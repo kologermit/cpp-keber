@@ -10,6 +10,7 @@ install_requirements:
 	./.venv/bin/pip install -r ./requirements.txt
 
 build_conan:
+	./.venv/bin/conan profile detect || true
 	./.venv/bin/conan install . --build missing -s compiler.cppstd=gnu20 --output-folder=./.conan
 
 build_bot:

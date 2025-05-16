@@ -5,3 +5,5 @@
 !Makefile
 !conanfile.txt
 !requirements.txt
+!docker
+!conanprofile.txt

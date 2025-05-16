@@ -1,0 +1,11 @@
+*
+!.gitignore
+!bot.yml
+!BOT_DOCKERFILE
+!db.yml
+!downloader.yml
+!DOWNLOADER_DOCKERFILE
+!web_server.yml
+!networks.yml
+!cron.yml
+!CRON_DOCKERFILE
