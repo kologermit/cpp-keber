@@ -15,3 +15,6 @@ build_conan:
 build_bot:
 	cmake ./bot -DCMAKE_TOOLCHAIN_FILE=$$PWD/.conan/conan_toolchain.cmake -DCMAKE_BUILD_TYPE=Release -B ./.build/bot/
 	cmake --build ./.build/bot
+
+run_bot:
+	./.build/bot/KEBER_BOT
