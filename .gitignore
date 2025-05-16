@@ -1,0 +1,7 @@
+*
+!.gitignore
+!README.md
+!bot
+!Makefile
+!conanfile.txt
+!requirements.txt
