@@ -1,0 +1,7 @@
+networks:
+  web_server_to_bot:
+  bot_to_db:
+  bot_to_cache:
+  downloader_to_cache:
+  downloader_to_db:
+  cron_to_bot:

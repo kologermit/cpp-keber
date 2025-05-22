@@ -1,6 +1,0 @@
-[requires]
-poco/1.13.2
-
-[generators]
-CMakeDeps
-CMakeToolchain

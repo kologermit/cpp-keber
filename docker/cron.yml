@@ -1,0 +1,8 @@
+services:
+  cron:
+    extends:
+      file: ./parents.yml
+      service: parent
+    image: monlor/docker-cron:main
+    networks:
+      - cron_to_bot

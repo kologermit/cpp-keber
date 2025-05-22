@@ -1,0 +1,16 @@
+services:
+  certbot:
+    image: certbot/certbot
+    ports:
+      - 0.0.0.0:80:80
+    volumes:
+      - ./web_server/ssl:/etc/letsencrypt
+      - ./:/var/www/html
+    command: certonly \
+      -d ${BOT_WEBHOOK_URL}
+      --standalone \
+      --email ${CERTBOT_EMAIL}
+      --cert-name=certfolder \
+      --key-type rsa \
+      --agree-tos \
+      --non-interactive

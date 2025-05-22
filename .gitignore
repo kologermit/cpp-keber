@@ -3,7 +3,11 @@
 !README.md
 !bot
 !Makefile
-!conanfile.txt
+!conanfile.py
 !requirements.txt
 !docker
 !conanprofile.txt
+!.env.example
+!CMakeLists.txt
+!Dockerfile
+!docker-compose

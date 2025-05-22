@@ -1,0 +1,18 @@
+volumes:
+  cache_data:
+
+services:
+  cache:
+    extends:
+      file: ./parents.yml
+      service: parent
+    image: redis:${CACHE_VERSION:-8.0.1-alpine}
+    ports:
+      - ${CACHE_EXTERNAL_PORT:-127.0.0.1:6379}:6379
+    volumes:
+      - cache_data:/root/redis
+    environment:
+      - REDIS_PASSWORD=${CACHE_PASSWORD:-qwerty}
+    networks:
+      - bot_to_cache
+      - downloader_to_cache

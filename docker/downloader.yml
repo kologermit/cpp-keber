@@ -1,0 +1,24 @@
+volumes:
+  downloader_logs:
+  downloader_tmp:
+
+services:
+  downloader:
+    extends:
+      file: parents.yml
+      service: custom_service
+    build:
+      context: ..
+      target: downloader
+    volumes:
+      - downloader_logs:/logs:rw
+      - downloader_tmp:/tmp:rw
+      - web_server_files:/uploads:rw
+    environment:
+      - UPLOADS_DIR=/uploads
+      - BOT_ADMINS=${BOT_ADMINS:-[]}
+      - BOT_TOKEN=${BOT_TOKEN}
+      - DOWNLOAD_URL=${BOT_WEBHOOK_URL}
+    networks:
+      - downloader_to_db
+      - downloader_to_cache
