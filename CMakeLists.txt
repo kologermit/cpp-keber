@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
-project(KEBER_BOT)
+project(BOT)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
@@ -20,8 +20,13 @@ find_package(fmt REQUIRED)
 find_package(Crow REQUIRED)
 find_package(hiredis REQUIRED)
 
-add_executable(KEBER_BOT ./bot/main.cpp)
-target_link_libraries(KEBER_BOT
+include_directories(
+    ".",
+    "./utils"
+)
+
+add_executable(BOT ./bot/main.cpp)
+target_link_libraries(BOT
     libpqxx::pqxx
     fmt::fmt
     Crow::Crow

@@ -1,6 +1,7 @@
 services:
   parent:
     restart: ${CONTAINER_RESTART:-always}
+    stop_signal: SIGINT
     cap_drop:  
       - ALL
     cap_add:  
@@ -22,6 +23,7 @@ services:
     extends:
       file: ./parents.yml
       service: parent
+    user: runner
     environment:
       - LOGS_DIR=/logs
       - TMP_DIR=-/tmp

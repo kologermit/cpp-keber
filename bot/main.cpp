@@ -2,37 +2,55 @@
 #include <crow.h>
 #include <fmt/core.h>
 #include <iostream>
-#include <chrono>
-#include <cstdlib>
+#include <vector>
 #include <hiredis/hiredis.h>
+#include <utils/env.cpp>
+#include <utils/random.cpp>
 
+typedef const char* c_string;
+typedef redisContext* RedisConn;
+typedef redisReply* RedisCommand;
+typedef pqxx::connection DBConnection;
+typedef pqxx::work DBWorker;
+typedef crow::json::wvalue JSON;
 using namespace std;
-using namespace std::chrono;
 using namespace crow;
-using namespace pqxx;
 
-const char* get_env(const char* variable, const char* _default="") {
-    const char* res = getenv(variable);
-    if (res == nullptr) {
-        return _default;
-    }
-    return res;
-}
+struct LogMiddleware {
+    struct context {
+        int id;
+    };
+    void before_handle(request& req, response& res, context& ctx) {
+        ctx.id = utils::randint(1, 1000000);
+        cout << fmt::format(
+            "event={}; request_id={}; method={}; uri={}\n",
+            "new-request",
+            ctx.id,
+            method_name(req.method),
+            req.url
+        );
+    };
+
+    void after_handle(request& req, response& res, context& ctx) {};
+};
 
 int main()
 {
-    const string
-        db_host = get_env("DB_HOST", "localhost"),
-        db_port = get_env("DB_PORT", "5432"),
-        db_name = get_env("DB_NAME", "bot"),
-        db_user = get_env("DB_USER", "postgres"),
-        db_password = get_env("DB_PASSWORD", "qwerty"),
-        cache_host = get_env("CACHE_HOST", "localhost"),
-        cache_port = get_env("CACHE_PORT", "6379"),
-        cache_password = get_env("CACHE_PASSWORD", "qwerty"),
-        port = get_env("PORT", "8080");
 
-    const auto db_conn_str = fmt::format(
+    utils::init_random();
+
+    const string
+        db_host = utils::get_env("DB_HOST", "localhost"),
+        db_port = utils::get_env("DB_PORT", "5432"),
+        db_name = utils::get_env("DB_NAME", "bot"),
+        db_user = utils::get_env("DB_USER", "postgres"),
+        db_password = utils::get_env("DB_PASSWORD", "qwerty"),
+        cache_host = utils::get_env("CACHE_HOST", "localhost"),
+        cache_port = utils::get_env("CACHE_PORT", "6379"),
+        cache_password = utils::get_env("CACHE_PASSWORD", "qwerty"),
+        port = utils::get_env("BOT_PORT", "8080");
+
+    const string db_conn_str = fmt::format(
         "host={} port={} dbname={} user={} password={}",
         db_host,
         db_port,
@@ -43,57 +61,34 @@ int main()
     cout << "DB CONN: " << db_conn_str << endl;
 
 
-
-
-    auto cache_conn = redisConnect(cache_host.c_str(), atoi(cache_port.c_str()));
-    auto reply = (redisReply*)redisCommand(cache_conn, "PING");
-    if (reply == nullptr) {
-        cerr << "Error" << std::endl;
-        redisFree(cache_conn);
-        return 1;
-    }
+    RedisConn cache_conn = redisConnect(cache_host.c_str(), atoi(cache_port.c_str()));
+    RedisCommand reply = (RedisCommand)redisCommand(cache_conn, "PING");
     cout << "Ответ Redis: " << reply->str << std::endl;
 
 
+    DBConnection connectionObject(db_conn_str);
+    DBWorker worker(connectionObject);
 
 
-    connection connectionObject(db_conn_str);
-    work worker(connectionObject);
-
-
-    SimpleApp app;
-    CROW_ROUTE(app, "/")([&worker](){
-
-        auto start = high_resolution_clock::now();
-
-        string answer = "";
-
+    App<LogMiddleware> app;
+    app.loglevel(LogLevel::WARNING);
+    CROW_ROUTE(app, "/<string>")
+    .methods(HTTPMethod::GET)
+    ([&worker](const string a){
+        json::wvalue answer;
         for (auto row : worker.exec("\
             SELECT\
-                \"id\",\
-                \"name\",\
-                \"screen\",\
-                \"created\"\
-            FROM \"user\"\
+                1 AS \"id\",\
+                'Фёдор' AS \"name\",\
+                'start' AS \"screen\",\
+                '2025-01-01 00:00:00' AS \"created\"\
         ")) {
-            const long id = row["id"].as<long>();
-            const string
-                name = row["name"].c_str(),
-                screen = row["screen"].c_str(),
-                created = row["created"].c_str();
-
-            answer += fmt::format(
-                "| id={} name={} screen={} created={}", 
-                id, name, screen, created
-            );
+            for (auto cell : row) {
+                vector<string> a = {string(cell.c_str())};
+                answer[cell.name()] = a;
+            }
         }
-
-        auto end = high_resolution_clock::now();
-
-        duration<double, milli> duration = end - start;
-
-        cout << "Request time: " << duration.count() << "ms" << endl;
-
+        answer["a"] = a;
         return answer;
     });
 

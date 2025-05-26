@@ -2,6 +2,8 @@ networks:
   web_server_to_bot:
   bot_to_db:
   bot_to_cache:
+  bot_to_downloader:
   downloader_to_cache:
   downloader_to_db:
-  cron_to_bot:
+  cron_to_downloader:
+  cron_to_delete:

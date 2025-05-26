@@ -1,0 +1,4 @@
+*
+!.gitignore
+!env.cpp
+!random.cpp

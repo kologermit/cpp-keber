@@ -20,5 +20,7 @@ services:
       - BOT_TOKEN=${BOT_TOKEN}
       - DOWNLOAD_URL=${BOT_WEBHOOK_URL}
     networks:
+      - bot_to_downloader
       - downloader_to_db
       - downloader_to_cache
+      - cron_to_downloader

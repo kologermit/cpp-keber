@@ -24,4 +24,5 @@ services:
         - BOT_WEBHOOK_URL=${BOT_WEBHOOK_URL}
         - BOT_WEBHOOK_URL_PATH=/bot_webhook_secret_path
         - BOT_ADMINS=${BOT_ADMINS:-[]}
+        - PORT=8080
     

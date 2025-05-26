@@ -5,4 +5,5 @@ services:
       service: parent
     image: monlor/docker-cron:main
     networks:
-      - cron_to_bot
+      - cron_to_delete
+      - cron_to_downloader
