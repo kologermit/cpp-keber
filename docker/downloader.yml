@@ -8,7 +8,6 @@ services:
       file: parents.yml
       service: custom_service
     build:
-      context: ..
       target: downloader
     volumes:
       - downloader_logs:/logs:rw

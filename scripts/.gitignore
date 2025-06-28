@@ -1,0 +1,7 @@
+*
+!.gitignore
+!venv.json
+!install.json
+!conan.json
+!bot.json
+!docker.json

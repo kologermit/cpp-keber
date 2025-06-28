@@ -1,0 +1,15 @@
+{
+    "build": {
+        "description": "Build Conan source files",
+        "scripts": [
+            "./venv/bin/conan profile detect --force",
+            "./venv/bin/conan install . --build missing"
+        ]
+    },
+    "build_deps": {
+        "description": "Build Conan deps into ./build",
+        "scripts": [
+            "cmake . -DCMAKE_BUILD_TYPE=Release -DONLY_CONAN=ON ./build"
+        ]
+    }
+}

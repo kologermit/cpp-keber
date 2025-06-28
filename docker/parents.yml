@@ -23,16 +23,12 @@ services:
     extends:
       file: ./parents.yml
       service: parent
+    build:
+      context: ..
+      args:
+        - BUILDER_IMAGE=${BUILDER_IMAGE:-debian}
+        - BASE_IMAGE=${BASE_IMAGE:-busybox}
+        - GROUP_ID=${GROUP_ID:-1001}
+        - USER_ID=${USER_ID:-1001}
     user: runner
-    environment:
-      - LOGS_DIR=/logs
-      - TMP_DIR=-/tmp
-      - DB_HOST=db
-      - DB_PORT=5432
-      - DB_NAME=${DB_NAME:-bot}
-      - DB_USER=${DB_USER:-postgres}
-      - DB_PASSWORD=${DB_PASSWORD:-qwerty}
-      - CACHE_HOST=cache
-      - CACHE_PORT=6379
-      - CACHE_PASSWORD=${CACHE_PASSWORD:-qwerty}
-
+    env_file: ../.env

@@ -2,6 +2,9 @@
 !.gitignore
 !README.md
 !bot
+!cleaner
+!downloader
+!cron
 !Makefile
 !conanfile.py
 !requirements.txt
@@ -12,3 +15,5 @@
 !Dockerfile
 !docker-compose
 !utils
+!scripts
+!manager.py

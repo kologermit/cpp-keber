@@ -6,7 +6,7 @@ services:
     extends:
       file: ./parents.yml
       service: parent
-    image: redis:${CACHE_VERSION:-8.0.1-alpine}
+    image: ${CACHE_IMAGE:-redis:8.0.1-alpine}
     user: redis
     ports:
       - ${CACHE_EXTERNAL_PORT:-127.0.0.1:6379}:6379

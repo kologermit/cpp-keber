@@ -1,6 +1,6 @@
 services:
   certbot:
-    image: certbot/certbot
+    image: ${CERTBOT_IMAGE:-certbot/certbot}
     ports:
       - 0.0.0.0:80:80
     volumes:

@@ -2,8 +2,7 @@ services:
   cron:
     extends:
       file: ./parents.yml
-      service: parent
-    image: monlor/docker-cron:main
+      service: custom_service
     networks:
-      - cron_to_delete
+      - cron_to_cleaner
       - cron_to_downloader

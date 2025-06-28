@@ -13,9 +13,6 @@ build_conan:
 	venv/bin/conan profile detect --force
 	venv/bin/conan install . --build missing
 
-.env:
-	cp .env.example .env
-
 install_deps:
 	make venv
 	make install_requirements

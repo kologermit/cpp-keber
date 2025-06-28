@@ -1,0 +1,24 @@
+{
+    "build": {
+        "description": "Build bot",
+        "scripts": [
+            "@@ conan build_deps",
+            "rm -rf ./build/BOT",
+            "cmake --build ./build --target BOT",
+            "chmod 777 ./build/BOT"
+        ]
+    },
+    "run": {
+        "description": "Run ./build/BOT",
+        "scripts": [
+            "./build/BOT"
+        ]
+    },
+    "build_and_run": {
+        "description": "Build bot and run ./build/BOT",
+        "scripts": [
+            "@@ bot build",
+            "@@ bot run"
+        ]
+    }
+}

@@ -8,7 +8,6 @@ services:
       file: ./parents.yml
       service: custom_service
     build:
-      context: ..
       target: bot
     networks:
       - bot_to_cache
@@ -18,11 +17,4 @@ services:
       - bot_logs:/logs:rw
       - bot_tmp:/tmp:rw
     ports:
-      - ${BOT_EXTERNAL_PORT:-127.0.0.1:8080}:8080
-    environment:
-        - BOT_TOKEN=${BOT_TOKEN}
-        - BOT_WEBHOOK_URL=${BOT_WEBHOOK_URL}
-        - BOT_WEBHOOK_URL_PATH=/bot_webhook_secret_path
-        - BOT_ADMINS=${BOT_ADMINS:-[]}
-        - PORT=8080
-    
+      - ${BOT_EXTERNAL_PORT:-127.0.0.1:8080}:${BOT_PORT:-8080}

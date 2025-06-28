@@ -1,0 +1,9 @@
+{
+    "deps": {
+        "scripts": [
+            "@@ venv venv",
+            "@@ venv requirements",
+            "@@ conan build"
+        ]
+    }
+}

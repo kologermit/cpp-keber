@@ -6,7 +6,7 @@ services:
     extends:
       file: ./parents.yml
       service: parent
-    image: postgres:${DB_VERSION:-17-alpine}
+    image: ${DB_IMAGE:-postgres:17-alpine}
     user: postgres
     volumes:
       - db_data:/var/lib/postgresql/data:rw
