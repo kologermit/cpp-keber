@@ -7,7 +7,7 @@ class ExampleRecipe(ConanFile):
     generators = "CMakeDeps", "CMakeToolchain"
 
     def requirements(self):
-        self.requires("libpqxx/7.10.1")
+        self.requires("sqlpp11/0.64")
         self.requires("crowcpp-crow/1.2.0")
         self.requires("fmt/11.2.0")
         self.requires("hiredis/1.2.0")

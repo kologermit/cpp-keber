@@ -3,15 +3,20 @@
 #include <ctime>
 #include <cstdlib>
 #include <random>
+#include <utils/Types.cpp>
 
-namespace utils {
+using Utils::Types::ConstInt;
 
-void init_random() {
+namespace Utils {
+namespace Random {
+
+void init() {
     std::srand(std::time(0));
 }
 
-const int randint(const int start, const int end) {
+int randint(ConstInt start, ConstInt end) {
     return (std::rand() % (end - start)) + start;
 }
 
+}
 }

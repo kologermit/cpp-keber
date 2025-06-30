@@ -1,97 +1,76 @@
-#include <pqxx/pqxx>
-#include <crow.h>
 #include <fmt/core.h>
 #include <iostream>
-#include <vector>
-#include <hiredis/hiredis.h>
-#include <utils/env.cpp>
-#include <utils/random.cpp>
+#include <utils/Env.cpp>
+#include <utils/Random.cpp>
+#include <utils/Types.cpp>
+#include <Middlewares/LogMiddleware.cpp>
 
-typedef const char* c_string;
-typedef redisContext* RedisConn;
-typedef redisReply* RedisCommand;
-typedef pqxx::connection DBConnection;
-typedef pqxx::work DBWorker;
-typedef crow::json::wvalue JSON;
-using namespace std;
-using namespace crow;
+using Middlewares::LogMiddleware;
+using Utils::Types::ConstString;
+using Utils::Types::App;
+using Utils::Types::LogLevel;
+using Utils::Types::JSON;
+using Utils::Types::HTTPMethod;
 
-struct LogMiddleware {
-    struct context {
-        int id;
+class Program {
+    private:
+    ConstString cache_host;
+    ConstString cache_port;
+    ConstString cache_password;
+    ConstString bot_port;
+    ConstString db_conn_str;
+    App<LogMiddleware> app;
+
+    void init_random() const {
+        Utils::Random::init();
+    }
+
+    void init_app() {
+        this->app.loglevel(LogLevel::WARNING);
+        CROW_ROUTE(this->app, "/<string>")
+        .methods(HTTPMethod::GET)
+        ([](ConstString a){
+            JSON answer;
+            answer["a"] = "a";
+            return answer;
+        });
+    }
+
+    void log_start() {
+        std::cout << "Start keber-bot on 0.0.0.0:" << this->bot_port << std::endl;
+    }
+    
+    void run_app() {
+        this->app.port(atoi(this->bot_port.c_str())).multithreaded().run();
+    }
+
+    public:
+    Program():
+        cache_host(Utils::Env::get("CACHE_HOST", "localhost")),
+        cache_port(Utils::Env::get("CACHE_PORT", "6379")),
+        cache_password(Utils::Env::get("CACHE_PASSWORD", "qwerty")),
+        bot_port(Utils::Env::get("BOT_PORT", "8080")),
+        db_conn_str(
+            fmt::format(
+                "host={} port={} dbname={} user={} password={}",
+                Utils::Env::get("DB_HOST", "localhost"),
+                Utils::Env::get("DB_PORT", "5432"),
+                Utils::Env::get("DB_NAME", "bot"),
+                Utils::Env::get("DB_USER", "postgres"),
+                Utils::Env::get("DB_PASSWORD", "qwerty")
+            )
+        ) 
+    {
+        this->init_random();
+        this->init_app();
     };
-    void before_handle(request& req, response& res, context& ctx) {
-        ctx.id = utils::randint(1, 1000000);
-        cout << fmt::format(
-            "event={}; request_id={}; method={}; uri={}\n",
-            "new-request",
-            ctx.id,
-            method_name(req.method),
-            req.url
-        );
-    };
 
-    void after_handle(request& req, response& res, context& ctx) {};
+    void run() {
+        this->log_start();
+        this->run_app();
+    }
 };
 
-int main()
-{
-
-    utils::init_random();
-
-    const string
-        db_host = utils::get_env("DB_HOST", "localhost"),
-        db_port = utils::get_env("DB_PORT", "5432"),
-        db_name = utils::get_env("DB_NAME", "bot"),
-        db_user = utils::get_env("DB_USER", "postgres"),
-        db_password = utils::get_env("DB_PASSWORD", "qwerty"),
-        cache_host = utils::get_env("CACHE_HOST", "localhost"),
-        cache_port = utils::get_env("CACHE_PORT", "6379"),
-        cache_password = utils::get_env("CACHE_PASSWORD", "qwerty"),
-        port = utils::get_env("BOT_PORT", "8080");
-
-    const string db_conn_str = fmt::format(
-        "host={} port={} dbname={} user={} password={}",
-        db_host,
-        db_port,
-        db_name,
-        db_user,
-        db_password
-    );
-    cout << "DB CONN: " << db_conn_str << endl;
-
-
-    RedisConn cache_conn = redisConnect(cache_host.c_str(), atoi(cache_port.c_str()));
-    RedisCommand reply = (RedisCommand)redisCommand(cache_conn, "PING");
-    cout << "Ответ Redis: " << reply->str << std::endl;
-
-
-    DBConnection connectionObject(db_conn_str);
-    DBWorker worker(connectionObject);
-
-
-    App<LogMiddleware> app;
-    app.loglevel(LogLevel::WARNING);
-    CROW_ROUTE(app, "/<string>")
-    .methods(HTTPMethod::GET)
-    ([&worker](const string a){
-        json::wvalue answer;
-        for (auto row : worker.exec("\
-            SELECT\
-                1 AS \"id\",\
-                'Фёдор' AS \"name\",\
-                'start' AS \"screen\",\
-                '2025-01-01 00:00:00' AS \"created\"\
-        ")) {
-            for (auto cell : row) {
-                vector<string> a = {string(cell.c_str())};
-                answer[cell.name()] = a;
-            }
-        }
-        answer["a"] = a;
-        return answer;
-    });
-
-    cout << "Start cpp-keber" << endl;
-    app.port(atoi(port.c_str())).multithreaded().run();
+int main() {
+    Program().run();
 }

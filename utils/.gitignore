@@ -1,4 +1,6 @@
 *
 !.gitignore
-!env.cpp
-!random.cpp
+!Env.cpp
+!Random.cpp
+!SqlBuilder.cpp
+!Types.cpp

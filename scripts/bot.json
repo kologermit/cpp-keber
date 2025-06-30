@@ -2,10 +2,10 @@
     "build": {
         "description": "Build bot",
         "scripts": [
-            "@@ conan build_deps",
-            "rm -rf ./build/BOT",
+            "@@ conan build",
+            "cmake -B ./build -DBUILD_BOT=ON",
             "cmake --build ./build --target BOT",
-            "chmod 777 ./build/BOT"
+            "chmod 777 ./build/BOT || true"
         ]
     },
     "run": {

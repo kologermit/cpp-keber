@@ -21,14 +21,13 @@ RUN \
     && groupadd -g ${GROUP_ID:-1001} runner \
     && useradd -l -u ${USER_ID:-1001} -g runner runner
 USER runner
-COPY ./utils                /app/utlis
 COPY ./scripts/venv.json    /app/scripts/venv.json
 COPY ./scripts/install.json /app/scripts/install.json
 COPY ./scripts/conan.json   /app/scripts/conan.json
 COPY ./manager.py           /app/manager.py
 RUN python3 manager.py install deps
 COPY ./CMakeLists.txt       /app/CMakeLists.txt
-RUN python3 manager.py conan build_deps
+COPY ./utils                /app/utils
 
 FROM ${BASE_IMAGE:-busybox} AS base
 WORKDIR /app
