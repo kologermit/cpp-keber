@@ -4,3 +4,5 @@
 !Random.cpp
 !SqlBuilder.cpp
 !Types.cpp
+!Logger
+!GlobalFunctions.cpp

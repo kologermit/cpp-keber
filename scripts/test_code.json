@@ -1,0 +1,24 @@
+{
+    "build": {
+        "description": "Build test_code",
+        "scripts": [
+            "@@ conan build",
+            "cmake -B ./build -DBUILD_TEST_CODE=ON",
+            "cmake --build ./build --target TEST_CODE",
+            "chmod 777 ./build/TEST_CODE || true"
+        ]
+    },
+    "run": {
+        "description": "Run ./build/TEST_CODE",
+        "scripts": [
+            "./build/TEST_CODE"
+        ]
+    },
+    "build_and_run": {
+        "description": "Build test_code and run ./build/TEST_CODE",
+        "scripts": [
+            "@@ test_code build",
+            "@@ test_code run"
+        ]
+    }
+}

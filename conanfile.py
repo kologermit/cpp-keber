@@ -11,6 +11,7 @@ class ExampleRecipe(ConanFile):
         self.requires("crowcpp-crow/1.2.0")
         self.requires("fmt/11.2.0")
         self.requires("hiredis/1.2.0")
+        self.requires("spdlog/1.15.3")
 
     def layout(self):
         cmake_layout(self)

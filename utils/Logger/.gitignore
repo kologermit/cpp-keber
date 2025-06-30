@@ -1,0 +1,5 @@
+*
+!.gitignore
+!AbstractLogger.cpp
+!LoggerLevelEnum.cpp
+!FileDailyLogger.cpp
