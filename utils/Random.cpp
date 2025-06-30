@@ -1,21 +1,22 @@
 #pragma once
 
-#include <ctime>
-#include <cstdlib>
-#include <random>
 #include <utils/Types.cpp>
-
-using Utils::Types::ConstInt;
+#include <utils/Functions.cpp>
 
 namespace Utils {
 namespace Random {
 
+using Utils::Types::ConstInt;
+using Utils::Functions::SRand;
+using Utils::Functions::Rand;
+using Utils::Functions::Time;
+
 void init() {
-    std::srand(std::time(0));
+    SRand(Time(0));
 }
 
 int randint(ConstInt start, ConstInt end) {
-    return (std::rand() % (end - start)) + start;
+    return (Rand() % (end - start)) + start;
 }
 
 }

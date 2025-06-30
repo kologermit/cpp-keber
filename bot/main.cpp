@@ -46,18 +46,18 @@ class Program {
 
     public:
     Program():
-        cache_host(Utils::Env::get("CACHE_HOST", "localhost")),
-        cache_port(Utils::Env::get("CACHE_PORT", "6379")),
-        cache_password(Utils::Env::get("CACHE_PASSWORD", "qwerty")),
-        bot_port(Utils::Env::get("BOT_PORT", "8080")),
+        cache_host(Utils::Env::Get("CACHE_HOST", "localhost")),
+        cache_port(Utils::Env::Get("CACHE_PORT", "6379")),
+        cache_password(Utils::Env::Get("CACHE_PASSWORD", "qwerty")),
+        bot_port(Utils::Env::Get("BOT_PORT", "8080")),
         db_conn_str(
             fmt::format(
                 "host={} port={} dbname={} user={} password={}",
-                Utils::Env::get("DB_HOST", "localhost"),
-                Utils::Env::get("DB_PORT", "5432"),
-                Utils::Env::get("DB_NAME", "bot"),
-                Utils::Env::get("DB_USER", "postgres"),
-                Utils::Env::get("DB_PASSWORD", "qwerty")
+                Utils::Env::Get("DB_HOST", "localhost"),
+                Utils::Env::Get("DB_PORT", "5432"),
+                Utils::Env::Get("DB_NAME", "bot"),
+                Utils::Env::Get("DB_USER", "postgres"),
+                Utils::Env::Get("DB_PASSWORD", "qwerty")
             )
         ) 
     {

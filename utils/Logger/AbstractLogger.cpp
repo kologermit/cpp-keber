@@ -2,10 +2,10 @@
 
 #include <utils/Types.cpp>
 
-using Utils::Types::ConstString;
-
 namespace Utils {
 namespace Logger {
+
+using Utils::Types::ConstString;
 
 class AbstractLogger {
     public:

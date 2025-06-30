@@ -1,36 +1,36 @@
 #pragma once
 
-#include <memory>
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/daily_file_sink.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <utils/Types.cpp>
 #include <utils/Env.cpp>
-#include <utils/GlobalFunctions.cpp>
 #include <utils/Logger/LoggerLevelEnum.cpp>
 #include <utils/Logger/AbstractLogger.cpp>
-
-using Utils::Types::ConstString;
-using Utils::Logger::LoggerLevelEnum;
-using Utils::Logger::AbstractLogger;
-using Utils::GlobalFunctions::format;
+#include <utils/Functions.cpp>
 
 namespace Utils {
 namespace Logger {
 
+using Utils::Types::ConstString;
+using Utils::Types::SharedPtr;
+using Utils::Logger::LoggerLevelEnum;
+using Utils::Logger::AbstractLogger;
+using Utils::Functions::Format;
+
 class FileDailyLogger : public AbstractLogger {
 
     private:
-        std::shared_ptr<spdlog::logger> _logger;
+        SharedPtr<spdlog::logger> _logger;
 
         ConstString get_text_from_message_and_event(ConstString& event, ConstString& message) const {
-            return format(
+            return Format(
                 "[{}] -- {}",
                 event,
                 message
             );
         };
-        
+
     public:
 
         void info(ConstString& event, ConstString& message) const override {
@@ -51,7 +51,7 @@ class FileDailyLogger : public AbstractLogger {
 
         FileDailyLogger() {
             ConstString
-                dir = Utils::Env::get("LOG_DIR", "./logs"),
+                dir = Utils::Env::Get("LOG_DIR", "./logs/"),
                 name = "main";
             LoggerLevelEnum level = LoggerLevelEnum::DEBUG;
             this->_logger = spdlog::daily_logger_mt(name, dir, 0, 0);

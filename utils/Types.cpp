@@ -2,14 +2,17 @@
 
 #include <iostream>
 #include <crow.h>
+#include <memory>
 
 namespace Utils {
 namespace Types {
 
 // std
-using ConstString = const std::string;
+using String = std::string;
+using ConstString = const String;
 using ConstCString = const char*;
 using ConstInt = const int;
+template <typename T> using SharedPtr = std::shared_ptr<T>;
 
 // crow
 using Request = crow::request;

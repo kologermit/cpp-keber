@@ -1,16 +1,17 @@
 #pragma once
 
-#include <cstdlib>
 #include <utils/Types.cpp>
-
-using Utils::Types::ConstString;
-using Utils::Types::ConstCString;
+#include <utils/Functions.cpp>
 
 namespace Utils {
 namespace Env {
 
-ConstString get(ConstString variable, ConstString _default="") {
-    ConstCString res = getenv(variable.c_str());
+using Utils::Types::ConstString;
+using Utils::Types::ConstCString;
+using Utils::Functions::GetEnv;
+
+ConstString Get(ConstString variable, ConstString _default="") {
+    ConstCString res = GetEnv(variable.c_str());
     if (res == nullptr) {
         return ConstString(_default);
     }
