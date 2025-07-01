@@ -3,36 +3,31 @@
 #include <cstdlib>
 #include <random>
 #include <ctime>
-
 #include <fmt/core.h>
-
-
-#define USING_FUNC(USING_NAME, FUNC_NAME)\
-    constexpr auto USING_NAME = [](auto&&... args) { \
-        return FUNC_NAME(std::forward<decltype(args)>(args)...); \
-    }
-
-#define USING_FUNC_T(USING_NAME, FUNC_NAME) \
-    template<typename ...T> \
-    auto USING_NAME = [](auto&&... args) { \
-        return FUNC_NAME<T...>(std::forward<decltype(args)>(args)...); \
-    };
-
+#include <utils/Types.cpp>
 
 namespace Utils {
 namespace Functions {
 
+using Utils::Types::ConstString;
+using Utils::Types::CString;
+using Utils::Types::String;
+using Utils::Types::Void;
+using Utils::Types::ConstInt;
+using Utils::Types::Int;
+using Utils::Types::TimeT;
+
 // c
-USING_FUNC(GetEnv, getenv);
+CString GetEnv(ConstString& name) { return getenv(name.c_str()); }
 
 // std
-USING_FUNC(SRand, std::srand);
-USING_FUNC(Rand, std::rand);
-USING_FUNC(Time, std::time);
-USING_FUNC_T(MakeShared, std::make_shared);
+Void SRand(ConstInt seed) { std::srand(seed); }
+Int Rand() { return std::rand(); }
+TimeT Time(TimeT* arg) {return std::time(arg); }
 
 // fmt
-USING_FUNC(Format, fmt::format);
+template<typename ...Args>
+String Format(ConstString& pattern, Args&... args) { return fmt::format(pattern, args...); }
 
 }
 }

@@ -3,16 +3,23 @@
 #include <iostream>
 #include <crow.h>
 #include <memory>
+#include <ctime>
 
 namespace Utils {
 namespace Types {
 
+// c
+using CString = char*;
+using ConstCString = const CString;
+using Int = int;
+using ConstInt = const Int;
+using Void = void;
+
 // std
 using String = std::string;
 using ConstString = const String;
-using ConstCString = const char*;
-using ConstInt = const int;
 template <typename T> using SharedPtr = std::shared_ptr<T>;
+using TimeT = std::time_t;
 
 // crow
 using Request = crow::request;

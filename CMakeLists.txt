@@ -6,7 +6,7 @@ set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
 set(CMAKE_BUILD_TYPE "Release")
 set(CMAKE_SHARED_LINKER_FLAGS "-static -static-libgcc -static-libstdc++")
 
-include(./build/Release/generators/conan_toolchain.cmake)
+include(./build/${CMAKE_BUILD_TYPE}/generators/conan_toolchain.cmake)
 
 include_directories(
     ".",
@@ -23,15 +23,19 @@ find_package(hiredis REQUIRED)
 find_package(Sqlpp11 REQUIRED)
 find_package(spdlog REQUIRED)
 
+set(ALL_LINK_LIBRARIES 
+    spdlog::spdlog 
+    fmt::fmt 
+    Crow::Crow 
+    hiredis::hiredis 
+    sqlpp11::sqlpp11
+)
+
 option(BUILD_BOT "Build bot" OFF)
 if (BUILD_BOT)
     add_executable(BOT ./bot/main.cpp)
     target_link_libraries(BOT
-        spdlog::spdlog
-        fmt::fmt
-        Crow::Crow
-        hiredis::hiredis
-        sqlpp11::sqlpp11
+        ${ALL_LINK_LIBRARIES}
     )
 endif()
 
@@ -39,10 +43,6 @@ option(BUILD_TEST_CODE "Build test" OFF)
 if (BUILD_TEST_CODE)
     add_executable(TEST_CODE ./test_code/test_code.cpp)
     target_link_libraries(TEST_CODE
-        spdlog::spdlog
-        fmt::fmt
-        Crow::Crow
-        hiredis::hiredis
-        sqlpp11::sqlpp11
+        ${ALL_LINK_LIBRARIES}
     )
 endif()
