@@ -5,8 +5,6 @@ ARG GROUP_ID=1001
 
 FROM ${BUILDER_IMAGE:-debian} AS builder_base
 WORKDIR /app
-COPY ./conanfile.py     /app/conanfile.py
-COPY ./requirements.txt /app/requirements.txt
 RUN \
     apt update \
     && apt upgrade -y \
@@ -15,12 +13,14 @@ RUN \
         python3 \
         python3-pip \
         python3-venv \
-        g++ \
+        clang \
     && mkdir -p /home/runner /app\
     && chmod 777 -R /home/runner /app\
     && groupadd -g ${GROUP_ID:-1001} runner \
     && useradd -l -u ${USER_ID:-1001} -g runner runner
 USER runner
+COPY ./conanfile.py         /app/conanfile.py
+COPY ./requirements.txt     /app/requirements.txt
 COPY ./scripts/venv.json    /app/scripts/venv.json
 COPY ./scripts/install.json /app/scripts/install.json
 COPY ./scripts/conan.json   /app/scripts/conan.json

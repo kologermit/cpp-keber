@@ -1,5 +1,5 @@
 *
 !.gitignore
-!AbstractLogger.cpp
-!LoggerLevelEnum.cpp
+!InterfaceLogger.cpp
+!EnumLoggerLevel.cpp
 !FileDailyLogger.cpp

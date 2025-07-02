@@ -3,7 +3,7 @@
 namespace Utils {
 namespace Logger {
 
-enum LoggerLevelEnum {
+enum EnumLoggerLevel {
     DEBUG,
     INFO,
     WARN,

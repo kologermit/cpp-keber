@@ -1,11 +1,25 @@
 {
-    "build": {
+    "build_executable": {
+        "description": "Build executable ./build/BOT",
+        "scripts": [
+            "cmake --build ./build --target BOT",
+            "chmod 777 ./build/BOT || true"
+        ]
+    },
+    "build_release": {
         "description": "Build bot",
         "scripts": [
             "@@ conan build",
             "cmake -B ./build -DBUILD_BOT=ON",
-            "cmake --build ./build --target BOT",
-            "chmod 777 ./build/BOT || true"
+            "@@ bot build_executable"
+        ]
+    },
+    "build_debug": {
+        "description": "Build bot debug",
+        "scripts": [
+            "@@ conan build",
+            "cmake -B ./build -DBUILD_BOT=ON -DDEBUG_ARGS=ON",
+            "@@ bot build_executable"
         ]
     },
     "run": {
@@ -17,7 +31,7 @@
     "build_and_run": {
         "description": "Build bot and run ./build/BOT",
         "scripts": [
-            "@@ bot build",
+            "@@ bot build_release",
             "@@ bot run"
         ]
     }

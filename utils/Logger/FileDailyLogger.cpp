@@ -3,28 +3,26 @@
 #include <spdlog/spdlog.h>
 #include <spdlog/sinks/daily_file_sink.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
-#include <utils/Types.cpp>
-#include <utils/Env.cpp>
-#include <utils/Logger/LoggerLevelEnum.cpp>
-#include <utils/Logger/AbstractLogger.cpp>
-#include <utils/Functions.cpp>
+#include <utils/Type.cpp>
+#include <utils/Logger/EnumLoggerLevel.cpp>
+#include <utils/Logger/InterfaceLogger.cpp>
 
 namespace Utils {
 namespace Logger {
 
-using Utils::Types::ConstString;
-using Utils::Types::SharedPtr;
-using Utils::Logger::LoggerLevelEnum;
-using Utils::Logger::AbstractLogger;
-using Utils::Functions::Format;
+using namespace Utils::Type;
+using namespace Utils::Logger;
+using namespace std;
+using namespace spdlog;
+using namespace fmt;
 
-class FileDailyLogger : public AbstractLogger {
+class FileDailyLogger : public InterfaceLogger {
 
     private:
-        SharedPtr<spdlog::logger> _logger;
+        shared_ptr<logger> _logger;
 
-        ConstString get_text_from_message_and_event(ConstString& event, ConstString& message) const {
-            return Format(
+        const_string get_text_from_message_and_event(const_string& event, const_string& message) const {
+            return format(
                 "[{}] -- {}",
                 event,
                 message
@@ -33,34 +31,35 @@ class FileDailyLogger : public AbstractLogger {
 
     public:
 
-        void info(ConstString& event, ConstString& message) const override {
+        void info(const_string& event, const_string& message) const override {
             this->_logger->info(this->get_text_from_message_and_event(event, message));
         }
 
-        void warning(ConstString& event, ConstString& message) const override {
+        void warning(const_string& event, const_string& message) const override {
             this->_logger->warn(this->get_text_from_message_and_event(event, message));
         }
 
-        void error(ConstString& event, ConstString& message) const override {
+        void error(const_string& event, const_string& message) const override {
             this->_logger->error(this->get_text_from_message_and_event(event, message));
         }
 
-        void debug(ConstString& event, ConstString& message) const override {
+        void debug(const_string& event, const_string& message) const override {
             this->_logger->debug(this->get_text_from_message_and_event(event, message));
         }
 
         FileDailyLogger() {
-            ConstString
-                dir = Utils::Env::Get("LOG_DIR", "./logs/"),
+            const_string
+                dir = "./logs",
                 name = "main";
-            LoggerLevelEnum level = LoggerLevelEnum::DEBUG;
-            this->_logger = spdlog::daily_logger_mt(name, dir, 0, 0);
-            this->_logger->sinks().push_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
-            this->_logger->set_level(std::map<LoggerLevelEnum, spdlog::level::level_enum> {
-                {LoggerLevelEnum::DEBUG, spdlog::level::debug},
-                {LoggerLevelEnum::INFO, spdlog::level::info},
-                {LoggerLevelEnum::WARN, spdlog::level::warn},
-                {LoggerLevelEnum::ERR, spdlog::level::err},
+            EnumLoggerLevel level = EnumLoggerLevel::DEBUG;
+            this->_logger = daily_logger_mt(name, dir, 0, 0);
+            this->_logger->sinks().push_back(std::make_shared<sinks::stdout_color_sink_mt>());
+
+            this->_logger->set_level(std::map<EnumLoggerLevel, level::level_enum> {
+                {EnumLoggerLevel::DEBUG, level::debug},
+                {EnumLoggerLevel::INFO, level::info},
+                {EnumLoggerLevel::WARN, level::warn},
+                {EnumLoggerLevel::ERR, level::err},
             }[level]);
         }
 

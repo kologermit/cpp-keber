@@ -1,4 +1,4 @@
 *
 !.gitignore
 !LogMiddleware.cpp
-!AbstractMiddleware.cpp
+!InterfaceMiddleware.cpp

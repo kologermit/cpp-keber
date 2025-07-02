@@ -7,12 +7,12 @@ from json.decoder import JSONDecodeError
 from sys import argv
 from subprocess import run
 
-DEFAULT_KEY = 'default'
+
+PROCESS_ARG = '--process'
+PROCESS_ARG_WITH_SPACE = f' {PROCESS_ARG} '
+PROCESS = argv.count(PROCESS_ARG)
 DESCRIPTION_KEY = 'description'
-FILE_KEY = 'file'
-SCRIPT_KEY = 'script'
 SCRIPTS_KEY = 'scripts'
-COMMAND_KEY = 'command'
 
 COMMAND_KEY_DATA_IS_NOT_DICT_ERROR = f'File: {{file}}. Key: {{key}}. Key \'{SCRIPTS_KEY}\' not found'
 JSON_DECODE_ERROR = 'Cannot json decode file {file}'
@@ -27,8 +27,8 @@ FILE_BASENAME = path.basename(__file__)
 USAGE_COMMAND = f'python3 {FILE_BASENAME}'
 HELP_COMMANDS = ['help', '--help']
 HELP_STR = f'To get help run {USAGE_COMMAND} {HELP_COMMANDS[0]}'
-START_SCRIPT_MSG = f'{FILE_BASENAME}[{{i}}]: {{script}}'
-KEYBOARD_INTERRUPT_MSG = f'KeyboardInterrupt (Crtl+C)'
+START_SCRIPT_MSG = f'{FILE_BASENAME}[{{process}}]: {{script}}'
+KEYBOARD_INTERRUPT_MSG = 'KeyboardInterrupt (Crtl+C)'
 
 EMPTY_STR = ''
 FOLDER_WITH_SCRIPTS = './scripts'
@@ -38,9 +38,7 @@ ENV_FILE_COMMENT_SYMBOL = '#'
 SELF_RUN_SYMBOL = '@@'
 JSON_FILE_EXTENSION = '.json'
 MAIN_NAME = '__main__'
-PARAMS_SPLIT_SYMBOL = ':'
 PARAM_ARG_FLAG = '--'
-PARAM_START_IN_SCRIPT = '$'
 READ_MODE = 'r'
 
 ERROR_RETURN_CODE = 1
@@ -54,9 +52,6 @@ def dump_message(msg: str, key="error", info=None, **kwargs) -> str:
             **({"info": info} if info is not None else {})
         }
     , indent=2, ensure_ascii=False)
-
-def get_class_str(class_name: str, **kwargs) -> str:
-    return f'{class_name}('+', '.join(f'{key}={repr(value)}' for key, value in kwargs.items())+')'
 
 def load_env_file() -> None:
     if not path.exists(ENV_FILE):
@@ -97,17 +92,6 @@ class Script:
         self.__scripts__   = deepcopy(scripts)
         self.__description__= deepcopy(description)
 
-    def __str__(self) -> str:
-        return get_class_str(
-            self.__class__.__name__,
-            action=self.__action__,
-            scripts=self.__scripts__,
-            description=self.__description__,
-        )
-    
-    def __repr__(self) -> str:
-        return self.__str__()
-
     def get_action(self) -> tuple[str]:
         return self.__action__
 
@@ -119,6 +103,11 @@ class Script:
 
 def main() -> int:
     load_env_file()
+
+    for arg in deepcopy(argv):
+        if arg.startswith(PARAM_ARG_FLAG):
+            argv.remove(arg)
+
     script_files = listdir(FOLDER_WITH_SCRIPTS)
 
     scripts: dict[tuple[str], Script] = {}
@@ -154,7 +143,6 @@ def main() -> int:
             continue
         except JSONDecodeError:
             print(dump_message(JSON_DECODE_ERROR, file=script_file))
-            print(text)
         except (TypeError, KeyError) as err:
             print(dump_message(str(err)))
 
@@ -186,12 +174,19 @@ def main() -> int:
     if (script := scripts.get(key)) is None:
         print(dump_message(SCRIPT_NOT_FOUND_ERROR, script=key))
         return ERROR_RETURN_CODE
+    
+    environ[__file__] = str(int(PROCESS) + 1)
 
-    for i, final_script in enumerate(script.get_scripts()):
+    for final_script in script.get_scripts():
         final_script = final_script.replace(SELF_RUN_SYMBOL, USAGE_COMMAND)
-        print(START_SCRIPT_MSG.format(i=i, script=final_script))
+        print(START_SCRIPT_MSG.format(script=final_script, process=PROCESS))
         try:
-            result = run(final_script, shell=True, cwd=path.curdir)
+            result = run(
+                final_script\
+                    .replace(USAGE_COMMAND, USAGE_COMMAND+PROCESS_ARG_WITH_SPACE*(PROCESS+1)), 
+                shell=True, 
+                cwd=path.curdir
+            )
         except KeyboardInterrupt:
             print(KEYBOARD_INTERRUPT_MSG)
             return SUCCESS_RETURN_CODE
