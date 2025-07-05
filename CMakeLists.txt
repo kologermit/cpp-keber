@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
-project(BOT)
+project(CPP-KEBER)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -8,6 +8,8 @@ set(CMAKE_BUILD_TYPE "Release")
 set(CMAKE_SHARED_LINKER_FLAGS "-static -static-libgcc -static-libstdc++")
 set(CMAKE_MODULE_PATH "${CMAKE_BINARY_DIR};${CMAKE_MODULE_PATH};./bot;./utils;.")
 
+include(./build/Release/generators/conan_toolchain.cmake)
+
 include_directories(
     .
     ./bot
@@ -15,19 +17,25 @@ include_directories(
 )
 
 find_package(fmt REQUIRED)
-find_package(Crow REQUIRED)
+find_package(nlohmann_json REQUIRED)
+# find_package(Crow REQUIRED)
 find_package(hiredis REQUIRED)
 find_package(Sqlpp11 REQUIRED)
 find_package(spdlog REQUIRED)
-find_package(CURL REQUIRED)
+# find_package(CURL REQUIRED)
+find_package(libuuid REQUIRED)
+find_package(httplib REQUIRED)
 
 set(ALL_LINK_LIBRARIES 
-    spdlog::spdlog 
-    fmt::fmt 
-    Crow::Crow 
-    hiredis::hiredis 
+    libuuid::libuuid
     sqlpp11::sqlpp11
-    CURL::libcurl
+    # Crow::Crow
+    hiredis::hiredis
+    spdlog::spdlog
+    fmt::fmt
+    # CURL::libcurl
+    httplib::httplib
+    nlohmann_json::nlohmann_json
 )
 
 option(DEBUG_ARGS "Build debug" OFF)

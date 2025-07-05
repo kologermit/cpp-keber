@@ -6,8 +6,8 @@ namespace Logger {
 enum EnumLoggerLevel {
     DEBUG,
     INFO,
-    WARN,
-    ERR
+    WARNING,
+    ERROR
 };
 
 }

@@ -3,3 +3,4 @@
 !InterfaceLogger.cpp
 !EnumLoggerLevel.cpp
 !FileDailyLogger.cpp
+!StdOutLogger.cpp

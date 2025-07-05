@@ -58,8 +58,8 @@ class FileDailyLogger : public InterfaceLogger {
             this->_logger->set_level(std::map<EnumLoggerLevel, level::level_enum> {
                 {EnumLoggerLevel::DEBUG, level::debug},
                 {EnumLoggerLevel::INFO, level::info},
-                {EnumLoggerLevel::WARN, level::warn},
-                {EnumLoggerLevel::ERR, level::err},
+                {EnumLoggerLevel::WARNING, level::warn},
+                {EnumLoggerLevel::ERROR, level::err},
             }[level]);
         }
 

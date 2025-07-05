@@ -1,0 +1,4 @@
+*
+!.gitignore
+!Bot.cpp
+!Query.cpp

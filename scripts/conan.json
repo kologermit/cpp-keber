@@ -2,7 +2,7 @@
     "build": {
         "description": "Build Conan source files",
         "scripts": [
-            "./venv/bin/conan profile detect --force",
+            "./venv/bin/conan profile detect || true",
             "./venv/bin/conan install . --build missing"
         ]
     }

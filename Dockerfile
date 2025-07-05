@@ -14,6 +14,8 @@ RUN \
         python3-pip \
         python3-venv \
         clang \
+        uuid-dev \
+        pkg-config \
     && mkdir -p /home/runner /app\
     && chmod 777 -R /home/runner /app\
     && groupadd -g ${GROUP_ID:-1001} runner \
