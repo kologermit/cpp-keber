@@ -3,8 +3,10 @@
 #define CPPHTTPLIB_OPENSSL_SUPPORT
 
 #include <utils/Type.cpp>
+#include <utils/TGBotApi/JSONKeys.cpp>
 #include <fmt/core.h>
 #include <httplib.h>
+#include <nlohmann/json.hpp>
 #include <string>
 #include <exception>
 
@@ -12,15 +14,13 @@ namespace Utils {
 namespace TGBotApi {
 
 using namespace Type;
+using namespace JSONKeys;
 using namespace std;
-using namespace httplib;
 using namespace fmt;
+using namespace httplib;
+using namespace nlohmann;
 
-const_string RESULT_KEY = "result";
-const_string ID_KEY = "id";
-const_string FIRST_NAME_KEY = "first_name";
-const_string USERNAME_KEY = "username";
-
+template<typename ResultType> 
 class Query {
     private: 
     const_string _token;
@@ -32,6 +32,11 @@ class Query {
 
     public:
 
+    struct QueryResult {
+        bool ok;
+        ResultType result;
+    };
+
     Query(const_string& token): _https_client("https://api.telegram.org"), _token(token) {}
 
     auto Get(
@@ -42,12 +47,18 @@ class Query {
 
         Params http_params; http_params.insert(params.begin(), params.end());
         Headers http_headers; http_headers.insert(headers.begin(), headers.end());
+        Result result = _https_client.Get(_get_path(path), http_params, http_headers);
 
-        auto result = _https_client.Get(_get_path(path), http_params, http_headers);
         if (result.error() != Error::Success) {
             throw to_string(result.error());
         }
-        return result;
+
+        auto json_result = json::parse(result->body);
+
+        return QueryResult{
+            bool(json_result[OK_KEY]),
+            ResultType(json_result[RESULT_KEY])
+        };
     }
 };
 

@@ -11,11 +11,9 @@ class ExampleRecipe(ConanFile):
         self.requires("cpp-httplib/0.20.1")
         self.requires("sqlpp11/0.64")
         self.requires("nlohmann_json/3.12.0")
-        # self.requires("crowcpp-crow/1.2.0")
         self.requires("fmt/11.2.0")
         self.requires("hiredis/1.2.0")
         self.requires("spdlog/1.15.3")
-        # self.requires("libcurl/8.12.1")
 
     def layout(self):
         cmake_layout(self)

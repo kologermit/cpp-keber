@@ -18,22 +18,18 @@ include_directories(
 
 find_package(fmt REQUIRED)
 find_package(nlohmann_json REQUIRED)
-# find_package(Crow REQUIRED)
 find_package(hiredis REQUIRED)
 find_package(Sqlpp11 REQUIRED)
 find_package(spdlog REQUIRED)
-# find_package(CURL REQUIRED)
 find_package(libuuid REQUIRED)
 find_package(httplib REQUIRED)
 
 set(ALL_LINK_LIBRARIES 
     libuuid::libuuid
     sqlpp11::sqlpp11
-    # Crow::Crow
     hiredis::hiredis
     spdlog::spdlog
     fmt::fmt
-    # CURL::libcurl
     httplib::httplib
     nlohmann_json::nlohmann_json
 )

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <optional>
 // #include <crow.h>
 #include <memory>
 #include <ctime>
@@ -17,6 +18,7 @@ using const_bool = const bool;
 // std
 using const_string = const std::string;
 using const_map_string_string = const std::map<const_string, const_string>;
+using optional_const_string = std::optional<const_string&>;
 
 // crow
 // using const_request = const crow::request;

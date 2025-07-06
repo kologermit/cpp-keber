@@ -12,7 +12,7 @@ namespace Logger {
 using namespace Utils::Type;
 using namespace std;
 
-class StdOutLogger : public InterfaceLogger {
+class StdOutLogger : public virtual InterfaceLogger {
     private:
         const EnumLoggerLevel _level;
     public:

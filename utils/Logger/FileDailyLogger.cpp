@@ -16,7 +16,7 @@ using namespace std;
 using namespace spdlog;
 using namespace fmt;
 
-class FileDailyLogger : public InterfaceLogger {
+class FileDailyLogger : public virtual InterfaceLogger {
 
     private:
         shared_ptr<logger> _logger;

@@ -1,4 +1,7 @@
 *
 !.gitignore
-!Bot.cpp
+!Bot
 !Query.cpp
+!User
+!Message.cpp
+!JSONKeys.cpp
