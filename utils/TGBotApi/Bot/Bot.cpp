@@ -1,6 +1,6 @@
 #pragma once
 
-
+#include <memory>
 #include <utils/Logger/InterfaceLogger.cpp>
 #include <utils/Type.cpp>
 #include <utils/UUID4/UUID4.cpp>
@@ -12,6 +12,7 @@ namespace Utils {
 namespace TGBotApi {
 namespace Bot {
 
+using namespace std;
 using namespace fmt;
 using namespace Utils::TGBotApi::User;
 using namespace Utils::Type;
@@ -25,18 +26,26 @@ class Bot : public virtual InterfaceBot, public User {
 
     public:
 
-    const User& get_me() const override { return Query<User>(_token).Get("getMe").result; }
+    shared_ptr<InterfaceUser> get_me() const override { 
+        return Query(_token).query<User>(EnumQueryMethod::GET, "getMe").result;
+    }
     
     Bot(const_string& token): _token(token), _secret(UUID4::generate_str()) {
-        static_cast<User&>(*this) = get_me();
+        static_cast<User&>(*this) = *get_me();
     }
 
-    void delete_webhook() const override { Query<User>(_token).Get("deleteWebhook"); }
+    void delete_webhook() const override { 
+        Query(_token).query(EnumQueryMethod::GET, "deleteWebhook"); 
+    }
     void set_webhook(const_string& webhook_url) const override { 
-        Query<User>(_token).Get("setWebhook", {
-            {"url", webhook_url},
-            {"secret", _secret}
-        }); 
+        Query(_token).query(
+            EnumQueryMethod::GET,
+            "setWebhook", 
+            {
+                {"url", webhook_url},
+                {"secret", _secret}
+            }
+        ); 
     }
 };
 

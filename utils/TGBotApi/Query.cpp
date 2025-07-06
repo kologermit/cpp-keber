@@ -7,6 +7,7 @@
 #include <fmt/core.h>
 #include <httplib.h>
 #include <nlohmann/json.hpp>
+#include <memory>
 #include <string>
 #include <exception>
 
@@ -20,7 +21,11 @@ using namespace fmt;
 using namespace httplib;
 using namespace nlohmann;
 
-template<typename ResultType> 
+enum EnumQueryMethod {
+    GET,
+    POST
+};
+
 class Query {
     private: 
     const_string _token;
@@ -32,32 +37,48 @@ class Query {
 
     public:
 
+    template<typename ResultType>
     struct QueryResult {
         bool ok;
-        ResultType result;
+        shared_ptr<ResultType> result;
     };
 
     Query(const_string& token): _https_client("https://api.telegram.org"), _token(token) {}
 
-    auto Get(
+    string query(
+        const EnumQueryMethod& method,
             const_string& path, 
             const_map_string_string& params = const_map_string_string(),
             const_map_string_string& headers = const_map_string_string()
-        ) {
-
+    ) {
         Params http_params; http_params.insert(params.begin(), params.end());
         Headers http_headers; http_headers.insert(headers.begin(), headers.end());
-        Result result = _https_client.Get(_get_path(path), http_params, http_headers);
+        Result result;
+        
+        if (method == EnumQueryMethod::GET) {
+            result = _https_client.Get(_get_path(path), http_params, http_headers);
+        }
 
         if (result.error() != Error::Success) {
             throw to_string(result.error());
         }
 
-        auto json_result = json::parse(result->body);
+        return result->body;
+    }
 
-        return QueryResult{
-            bool(json_result[OK_KEY]),
-            ResultType(json_result[RESULT_KEY])
+    template<typename ResultType>
+    auto query(
+            const EnumQueryMethod& method,
+            const_string& path, 
+            const_map_string_string& params = const_map_string_string(),
+            const_map_string_string& headers = const_map_string_string()
+        ) {
+
+        auto json_result = json::parse(query(method, path, params, headers));
+
+        return QueryResult<ResultType>{
+            .ok = json_result[OK_KEY],
+            .result = make_shared<ResultType>(json_result[RESULT_KEY])
         };
     }
 };

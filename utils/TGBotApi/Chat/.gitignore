@@ -1,0 +1,4 @@
+*
+!.gitignore
+!InterfaceChat.cpp
+!Chat.cpp

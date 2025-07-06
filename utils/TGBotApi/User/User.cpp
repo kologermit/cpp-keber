@@ -26,7 +26,8 @@ class User : public virtual InterfaceUser {
         bool _supports_inline_queries;
         bool _can_connect_to_business;
         bool _has_main_web_app;
-        friend class Query<User>;
+        
+    public:
 
         User(
             const_int& id=0,
@@ -48,6 +49,17 @@ class User : public virtual InterfaceUser {
             _has_main_web_app(has_main_web_app)
         {}
 
+        User(InterfaceUser& user):
+            _id(user.get_id()), 
+            _name(user.get_name()), 
+            _username(user.get_username()),
+            _can_join_groups(user.get_can_join_groups()),
+            _can_read_all_group_messages(user.get_can_read_all_group_messages()),
+            _supports_inline_queries(user.get_supports_inline_queries()),
+            _can_connect_to_business(user.get_can_connect_to_business()),
+            _has_main_web_app(user.get_has_main_web_app())
+        {}
+
         User(json json_result): 
             _id(json_result.contains(ID_KEY) ? int(json_result[ID_KEY]) : 0), 
             _name(json_result.contains(FIRST_NAME_KEY) ? string(json_result[FIRST_NAME_KEY]) : ""), 
@@ -58,8 +70,7 @@ class User : public virtual InterfaceUser {
             _can_connect_to_business(json_result.contains(CAN_CONNECT_TO_BUSINESS_KEY) ? bool(json_result[CAN_CONNECT_TO_BUSINESS_KEY]) : false),
             _has_main_web_app(json_result.contains(HAS_MAIN_WEB_APP_KEY) ? bool(json_result[HAS_MAIN_WEB_APP_KEY]) : false)
         {}
-        
-    public:
+
         int get_id() const override { return _id; }
         const_string& get_name() const override { return _name; }
         const_string& get_username() const override { return _username; }
