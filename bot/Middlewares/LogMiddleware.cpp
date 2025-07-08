@@ -6,11 +6,11 @@
 #include <Middlewares/InterfaceMiddleware.cpp>
 #include <utils/Logger/InterfaceLogger.cpp>
 #include <utils/Random/Random.cpp>
-#include <utils/Type.cpp>
+#include <utils/Types.hpp>
 
 namespace Middlewares {
 
-using namespace Utils::Type;
+using namespace Utils::Types;
 using namespace Utils::Logger;
 using namespace Utils::Random;
 using namespace fmt;
@@ -32,8 +32,8 @@ struct LogMiddleware : public InterfaceMiddleware {
     }
 
     void before(const_request& req, const_response& res, context& ctx) override {
-        this->generate_id(ctx);
-        this->log_request(req, ctx);
+        ->generate_id(ctx);
+        ->log_request(req, ctx);
     };
 };
 

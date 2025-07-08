@@ -3,11 +3,11 @@
 #include <crow.h>
 #include <fmt/core.h>
 #include <iostream>
-#include <utils/Type.cpp>
+#include <utils/Types.hpp>
 
 namespace Middlewares {
 
-using namespace Utils::Type;
+using namespace Utils::Types;
 
 struct InterfaceMiddleware {
     struct context { int id; };
@@ -17,12 +17,12 @@ struct InterfaceMiddleware {
 
     template<typename AllContext> 
     void before_handle(const_request& req, const_response& res, context& ctx, AllContext& all_context) {
-        this->before(req, res, ctx);
+        ->before(req, res, ctx);
     };
 
     template<typename AllContext>
     void after_handle(const_request& req, const_response& res, context& ctx, AllContext& all_context) {
-        this->after(req, res, ctx);
+        ->after(req, res, ctx);
     };
 };
 

@@ -1,10 +1,10 @@
 #pragma once
 
-#include <utils/Type.cpp>
+#include <utils/Types.hpp>
 
 namespace Utils::TGBotApi::User {
 
-using Utils::Type::const_string;
+using Utils::Types::const_string;
 
 struct InterfaceUser {
     virtual int get_id() const noexcept = 0;

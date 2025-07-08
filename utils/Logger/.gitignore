@@ -1,6 +1,7 @@
 *
 !.gitignore
-!InterfaceLogger.cpp
-!EnumLoggerLevel.cpp
+!InterfaceLogger.hpp
 !FileDailyLogger.cpp
+!FileDailyLogger.hpp
 !StdOutLogger.cpp
+!StdOutLogger.hpp

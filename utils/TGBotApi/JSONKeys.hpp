@@ -1,10 +1,10 @@
 #pragma once
 
-#include <utils/Type.cpp>
+#include <utils/Types.hpp>
 
 namespace Utils::TGBotApi::JSONKeys {
 
-using Utils::Type::const_c_string;
+using Utils::Types::const_c_string;
 
 const_c_string CAN_CONNECT_TO_BUSINESS_KEY    = "can_connect_to_business";
 const_c_string CAN_JOIN_GROUPS_KEY           = "can_join_groups";

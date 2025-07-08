@@ -1,12 +1,9 @@
 #pragma once
 
-#include <string>
-#include <nlohmann/json.hpp>
-#include <utils/TGBotApi/User/InterfaceUser.cpp>
+#include <utils/TGBotApi/User/InterfaceUser.hpp>
 
 namespace Utils::TGBotApi::Chat {
 
-using std::string;
 using Utils::TGBotApi::User::InterfaceUser;
 
 enum EnumChatType {

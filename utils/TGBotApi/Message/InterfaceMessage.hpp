@@ -1,9 +1,7 @@
 #pragma once
 
-#include <utils/TGBotApi/Chat/InterfaceChat.cpp>
-#include <utils/TGBotApi/User/InterfaceUser.cpp>
-#include <memory>
-#include <string>
+#include <utils/TGBotApi/Chat/InterfaceChat.hpp>
+#include <utils/TGBotApi/User/InterfaceUser.hpp>
 
 namespace Utils::TGBotApi::Message {
 

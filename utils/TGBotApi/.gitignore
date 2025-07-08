@@ -2,8 +2,9 @@
 !.gitignore
 !Bot
 !Query.cpp
+!Query.hpp
 !User
 !Message.cpp
-!JSONKeys.cpp
+!JSONKeys.hpp
 !Message
 !Chat

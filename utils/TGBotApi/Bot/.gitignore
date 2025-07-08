@@ -1,4 +1,5 @@
 *
 !.gitignore
-!InterfaceBot.cpp
+!InterfaceBot.hpp
 !Bot.cpp
+!Bot.hpp

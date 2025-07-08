@@ -1,4 +1,5 @@
 *
 !.gitignore
 !User.cpp
-!InterfaceUser.cpp
+!User.hpp
+!InterfaceUser.hpp

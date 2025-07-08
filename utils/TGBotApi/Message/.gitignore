@@ -1,4 +1,5 @@
 *
 !.gitignore
 !Message.cpp
-!InterfaceMessage.cpp
+!Message.hpp
+!InterfaceMessage.hpp

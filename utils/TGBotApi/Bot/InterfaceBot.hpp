@@ -3,14 +3,14 @@
 #include <string>
 #include <string_view>
 #include <memory>
-#include <utils/Type.cpp>
-#include <utils/TGBotApi/User/InterfaceUser.cpp>
-#include <utils/TGBotApi/Message/InterfaceMessage.cpp>
+#include <utils/Types.hpp>
+#include <utils/TGBotApi/User/InterfaceUser.hpp>
+#include <utils/TGBotApi/Message/InterfaceMessage.hpp>
 
 namespace Utils::TGBotApi::Bot {
 
 using std::string_view, std::shared_ptr;
-using Utils::Type::const_string;
+using Utils::Types::const_string;
 using Utils::TGBotApi::User::InterfaceUser;
 using Utils::TGBotApi::Message::InterfaceMessage;
 

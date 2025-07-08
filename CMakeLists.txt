@@ -34,6 +34,7 @@ set(ALL_LINK_LIBRARIES
     nlohmann_json::nlohmann_json
 )
 
+
 option(DEBUG_ARGS "Build debug" OFF)
 if (DEBUG_ARGS) 
     add_compile_options(-g3 -O0)

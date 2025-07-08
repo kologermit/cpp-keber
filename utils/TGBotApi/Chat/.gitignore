@@ -1,4 +1,5 @@
 *
 !.gitignore
-!InterfaceChat.cpp
+!InterfaceChat.hpp
 !Chat.cpp
+!Chat.hpp

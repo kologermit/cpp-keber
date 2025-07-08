@@ -2,10 +2,8 @@
 !.gitignore
 !Env
 !Random
-!SqlBuilder.cpp
-!Type.cpp
+!Types.hpp
 !Logger
-!Func.cpp
-!Procedure.cpp
 !TGBotApi
 !UUID4
+!CmakeLists.txt

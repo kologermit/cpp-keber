@@ -2,7 +2,7 @@
 #include <memory>
 #include <utils/Env/Env.cpp>
 #include <utils/Random/Random.cpp>
-#include <utils/Type.cpp>
+#include <utils/Types.hpp>
 #include <utils/Logger/InterfaceLogger.cpp>
 #include <utils/Logger/FileDailyLogger.cpp>
 #include <Middlewares/LogMiddleware.cpp>
@@ -10,7 +10,7 @@
 namespace Program {
 
 using namespace Middlewares;
-using namespace Utils::Type;
+using namespace Utils::Types;
 using namespace Utils;
 using namespace crow;
 using namespace std;
@@ -30,8 +30,8 @@ class Program {
     }
 
     void init_app() {
-        this->app.loglevel(LogLevel::WARNING);
-        CROW_ROUTE(this->app, "/<string>")
+        ->app.loglevel(LogLevel::WARNING);
+        CROW_ROUTE(->app, "/<string>")
         .methods(HTTPMethod::GET)
         ([](const_string a){
             JSON answer;
@@ -47,13 +47,13 @@ class Program {
             format(
                 "host={host} port={port} url=http://{host}:{port}",
                 arg("host", host),
-                arg("port", this->bot_port)
+                arg("port", ->bot_port)
             )
         );
     }
     
     void run_app() {
-        this->app.port(atoi(this->bot_port.c_str())).multithreaded().run();
+        ->app.port(atoi(->bot_port.c_str())).multithreaded().run();
     }
 
     void init_logger() {
@@ -77,14 +77,14 @@ class Program {
             )
         ) 
     {
-        this->init_random();
-        this->init_logger();
-        this->init_app();
+        ->init_random();
+        ->init_logger();
+        ->init_app();
     };
 
     void run() {
-        this->log_start();
-        this->run_app();
+        ->log_start();
+        ->run_app();
     }
 };
 

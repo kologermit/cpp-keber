@@ -1,25 +1,15 @@
 #pragma once
 
-#include <string>
-#include <string_view>
-#include <memory>
-#include <utils/Logger/InterfaceLogger.cpp>
-#include <utils/Type.cpp>
 #include <utils/UUID4/UUID4.cpp>
 #include <utils/TGBotApi/Query.cpp>
-#include <utils/TGBotApi/User/User.cpp>
-#include <utils/TGBotApi/Bot/InterfaceBot.cpp>
-#include <utils/TGBotApi/Message/InterfaceMessage.cpp>
 #include <utils/TGBotApi/Message/Message.cpp>
-#include <utils/TGBotApi/JSONKeys.cpp>
+#include <utils/TGBotApi/JSONKeys.hpp>
+#include <utils/TGBotApi/Bot/Bot.hpp>
 
 namespace Utils::TGBotApi::Bot {
 
-using Utils::Type::const_string;
-using Utils::TGBotApi::User::User;
 using Utils::TGBotApi::Query::Query;
 using Utils::TGBotApi::Query::EnumQueryMethod;
-using Utils::TGBotApi::Message::InterfaceMessage;
 using Utils::TGBotApi::Message::Message;
 using Utils::TGBotApi::JSONKeys::RESULT_KEY;
 using Utils::TGBotApi::JSONKeys::SECRET_KEY;
@@ -31,40 +21,8 @@ using Utils::TGBotApi::JSONKeys::CAN_READ_ALL_GROUP_MESSAGES_KEY;
 using Utils::TGBotApi::JSONKeys::SUPPORTS_INLINE_QUERIES_KEY;
 using Utils::TGBotApi::JSONKeys::CAN_CONNECT_TO_BUSINESS_KEY;
 using Utils::TGBotApi::JSONKeys::HAS_MAIN_WEB_APP_KEY;
-using nlohmann::json;
-using std::string_view, std::make_shared, std::to_string;
-
-struct Bot : virtual InterfaceBot, User {
-    
-    Bot(string_view);
-
-    bool can_join_groups() const noexcept override;
-    bool can_read_all_group_messages() const noexcept override;
-    bool supports_inline_queries() const noexcept override;
-    bool can_connect_to_business() const noexcept override;
-    bool has_main_web_app() const noexcept override;
-
-
-    void delete_webhook() const override;
-    void set_webhook(string_view) const override;
-    ptrMessage send_text(int, string_view) const override;
-
-    protected:
-
-    Bot(string_view, const json&);
-
-    static const json get_me_raw_json(string_view token) { 
-        return Query(token).query_raw_json(EnumQueryMethod::GET, "getMe")[RESULT_KEY];
-    }
-
-    const_string _token;
-    const_string _secret;
-    bool _can_join_groups;
-    bool _can_read_all_group_messages;
-    bool _supports_inline_queries;
-    bool _can_connect_to_business;
-    bool _has_main_web_app;
-};
+using std::make_shared;
+using std::to_string;
 
 Bot::Bot(string_view token, const json& json_bot):
     User(json_bot),
@@ -78,6 +36,10 @@ Bot::Bot(string_view token, const json& json_bot):
 
 Bot::Bot(string_view token): 
 Bot(token, get_me_raw_json(token)) {}
+
+const json Bot::get_me_raw_json(string_view token) { 
+    return Query(token).query_raw_json(EnumQueryMethod::GET, "getMe")[RESULT_KEY];
+}
 
 bool Bot::can_join_groups() const noexcept { return _can_join_groups; }
 bool Bot::can_read_all_group_messages() const noexcept { return _can_read_all_group_messages; }

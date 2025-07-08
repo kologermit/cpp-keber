@@ -1,10 +1,12 @@
 #pragma once
 
-#include <utils/Type.cpp>
+#include <utils/Random/Random.hpp>
 #include <random>
 #include <ctime>
 
 namespace Utils::Random {
+
+using std::srand, std::rand, std::time;
 
 void init() {
     std::srand(std::time(0));
