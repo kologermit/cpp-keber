@@ -12,10 +12,7 @@ namespace Logger {
 using namespace Utils::Type;
 using namespace std;
 
-class StdOutLogger : public virtual InterfaceLogger {
-    private:
-        const EnumLoggerLevel _level;
-    public:
+struct StdOutLogger : virtual InterfaceLogger {
     StdOutLogger(const EnumLoggerLevel& level=EnumLoggerLevel::DEBUG):
     _level(level)
     {}
@@ -39,6 +36,9 @@ class StdOutLogger : public virtual InterfaceLogger {
             cout << "[ERROR] [" << event << "] -- " << message << endl;
         }
     }
+
+    protected:
+        const EnumLoggerLevel _level;
 };
 
 }

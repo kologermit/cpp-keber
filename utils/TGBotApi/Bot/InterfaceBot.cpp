@@ -11,9 +11,14 @@ namespace Bot {
 using namespace std;
 using namespace Utils::TGBotApi::User;
 
-class InterfaceBot : public virtual InterfaceUser {
-    public:
-    virtual shared_ptr<InterfaceUser> get_me() const = 0;
+struct InterfaceBot : virtual InterfaceUser {
+
+    virtual bool get_can_join_groups() const = 0;
+    virtual bool get_can_read_all_group_messages() const = 0;
+    virtual bool get_supports_inline_queries() const = 0;
+    virtual bool get_can_connect_to_business() const = 0;
+    virtual bool get_has_main_web_app() const = 0;
+    
     virtual void delete_webhook() const = 0;
     virtual void set_webhook(const_string&) const = 0;
 };

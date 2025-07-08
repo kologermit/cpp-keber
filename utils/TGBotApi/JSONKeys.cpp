@@ -9,10 +9,14 @@ namespace JSONKeys {
 using namespace Utils::Type;
 
 const_c_string ID_KEY = "id";
+const_c_string CHAT_ID_KEY = "chat_id";
+const_c_string TEXT_KEY = "text";
 const_c_string FIRST_NAME_KEY = "first_name";
 const_c_string USERNAME_KEY = "username";
 const_c_string RESULT_KEY = "result";
 const_c_string OK_KEY = "ok";
+const_c_string URL_KEY = "url";
+const_c_string SECRET_KEY = "secret";
 const_c_string CAN_JOIN_GROUPS_KEY = "can_join_groups";
 const_c_string CAN_READ_ALL_GROUP_MESSAGES_KEY = "can_read_all_group_messages";
 const_c_string SUPPORTS_INLINE_QUERIES_KEY = "supports_inline_queries";

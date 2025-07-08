@@ -8,8 +8,10 @@ namespace Chat {
 
 using namespace Type;
 
-class InterfaceChat {
-public:
+struct InterfaceChat {
+
+virtual int get_id() const = 0;
+virtual const_string& get_name() const = 0;
 
 };
 

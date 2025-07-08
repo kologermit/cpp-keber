@@ -9,12 +9,11 @@ namespace Logger {
 using namespace Utils::Type;
 using namespace std;
 
-class InterfaceLogger {
-    public:
-        virtual void info(const_string& event, const_string& message) const = 0;
-        virtual void warning(const_string& event, const_string& message) const = 0;
-        virtual void error(const_string& event, const_string& message) const = 0;
-        virtual void debug(const_string& event, const_string& message) const = 0;
+struct InterfaceLogger {
+    virtual void info(const_string& event, const_string& message) const = 0;
+    virtual void warning(const_string& event, const_string& message) const = 0;
+    virtual void error(const_string& event, const_string& message) const = 0;
+    virtual void debug(const_string& event, const_string& message) const = 0;
 };
 
 shared_ptr<InterfaceLogger> GLOBAL_LOGGER;
