@@ -1,37 +1,37 @@
 #pragma once
 
 #include <iostream>
+#include <string_view>
 #include <fmt/core.h>
 #include <utils/Logger/InterfaceLogger.cpp>
 #include <utils/Logger/EnumLoggerLevel.cpp>
 #include <utils/Type.cpp>
 
-namespace Utils {
-namespace Logger {
+namespace Utils::Logger {
 
-using namespace Utils::Type;
-using namespace std;
+using Utils::Type::const_string;
+using std::cout, std::endl, std::string_view;
 
 struct StdOutLogger : virtual InterfaceLogger {
     StdOutLogger(const EnumLoggerLevel& level=EnumLoggerLevel::DEBUG):
     _level(level)
     {}
-    void debug(const_string& event, const_string& message) const override {
+    void debug(string_view event, string_view message) const override {
         if (_level <= EnumLoggerLevel::DEBUG) {
             cout << "[DEBUG] [" << event << "] -- " << message << endl;
         }
     }
-    void info(const_string& event, const_string& message) const override {
+    void info(string_view event, string_view message) const override {
         if (_level <= EnumLoggerLevel::INFO) {
             cout << "[INFO] [" << event << "] -- " << message << endl;
         }
     }
-    void warning(const_string& event, const_string& message) const override {
+    void warning(string_view event, string_view message) const override {
         if (_level <= EnumLoggerLevel::WARNING) {
             cout << "[WARNING] [" << event << "] -- " << message << endl;
         }
     }
-    void error(const_string& event, const_string& message) const override {
+    void error(string_view event, string_view message) const override {
         if (_level <= EnumLoggerLevel::ERROR) {
             cout << "[ERROR] [" << event << "] -- " << message << endl;
         }
@@ -41,5 +41,4 @@ struct StdOutLogger : virtual InterfaceLogger {
         const EnumLoggerLevel _level;
 };
 
-}
 }

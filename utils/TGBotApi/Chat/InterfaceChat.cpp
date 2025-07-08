@@ -1,20 +1,24 @@
 #pragma once
 
-#include <utils/Type.cpp>
+#include <string>
+#include <nlohmann/json.hpp>
+#include <utils/TGBotApi/User/InterfaceUser.cpp>
 
-namespace Utils {
-namespace TGBotApi {
-namespace Chat {
+namespace Utils::TGBotApi::Chat {
 
-using namespace Type;
+using std::string;
+using Utils::TGBotApi::User::InterfaceUser;
 
-struct InterfaceChat {
+enum EnumChatType {
+    PRIVATE
+};
 
-virtual int get_id() const = 0;
-virtual const_string& get_name() const = 0;
+struct InterfaceChat : virtual InterfaceUser {
+
+    virtual EnumChatType get_type() const noexcept = 0;
+
+    ~InterfaceChat() = default;
 
 };
 
-}
-}
 }

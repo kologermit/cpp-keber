@@ -4,18 +4,14 @@
 #include <random>
 #include <ctime>
 
-namespace Utils {
-namespace Random {
-
-using Utils::Type::const_int;
+namespace Utils::Random {
 
 void init() {
     std::srand(std::time(0));
 }
 
-int rand_int(const_int start, const_int end) {
+int rand_int(int start, int end) {
     return (std::rand() % (end - start)) + start;
 }
 
-}
 }

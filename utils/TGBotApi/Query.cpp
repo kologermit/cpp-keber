@@ -8,17 +8,25 @@
 #include <httplib.h>
 #include <nlohmann/json.hpp>
 #include <string>
+#include <string_view>
 #include <exception>
 
-namespace Utils {
-namespace TGBotApi {
+namespace Utils::TGBotApi::Query {
 
-using namespace Type;
-using namespace JSONKeys;
-using namespace std;
-using namespace fmt;
-using namespace httplib;
-using namespace nlohmann;
+using Utils::Type::const_string;
+using Utils::Type::const_map_string_to_string;
+using Utils::TGBotApi::JSONKeys::RESULT_KEY;
+using Utils::TGBotApi::JSONKeys::OK_KEY;
+using nlohmann::json;
+using std::string;
+using std::to_string;
+using std::runtime_error;
+using std::string_view;
+using httplib::Client;
+using httplib::Params;
+using httplib::Headers;
+using httplib::Result;
+using httplib::Error;
 
 enum EnumQueryMethod {
     GET,
@@ -26,7 +34,7 @@ enum EnumQueryMethod {
 };
 
 struct Query {
-    Query(const_string& token): _https_client("https://api.telegram.org"), _token(token) {}
+    Query(string_view token): _https_client("https://api.telegram.org"), _token(token) {}
 
     template<typename ResultType>
     struct QueryResult {
@@ -34,34 +42,41 @@ struct Query {
         ResultType result;
     };
 
-    const_string& query(
+    const_string query(
         const EnumQueryMethod& method,
-        const_string&, 
-        const_map_string_string&,
-        const_map_string_string&
+        string_view path, 
+        const_map_string_to_string& params = {},
+        const_map_string_to_string& headers = {}
+    );
+
+    const json query_raw_json(
+        const EnumQueryMethod& method,
+        string_view path,
+        const_map_string_to_string& params = {},
+        const_map_string_to_string& headers = {}
     );
 
     template<typename ResultType>
-    QueryResult<ResultType> query(
-            const EnumQueryMethod&,
-            const_string&, 
-            const_map_string_string&,
-            const_map_string_string&
-        );
+    QueryResult<ResultType> query_parse_json(
+        const EnumQueryMethod& method,
+        string_view path, 
+        const_map_string_to_string& params = {},
+        const_map_string_to_string& headers = {}
+    );
 
     protected: 
     const_string _token;
     Client _https_client;
-    string _get_path(const_string& path) {
-        return "/bot" + _token + "/" + path;
+    string _get_path(string_view path) {
+        return "/bot" + _token + "/" + const_string(path);
     }
 };
 
-const_string& Query::query(
+const_string Query::query(
     const EnumQueryMethod& method,
-    const_string& path, 
-    const_map_string_string& params = const_map_string_string(),
-    const_map_string_string& headers = const_map_string_string()
+    string_view path, 
+    const_map_string_to_string& params,
+    const_map_string_to_string& headers
 ) {
     Params http_params; http_params.insert(params.begin(), params.end());
     Headers http_headers; http_headers.insert(headers.begin(), headers.end());
@@ -72,27 +87,34 @@ const_string& Query::query(
     }
 
     if (result.error() != Error::Success) {
-        throw to_string(result.error());
+        throw runtime_error(to_string(result.error()));
     }
 
     return result->body;
 }
 
-template<typename ResultType>
-Query::QueryResult<ResultType> Query::query(
+const json Query::query_raw_json(
     const EnumQueryMethod& method,
-    const_string& path, 
-    const_map_string_string& params = const_map_string_string(),
-    const_map_string_string& headers = const_map_string_string()
+    string_view path, 
+    const_map_string_to_string& params,
+    const_map_string_to_string& headers
 ) {
+    return json::parse(query(method, path, params, headers));
+}
 
-    auto json_result = json::parse(query(method, path, params, headers));
+template<typename ResultType>
+Query::QueryResult<ResultType> Query::query_parse_json(
+    const EnumQueryMethod& method,
+    string_view path, 
+    const_map_string_to_string& params,
+    const_map_string_to_string& headers
+) {
+    auto json_result = query_raw_json(method, path, params, headers);
 
-    return QueryResult<ResultType>{
-        .ok = json_result[OK_KEY],
-        .result = ResultType(json_result[RESULT_KEY])
+    return {
+        json_result[OK_KEY],
+        ResultType(json_result[RESULT_KEY])
     };
 }
 
-}
 }

@@ -6,30 +6,38 @@
 #include <utils/Type.cpp>
 #include <utils/Logger/EnumLoggerLevel.cpp>
 #include <utils/Logger/InterfaceLogger.cpp>
+#include <memory>
+#include <map>
+#include <string_view>
+#include <fmt/core.h>
 
-namespace Utils {
-namespace Logger {
+namespace Utils::Logger {
 
-using namespace Utils::Type;
-using namespace Utils::Logger;
-using namespace std;
-using namespace spdlog;
-using namespace fmt;
+using Utils::Type::const_string;
+using spdlog::daily_logger_mt;
+using spdlog::sinks::stdout_color_sink_mt;
+using spdlog::level::level_enum;
+using spdlog::logger;
+using std::make_shared;
+using std::map;
+using std::shared_ptr;
+using std::string_view;
+using fmt::format;
 
 struct FileDailyLogger : virtual InterfaceLogger {
-    void info(const_string& event, const_string& message) const override {
+    void info(string_view event, string_view message) const override {
         this->_logger->info(this->get_text_from_message_and_event(event, message));
     }
 
-    void warning(const_string& event, const_string& message) const override {
+    void warning(string_view event, string_view message) const override {
         this->_logger->warn(this->get_text_from_message_and_event(event, message));
     }
 
-    void error(const_string& event, const_string& message) const override {
+    void error(string_view event, string_view message) const override {
         this->_logger->error(this->get_text_from_message_and_event(event, message));
     }
 
-    void debug(const_string& event, const_string& message) const override {
+    void debug(string_view event, string_view message) const override {
         this->_logger->debug(this->get_text_from_message_and_event(event, message));
     }
 
@@ -39,20 +47,20 @@ struct FileDailyLogger : virtual InterfaceLogger {
             name = "main";
         EnumLoggerLevel level = EnumLoggerLevel::DEBUG;
         this->_logger = daily_logger_mt(name, dir, 0, 0);
-        this->_logger->sinks().push_back(std::make_shared<sinks::stdout_color_sink_mt>());
+        this->_logger->sinks().push_back(make_shared<stdout_color_sink_mt>());
 
-        this->_logger->set_level(std::map<EnumLoggerLevel, level::level_enum> {
-            {EnumLoggerLevel::DEBUG, level::debug},
-            {EnumLoggerLevel::INFO, level::info},
-            {EnumLoggerLevel::WARNING, level::warn},
-            {EnumLoggerLevel::ERROR, level::err},
+        this->_logger->set_level(map<EnumLoggerLevel, level_enum> {
+            {EnumLoggerLevel::DEBUG, level_enum::debug},
+            {EnumLoggerLevel::INFO, level_enum::info},
+            {EnumLoggerLevel::WARNING, level_enum::warn},
+            {EnumLoggerLevel::ERROR, level_enum::err},
         }[level]);
     }
 
     protected:
         shared_ptr<logger> _logger;
 
-        const_string get_text_from_message_and_event(const_string& event, const_string& message) const {
+        const_string get_text_from_message_and_event(string_view event, string_view message) const {
             return format(
                 "[{}] -- {}",
                 event,
@@ -62,5 +70,4 @@ struct FileDailyLogger : virtual InterfaceLogger {
 
 };
 
-}
 }

@@ -1,7 +1,6 @@
 #pragma once
 
-namespace Utils {
-namespace Logger {
+namespace Utils::Logger {
 
 enum EnumLoggerLevel {
     DEBUG,
@@ -10,5 +9,4 @@ enum EnumLoggerLevel {
     ERROR
 };
 
-}
 }

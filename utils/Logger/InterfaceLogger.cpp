@@ -1,22 +1,22 @@
 #pragma once
 
-#include <utils/Type.cpp>
 #include <memory>
+#include <string_view>
 
-namespace Utils {
-namespace Logger {
+namespace Utils::Logger {
 
-using namespace Utils::Type;
-using namespace std;
+using std::shared_ptr;
+using std::string_view;
 
 struct InterfaceLogger {
-    virtual void info(const_string& event, const_string& message) const = 0;
-    virtual void warning(const_string& event, const_string& message) const = 0;
-    virtual void error(const_string& event, const_string& message) const = 0;
-    virtual void debug(const_string& event, const_string& message) const = 0;
+    virtual void info(string_view event, string_view message) const = 0;
+    virtual void warning(string_view event, string_view message) const = 0;
+    virtual void error(string_view event, string_view message) const = 0;
+    virtual void debug(string_view event, string_view message) const = 0;
+
+    ~InterfaceLogger() = default;
 };
 
 shared_ptr<InterfaceLogger> GLOBAL_LOGGER;
 
-}
 }

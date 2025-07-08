@@ -3,8 +3,7 @@
 #include <uuid/uuid.h>
 #include <string>
 
-namespace Utils {
-namespace UUID4 {
+namespace Utils::UUID4 {
 
 using namespace std;
 string generate_str() {
@@ -17,5 +16,4 @@ string generate_str() {
     return string(uuid_str);
 }
 
-}
 }

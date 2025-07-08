@@ -3,24 +3,23 @@
 #include <utils/Type.cpp>
 #include <cstdlib>
 #include <string>
+#include <string_view>
 
-namespace Utils {
-namespace Env {
+namespace Utils::Env {
 
-using namespace Utils::Type;
-using namespace std;
+using Utils::Type::const_string;
+using Utils::Type::const_c_string;
+using std::getenv;
+using std::string;
+using std::string_view;
 
 string 
-Get(const_string variable, const_string _default="") {
+Get(string_view variable, string_view _default="") {
 
-    const_c_string res = getenv(variable.c_str());
+    const_c_string res = getenv(variable.data());
     if (res == nullptr) {
-
         return const_string(_default);
-
     }
-
     return const_string(res);
 }
 }
-};
