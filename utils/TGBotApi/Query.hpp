@@ -23,7 +23,7 @@ enum EnumQueryMethod {
 };
 
 struct Query {
-    Query(string_view token): _https_client("https://api.telegram.org"), _token(token) {}
+    explicit Query(std::string_view token);
 
     template<typename ResultType>
     struct QueryResult {
@@ -33,14 +33,14 @@ struct Query {
 
     const_string query(
         const EnumQueryMethod& method,
-        string_view path, 
+        std::string_view path, 
         const_map_string_to_string& params = {},
         const_map_string_to_string& headers = {}
     );
 
     const json query_raw_json(
         const EnumQueryMethod& method,
-        string_view path,
+        std::string_view path,
         const_map_string_to_string& params = {},
         const_map_string_to_string& headers = {}
     );
@@ -48,7 +48,7 @@ struct Query {
     template<typename ResultType>
     QueryResult<ResultType> query_parse_json(
         const EnumQueryMethod& method,
-        string_view path, 
+        std::string_view path, 
         const_map_string_to_string& params = {},
         const_map_string_to_string& headers = {}
     );
@@ -56,7 +56,7 @@ struct Query {
     protected: 
     const_string _token;
     Client _https_client;
-    string _get_path(string_view path);
+    string _get_path(std::string_view path);
 };
 
 }

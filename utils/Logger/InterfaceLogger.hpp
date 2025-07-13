@@ -16,14 +16,14 @@ enum EnumLoggerLevel {
 };
 
 struct InterfaceLogger {
-    virtual void info(string_view event, string_view message) const = 0;
-    virtual void warning(string_view event, string_view message) const = 0;
-    virtual void error(string_view event, string_view message) const = 0;
-    virtual void debug(string_view event, string_view message) const = 0;
+    virtual void info(string_view event, string_view message) const {};
+    virtual void warning(string_view event, string_view message) const {};
+    virtual void error(string_view event, string_view message) const {};
+    virtual void debug(string_view event, string_view message) const {};
 
     ~InterfaceLogger() = default;
 };
 
-shared_ptr<InterfaceLogger> GLOBAL_LOGGER;
+static shared_ptr<InterfaceLogger> GLOBAL_LOGGER;
 
 }

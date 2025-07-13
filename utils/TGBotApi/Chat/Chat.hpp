@@ -11,7 +11,7 @@ using nlohmann::json;
 
 struct Chat : virtual InterfaceChat, User {
     EnumChatType get_type() const noexcept override;
-    Chat(const json&);
+    explicit Chat(const json&);
 
     protected:
     EnumChatType _type;

@@ -1,5 +1,3 @@
-#pragma once
-
 #include <utils/Env/Env.hpp>
 #include <utils/Types.hpp>
 #include <cstdlib>

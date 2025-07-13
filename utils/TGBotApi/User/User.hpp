@@ -10,16 +10,16 @@ using std::string_view;
 using nlohmann::json;
 
 struct User : virtual InterfaceUser {
-    User(
+    explicit User(
         int id,
         string_view name, 
         string_view username
     );
-    User(const json&);
+    explicit User(const json&);
 
-    int get_id() const noexcept override { return _id; }
-    const_string get_name() const noexcept override { return _name; }
-    const_string get_username() const noexcept override { return _username; }
+    int get_id() const noexcept override;
+    const_string get_name() const noexcept override;
+    const_string get_username() const noexcept override;
 
     
     protected:

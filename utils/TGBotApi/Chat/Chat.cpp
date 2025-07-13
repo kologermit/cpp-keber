@@ -1,5 +1,3 @@
-#pragma once
-
 #include <utils/TGBotApi/Chat/Chat.hpp>
 
 namespace Utils::TGBotApi::Chat {

@@ -1,5 +1,3 @@
-#pragma once
-
 #include <iostream>
 #include <utils/Logger/StdOutLogger.hpp>
 
@@ -7,7 +5,7 @@ namespace Utils::Logger {
 
 using std::cout, std::endl;
 
-StdOutLogger::StdOutLogger(const EnumLoggerLevel& level=EnumLoggerLevel::DEBUG):
+StdOutLogger::StdOutLogger(const EnumLoggerLevel& level):
 _level(level)
 {}
 void StdOutLogger::debug(string_view event, string_view message) const {

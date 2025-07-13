@@ -1,5 +1,3 @@
-#pragma once
-
 #include <utils/TGBotApi/User/User.hpp>
 #include <utils/TGBotApi/JSONKeys.hpp>
 
@@ -23,5 +21,9 @@ User::User(const json& json_user):
 _id(json_user[ID_KEY]),
 _name(json_user[FIRST_NAME_KEY]),
 _username(json_user.value(USERNAME_KEY, "")) {}
+
+int User::get_id() const noexcept { return _id; }
+const_string User::get_name() const noexcept { return _name; }
+const_string User::get_username() const noexcept { return _username; }
 
 }

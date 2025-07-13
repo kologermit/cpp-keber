@@ -1,5 +1,3 @@
-#pragma once
-
 #include <spdlog/sinks/daily_file_sink.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <utils/Logger/FileDailyLogger.hpp>

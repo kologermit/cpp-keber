@@ -1,5 +1,3 @@
-#pragma once
-
 #include <utils/Random/Random.hpp>
 #include <random>
 #include <ctime>

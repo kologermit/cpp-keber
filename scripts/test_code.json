@@ -1,8 +1,6 @@
 {
     "build": {
-        "description": "Build test_code",
         "scripts": [
-            "@@ conan build",
             "cmake -B ./build -DBUILD_TEST_CODE=ON -DDEBUG_ARGS=ON",
             "cmake --build ./build --target TEST_CODE",
             "chmod 777 ./build/TEST_CODE || true"

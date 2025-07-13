@@ -1,6 +1,7 @@
 #pragma once
 
 #include <utils/TGBotApi/Bot/InterfaceBot.hpp>
+#include <utils/TGBotApi/User/User.hpp>
 
 namespace Utils::TGBotApi::Bot {
 
@@ -24,7 +25,7 @@ struct Bot : virtual InterfaceBot, User {
 
     protected:
 
-    Bot(string_view, const json&);
+    explicit Bot(string_view, const json&);
 
     static const json get_me_raw_json(string_view token);
 

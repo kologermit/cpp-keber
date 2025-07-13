@@ -1,5 +1,3 @@
-#pragma once
-
 #include <utils/UUID4/UUID4.hpp>
 #include <uuid/uuid.h>
 #include <string>

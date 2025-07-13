@@ -9,7 +9,6 @@
     "build_release": {
         "description": "Build bot",
         "scripts": [
-            "@@ conan build",
             "cmake -B ./build -DBUILD_BOT=ON",
             "@@ bot build_executable"
         ]
@@ -17,7 +16,6 @@
     "build_debug": {
         "description": "Build bot debug",
         "scripts": [
-            "@@ conan build",
             "cmake -B ./build -DBUILD_BOT=ON -DDEBUG_ARGS=ON",
             "@@ bot build_executable"
         ]

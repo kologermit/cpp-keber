@@ -6,7 +6,7 @@
 namespace Utils::Logger {
 
 struct StdOutLogger : virtual InterfaceLogger {
-    StdOutLogger(const EnumLoggerLevel& level=EnumLoggerLevel::DEBUG);
+    explicit StdOutLogger(const EnumLoggerLevel& level=EnumLoggerLevel::DEBUG);
     void debug(string_view event, string_view message) const override;
     void info(string_view event, string_view message) const override;
     void warning(string_view event, string_view message) const override;

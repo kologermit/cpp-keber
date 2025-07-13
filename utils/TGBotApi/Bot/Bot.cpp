@@ -1,5 +1,3 @@
-#pragma once
-
 #include <utils/UUID4/UUID4.cpp>
 #include <utils/TGBotApi/Query.cpp>
 #include <utils/TGBotApi/Message/Message.cpp>

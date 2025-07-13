@@ -14,7 +14,7 @@ struct Message : InterfaceMessage {
     ptrUser from() const noexcept override;
     ptrChat chat() const noexcept override;
 
-    Message(const json&);
+    explicit Message(const json&);
 
     protected:
 

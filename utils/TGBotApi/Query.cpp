@@ -1,5 +1,3 @@
-#pragma once
-
 #include <utils/TGBotApi/Query.hpp>
 #include <utils/TGBotApi/JSONKeys.hpp>
 
@@ -10,6 +8,10 @@ using httplib::Params;
 using httplib::Headers;
 using httplib::Result;
 using httplib::Error;
+using Utils::TGBotApi::JSONKeys::RESULT_KEY;
+using Utils::TGBotApi::JSONKeys::OK_KEY;
+
+Query::Query(string_view token): _https_client("https://api.telegram.org"), _token(token) {}
 
 string Query::_get_path(string_view path) {
     return "/bot" + _token + "/" + const_string(path);
