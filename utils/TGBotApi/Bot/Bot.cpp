@@ -3,6 +3,7 @@
 #include <utils/TGBotApi/Message/Message.cpp>
 #include <utils/TGBotApi/JSONKeys.hpp>
 #include <utils/TGBotApi/Bot/Bot.hpp>
+#include <iostream>
 
 namespace Utils::TGBotApi::Bot {
 
@@ -19,7 +20,11 @@ using Utils::TGBotApi::JSONKeys::CAN_READ_ALL_GROUP_MESSAGES_KEY;
 using Utils::TGBotApi::JSONKeys::SUPPORTS_INLINE_QUERIES_KEY;
 using Utils::TGBotApi::JSONKeys::CAN_CONNECT_TO_BUSINESS_KEY;
 using Utils::TGBotApi::JSONKeys::HAS_MAIN_WEB_APP_KEY;
+using Utils::TGBotApi::JSONKeys::REPLY_TO_MESSAGE_ID_KEY;
+using Utils::TGBotApi::JSONKeys::CAPTION_KEY;
+using httplib::Params;
 using std::make_shared;
+using std::make_pair;
 using std::to_string;
 
 Bot::Bot(string_view token, const json& json_bot):
@@ -33,10 +38,22 @@ Bot::Bot(string_view token, const json& json_bot):
     _has_main_web_app(json_bot[HAS_MAIN_WEB_APP_KEY]) {}
 
 Bot::Bot(string_view token): 
-Bot(token, get_me_raw_json(token)) {}
+Bot(token, _get_me_raw_json(token)) {}
 
-const json Bot::get_me_raw_json(string_view token) { 
+const json Bot::_get_me_raw_json(string_view token) { 
     return Query(token).query_raw_json(EnumQueryMethod::GET, "getMe")[RESULT_KEY];
+}
+
+const Params Bot::_get_params_with_optional(
+    vector<pair<const_string, optional_const_string> > raw_params
+) {
+    Params params;
+    for (auto raw_param : raw_params) {
+        if (raw_param.second.has_value()) {
+            params.insert({raw_param.first, *raw_param.second});
+        }
+    }
+    return params;
 }
 
 bool Bot::can_join_groups() const noexcept { return _can_join_groups; }
@@ -51,23 +68,51 @@ void Bot::delete_webhook() const {
 
 void Bot::set_webhook(string_view webhook_url) const { 
     Query(_token).query(
-        EnumQueryMethod::GET,
+        EnumQueryMethod::POST,
         "setWebhook", 
-        {
+        Params{
             {URL_KEY, const_string(webhook_url)},
             {SECRET_KEY, _secret}
         }
     ); 
 }
 
-Bot::ptrMessage Bot::send_text(int chat_id, string_view text) const {
+Bot::ptrMessage Bot::send_text(int chat_id, string_view text, optional_string_view reply_message_id) const {
     return make_shared<Message>(
         Query(_token).query_raw_json(
-            EnumQueryMethod::GET,
+            EnumQueryMethod::POST,
             "sendMessage",
-            {
-                {CHAT_ID_KEY, to_string(chat_id)},
-                {TEXT_KEY, const_string(text)}
+            _get_params_with_optional(
+                {
+                    {CHAT_ID_KEY, optional_const_string(to_string(chat_id))},
+                    {TEXT_KEY, optional_const_string(const_string(text))},
+                    {REPLY_TO_MESSAGE_ID_KEY, optional_const_string(reply_message_id)}
+                }
+            )
+        )[RESULT_KEY]
+    );
+}
+
+Bot::ptrMessage Bot::send_photo(int chat_id, string_view filepath, optional_string_view text, optional_string_view reply_message_id) const {
+    return make_shared<Message>(
+        Query(_token).query_raw_json(
+            EnumQueryMethod::POST,
+            "sendPhoto",
+            _get_params_with_optional(
+                {
+                    {CHAT_ID_KEY, optional_const_string(to_string(chat_id))},
+                    {CAPTION_KEY, optional_const_string(text)},
+                    {REPLY_TO_MESSAGE_ID_KEY, optional_const_string(reply_message_id)}
+                }
+            ),
+            nullopt,
+            Query::Files{
+                Query::File{
+                    .name = "photo",
+                    .filepath = const_string(filepath),
+                    .filename = "photo.jpg",
+                    .content_type = "image/jpeg"
+                }
             }
         )[RESULT_KEY]
     );

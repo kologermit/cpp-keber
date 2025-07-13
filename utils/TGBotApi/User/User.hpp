@@ -6,6 +6,8 @@
 
 namespace Utils::TGBotApi::User {
 
+using Utils::Types::optional_string_view;
+using std::nullopt;
 using std::string_view;
 using nlohmann::json;
 
@@ -13,13 +15,13 @@ struct User : virtual InterfaceUser {
     explicit User(
         int id,
         string_view name, 
-        string_view username
+        optional_string_view username = nullopt
     );
     explicit User(const json&);
 
     int get_id() const noexcept override;
     const_string get_name() const noexcept override;
-    const_string get_username() const noexcept override;
+    optional_const_string get_username() const noexcept override;
 
     
     protected:
@@ -27,6 +29,6 @@ struct User : virtual InterfaceUser {
 
     int _id;
     const_string _name;
-    const_string _username;
+    optional_const_string _username;
 };
 }

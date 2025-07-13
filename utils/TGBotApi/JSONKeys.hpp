@@ -24,6 +24,11 @@ constexpr const_c_string URL_KEY                       = "url";
 constexpr const_c_string USERNAME_KEY                  = "username";
 constexpr const_c_string FROM_KEY                      = "from";
 constexpr const_c_string CHAT_KEY                      = "chat";
+constexpr const_c_string REPLY_TO_MESSAGE_ID_KEY       = "reply_to_message_id";
+constexpr const_c_string CAPTION_KEY                   = "caption";
+constexpr const_c_string PHOTO_KEY                     = "photo";
+constexpr const_c_string FILE_ID_KEY                   = "file_id";
+constexpr const_c_string DOCUMENT_KEY                  = "document";
 
 
 }

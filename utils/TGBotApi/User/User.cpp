@@ -10,7 +10,7 @@ using Utils::TGBotApi::JSONKeys::USERNAME_KEY;
 User::User(
     int id,
     string_view name, 
-    string_view username
+    optional_string_view username
     ): 
     _id(id), 
     _name(name), 
@@ -20,10 +20,16 @@ User::User(
 User::User(const json& json_user):
 _id(json_user[ID_KEY]),
 _name(json_user[FIRST_NAME_KEY]),
-_username(json_user.value(USERNAME_KEY, "")) {}
+_username(
+    (!json_user.contains(USERNAME_KEY))
+    ? nullopt
+    : json_user[USERNAME_KEY].is_null() 
+        ? nullopt
+        : optional_string_view(to_string(json_user[USERNAME_KEY]))
+) {}
 
 int User::get_id() const noexcept { return _id; }
 const_string User::get_name() const noexcept { return _name; }
-const_string User::get_username() const noexcept { return _username; }
+optional_const_string User::get_username() const noexcept { return _username; }
 
 }
