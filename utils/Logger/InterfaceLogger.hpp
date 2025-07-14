@@ -24,6 +24,7 @@ struct InterfaceLogger {
     ~InterfaceLogger() = default;
 };
 
-static shared_ptr<InterfaceLogger> GLOBAL_LOGGER;
+shared_ptr<InterfaceLogger> get_logger(InterfaceLogger* logger = nullptr);
+
 
 }

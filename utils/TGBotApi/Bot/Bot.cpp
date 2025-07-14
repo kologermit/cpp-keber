@@ -41,7 +41,9 @@ Bot::Bot(string_view token):
 Bot(token, _get_me_raw_json(token)) {}
 
 const json Bot::_get_me_raw_json(string_view token) { 
-    return Query(token).query_raw_json(EnumQueryMethod::GET, "getMe")[RESULT_KEY];
+    Query client(token);
+    const json result = client.query_raw_json(EnumQueryMethod::GET, "getMe")[RESULT_KEY];
+    return result;
 }
 
 const Params Bot::_get_params_with_optional(

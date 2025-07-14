@@ -38,6 +38,7 @@ set(
     ./utils/UUID4/UUID4.cpp
     ./utils/Logger/FileDailyLogger.cpp
     ./utils/Logger/StdOutLogger.cpp
+    ./utils/Logger/InterfaceLogger.cpp
     ./utils/Random/Random.cpp
     ./utils/TGBotApi/Chat/Chat.cpp
     ./utils/TGBotApi/Message/Message.cpp
@@ -53,6 +54,7 @@ target_include_directories(UTILS_LIB PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 option(DEBUG_ARGS "Build debug" OFF)
 if (DEBUG_ARGS) 
+    add_compile_definitions(DEBUG_LOGGER=1)
     add_compile_options(-g3 -O0)
 endif()
 
