@@ -78,7 +78,7 @@ struct Query {
 
     private: 
     const_string _token;
-    Client _https_client;
+    // Client _https_client;
     string _get_path(std::string_view path);
     string _read_file(std::string_view filename);
 };

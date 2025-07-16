@@ -11,7 +11,7 @@ using std::nullopt;
 using std::string_view;
 using nlohmann::json;
 
-struct User : InterfaceUser {
+struct User : virtual InterfaceUser {
     explicit User(
         int id,
         string_view name, 

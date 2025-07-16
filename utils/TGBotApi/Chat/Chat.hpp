@@ -9,7 +9,7 @@ namespace Utils::TGBotApi::Chat {
 using Utils::TGBotApi::User::User;
 using nlohmann::json;
 
-struct Chat : virtual InterfaceChat, User {
+struct Chat : virtual InterfaceChat, User  {
     EnumChatType get_type() const noexcept override;
     explicit Chat(const json&);
 

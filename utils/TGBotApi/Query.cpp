@@ -1,3 +1,5 @@
+#define CPPHTTPLIB_OPENSSL_SUPPORT
+
 #include <utils/TGBotApi/Query.hpp>
 #include <utils/TGBotApi/JSONKeys.hpp>
 #include <utils/Logger/InterfaceLogger.hpp>
@@ -23,7 +25,8 @@ using Utils::TGBotApi::JSONKeys::RESULT_KEY;
 using Utils::TGBotApi::JSONKeys::OK_KEY;
 using Utils::Logger::get_logger;
 
-Query::Query(string_view token): _https_client("https://api.telegram.org"), _token(token) {}
+Query::Query(string_view token): 
+_token(token) {}
 
 string Query::_get_path(string_view path) {
     return "/bot" + _token + "/" + const_string(path);
@@ -48,48 +51,42 @@ const_string Query::query(
     Result result;
     string full_path = _get_path(path);
 
-    // #define DEBUG_LOGGER
+    #ifdef DEBUG_LOGGER
 
-    // #ifdef DEBUG_LOGGER
-
-    // get_logger()->debug("Query::query::method", to_string(method));
-    // get_logger()->debug("Query::query::path", path);
-    // get_logger()->debug("Query::query::full_path", full_path);
-    // get_logger()->debug("Query::query::params_is_empty", to_string(params.value_or(Params()).empty()));
-    // for (auto param : params.value_or(Params())) {
-    //     get_logger()->debug("Query::query::params", param.first + " : " + param.second);
-    // }
-    // get_logger()->debug("Query::query::headers_is_empty", to_string(headers.value_or(Headers()).empty()));
-    // for (auto header : headers.value_or(Headers())) {
-    //     get_logger()->debug("Query::query::headers", header.first + " : " + header.second);
-    // }
-    // get_logger()->debug("Query::query::files::is_empty", to_string(files.value_or(Files{}).empty()));
-    // for (auto file : files.value_or(Files{})) {
-    //     get_logger()->debug("Query::query::files", format(
-    //         "name={}; filename={}; filepath={}; content_type={}",
-    //         file.name,
-    //         file.filename,
-    //         file.filepath,
-    //         file.content_type
-    //     ));
-    // }
+    get_logger()->debug("Query::query::method", to_string(method));
+    get_logger()->debug("Query::query::path", path);
+    get_logger()->debug("Query::query::full_path", full_path);
+    get_logger()->debug("Query::query::params_is_empty", to_string(params.value_or(Params()).empty()));
+    for (auto param : params.value_or(Params())) {
+        get_logger()->debug("Query::query::params", param.first + " : " + param.second);
+    }
+    get_logger()->debug("Query::query::headers_is_empty", to_string(headers.value_or(Headers()).empty()));
+    for (auto header : headers.value_or(Headers())) {
+        get_logger()->debug("Query::query::headers", header.first + " : " + header.second);
+    }
+    get_logger()->debug("Query::query::files::is_empty", to_string(files.value_or(Files{}).empty()));
+    for (auto file : files.value_or(Files{})) {
+        get_logger()->debug("Query::query::files", format(
+            "name={}; filename={}; filepath={}; content_type={}",
+            file.name,
+            file.filename,
+            file.filepath,
+            file.content_type
+        ));
+    }
 
 
-    // #endif
+    #endif
+
+    Client cli("https://api.telegram.org");
     
     if (method == EnumQueryMethod::GET) {
-        get_logger()->debug("Method", "1");
-        auto result = Client("https://api.telegram.org").Get(
-            "/bot7699806249:AAE7JYJ9oV4DLQ4QRRIOhesHiIwvOX-hBk0/getMe", 
-            Params(), 
-            Headers()
+        result = cli.Get(
+            full_path,
+            params.value_or(Params()), 
+            headers.value_or(Headers())
         );
-        cout << result.error() << endl;
-        cout << result->body << endl;
-        get_logger()->debug("Query::error", to_string(result.error()));
-        get_logger()->debug("Query::result", result->body);
     } else if (method == EnumQueryMethod::POST) {
-        get_logger()->debug("Method", "2");
         MultipartFormDataItems form_data;
         if (params.has_value()) {
             for (auto param : *params) {
@@ -109,7 +106,7 @@ const_string Query::query(
                 });
             }
         }
-        result = _https_client.Post(
+        result = cli.Post(
             _get_path(path),
             headers.value_or(Headers()),
             form_data  
