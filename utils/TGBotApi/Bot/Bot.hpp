@@ -43,7 +43,7 @@ struct Bot : virtual InterfaceBot, User {
     //     optional_string_view text = nullopt
     // ) const override;
 
-    protected:
+    private:
 
     explicit Bot(string_view, const json&);
 

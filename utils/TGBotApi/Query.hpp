@@ -76,7 +76,7 @@ struct Query {
         OptionalFiles files = nullopt
     );
 
-    protected: 
+    private: 
     const_string _token;
     Client _https_client;
     string _get_path(std::string_view path);

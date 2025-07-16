@@ -19,7 +19,7 @@ struct Message : InterfaceMessage {
 
     explicit Message(const json&);
 
-    protected:
+    private:
 
     int _id;
     optional_const_string _text;

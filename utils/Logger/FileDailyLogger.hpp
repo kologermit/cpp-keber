@@ -9,14 +9,14 @@ namespace Utils::Logger {
 using Utils::Types::const_string;
 using spdlog::logger;
 
-struct FileDailyLogger : virtual InterfaceLogger {
+struct FileDailyLogger : InterfaceLogger {
     void info(string_view event, string_view message) const override;
     void warning(string_view event, string_view message) const override;
     void error(string_view event, string_view message) const override;
     void debug(string_view event, string_view message) const override;
     explicit FileDailyLogger();
 
-    protected:
+    private:
     shared_ptr<logger> _logger;
     const_string get_text_from_message_and_event(string_view event, string_view message) const;
 };

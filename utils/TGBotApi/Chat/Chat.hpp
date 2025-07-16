@@ -13,7 +13,7 @@ struct Chat : virtual InterfaceChat, User {
     EnumChatType get_type() const noexcept override;
     explicit Chat(const json&);
 
-    protected:
+    private:
     EnumChatType _type;
 };
 
