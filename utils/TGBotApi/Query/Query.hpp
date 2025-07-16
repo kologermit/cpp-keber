@@ -48,7 +48,7 @@ struct Query {
     template<typename ResultType>
     struct QueryResult {
         bool ok;
-        ResultType result;
+        std::shared_ptr<ResultType> result;
     };
 
     const_string query(

@@ -38,6 +38,7 @@ struct InterfaceBot : virtual InterfaceUser {
         optional_string_view text = nullopt,
         optional_string_view reply_message_id = nullopt
     ) const = 0;
+
     virtual void delete_webhook() const = 0;
     virtual void set_webhook(string_view) const = 0;
 

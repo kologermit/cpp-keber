@@ -1,6 +1,6 @@
 #define CPPHTTPLIB_OPENSSL_SUPPORT
 
-#include <utils/TGBotApi/Query.hpp>
+#include <utils/TGBotApi/Query/Query.hpp>
 #include <utils/TGBotApi/JSONKeys.hpp>
 #include <utils/Logger/InterfaceLogger.hpp>
 #include <fmt/core.h>
@@ -53,7 +53,11 @@ const_string Query::query(
 
     #ifdef DEBUG_LOGGER
 
-    get_logger()->debug("Query::query::method", to_string(method));
+    get_logger()->debug("Query::query::method", (
+        method == EnumQueryMethod::GET ? "GET"
+        : method == EnumQueryMethod::POST ? "POST"
+        : "UNKNOWN"
+    ));
     get_logger()->debug("Query::query::path", path);
     get_logger()->debug("Query::query::full_path", full_path);
     get_logger()->debug("Query::query::params_is_empty", to_string(params.value_or(Params()).empty()));
@@ -111,8 +115,6 @@ const_string Query::query(
             headers.value_or(Headers()),
             form_data  
         );
-    } else {
-        get_logger()->debug("Method", "else");
     }
 
     if (result.error() != Error::Success) {
@@ -144,7 +146,7 @@ Query::QueryResult<ResultType> Query::query_parse_json(
 
     return {
         json_result[OK_KEY],
-        ResultType(json_result[RESULT_KEY])
+        make_shared<ResultType>(json_result[RESULT_KEY])
     };
 }
 

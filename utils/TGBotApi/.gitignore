@@ -1,10 +1,10 @@
 *
 !.gitignore
 !Bot
-!Query.cpp
-!Query.hpp
+!Query
 !User
 !Message.cpp
 !JSONKeys.hpp
 !Message
 !Chat
+!File
