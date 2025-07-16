@@ -26,16 +26,18 @@ struct InterfaceBot : virtual InterfaceUser {
     
     virtual ptrMessage send_text(int chat_id, string_view text, optional_string_view reply_message_id = nullopt) const = 0;
     virtual ptrMessage send_photo(
-        int chat_id, string_view filepath, 
+        int chat_id, 
+        string_view filepath, 
         optional_string_view text = nullopt, 
         optional_string_view reply_message_id = nullopt
     ) const = 0;
-    // virtual ptrMessage send_document(
-    //     int chat_id, 
-    //     string_view filepath, 
-    //     optional_string_view filename = nullopt, 
-    //     optional_string_view text = nullopt
-    // ) const = 0;
+    virtual ptrMessage send_document(
+        int chat_id, 
+        string_view filepath, 
+        optional_string_view filename = nullopt, 
+        optional_string_view text = nullopt,
+        optional_string_view reply_message_id = nullopt
+    ) const = 0;
     virtual void delete_webhook() const = 0;
     virtual void set_webhook(string_view) const = 0;
 

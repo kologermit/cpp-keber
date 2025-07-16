@@ -10,22 +10,22 @@ _level(level)
 {}
 void StdOutLogger::debug(string_view event, string_view message) const {
     if (_level <= EnumLoggerLevel::DEBUG) {
-        cout << "[DEBUG] [" << event << "] -- " << message << endl;
+        cout << "[DBG] [" << event << "] -- " << message << endl;
     }
 }
 void StdOutLogger::info(string_view event, string_view message) const {
     if (_level <= EnumLoggerLevel::INFO) {
-        cout << "[INFO] [" << event << "] -- " << message << endl;
+        cout << "[INF] [" << event << "] -- " << message << endl;
     }
 }
 void StdOutLogger::warning(string_view event, string_view message) const {
     if (_level <= EnumLoggerLevel::WARNING) {
-        cout << "[WARNING] [" << event << "] -- " << message << endl;
+        cout << "[WRN] [" << event << "] -- " << message << endl;
     }
 }
 void StdOutLogger::error(string_view event, string_view message) const {
     if (_level <= EnumLoggerLevel::ERROR) {
-        cout << "[ERROR] [" << event << "] -- " << message << endl;
+        cout << "[ERR] [" << event << "] -- " << message << endl;
     }
 }
 

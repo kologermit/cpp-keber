@@ -4,6 +4,7 @@
 #include <utils/TGBotApi/JSONKeys.hpp>
 #include <utils/TGBotApi/Bot/Bot.hpp>
 #include <iostream>
+#include <httplib.h>
 
 namespace Utils::TGBotApi::Bot {
 
@@ -114,6 +115,37 @@ Bot::ptrMessage Bot::send_photo(int chat_id, string_view filepath, optional_stri
                     .filepath = const_string(filepath),
                     .filename = "photo.jpg",
                     .content_type = "image/jpeg"
+                }
+            }
+        )[RESULT_KEY]
+    );
+}
+
+Bot::ptrMessage Bot::send_document(
+    int chat_id, 
+    string_view filepath, 
+    optional_string_view filename = nullopt, 
+    optional_string_view text = nullopt,
+    optional_string_view reply_message_id = nullopt
+) const {
+    return make_shared<Message>(
+        Query(_token).query_raw_json(
+            EnumQueryMethod::POST,
+            "sendDocument",
+            _get_params_with_optional(
+                {
+                    {CHAT_ID_KEY, optional_const_string(to_string(chat_id))},
+                    {CAPTION_KEY, optional_const_string(text)},
+                    {REPLY_TO_MESSAGE_ID_KEY, optional_const_string(reply_message_id)}
+                }
+            ),
+            nullopt,
+            Query::Files{
+                Query::File{
+                    .name = "document",
+                    .filepath = const_string(filepath),
+                    .filename = const_string(filename.value_or(filename)),
+                    .content_type = "document"
                 }
             }
         )[RESULT_KEY]
