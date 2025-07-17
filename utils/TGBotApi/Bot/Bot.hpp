@@ -36,6 +36,18 @@ struct Bot : virtual InterfaceBot, User {
         optional_string_view text = nullopt,
         optional_string_view reply_message_id = nullopt
     ) const override;
+    ptrMessage send_audio(
+        int chat_id,
+        string_view filepath,
+        optional_string_view text = nullopt,
+        optional_string_view reply_message_id = nullopt
+    ) const override;
+    ptrMessage send_video(
+        int chat_id,
+        string_view filepath,
+        optional_string_view text = nullopt,
+        optional_string_view reply_message_id = nullopt
+    ) const override;
     ptrMessage send_document(
         int chat_id, 
         string_view filepath, 

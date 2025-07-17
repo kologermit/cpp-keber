@@ -113,8 +113,56 @@ Bot::ptrMessage Bot::send_photo(int chat_id, string_view filepath, optional_stri
             Query::File{
                 .name = "photo",
                 .filepath = const_string(filepath),
-                .filename = "photo.jpg",
+                .filename = const_string(filepath),
                 .content_type = "image/jpeg"
+            }
+        }
+    ).result;
+}
+
+Bot::ptrMessage Bot::send_audio(int chat_id, string_view filepath, optional_string_view text, optional_string_view reply_message_id) const {
+    throw_if_not_correct_file(filepath);
+    return Query(_token).query_parse_json<Message>(
+        EnumQueryMethod::POST,
+        "sendAudio",
+        _get_params_with_optional(
+            {
+                {CHAT_ID_KEY, optional_const_string(to_string(chat_id))},
+                {CAPTION_KEY, optional_const_string(text)},
+                {REPLY_TO_MESSAGE_ID_KEY, optional_const_string(reply_message_id)}
+            }
+        ),
+        nullopt,
+        Query::Files{
+            Query::File{
+                .name = "audio",
+                .filepath = const_string(filepath),
+                .filename = const_string(filepath),
+                .content_type = "audio/mp3"
+            }
+        }
+    ).result;
+}
+
+Bot::ptrMessage Bot::send_video(int chat_id, string_view filepath, optional_string_view text, optional_string_view reply_message_id) const {
+    throw_if_not_correct_file(filepath);
+    return Query(_token).query_parse_json<Message>(
+        EnumQueryMethod::POST,
+        "sendVideo",
+        _get_params_with_optional(
+            {
+                {CHAT_ID_KEY, optional_const_string(to_string(chat_id))},
+                {CAPTION_KEY, optional_const_string(text)},
+                {REPLY_TO_MESSAGE_ID_KEY, optional_const_string(reply_message_id)}
+            }
+        ),
+        nullopt,
+        Query::Files{
+            Query::File{
+                .name = "video",
+                .filepath = const_string(filepath),
+                .filename = const_string(filepath),
+                .content_type = "video/mp4"
             }
         }
     ).result;

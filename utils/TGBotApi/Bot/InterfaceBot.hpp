@@ -31,18 +31,18 @@ struct InterfaceBot : virtual InterfaceUser {
         optional_string_view text = nullopt, 
         optional_string_view reply_message_id = nullopt
     ) const = 0;
-    // virtual ptrMessage send_audio(
-    //     int chat_id,
-    //     string_view filepath,
-    //     optional_string_view text = nullopt,
-    //     optional_string_view reply_message_id = nullopt
-    // ) = 0;
-    // virtual ptrMessage send_video(
-    //     int chat_id,
-    //     string_view filepath,
-    //     optional_string_view text = nullopt,
-    //     optional_string_view reply_message_id = nullopt
-    // ) = 0;
+    virtual ptrMessage send_audio(
+        int chat_id,
+        string_view filepath,
+        optional_string_view text = nullopt,
+        optional_string_view reply_message_id = nullopt
+    ) const = 0;
+    virtual ptrMessage send_video(
+        int chat_id,
+        string_view filepath,
+        optional_string_view text = nullopt,
+        optional_string_view reply_message_id = nullopt
+    ) const = 0;
     virtual ptrMessage send_document(
         int chat_id, 
         string_view filepath, 
