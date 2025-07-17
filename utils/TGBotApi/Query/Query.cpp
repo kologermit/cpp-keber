@@ -23,6 +23,8 @@ using httplib::Error;
 using httplib::MultipartFormDataItems;
 using Utils::TGBotApi::JSONKeys::RESULT_KEY;
 using Utils::TGBotApi::JSONKeys::OK_KEY;
+using Utils::TGBotApi::JSONKeys::DESCRIPTION_KEY;
+using Utils::TGBotApi::JSONKeys::ERROR_CODE_KEY;
 using Utils::Logger::get_logger;
 
 Query::Query(string_view token): 
@@ -121,6 +123,12 @@ const_string Query::query(
         throw runtime_error(to_string(result.error()));
     }
 
+    #ifdef DEBUG_LOGGER
+
+    get_logger()->debug("Query::query::result->body", result->body);
+
+    #endif
+
     return result->body;
 }
 
@@ -143,6 +151,14 @@ Query::QueryResult<ResultType> Query::query_parse_json(
     OptionalFiles files
 ) {
     auto json_result = query_raw_json(method, path, params, headers, files);
+
+    if (!bool(json_result[OK_KEY])) {
+        throw runtime_error(format(
+            "Utils::TGBotApi::Query::query_parse_json: {} -- {}",
+            to_string(json_result[ERROR_CODE_KEY]),
+            to_string(json_result[DESCRIPTION_KEY])
+        ));
+    }
 
     return {
         json_result[OK_KEY],

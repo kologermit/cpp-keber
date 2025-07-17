@@ -19,6 +19,7 @@ using const_map_string_to_string = const map_string_to_string;
 using const_multimap_string_to_string = const std::multimap<const_string, const_string>;
 using optional_const_string = std::optional<const_string>;
 using optional_string_view = std::optional<std::string_view>;
+using optional_int = std::optional<int>;
 
 // custom
 template <
