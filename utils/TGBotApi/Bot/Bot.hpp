@@ -28,6 +28,9 @@ struct Bot : virtual InterfaceBot, User {
     bool has_main_web_app() const noexcept override;
 
 
+    ptrMessage edit_text(int chat_id, int message_id, string_view text) const override;
+    ptrMessage edit_caption(int chat_id, int message_id, string_view caption) const override;
+    bool delete_message(int chat_id, int message_id) const override;
     void delete_webhook() const override;
     void set_webhook(string_view) const override;
 

@@ -51,6 +51,9 @@ struct InterfaceBot : virtual InterfaceUser {
     using ptrMessage = shared_ptr<InterfaceMessage>;
     
     virtual ptrMessage send_message(const SendMessageParameters& message_data) const = 0;
+    virtual ptrMessage edit_text(int chat_id, int message_id, string_view text) const = 0;
+    virtual ptrMessage edit_caption(int chat_id, int message_id, string_view caption) const = 0;
+    virtual bool delete_message(int chat_id, int message_id) const = 0;
     virtual void delete_webhook() const = 0;
     virtual void set_webhook(string_view url) const = 0;
 

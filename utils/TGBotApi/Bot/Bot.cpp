@@ -33,6 +33,7 @@ using Utils::TGBotApi::JSONKeys::DOCUMENT_KEY;
 using Utils::TGBotApi::JSONKeys::PHOTO_KEY;
 using Utils::TGBotApi::JSONKeys::AUDIO_KEY;
 using Utils::TGBotApi::JSONKeys::VIDEO_KEY;
+using Utils::TGBotApi::JSONKeys::MESSAGE_ID_KEY;
 using Utils::TGBotApi::JSONKeys::REPLY_MARKUP_KEY;
 using Utils::TGBotApi::File::throw_if_not_correct_file;
 using httplib::Params;
@@ -141,6 +142,40 @@ Bot::ptrMessage Bot::send_message(const SendMessageParameters& message_parameter
         params,
         nullopt,
         files
+    ).result;
+}
+
+Bot::ptrMessage Bot::edit_text(int chat_id, int message_id, string_view text) const {
+    return Query(_token).query_parse_json<Message>(
+        EnumQueryMethod::POST,
+        "editMessageText",
+        Params{
+            {CHAT_ID_KEY, to_string(chat_id)},
+            {MESSAGE_ID_KEY, to_string(message_id)},
+            {TEXT_KEY, const_string(text)},
+        }
+    ).result;
+
+}
+Bot::ptrMessage Bot::edit_caption(int chat_id, int message_id, string_view caption) const {
+    return Query(_token).query_parse_json<Message>(
+        EnumQueryMethod::POST,
+        "editMessageCaption",
+        Params{
+            {CHAT_ID_KEY, to_string(chat_id)},
+            {MESSAGE_ID_KEY, to_string(message_id)},
+            {CAPTION_KEY, const_string(caption)},
+        }
+    ).result;
+}
+bool Bot::delete_message(int chat_id, int message_id) const {
+    return *Query(_token).query_parse_json<bool>(
+        EnumQueryMethod::POST,
+        "deleteMessage",
+        Params{
+            {CHAT_ID_KEY, to_string(chat_id)},
+            {MESSAGE_ID_KEY, to_string(message_id)},
+        }
     ).result;
 }
 
