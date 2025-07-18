@@ -32,5 +32,12 @@
             "@@ bot build_release",
             "@@ bot run"
         ]
+    },
+    "build_debug_and_run": {
+        "description": "Build debug bot and run ./build/BOT",
+        "scripts": [
+            "@@ bot build_debug",
+            "@@ bot run"
+        ]
     }
 }
