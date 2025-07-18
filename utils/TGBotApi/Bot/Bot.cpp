@@ -1,3 +1,6 @@
+#define CPPHTTPLIB_OPENSSL_SUPPORT
+
+#include <httplib.h>
 #include <utils/UUID4/UUID4.cpp>
 #include <utils/TGBotApi/Query/Query.cpp>
 #include <utils/TGBotApi/Message/Message.cpp>
@@ -5,7 +8,6 @@
 #include <utils/TGBotApi/Bot/Bot.hpp>
 #include <utils/TGBotApi/File/File.hpp>
 #include <iostream>
-#include <httplib.h>
 
 namespace Utils::TGBotApi::Bot {
 
@@ -24,11 +26,20 @@ using Utils::TGBotApi::JSONKeys::CAN_CONNECT_TO_BUSINESS_KEY;
 using Utils::TGBotApi::JSONKeys::HAS_MAIN_WEB_APP_KEY;
 using Utils::TGBotApi::JSONKeys::REPLY_TO_MESSAGE_ID_KEY;
 using Utils::TGBotApi::JSONKeys::CAPTION_KEY;
+using Utils::TGBotApi::JSONKeys::HTML_KEY;
+using Utils::TGBotApi::JSONKeys::PLACEHOLDER_KEY;
+using Utils::TGBotApi::JSONKeys::PARSE_MODE_KEY;
+using Utils::TGBotApi::JSONKeys::DOCUMENT_KEY;
+using Utils::TGBotApi::JSONKeys::PHOTO_KEY;
+using Utils::TGBotApi::JSONKeys::AUDIO_KEY;
+using Utils::TGBotApi::JSONKeys::VIDEO_KEY;
+using Utils::TGBotApi::JSONKeys::REPLY_MARKUP_KEY;
 using Utils::TGBotApi::File::throw_if_not_correct_file;
 using httplib::Params;
 using std::make_shared;
 using std::make_pair;
 using std::to_string;
+using std::map;
 
 Bot::Bot(string_view token, const json& json_bot):
     User(json_bot),
@@ -47,18 +58,6 @@ const json Bot::_get_me_raw_json(string_view token) {
     Query client(token);
     const json result = client.query_raw_json(EnumQueryMethod::GET, "getMe")[RESULT_KEY];
     return result;
-}
-
-const Params Bot::_get_params_with_optional(
-    vector<pair<const_string, optional_const_string> > raw_params
-) {
-    Params params;
-    for (auto raw_param : raw_params) {
-        if (raw_param.second.has_value()) {
-            params.insert({raw_param.first, *raw_param.second});
-        }
-    }
-    return params;
 }
 
 bool Bot::can_join_groups() const noexcept { return _can_join_groups; }
@@ -82,119 +81,66 @@ void Bot::set_webhook(string_view webhook_url) const {
     ); 
 }
 
-Bot::ptrMessage Bot::send_text(int chat_id, string_view text, optional_string_view reply_message_id) const {
-    return Query(_token).query_parse_json<Message>(
-        EnumQueryMethod::POST,
-        "sendMessage",
-        _get_params_with_optional(
-            {
-                {CHAT_ID_KEY, optional_const_string(to_string(chat_id))},
-                {TEXT_KEY, optional_const_string(const_string(text))},
-                {REPLY_TO_MESSAGE_ID_KEY, optional_const_string(reply_message_id)}
-            }
-        )
-    ).result;
-}
+Bot::ptrMessage Bot::send_message(const SendMessageParameters& message_parameters) const {
+    const_string path = map<EnumContentType, const_string>{
+        {EnumContentType::TEXT, "sendMessage"},
+        {EnumContentType::DOCUMENT, "sendDocument"},
+        {EnumContentType::VIDEO, "sendVidep"},
+        {EnumContentType::PHOTO, "sendPhoto"},
+        {EnumContentType::AUDIO, "sendAudio"},
+    }[message_parameters.content_type];
 
-Bot::ptrMessage Bot::send_photo(int chat_id, string_view filepath, optional_string_view text, optional_string_view reply_message_id) const {
-    throw_if_not_correct_file(filepath);
-    return Query(_token).query_parse_json<Message>(
-        EnumQueryMethod::POST,
-        "sendPhoto",
-        _get_params_with_optional(
-            {
-                {CHAT_ID_KEY, optional_const_string(to_string(chat_id))},
-                {CAPTION_KEY, optional_const_string(text)},
-                {REPLY_TO_MESSAGE_ID_KEY, optional_const_string(reply_message_id)}
-            }
-        ),
-        nullopt,
-        Query::Files{
-            Query::File{
-                .name = "photo",
-                .filepath = const_string(filepath),
-                .filename = const_string(filepath),
-                .content_type = "image/jpeg"
-            }
-        }
-    ).result;
-}
+    Params params;
+    Query::Files files;
+    params.insert({CHAT_ID_KEY, to_string(message_parameters.chat_id)});
+    params.insert({PARSE_MODE_KEY, message_parameters.parse_mode});
+    if (message_parameters.text.has_value()) {
+        params.insert({
+            (
+                message_parameters.content_type == EnumContentType::TEXT
+                ? TEXT_KEY
+                : CAPTION_KEY
+            ),
+            *message_parameters.text
+        });
+    }
 
-Bot::ptrMessage Bot::send_audio(int chat_id, string_view filepath, optional_string_view text, optional_string_view reply_message_id) const {
-    throw_if_not_correct_file(filepath);
-    return Query(_token).query_parse_json<Message>(
-        EnumQueryMethod::POST,
-        "sendAudio",
-        _get_params_with_optional(
-            {
-                {CHAT_ID_KEY, optional_const_string(to_string(chat_id))},
-                {CAPTION_KEY, optional_const_string(text)},
-                {REPLY_TO_MESSAGE_ID_KEY, optional_const_string(reply_message_id)}
-            }
-        ),
-        nullopt,
-        Query::Files{
-            Query::File{
-                .name = "audio",
-                .filepath = const_string(filepath),
-                .filename = const_string(filepath),
-                .content_type = "audio/mp3"
-            }
-        }
-    ).result;
-}
+    if (message_parameters.reply_message_id.has_value()) {
+        params.insert({REPLY_TO_MESSAGE_ID_KEY, to_string(*message_parameters.reply_message_id)});
+    }
 
-Bot::ptrMessage Bot::send_video(int chat_id, string_view filepath, optional_string_view text, optional_string_view reply_message_id) const {
-    throw_if_not_correct_file(filepath);
-    return Query(_token).query_parse_json<Message>(
-        EnumQueryMethod::POST,
-        "sendVideo",
-        _get_params_with_optional(
-            {
-                {CHAT_ID_KEY, optional_const_string(to_string(chat_id))},
-                {CAPTION_KEY, optional_const_string(text)},
-                {REPLY_TO_MESSAGE_ID_KEY, optional_const_string(reply_message_id)}
-            }
-        ),
-        nullopt,
-        Query::Files{
-            Query::File{
-                .name = "video",
-                .filepath = const_string(filepath),
-                .filename = const_string(filepath),
-                .content_type = "video/mp4"
-            }
-        }
-    ).result;
-}
+    if (message_parameters.placeholder.has_value()) {
+        params.insert({PLACEHOLDER_KEY, *message_parameters.placeholder});
+    }
 
-Bot::ptrMessage Bot::send_document(
-    int chat_id, 
-    string_view filepath, 
-    optional_string_view filename, 
-    optional_string_view text,
-    optional_string_view reply_message_id
-) const {
-    throw_if_not_correct_file(filepath);
+    if (message_parameters.filepath.has_value() && message_parameters.content_type != EnumContentType::TEXT) {
+        files.push_back(Query::File{
+            .name = map<EnumContentType, const_string>{
+                {EnumContentType::DOCUMENT, DOCUMENT_KEY},
+                {EnumContentType::VIDEO, VIDEO_KEY},
+                {EnumContentType::PHOTO, PHOTO_KEY},
+                {EnumContentType::AUDIO, AUDIO_KEY},
+            }[message_parameters.content_type],
+            .filepath = message_parameters.filepath.value(),
+            .filename = message_parameters.filename.value_or(message_parameters.filepath.value()),
+            .content_type = DOCUMENT_KEY
+        });
+    }
+
+    if (message_parameters.inline_keyboard != nullptr) {
+        params.insert({REPLY_MARKUP_KEY, message_parameters.inline_keyboard->get_json()});
+    }
+
+    if (message_parameters.reply_keyboard != nullptr) {
+        params.insert({REPLY_MARKUP_KEY, message_parameters.reply_keyboard->get_json()});
+    }
+
     return Query(_token).query_parse_json<Message>(
         EnumQueryMethod::POST,
-        "sendDocument",
-        _get_params_with_optional(
-            {
-                {CHAT_ID_KEY, optional_const_string(to_string(chat_id))},
-                {CAPTION_KEY, optional_const_string(text)},
-                {REPLY_TO_MESSAGE_ID_KEY, optional_const_string(reply_message_id)}
-            }
-        ),
+        path,
+        params,
         nullopt,
-        Query::Files{
-            Query::File{
-                .name = "document",
-                .filepath = const_string(filepath),
-                .filename = const_string(filename.value_or(filepath)),
-                .content_type = "document"
-            }
-        }
+        files
     ).result;
 }
 

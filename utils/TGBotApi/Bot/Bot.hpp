@@ -1,5 +1,7 @@
 #pragma once
 
+#define CPPHTTPLIB_OPENSSL_SUPPORT
+
 #include <utils/TGBotApi/Bot/InterfaceBot.hpp>
 #include <utils/TGBotApi/User/User.hpp>
 #include <vector>
@@ -29,41 +31,13 @@ struct Bot : virtual InterfaceBot, User {
     void delete_webhook() const override;
     void set_webhook(string_view) const override;
 
-    ptrMessage send_text(int chat_id, string_view text, optional_string_view reply_message_id = nullopt) const override;
-    ptrMessage send_photo(
-        int chat_id, 
-        string_view filepath, 
-        optional_string_view text = nullopt,
-        optional_string_view reply_message_id = nullopt
-    ) const override;
-    ptrMessage send_audio(
-        int chat_id,
-        string_view filepath,
-        optional_string_view text = nullopt,
-        optional_string_view reply_message_id = nullopt
-    ) const override;
-    ptrMessage send_video(
-        int chat_id,
-        string_view filepath,
-        optional_string_view text = nullopt,
-        optional_string_view reply_message_id = nullopt
-    ) const override;
-    ptrMessage send_document(
-        int chat_id, 
-        string_view filepath, 
-        optional_string_view filename = nullopt, 
-        optional_string_view text = nullopt,
-        optional_string_view reply_message_id = nullopt
-    ) const override;
+    ptrMessage send_message(const SendMessageParameters& message_parameters) const override;
 
     private:
 
     explicit Bot(string_view, const json&);
 
     static const json _get_me_raw_json(string_view token);
-    static const Params _get_params_with_optional(
-        vector<pair<const_string, optional_const_string> > raw_params
-    );
 
     const_string _token;
     const_string _secret;

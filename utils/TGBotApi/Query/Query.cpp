@@ -84,7 +84,7 @@ const_string Query::query(
 
     #endif
 
-    Client cli("https://api.telegram.org");
+    httplib::Client cli("https://api.telegram.org");
     
     if (method == EnumQueryMethod::GET) {
         result = cli.Get(

@@ -23,6 +23,7 @@ enum EnumContentType {
     VIDEO,
     AUDIO,
     DOCUMENT,
+    TEXT,
     UNKNOWN
 };
 
@@ -31,6 +32,7 @@ const map<EnumContentType, const_string> convert_map_content_type = {
     {EnumContentType::VIDEO, "VIDEO"},
     {EnumContentType::AUDIO, "AUDIO"},
     {EnumContentType::DOCUMENT, "DOCUMENT"},
+    {EnumContentType::TEXT, "TEXT"},
 };
 
 const map<EnumResultCheckFile, const_string> convert_map_result_check_file = {

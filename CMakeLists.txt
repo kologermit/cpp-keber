@@ -34,18 +34,22 @@ set(ALL_LINK_LIBRARIES
 
 set(
     UTILS_RELEASES
+    ./utils/Env/Env.cpp
+    ./utils/Logger/FileDailyLogger.cpp
+    ./utils/Logger/InterfaceLogger.cpp
+    ./utils/Logger/StdOutLogger.cpp
+    ./utils/Random/Random.cpp
     ./utils/TGBotApi/Bot/Bot.cpp
     ./utils/TGBotApi/Chat/Chat.cpp
     ./utils/TGBotApi/File/File.cpp
+    ./utils/TGBotApi/Message/Keyboard/InlineButton.cpp
+    ./utils/TGBotApi/Message/Keyboard/InlineKeyboard.cpp
+    ./utils/TGBotApi/Message/Keyboard/ReplyButton.cpp
+    ./utils/TGBotApi/Message/Keyboard/ReplyKeyboard.cpp
     ./utils/TGBotApi/Message/Message.cpp
     ./utils/TGBotApi/Query/Query.cpp
     ./utils/TGBotApi/User/User.cpp
-    ./utils/Random/Random.cpp
     ./utils/UUID4/UUID4.cpp
-    ./utils/Logger/InterfaceLogger.cpp
-    ./utils/Logger/StdOutLogger.cpp
-    ./utils/Logger/FileDailyLogger.cpp
-    ./utils/Env/Env.cpp
 )
 
 add_library(UTILS_LIB STATIC ${UTILS_RELEASES})

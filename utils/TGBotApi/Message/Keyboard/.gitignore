@@ -1,0 +1,14 @@
+*
+!.gitignore
+!InterfaceInlineKeyboard.hpp
+!InterfaceInlineButton.hpp
+!InlineKeyboard.hpp
+!InlineKeyboard.cpp
+!InlineButton.hpp
+!InlineButton.cpp
+!InterfaceReplyKeyboard.hpp
+!InterfaceReplyButton.hpp
+!ReplyKeyboard.hpp
+!ReplyKeyboard.cpp
+!ReplyButton.hpp
+!ReplyButton.cpp
