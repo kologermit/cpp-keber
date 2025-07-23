@@ -13,9 +13,10 @@ RUN \
         python3 \
         python3-pip \
         python3-venv \
-        clang \
+        gcc \
         uuid-dev \
         pkg-config \
+        libssl-dev \
     && mkdir -p /home/runner /app\
     && chmod 777 -R /home/runner /app\
     && groupadd -g ${GROUP_ID:-1001} runner \
@@ -42,7 +43,7 @@ CMD ["/app/run"]
 FROM builder_base AS bot_builder
 COPY ./bot /app/bot
 COPY ./scripts/bot.json /app/scripts/bot.json
-RUN python3 manager.py bot build
+RUN python3 manager.py bot build_release
    
 
 FROM base AS bot

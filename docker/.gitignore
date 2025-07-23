@@ -3,7 +3,7 @@
 !bot.yml
 !db.yml
 !downloader.yml
-!web_server.yml
+!nginx.yml
 !networks.yml
 !cron.yml
 !cache.yml

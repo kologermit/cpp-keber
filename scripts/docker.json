@@ -104,19 +104,19 @@
     "downloader_exec":{"scripts": ["$DOCKER_COMPOSE_COMMAND exec downloader sh"]},
 
 
-    "web_server_run":{"scripts":["$DOCKER_COMPOSE_COMMAND up -d web_server"]},
-    "web_server_stop":{"scripts": ["$DOCKER_COMPOSE_COMMAND stop -t 1 web_server"]},
-    "web_server_logs":{"scripts": ["$DOCKER_COMPOSE_COMMAND logs --tail 100 -f web_server"]},
-    "web_server_logs0":{"scripts": ["$DOCKER_COMPOSE_COMMAND logs --tail 0 -f web_server"]},
-    "web_server_restart": {"scripts": [
-        "@@ docker web_server_stop",
-        "@@ docker web_server_run"
+    "nginx_run":{"scripts":["$DOCKER_COMPOSE_COMMAND up -d nginx"]},
+    "nginx_stop":{"scripts": ["$DOCKER_COMPOSE_COMMAND stop -t 1 nginx"]},
+    "nginx_logs":{"scripts": ["$DOCKER_COMPOSE_COMMAND logs --tail 100 -f nginx"]},
+    "nginx_logs0":{"scripts": ["$DOCKER_COMPOSE_COMMAND logs --tail 0 -f nginx"]},
+    "nginx_restart": {"scripts": [
+        "@@ docker nginx_stop",
+        "@@ docker nginx_run"
     ]},
-    "web_server_recreate":{"scripts":[
-        "@@ docker web_server_stop",
-        "$DOCKER_COMPOSE_COMMAND up -d --force-recreate --build web_server"
+    "nginx_recreate":{"scripts":[
+        "@@ docker nginx_stop",
+        "$DOCKER_COMPOSE_COMMAND up -d --force-recreate --build nginx"
     ]},
-    "web_server_exec":{"scripts": ["$DOCKER_COMPOSE_COMMAND exec web_server sh"]},
+    "nginx_exec":{"scripts": ["$DOCKER_COMPOSE_COMMAND exec nginx sh"]},
 
 
     "all_run":{"scripts":["$DOCKER_COMPOSE_COMMAND up -d"]},

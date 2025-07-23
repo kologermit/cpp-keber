@@ -34,6 +34,9 @@ using Utils::TGBotApi::JSONKeys::PHOTO_KEY;
 using Utils::TGBotApi::JSONKeys::AUDIO_KEY;
 using Utils::TGBotApi::JSONKeys::VIDEO_KEY;
 using Utils::TGBotApi::JSONKeys::MESSAGE_ID_KEY;
+using Utils::TGBotApi::JSONKeys::ALLOWED_UPDATES_KEY;
+using Utils::TGBotApi::JSONKeys::MESSAGE_KEY;
+using Utils::TGBotApi::JSONKeys::CALLBACK_QUERY_KEY;
 using Utils::TGBotApi::JSONKeys::REPLY_MARKUP_KEY;
 using Utils::TGBotApi::File::throw_if_not_correct_file;
 using httplib::Params;
@@ -77,7 +80,8 @@ void Bot::set_webhook(string_view webhook_url) const {
         "setWebhook", 
         Params{
             {URL_KEY, const_string(webhook_url)},
-            {SECRET_KEY, _secret}
+            {SECRET_KEY, _secret},
+            {ALLOWED_UPDATES_KEY, json{MESSAGE_KEY, CALLBACK_QUERY_KEY}.dump()}
         }
     ); 
 }

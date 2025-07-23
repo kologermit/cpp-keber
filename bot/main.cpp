@@ -1,68 +1,82 @@
-#include <utils/Logger/StdOutLogger.hpp>
-#include <utils/Env/Env.hpp>
+#define CPPHTTPLIB_OPENSSL_SUPPORT
 #include <utils/TGBotApi/Bot/Bot.hpp>
-#include <utils/TGBotApi/Message/Keyboard/ReplyKeyboard.hpp>
-#include <utils/TGBotApi/Message/Keyboard/ReplyButton.hpp>
+#include <utils/TGBotApi/Message/Message.hpp>
 #include <utils/TGBotApi/Message/Keyboard/InlineKeyboard.hpp>
 #include <utils/TGBotApi/Message/Keyboard/InlineButton.hpp>
+#include <utils/Logger/StdOutLogger.hpp>
+#include <utils/Env/Env.hpp>
+#include <httplib.h>
+#include <nlohmann/json.hpp>
+#include <iostream>
+#include <string>
+#include <thread>
 
-using Utils::TGBotApi::File::EnumContentType;
-using Utils::Logger::get_logger;
-using Utils::Logger::StdOutLogger;
+using json = nlohmann::json;
+
+const std::string BOT_TOKEN = Utils::Env::Get("BOT_TOKEN");
+const std::string WEBHOOK_URL = "https://kologermit.ru";
+const int PORT = 8083;  // Порт, на котором работает сервер
+const std::string API_BASE = "https://api.telegram.org";
+
 using Utils::TGBotApi::Bot::Bot;
-using Utils::TGBotApi::Message::Keyboard::ReplyKeyboard;
-using Utils::TGBotApi::Message::Keyboard::ReplyButton;
+using Utils::TGBotApi::Bot::InterfaceBot;
+using Utils::TGBotApi::Message::Message;
+using Utils::TGBotApi::Message::InterfaceMessage;
 using Utils::TGBotApi::Message::Keyboard::InlineKeyboard;
+using Utils::TGBotApi::Message::Keyboard::InterfaceInlineKeyboard;
+using Utils::TGBotApi::Message::Keyboard::InterfaceInlineButton;
 using Utils::TGBotApi::Message::Keyboard::InlineButton;
-using Utils::TGBotApi::Bot::ptrBot;
-using std::to_string;
-using std::make_shared;
-using std::string;
+using Utils::Logger::StdOutLogger;
+using Utils::Logger::get_logger;
+using std::shared_ptr, std::make_shared;
 using std::nullopt;
-const int MESSAGE_ID = 2723;
-const int USER_ID = 847721936;
-string TOKEN = Utils::Env::Get("BOT_TOKEN");
-string ANSWER_TEXT = "<code>answer</code>";
-string PHOTO_FILEPATH = "/home/kologermit/audio.mp3";
 
 int main() {
-    auto logger = get_logger(new StdOutLogger);
-    ptrBot bot = make_shared<Bot>(TOKEN);
+    shared_ptr<InterfaceBot> bot = make_shared<Bot>(BOT_TOKEN);
+    get_logger(new StdOutLogger());
+    bot->set_webhook(WEBHOOK_URL + "/webhook");
 
-    bot->send_message({
-        .chat_id = USER_ID,
-        .text = ANSWER_TEXT,
-        .reply_message_id = MESSAGE_ID,
-        .filepath = PHOTO_FILEPATH,
-        .content_type = EnumContentType::AUDIO,
-        .inline_keyboard = make_shared<InlineKeyboard>(
-            InlineKeyboard::ptrButtons(new InlineKeyboard::Buttons{
-                { make_shared<InlineButton>("Проверка callback", nullopt, "123") },
-                { make_shared<InlineButton>("Ссылка на VK", "https://vk.com/kologermit"), make_shared<InlineButton>("Ссылка на ТГ", "https://t.me/kologermit.ru") }
-            })
-        )
+    // 2. Запускаем сервер для обработки входящих запросов
+    httplib::Server server;
+
+    // Обработчик вебхука
+    server.Post("/webhook", [&bot](const httplib::Request& req, httplib::Response& res) {
+        get_logger()->info("BODY", req.body);
+        try {
+            json update = json::parse(req.body);
+            if (update.contains("message")) {
+                InterfaceMessage::ptrMessage update_message = make_shared<Message>(update["message"]);
+                std::cout << "Получено: " << update_message->get_text().value_or("(none)") << std::endl;
+
+                auto message = bot->send_message({
+                    .chat_id = update_message->get_chat()->get_id(),
+                    .text = update_message->get_text().value_or("(noneo)"),
+                    .inline_keyboard = shared_ptr<InterfaceInlineKeyboard>(new InlineKeyboard(
+                        make_shared<InlineKeyboard::Buttons>(
+                            1,
+                            InlineKeyboard::Lane(
+                                1,
+                                make_shared<InlineButton>("callback", nullopt, "hihihaha")
+                            )
+                        )
+                    ))
+                });
+            }
+            res.status = 200;
+        } catch (const json::exception& e) {
+            std::cerr << "Ошибка JSON: " << e.what() << std::endl;
+            res.status = 400;
+        }
     });
 
-    auto message = bot->send_message({
-        .chat_id = USER_ID,
-        .text = ANSWER_TEXT,
-        .reply_message_id = MESSAGE_ID,
-        .filepath = PHOTO_FILEPATH,
-        .content_type = EnumContentType::AUDIO,
-        .reply_keyboard = make_shared<ReplyKeyboard>(
-            ReplyKeyboard::ptrButtons(new ReplyKeyboard::Buttons{
-                { make_shared<ReplyButton>("Проверка callback") },
-                { make_shared<ReplyButton>("Ссылка на VK"), make_shared<ReplyButton>("Ссылка на ТГ") }
-            })
-        )
+    server.Get(".*", [](const httplib::Request& req, httplib::Response& res) {
+        res.body = "123";
+        res.status = 200;
+        std::cout << 123 << std::endl;
     });
 
-    logger->info("MESSAGE_TEXT", *message->get_text());
-    logger->info("MESSAGE_DOWNLOAD_ID", *message->get_file_download_id());
-    logger->info("MESSAGE_CONTENT_TYPE", to_string(message->get_file_content_type()));
-    logger->info("MESSAGE_DOWNLOAD_ID", *message->get_file_name());
-    logger->info("MESSAGE_FILE_SIZE (kb)", to_string(*message->get_file_size() / 1024));
+    std::cout << "Сервер запущен на порту " << PORT << ". Ожидание вебхуков..." << std::endl;
+    server.listen("0.0.0.0", PORT);
 
-    logger->info("REPLY_MESSAGE_ID", to_string(message->get_reply_message()->get_id()));
-    logger->info("REPLY_MESSAGE_TEXT", *message->get_reply_message()->get_text());
+    return 0;
 }

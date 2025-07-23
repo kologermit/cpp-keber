@@ -12,7 +12,7 @@ services:
     networks:
       - bot_to_cache
       - bot_to_db
-      - web_server_to_bot
+      - nginx_to_bot
     volumes:
       - bot_logs:/logs:rw
       - bot_tmp:/tmp:rw

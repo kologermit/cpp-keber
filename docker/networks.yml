@@ -1,5 +1,5 @@
 networks:
-  web_server_to_bot:
+  nginx_to_bot:
   bot_to_db:
   bot_to_cache:
   bot_to_downloader:

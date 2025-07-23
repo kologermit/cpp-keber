@@ -9,7 +9,7 @@ struct ReplyKeyboard : virtual InterfaceReplyKeyboard {
     const_string get_json() const noexcept override;
     ptrButtons get_buttons() const noexcept override;
 
-    ReplyKeyboard(ptrButtons buttons);
+    ReplyKeyboard(ptrButtons buttons = nullptr);
 
     private:
 

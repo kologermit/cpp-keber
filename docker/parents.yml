@@ -19,6 +19,11 @@ services:
       nofile:  
         soft: 1024
         hard: 2048
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
   custom_service:
     extends:
       file: ./parents.yml
