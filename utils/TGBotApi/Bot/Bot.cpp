@@ -1,9 +1,9 @@
 #define CPPHTTPLIB_OPENSSL_SUPPORT
 
 #include <httplib.h>
-#include <utils/UUID4/UUID4.cpp>
-#include <utils/TGBotApi/Query/Query.cpp>
-#include <utils/TGBotApi/Message/Message.cpp>
+#include <utils/UUID4/UUID4.hpp>
+#include <utils/TGBotApi/Query/Query.hpp>
+#include <utils/TGBotApi/Message/Message.hpp>
 #include <utils/TGBotApi/JSONKeys.hpp>
 #include <utils/TGBotApi/Bot/Bot.hpp>
 #include <utils/TGBotApi/File/File.hpp>
@@ -15,9 +15,11 @@ using Utils::TGBotApi::Query::Query;
 using Utils::TGBotApi::Query::EnumQueryMethod;
 using Utils::TGBotApi::Message::Message;
 using Utils::TGBotApi::JSONKeys::RESULT_KEY;
-using Utils::TGBotApi::JSONKeys::SECRET_KEY;
+using Utils::TGBotApi::JSONKeys::SECRET_TOKEN_KEY;
 using Utils::TGBotApi::JSONKeys::CHAT_ID_KEY;
 using Utils::TGBotApi::JSONKeys::TEXT_KEY;
+using Utils::TGBotApi::JSONKeys::TRUE_KEY;
+using Utils::TGBotApi::JSONKeys::SHOW_ALERT_KEY;
 using Utils::TGBotApi::JSONKeys::URL_KEY;
 using Utils::TGBotApi::JSONKeys::CAN_JOIN_GROUPS_KEY;
 using Utils::TGBotApi::JSONKeys::CAN_READ_ALL_GROUP_MESSAGES_KEY;
@@ -37,6 +39,7 @@ using Utils::TGBotApi::JSONKeys::MESSAGE_ID_KEY;
 using Utils::TGBotApi::JSONKeys::ALLOWED_UPDATES_KEY;
 using Utils::TGBotApi::JSONKeys::MESSAGE_KEY;
 using Utils::TGBotApi::JSONKeys::CALLBACK_QUERY_KEY;
+using Utils::TGBotApi::JSONKeys::CALLBACK_QUERY_ID_KEY;
 using Utils::TGBotApi::JSONKeys::REPLY_MARKUP_KEY;
 using Utils::TGBotApi::File::throw_if_not_correct_file;
 using httplib::Params;
@@ -48,7 +51,7 @@ using std::map;
 Bot::Bot(string_view token, const json& json_bot):
     User(json_bot),
     _token(token),
-    _secret(UUID4::generate_str()),
+    _secret_token(UUID4::generate_str()),
     _can_join_groups(json_bot[CAN_JOIN_GROUPS_KEY]),
     _can_read_all_group_messages(json_bot[CAN_READ_ALL_GROUP_MESSAGES_KEY]),
     _supports_inline_queries(json_bot[SUPPORTS_INLINE_QUERIES_KEY]),
@@ -70,23 +73,26 @@ bool Bot::supports_inline_queries() const noexcept { return _supports_inline_que
 bool Bot::can_connect_to_business() const noexcept { return _can_connect_to_business; }
 bool Bot::has_main_web_app() const noexcept { return _has_main_web_app; }
 
-void Bot::delete_webhook() const { 
-    Query(_token).query(EnumQueryMethod::GET, "deleteWebhook"); 
+bool Bot::delete_webhook() const { 
+    return *Query(_token).query_parse_json<bool>(
+        EnumQueryMethod::GET, 
+        "deleteWebhook"
+    ).result; 
 }
 
-void Bot::set_webhook(string_view webhook_url) const { 
-    Query(_token).query(
+bool Bot::set_webhook(string_view webhook_url) const { 
+    return *Query(_token).query_parse_json<bool>(
         EnumQueryMethod::POST,
         "setWebhook", 
         Params{
-            {URL_KEY, const_string(webhook_url)},
-            {SECRET_KEY, _secret},
+            {URL_KEY, webhook_url.data()},
+            {SECRET_TOKEN_KEY, _secret_token},
             {ALLOWED_UPDATES_KEY, json{MESSAGE_KEY, CALLBACK_QUERY_KEY}.dump()}
         }
-    ); 
+    ).result; 
 }
 
-Bot::ptrMessage Bot::send_message(const SendMessageParameters& message_parameters) const {
+shared_ptr<InterfaceMessage> Bot::send_message(const SendMessageParameters& message_parameters) const {
     const_string path = map<EnumContentType, const_string>{
         {EnumContentType::TEXT, "sendMessage"},
         {EnumContentType::DOCUMENT, "sendDocument"},
@@ -149,30 +155,30 @@ Bot::ptrMessage Bot::send_message(const SendMessageParameters& message_parameter
     ).result;
 }
 
-Bot::ptrMessage Bot::edit_text(int chat_id, int message_id, string_view text) const {
+shared_ptr<InterfaceMessage> Bot::edit_text(long long chat_id, long long message_id, string_view text) const {
     return Query(_token).query_parse_json<Message>(
         EnumQueryMethod::POST,
         "editMessageText",
         Params{
             {CHAT_ID_KEY, to_string(chat_id)},
             {MESSAGE_ID_KEY, to_string(message_id)},
-            {TEXT_KEY, const_string(text)},
+            {TEXT_KEY, text.data()},
         }
     ).result;
 
 }
-Bot::ptrMessage Bot::edit_caption(int chat_id, int message_id, string_view caption) const {
+shared_ptr<InterfaceMessage> Bot::edit_caption(long long chat_id, long long message_id, string_view caption) const {
     return Query(_token).query_parse_json<Message>(
         EnumQueryMethod::POST,
         "editMessageCaption",
         Params{
             {CHAT_ID_KEY, to_string(chat_id)},
             {MESSAGE_ID_KEY, to_string(message_id)},
-            {CAPTION_KEY, const_string(caption)},
+            {CAPTION_KEY, caption.data()},
         }
     ).result;
 }
-bool Bot::delete_message(int chat_id, int message_id) const {
+bool Bot::delete_message(long long chat_id, long long message_id) const {
     return *Query(_token).query_parse_json<bool>(
         EnumQueryMethod::POST,
         "deleteMessage",
@@ -181,6 +187,34 @@ bool Bot::delete_message(int chat_id, int message_id) const {
             {MESSAGE_ID_KEY, to_string(message_id)},
         }
     ).result;
+}
+
+bool Bot::answer_callback_query(
+    string_view callback_query_id, 
+    optional_const_string text,
+    bool show_alert
+) const {
+    Params params{
+        {CALLBACK_QUERY_ID_KEY, callback_query_id.data()}
+    };
+
+    if (text.has_value()) {
+        params.insert({TEXT_KEY, text->data()});
+    }
+
+    if (show_alert) {
+        params.insert({SHOW_ALERT_KEY, TRUE_KEY});
+    }
+
+    return *Query(_token).query_parse_json<bool>(
+        EnumQueryMethod::POST,
+        "answerCallbackQuery",
+        params
+    ).result;
+}
+
+bool Bot::check_secret_token(string_view secret_token) const noexcept {
+    return _secret_token == secret_token;
 }
 
 }

@@ -7,13 +7,13 @@ namespace Utils::TGBotApi::Message::Keyboard {
 struct ReplyKeyboard : virtual InterfaceReplyKeyboard {
 
     const_string get_json() const noexcept override;
-    ptrButtons get_buttons() const noexcept override;
+    shared_ptr<vector<vector<shared_ptr<InterfaceReplyButton> > > > get_buttons() const noexcept override;
 
-    ReplyKeyboard(ptrButtons buttons = nullptr);
+    ReplyKeyboard(const vector<vector<shared_ptr<InterfaceReplyButton> > >& buttons);
 
     private:
 
-    ptrButtons _buttons;
+    shared_ptr<vector<vector<shared_ptr<InterfaceReplyButton> > > > _buttons;
 
 };
 

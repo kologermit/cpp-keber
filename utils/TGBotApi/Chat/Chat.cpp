@@ -1,4 +1,5 @@
 #include <utils/TGBotApi/Chat/Chat.hpp>
+#include <utils/TGBotApi/JSONKeys.hpp>
 
 namespace Utils::TGBotApi::Chat {
 

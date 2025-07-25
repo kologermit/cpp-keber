@@ -1,5 +1,6 @@
 #include <utils/TGBotApi/Message/Message.hpp>
-#include <utils/TGBotApi/Chat/Chat.cpp>
+#include <utils/TGBotApi/Chat/Chat.hpp>
+#include <utils/TGBotApi/JSONKeys.hpp>
 #include <fmt/core.h>
 
 namespace Utils::TGBotApi::Message {
@@ -21,7 +22,6 @@ using Utils::TGBotApi::JSONKeys::PHOTO_KEY;
 using Utils::TGBotApi::JSONKeys::TEXT_KEY;
 using Utils::TGBotApi::JSONKeys::VIDEO_KEY;
 using fmt::format;
-using Utils::Types::optional_string_view;
 using std::make_shared, std::nullopt;
 
 Message::Message(const json& json_message):
@@ -73,8 +73,8 @@ _file_name(
     : json_message.contains(PHOTO_KEY)
     ? optional_const_string(format(
         "{}_{}.jpg",
-        int(json_message[FROM_KEY][ID_KEY]),
-        int(json_message[MESSAGE_ID_KEY])
+        (long long)(json_message[FROM_KEY][ID_KEY]),
+        (long long)(json_message[MESSAGE_ID_KEY])
     ))
     // video
     : json_message.contains(VIDEO_KEY)
@@ -88,16 +88,16 @@ _file_name(
 _file_size(
     // document
     json_message.contains(DOCUMENT_KEY)
-    ? optional_int(json_message[DOCUMENT_KEY][FILE_SIZE_KEY])
+    ? optional_long_long(json_message[DOCUMENT_KEY][FILE_SIZE_KEY])
     // photo
     : json_message.contains(PHOTO_KEY)
-    ? optional_int(json_message[PHOTO_KEY].back()[FILE_SIZE_KEY])
+    ? optional_long_long(json_message[PHOTO_KEY].back()[FILE_SIZE_KEY])
     // video
     : json_message.contains(VIDEO_KEY)
-    ? optional_int(json_message[VIDEO_KEY][FILE_SIZE_KEY])
+    ? optional_long_long(json_message[VIDEO_KEY][FILE_SIZE_KEY])
     // audio
     : json_message.contains(AUDIO_KEY)
-    ? optional_int(json_message[AUDIO_KEY][FILE_SIZE_KEY])
+    ? optional_long_long(json_message[AUDIO_KEY][FILE_SIZE_KEY])
 
     : nullopt
 ),
@@ -109,15 +109,15 @@ _reply_message(
 _from(make_shared<User>(json_message[FROM_KEY])),
 _chat(make_shared<Chat>(json_message[CHAT_KEY])) {}
 
-int Message::get_id() const noexcept {
+long long Message::get_id() const noexcept {
     return _id;
 }
 
-Message::ptrUser Message::get_from() const noexcept {
+shared_ptr<InterfaceUser> Message::get_from() const noexcept {
     return _from;
 }
 
-Message::ptrChat Message::get_chat() const noexcept {
+shared_ptr<InterfaceChat> Message::get_chat() const noexcept {
     return _chat;
 }
 
@@ -137,11 +137,11 @@ optional_const_string Message::get_file_name() const noexcept {
     return _file_name;
 }
 
-optional_int Message::get_file_size() const noexcept {
+optional_long_long Message::get_file_size() const noexcept {
     return _file_size;
 }
 
-InterfaceMessage::ptrMessage Message::get_reply_message() const noexcept {
+shared_ptr<InterfaceMessage> Message::get_reply_message() const noexcept {
     return _reply_message;
 }
 

@@ -9,3 +9,5 @@
 !Message
 !Chat
 !File
+!CallbackQuery
+!Types.hpp

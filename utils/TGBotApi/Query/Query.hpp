@@ -3,6 +3,7 @@
 #define CPPHTTPLIB_OPENSSL_SUPPORT
 
 #include <utils/Types.hpp>
+#include <utils/TGBotApi/JSONKeys.hpp>
 #include <httplib.h>
 #include <nlohmann/json.hpp>
 #include <string>
@@ -10,6 +11,7 @@
 #include <optional>
 #include <memory>
 #include <vector>
+#include <fmt/core.h>
 
 namespace Utils::TGBotApi::Query {
 
@@ -23,7 +25,14 @@ using std::vector;
 using std::shared_ptr;
 using std::string, std::string_view;
 using std::optional, std::nullopt;
+using std::runtime_error;
 using httplib::Client;
+using fmt::format;
+using std::make_shared;
+using Utils::TGBotApi::JSONKeys::RESULT_KEY;
+using Utils::TGBotApi::JSONKeys::OK_KEY;
+using Utils::TGBotApi::JSONKeys::DESCRIPTION_KEY;
+using Utils::TGBotApi::JSONKeys::ERROR_CODE_KEY;
 
 enum EnumQueryMethod {
     GET,
@@ -59,7 +68,7 @@ struct Query {
         OptionalFiles files = nullopt
     );
 
-    const json query_raw_json(
+    inline const json query_raw_json(
         const EnumQueryMethod& method,
         std::string_view path,
         OptionalParams params = nullopt,
@@ -81,5 +90,39 @@ struct Query {
     string _get_path(std::string_view path);
     string _read_file(std::string_view filename);
 };
+
+const json Query::query_raw_json(
+    const EnumQueryMethod& method,
+    string_view path, 
+    OptionalParams params,
+    OptionalHeaders headers,
+    OptionalFiles files
+) {
+    return json::parse(query(method, path, params, headers, files));
+}
+
+template<typename ResultType>
+Query::QueryResult<ResultType> Query::query_parse_json(
+    const EnumQueryMethod& method,
+    string_view path, 
+    OptionalParams params,
+    OptionalHeaders headers,
+    OptionalFiles files
+) {
+    auto json_result = query_raw_json(method, path, params, headers, files);
+
+    if (!bool(json_result[OK_KEY])) {
+        throw runtime_error(format(
+            "Utils::TGBotApi::Query::query_parse_json: {} -- {}",
+            to_string(json_result[ERROR_CODE_KEY]),
+            to_string(json_result[DESCRIPTION_KEY])
+        ));
+    }
+
+    return {
+        json_result[OK_KEY],
+        make_shared<ResultType>(json_result[RESULT_KEY])
+    };
+}
 
 }

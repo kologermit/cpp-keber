@@ -8,9 +8,9 @@ using Utils::TGBotApi::JSONKeys::FIRST_NAME_KEY;
 using Utils::TGBotApi::JSONKeys::USERNAME_KEY;
 
 User::User(
-    int id,
+    long long id,
     string_view name, 
-    optional_string_view username
+    optional_const_string username
     ): 
     _id(id), 
     _name(name), 
@@ -25,10 +25,10 @@ _username(
     ? nullopt
     : json_user[USERNAME_KEY].is_null() 
         ? nullopt
-        : optional_string_view(to_string(json_user[USERNAME_KEY]))
+        : optional_const_string(to_string(json_user[USERNAME_KEY]))
 ) {}
 
-int User::get_id() const noexcept { return _id; }
+long long User::get_id() const noexcept { return _id; }
 const_string User::get_name() const noexcept { return _name; }
 optional_const_string User::get_username() const noexcept { return _username; }
 

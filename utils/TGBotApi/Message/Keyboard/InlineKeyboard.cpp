@@ -5,14 +5,15 @@
 namespace Utils::TGBotApi::Message::Keyboard {
 
 using nlohmann::json;
+using std::make_shared;
 using Utils::TGBotApi::JSONKeys::INLINE_KEYBOARD_KEY;
 using Utils::TGBotApi::JSONKeys::RESIZE_KEYBOARD_KEY;
 
-InlineKeyboard::InlineKeyboard(ptrButtons buttons) {
-    _buttons = buttons;
-}
+InlineKeyboard::InlineKeyboard(const vector<vector<shared_ptr<InterfaceInlineButton> > >& buttons):
+_buttons(make_shared<vector<vector<shared_ptr<InterfaceInlineButton> > > >(buttons))
+{}
 
-InlineKeyboard::ptrButtons InlineKeyboard::get_buttons() const noexcept {
+shared_ptr<vector<vector<shared_ptr<InterfaceInlineButton> > > > InlineKeyboard::get_buttons() const noexcept {
     return _buttons;
 }
 
@@ -20,9 +21,9 @@ const_string InlineKeyboard::get_json() const noexcept {
     json result = {
         {RESIZE_KEYBOARD_KEY, true}
     };
-    for (auto& lane : *_buttons) {
+    for (const auto& lane : *_buttons) {
         json lane_json;
-        for (auto& button : lane) {
+        for (const auto& button : lane) {
             json button_json = json::parse(button->get_json());
             lane_json.push_back(button_json);
         }

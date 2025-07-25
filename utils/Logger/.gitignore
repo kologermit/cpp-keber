@@ -6,3 +6,5 @@
 !FileDailyLogger.hpp
 !StdOutLogger.cpp
 !StdOutLogger.hpp
+!JSONSTDOutLogger.hpp
+!JSONSTDOutLogger.cpp

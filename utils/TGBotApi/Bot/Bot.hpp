@@ -19,36 +19,34 @@ using httplib::Params;
 
 struct Bot : virtual InterfaceBot, User {
     
-    Bot(string_view);
+    Bot(string_view token);
 
-    bool can_join_groups() const noexcept override;
-    bool can_read_all_group_messages() const noexcept override;
-    bool supports_inline_queries() const noexcept override;
-    bool can_connect_to_business() const noexcept override;
-    bool has_main_web_app() const noexcept override;
-
-
-    ptrMessage edit_text(int chat_id, int message_id, string_view text) const override;
-    ptrMessage edit_caption(int chat_id, int message_id, string_view caption) const override;
-    bool delete_message(int chat_id, int message_id) const override;
-    void delete_webhook() const override;
-    void set_webhook(string_view) const override;
-
-    ptrMessage send_message(const SendMessageParameters& message_parameters) const override;
+    bool                         can_join_groups()                                                                                          const noexcept override;
+    bool                         can_read_all_group_messages()                                                                              const noexcept override;
+    bool                         supports_inline_queries()                                                                                  const noexcept override;
+    bool                         can_connect_to_business()                                                                                  const noexcept override;
+    bool                         has_main_web_app()                                                                                         const noexcept override;
+    shared_ptr<InterfaceMessage> send_message(const SendMessageParameters& message_parameters)                                                       const override;
+    shared_ptr<InterfaceMessage> edit_text(long long chat_id, long long message_id, string_view text)                                                const override;
+    shared_ptr<InterfaceMessage> edit_caption(long long chat_id, long long message_id, string_view caption)                                          const override;
+    bool                         delete_message(long long chat_id, long long message_id)                                                             const override;
+    bool                         delete_webhook()                                                                                                    const override;
+    bool                         set_webhook(string_view)                                                                                            const override;
+    bool                         answer_callback_query(string_view callback_query_id, optional_const_string text = nullopt, bool show_alert = false) const override;
+    bool                         check_secret_token(string_view secret_token)                                                               const noexcept override;
 
     private:
 
     explicit Bot(string_view, const json&);
-
     static const json _get_me_raw_json(string_view token);
 
     const_string _token;
-    const_string _secret;
-    bool _can_join_groups;
-    bool _can_read_all_group_messages;
-    bool _supports_inline_queries;
-    bool _can_connect_to_business;
-    bool _has_main_web_app;
+    const_string _secret_token;
+    bool         _can_join_groups;
+    bool         _can_read_all_group_messages;
+    bool         _supports_inline_queries;
+    bool         _can_connect_to_business;
+    bool         _has_main_web_app;
 };
 
 }

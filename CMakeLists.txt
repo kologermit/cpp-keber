@@ -37,9 +37,11 @@ set(
     ./utils/Env/Env.cpp
     ./utils/Logger/FileDailyLogger.cpp
     ./utils/Logger/InterfaceLogger.cpp
+    ./utils/Logger/JSONSTDOutLogger.cpp
     ./utils/Logger/StdOutLogger.cpp
     ./utils/Random/Random.cpp
     ./utils/TGBotApi/Bot/Bot.cpp
+    ./utils/TGBotApi/CallbackQuery/CallbackQuery.cpp
     ./utils/TGBotApi/Chat/Chat.cpp
     ./utils/TGBotApi/File/File.cpp
     ./utils/TGBotApi/Message/Keyboard/InlineButton.cpp

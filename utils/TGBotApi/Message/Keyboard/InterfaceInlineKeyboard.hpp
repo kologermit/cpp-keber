@@ -9,11 +9,8 @@ using std::shared_ptr;
 using std::vector;
 
 struct InterfaceInlineKeyboard : virtual InterfaceJSONEncode {
-    using Lane = vector<shared_ptr<InterfaceInlineButton> >;
-    using Buttons = vector<Lane>;
-    using ptrButtons = shared_ptr<Buttons>;
-    
-    virtual ptrButtons get_buttons() const noexcept = 0;
+
+    virtual shared_ptr<vector<vector<shared_ptr<InterfaceInlineButton> > > > get_buttons() const noexcept = 0;
 
 };
 

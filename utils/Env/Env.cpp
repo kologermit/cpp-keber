@@ -14,8 +14,8 @@ string Get(string_view variable, string_view _default) {
 
     const_c_string res = getenv(variable.data());
     if (res == nullptr) {
-        return const_string(_default);
+        return _default.data();
     }
-    return const_string(res);
+    return res;
 }
 }

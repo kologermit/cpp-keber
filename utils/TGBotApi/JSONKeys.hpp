@@ -10,6 +10,7 @@ constexpr const_c_string AUDIO_KEY                     = "audio";
 constexpr const_c_string CAN_CONNECT_TO_BUSINESS_KEY   = "can_connect_to_business";
 constexpr const_c_string CAN_JOIN_GROUPS_KEY           = "can_join_groups";
 constexpr const_c_string CALLBACK_QUERY_KEY            = "callback_query";
+constexpr const_c_string CALLBACK_QUERY_ID_KEY         = "callback_query_id";
 constexpr const_c_string MESSAGE_KEY                   = "message";
 constexpr const_c_string CAN_READ_ALL_GROUP_MESSAGES_KEY = "can_read_all_group_messages";
 constexpr const_c_string CAPTION_KEY                   = "caption";
@@ -33,7 +34,7 @@ constexpr const_c_string PHOTO_KEY                     = "photo";
 constexpr const_c_string REPLY_TO_MESSAGE_KEY          = "reply_to_message";
 constexpr const_c_string REPLY_TO_MESSAGE_ID_KEY       = "reply_to_message_id";
 constexpr const_c_string RESULT_KEY                    = "result";
-constexpr const_c_string SECRET_KEY                    = "secret";
+constexpr const_c_string SECRET_TOKEN_KEY              = "secret_token";
 constexpr const_c_string SUPPORTS_INLINE_QUERIES_KEY   = "supports_inline_queries";
 constexpr const_c_string TEXT_KEY                      = "text";
 constexpr const_c_string TYPE_KEY                      = "type";
@@ -50,7 +51,9 @@ constexpr const_c_string RESIZE_KEYBOARD_KEY           = "resize_keyboard";
 constexpr const_c_string REMOVE_KEYBOARD_KEY           = "remove_keyboard";
 constexpr const_c_string ONE_TIME_KEYBOARD_KEY         = "one_time_keyboard";
 constexpr const_c_string ALLOWED_UPDATES_KEY           = "allowed_updates";
-
-
+constexpr const_c_string DATA_KEY                      = "data";
+constexpr const_c_string SHOW_ALERT_KEY                = "show_alert";
+constexpr const_c_string TRUE_KEY                      = "true";
+constexpr const_c_string FALSE_KEY                     = "false";
 
 }

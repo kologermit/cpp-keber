@@ -7,13 +7,13 @@ namespace Utils::TGBotApi::Message::Keyboard {
 struct InlineKeyboard : virtual InterfaceInlineKeyboard {
 
     const_string get_json() const noexcept override;
-    ptrButtons get_buttons() const noexcept override;
+    shared_ptr<vector<vector<shared_ptr<InterfaceInlineButton> > > > get_buttons() const noexcept override;
 
-    InlineKeyboard(ptrButtons _buttons);
+    InlineKeyboard(const vector<vector<shared_ptr<InterfaceInlineButton> > >& _buttons);
 
     private:
 
-    ptrButtons _buttons;
+    shared_ptr<vector<vector<shared_ptr<InterfaceInlineButton> > > > _buttons;
 
 };
 

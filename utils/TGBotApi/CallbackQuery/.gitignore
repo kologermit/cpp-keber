@@ -1,0 +1,5 @@
+*
+!.gitignore
+!InterfaceCallbackQuery.hpp
+!CallbackQuery.hpp
+!CallbackQuery.cpp
