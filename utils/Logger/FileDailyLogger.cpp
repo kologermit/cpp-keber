@@ -1,6 +1,7 @@
 #include <spdlog/sinks/daily_file_sink.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <utils/Logger/FileDailyLogger.hpp>
+#include <map>
 
 namespace Utils::Logger {
 
@@ -28,9 +29,7 @@ void FileDailyLogger::debug(string_view event, string_view message) const {
 }
 
 FileDailyLogger::FileDailyLogger() {
-    const_string
-        dir = "./logs",
-        name = "main";
+    string dir = "./logs", name = "main";
     EnumLoggerLevel level = EnumLoggerLevel::DEBUG;
     _logger = daily_logger_mt(name, dir, 0, 0);
     _logger->sinks().push_back(make_shared<stdout_color_sink_mt>());
@@ -43,7 +42,7 @@ FileDailyLogger::FileDailyLogger() {
     }[level]);
 }
 
-const_string FileDailyLogger::get_text_from_message_and_event(string_view event, string_view message) const {
+string FileDailyLogger::get_text_from_message_and_event(string_view event, string_view message) const {
     return format(
         "[{}] -- {}",
         event,

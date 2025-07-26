@@ -7,7 +7,11 @@ namespace Utils::TGBotApi::Chat {
 using Utils::TGBotApi::User::InterfaceUser;
 
 enum EnumChatType {
-    PRIVATE
+    PRIVATE,
+    GROUP,
+    SUPERGROUP,
+    CHANNEL,
+    UNKNOWN
 };
 
 struct InterfaceChat : virtual InterfaceUser {

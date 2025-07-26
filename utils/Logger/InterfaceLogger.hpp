@@ -7,6 +7,7 @@ namespace Utils::Logger {
 
 using std::shared_ptr;
 using std::string_view;
+using std::unique_ptr;
 
 enum EnumLoggerLevel {
     DEBUG,
@@ -24,7 +25,7 @@ struct InterfaceLogger {
     ~InterfaceLogger() = default;
 };
 
-shared_ptr<InterfaceLogger> get_logger(InterfaceLogger* logger = nullptr);
+shared_ptr<InterfaceLogger> get_logger(unique_ptr<InterfaceLogger> logger = nullptr);
 
 
 }

@@ -7,7 +7,7 @@ namespace Utils::Random {
 using std::srand, std::rand, std::time;
 
 void init() {
-    std::srand(std::time(0));
+    std::srand((unsigned int)std::time(0));
 }
 
 int rand_int(int start, int end) {

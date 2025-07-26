@@ -7,7 +7,6 @@
 
 namespace Utils::TGBotApi::File {
 
-using Utils::Types::const_string;
 using fmt::format;
 using std::to_string;
 using std::runtime_error;
@@ -62,7 +61,7 @@ namespace std {
         return convert_map_result_check_file.at(result_check);
     };
 
-    std::string to_string(Utils::TGBotApi::File::EnumContentType content_type) {
+    string to_string(Utils::TGBotApi::File::EnumContentType content_type) {
 
         if (convert_map_content_type.find(content_type) == convert_map_content_type.end()) {
             return "UNKNOWN";

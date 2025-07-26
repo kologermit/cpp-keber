@@ -43,10 +43,7 @@ using Utils::TGBotApi::JSONKeys::CALLBACK_QUERY_ID_KEY;
 using Utils::TGBotApi::JSONKeys::REPLY_MARKUP_KEY;
 using Utils::TGBotApi::File::throw_if_not_correct_file;
 using httplib::Params;
-using std::make_shared;
-using std::make_pair;
-using std::to_string;
-using std::map;
+using std::to_string, std::map, std::move;
 
 Bot::Bot(string_view token, const json& json_bot):
     User(json_bot),
@@ -85,15 +82,15 @@ bool Bot::set_webhook(string_view webhook_url) const {
         EnumQueryMethod::POST,
         "setWebhook", 
         Params{
-            {URL_KEY, webhook_url.data()},
+            {URL_KEY, string(webhook_url)},
             {SECRET_TOKEN_KEY, _secret_token},
             {ALLOWED_UPDATES_KEY, json{MESSAGE_KEY, CALLBACK_QUERY_KEY}.dump()}
         }
     ).result; 
 }
 
-shared_ptr<InterfaceMessage> Bot::send_message(const SendMessageParameters& message_parameters) const {
-    const_string path = map<EnumContentType, const_string>{
+unique_ptr<InterfaceMessage> Bot::send_message(const SendMessageParameters& message_parameters) const {
+    string path = map<EnumContentType, string>{
         {EnumContentType::TEXT, "sendMessage"},
         {EnumContentType::DOCUMENT, "sendDocument"},
         {EnumContentType::VIDEO, "sendVidep"},
@@ -105,35 +102,35 @@ shared_ptr<InterfaceMessage> Bot::send_message(const SendMessageParameters& mess
     Query::Files files;
     params.insert({CHAT_ID_KEY, to_string(message_parameters.chat_id)});
     params.insert({PARSE_MODE_KEY, message_parameters.parse_mode});
-    if (message_parameters.text.has_value()) {
+    if (!message_parameters.text.empty()) {
         params.insert({
             (
                 message_parameters.content_type == EnumContentType::TEXT
                 ? TEXT_KEY
                 : CAPTION_KEY
             ),
-            *message_parameters.text
+            message_parameters.text
         });
     }
 
-    if (message_parameters.reply_message_id.has_value()) {
-        params.insert({REPLY_TO_MESSAGE_ID_KEY, to_string(*message_parameters.reply_message_id)});
+    if (message_parameters.reply_message_id != 0) {
+        params.insert({REPLY_TO_MESSAGE_ID_KEY, to_string(message_parameters.reply_message_id)});
     }
 
-    if (message_parameters.placeholder.has_value()) {
-        params.insert({PLACEHOLDER_KEY, *message_parameters.placeholder});
+    if (!message_parameters.placeholder.empty()) {
+        params.insert({PLACEHOLDER_KEY, message_parameters.placeholder});
     }
 
-    if (message_parameters.filepath.has_value() && message_parameters.content_type != EnumContentType::TEXT) {
+    if (!message_parameters.filepath.empty() && message_parameters.content_type != EnumContentType::TEXT) {
         files.push_back(Query::File{
-            .name = map<EnumContentType, const_string>{
+            .name = map<EnumContentType, string>{
                 {EnumContentType::DOCUMENT, DOCUMENT_KEY},
                 {EnumContentType::VIDEO, VIDEO_KEY},
                 {EnumContentType::PHOTO, PHOTO_KEY},
                 {EnumContentType::AUDIO, AUDIO_KEY},
             }[message_parameters.content_type],
-            .filepath = message_parameters.filepath.value(),
-            .filename = message_parameters.filename.value_or(message_parameters.filepath.value()),
+            .filepath = message_parameters.filepath,
+            .filename = message_parameters.filename.empty() ? message_parameters.filepath : message_parameters.filename,
             .content_type = DOCUMENT_KEY
         });
     }
@@ -146,38 +143,40 @@ shared_ptr<InterfaceMessage> Bot::send_message(const SendMessageParameters& mess
         params.insert({REPLY_MARKUP_KEY, message_parameters.reply_keyboard->get_json()});
     }
 
-    return Query(_token).query_parse_json<Message>(
+    return move(Query(_token).query_parse_json<Message>(
         EnumQueryMethod::POST,
         path,
         params,
-        nullopt,
+        {},
         files
-    ).result;
+    ).result);
 }
 
-shared_ptr<InterfaceMessage> Bot::edit_text(long long chat_id, long long message_id, string_view text) const {
-    return Query(_token).query_parse_json<Message>(
+unique_ptr<InterfaceMessage> Bot::edit_text(long long chat_id, long long message_id, string_view text) const {
+    return move(Query(_token).query_parse_json<Message>(
         EnumQueryMethod::POST,
         "editMessageText",
         Params{
             {CHAT_ID_KEY, to_string(chat_id)},
             {MESSAGE_ID_KEY, to_string(message_id)},
-            {TEXT_KEY, text.data()},
+            {TEXT_KEY, string(text)},
         }
-    ).result;
+    ).result);
 
 }
-shared_ptr<InterfaceMessage> Bot::edit_caption(long long chat_id, long long message_id, string_view caption) const {
-    return Query(_token).query_parse_json<Message>(
+
+unique_ptr<InterfaceMessage> Bot::edit_caption(long long chat_id, long long message_id, string_view caption) const {
+    return move(Query(_token).query_parse_json<Message>(
         EnumQueryMethod::POST,
         "editMessageCaption",
         Params{
             {CHAT_ID_KEY, to_string(chat_id)},
             {MESSAGE_ID_KEY, to_string(message_id)},
-            {CAPTION_KEY, caption.data()},
+            {CAPTION_KEY, string(caption)},
         }
-    ).result;
+    ).result);
 }
+
 bool Bot::delete_message(long long chat_id, long long message_id) const {
     return *Query(_token).query_parse_json<bool>(
         EnumQueryMethod::POST,
@@ -191,15 +190,15 @@ bool Bot::delete_message(long long chat_id, long long message_id) const {
 
 bool Bot::answer_callback_query(
     string_view callback_query_id, 
-    optional_const_string text,
+    string_view text,
     bool show_alert
 ) const {
     Params params{
-        {CALLBACK_QUERY_ID_KEY, callback_query_id.data()}
+        {CALLBACK_QUERY_ID_KEY, string(callback_query_id)}
     };
 
-    if (text.has_value()) {
-        params.insert({TEXT_KEY, text->data()});
+    if (!text.empty()) {
+        params.insert({TEXT_KEY, string(text)});
     }
 
     if (show_alert) {

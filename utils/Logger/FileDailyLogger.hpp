@@ -6,8 +6,8 @@
 
 namespace Utils::Logger {
 
-using Utils::Types::const_string;
 using spdlog::logger;
+using std::string;
 
 struct FileDailyLogger : InterfaceLogger {
     void info(string_view event, string_view message) const override;
@@ -18,7 +18,7 @@ struct FileDailyLogger : InterfaceLogger {
 
     private:
     shared_ptr<logger> _logger;
-    const_string get_text_from_message_and_event(string_view event, string_view message) const;
+    string get_text_from_message_and_event(string_view event, string_view message) const;
 };
 
 }

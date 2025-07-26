@@ -15,7 +15,7 @@ string generate_str() {
     char uuid_str[37];
     uuid_unparse(uuid, uuid_str);
 
-    #ifdef DEBUG_LOGGER
+    #ifdef NDEBUG
 
     get_logger()->debug("UUID::generate_str", uuid_str);
 

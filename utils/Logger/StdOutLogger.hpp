@@ -6,7 +6,7 @@
 namespace Utils::Logger {
 
 struct StdOutLogger : InterfaceLogger {
-    #ifdef DEBUG_LOGGER
+    #ifdef NDEBUG
     explicit StdOutLogger(const EnumLoggerLevel& level=EnumLoggerLevel::DEBUG);
     #else
     explicit StdOutLogger(const EnumLoggerLevel& level=EnumLoggerLevel::INFO);

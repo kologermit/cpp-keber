@@ -10,7 +10,6 @@
 namespace Utils::TGBotApi::Bot {
 
 using Utils::TGBotApi::User::User;
-using Utils::Types::optional_const_string;
 using nlohmann::json;
 using std::vector;
 using std::pair;
@@ -26,13 +25,13 @@ struct Bot : virtual InterfaceBot, User {
     bool                         supports_inline_queries()                                                                                  const noexcept override;
     bool                         can_connect_to_business()                                                                                  const noexcept override;
     bool                         has_main_web_app()                                                                                         const noexcept override;
-    shared_ptr<InterfaceMessage> send_message(const SendMessageParameters& message_parameters)                                                       const override;
-    shared_ptr<InterfaceMessage> edit_text(long long chat_id, long long message_id, string_view text)                                                const override;
-    shared_ptr<InterfaceMessage> edit_caption(long long chat_id, long long message_id, string_view caption)                                          const override;
+    unique_ptr<InterfaceMessage> send_message(const SendMessageParameters& message_parameters)                                                       const override;
+    unique_ptr<InterfaceMessage> edit_text(long long chat_id, long long message_id, string_view text)                                                const override;
+    unique_ptr<InterfaceMessage> edit_caption(long long chat_id, long long message_id, string_view caption)                                          const override;
     bool                         delete_message(long long chat_id, long long message_id)                                                             const override;
     bool                         delete_webhook()                                                                                                    const override;
     bool                         set_webhook(string_view)                                                                                            const override;
-    bool                         answer_callback_query(string_view callback_query_id, optional_const_string text = nullopt, bool show_alert = false) const override;
+    bool                         answer_callback_query(string_view callback_query_id, string_view text = "", bool show_alert = false) const override;
     bool                         check_secret_token(string_view secret_token)                                                               const noexcept override;
 
     private:
@@ -40,8 +39,8 @@ struct Bot : virtual InterfaceBot, User {
     explicit Bot(string_view, const json&);
     static const json _get_me_raw_json(string_view token);
 
-    const_string _token;
-    const_string _secret_token;
+    string _token;
+    string _secret_token;
     bool         _can_join_groups;
     bool         _can_read_all_group_messages;
     bool         _supports_inline_queries;

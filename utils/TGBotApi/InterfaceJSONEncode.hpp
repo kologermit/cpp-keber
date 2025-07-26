@@ -1,14 +1,14 @@
 #pragma once
 
-#include <utils/Types.hpp>
+#include <string>
 
 namespace Utils::TGBotApi::JSONEncode {
 
-using Utils::Types::const_string;
+using std::string;
 
 struct InterfaceJSONEncode {
 
-    virtual const_string get_json() const noexcept = 0;
+    virtual string get_json() const noexcept = 0;
 
 };
 

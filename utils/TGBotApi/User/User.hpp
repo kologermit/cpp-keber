@@ -1,8 +1,8 @@
 #pragma once
 
-#include <string_view>
-#include <nlohmann/json.hpp>
 #include <utils/TGBotApi/User/InterfaceUser.hpp>
+#include <nlohmann/json.hpp>
+#include <string_view>
 
 namespace Utils::TGBotApi::User {
 
@@ -14,20 +14,20 @@ struct User : virtual InterfaceUser {
     explicit User(
         long long id,
         string_view name, 
-        optional_const_string username = nullopt
+        string_view username = ""
     );
     explicit User(const json&);
 
     long long get_id() const noexcept override;
-    const_string get_name() const noexcept override;
-    optional_const_string get_username() const noexcept override;
+    string get_name() const noexcept override;
+    string get_username() const noexcept override;
 
     
     private:
 
 
     long long _id;
-    const_string _name;
-    optional_const_string _username;
+    string _name;
+    string _username;
 };
 }

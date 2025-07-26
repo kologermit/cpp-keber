@@ -3,7 +3,9 @@
         "description": "Build Conan source files",
         "scripts": [
             "./venv/bin/conan profile detect --force",
-            "./venv/bin/conan install . --build missing"
+            "mkdir -p build",
+            "cd build && ../venv/bin/conan install .. --build missing -s build_type=Release && cd ..",
+            "cd build && ../venv/bin/conan install .. --build missing -s build_type=Debug && cd .."
         ]
     }
 }

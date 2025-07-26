@@ -7,18 +7,15 @@ namespace Utils::TGBotApi::CallbackQuery {
 
 using Utils::TGBotApi::Message::InterfaceMessage;
 using Utils::TGBotApi::User::InterfaceUser;
-using Utils::Types::const_string;
-using std::shared_ptr;
+using std::unique_ptr, std::string;
 
 struct InterfaceCallbackQuery {
 
-    virtual const_string                 get_id()      const noexcept = 0;
-    virtual shared_ptr<InterfaceUser>    get_from()    const noexcept = 0;
-    virtual shared_ptr<InterfaceMessage> get_message() const noexcept = 0;
-    virtual const_string                 get_data()    const noexcept = 0;
+    virtual string                  get_id()      const noexcept = 0;
+    virtual string                  get_data()    const noexcept = 0;
+    virtual const InterfaceUser*    get_from()    const noexcept = 0;
+    virtual const InterfaceMessage* get_message() const noexcept = 0;
 
 };
-
-using ptrCallbackQuery = std::shared_ptr<InterfaceCallbackQuery>;
 
 }

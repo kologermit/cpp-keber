@@ -25,6 +25,7 @@ constexpr const_c_string FILE_ID_KEY                   = "file_id";
 constexpr const_c_string FILE_NAME_KEY                 = "file_name";
 constexpr const_c_string FILE_SIZE_KEY                 = "file_size";
 constexpr const_c_string FIRST_NAME_KEY                = "first_name";
+constexpr const_c_string LAST_NAME_KEY                 = "last_name";
 constexpr const_c_string FROM_KEY                      = "from";
 constexpr const_c_string HAS_MAIN_WEB_APP_KEY          = "has_main_web_app";
 constexpr const_c_string ID_KEY                        = "id";

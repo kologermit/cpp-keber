@@ -1,30 +1,31 @@
 #pragma once
 
 #include <utils/TGBotApi/Message/Keyboard/InterfaceInlineButton.hpp>
+#include <string_view>
 
 namespace Utils::TGBotApi::Message::Keyboard {
 
 using std::string_view;
-using std::nullopt;
+using std::string;
 
 struct InlineButton : virtual InterfaceInlineButton {
 
-    const_string get_json() const noexcept override;
-    const_string get_text() const noexcept override;
-    optional_const_string get_url() const noexcept override;
-    optional_const_string get_callback_data() const noexcept override;
+    string get_json() const noexcept override;
+    string get_text() const noexcept override;
+    string get_url() const noexcept override;
+    string get_callback_data() const noexcept override;
 
     InlineButton(
         string_view text,
-        optional_const_string url = nullopt,
-        optional_const_string callback_data = nullopt
+        string_view url = "",
+        string_view callback_data = ""
     );
 
     private:
 
-    const_string _text;
-    optional_const_string _url;
-    optional_const_string _callback_data;
+    string _text;
+    string _url;
+    string _callback_data;
 };
 
 }

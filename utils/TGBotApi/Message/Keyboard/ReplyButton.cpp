@@ -9,11 +9,11 @@ using Utils::TGBotApi::JSONKeys::TEXT_KEY;
 
 ReplyButton::ReplyButton(string_view text): _text(text) {}
 
-const_string ReplyButton::get_text() const noexcept {
+string ReplyButton::get_text() const noexcept {
     return _text;
 }
 
-const_string ReplyButton::get_json() const noexcept {
+string ReplyButton::get_json() const noexcept {
     return json{
         {TEXT_KEY, _text}
     }.dump();

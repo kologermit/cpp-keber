@@ -6,7 +6,7 @@ namespace Utils::Logger {
 
 struct JSONSTDOutLogger : InterfaceLogger {
 
-    #ifdef DEBUG_LOGGER
+    #ifdef NDEBUG
     explicit JSONSTDOutLogger(const EnumLoggerLevel& level=EnumLoggerLevel::DEBUG);
     #else
     explicit JSONSTDOutLogger(const EnumLoggerLevel& level=EnumLoggerLevel::INFO);
