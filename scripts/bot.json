@@ -1,43 +1,46 @@
 {
-    "build_executable": {
-        "description": "Build executable ./build/BOT",
+    "build_debug": {
+        "description": "Build debug bot",
+        "working_dir": "./build/Debug",
         "scripts": [
-            "cmake --build ./build --target BOT",
-            "chmod 777 ./build/BOT || true"
+            "cmake ../.. -B . -DBUILD_BOT=ON -DCMAKE_BUILD_TYPE=Debug",
+            "cmake --build . --target BOT",
+            "chmod 777 BOT || true"
         ]
     },
     "build_release": {
-        "description": "Build bot",
+        "description": "Build release bot",
+        "working_dir": "./build/Release",
         "scripts": [
-            "cmake -B ./build -DBUILD_BOT=ON -DCMAKE_BUILD_TYPE=Release",
-            "@@ bot build_executable"
+            "cmake ../.. -B . -DBUILD_BOT=ON -DCMAKE_BUILD_TYPE=Release",
+            "cmake --build . --target BOT",
+            "chmod 777 BOT || true"
         ]
     },
-    "build_debug": {
-        "description": "Build bot debug",
+    "run_debug": {
+        "description": "Run ./build/Debug/BOT",
         "scripts": [
-            "cmake -B ./build -DBUILD_BOT=ON -DCMAKE_BUILD_TYPE=Debug",
-            "@@ bot build_executable"
+            "./build/Debug/BOT"
         ]
     },
-    "run": {
-        "description": "Run ./build/BOT",
+    "run_release": {
+        "description": "Run ./build/Release/BOT",
         "scripts": [
-            "./build/BOT"
-        ]
-    },
-    "build_and_run": {
-        "description": "Build bot and run ./build/BOT",
-        "scripts": [
-            "@@ bot build_release",
-            "@@ bot run"
+            "./build/Release/BOT"
         ]
     },
     "build_debug_and_run": {
-        "description": "Build debug bot and run ./build/BOT",
+        "description": "Build bot and run ./build/Debug/BOT",
         "scripts": [
             "@@ bot build_debug",
-            "@@ bot run"
+            "@@ bot run_debug"
+        ]
+    },
+    "build_release_and_run": {
+        "description": "Build bot and run ./build/Release/BOT",
+        "scripts": [
+            "@@ bot build_release",
+            "@@ bot run_release"
         ]
     }
 }

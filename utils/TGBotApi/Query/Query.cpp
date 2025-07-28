@@ -5,7 +5,7 @@
 #include <fstream>
 #include <sstream>
 
-#ifdef NDEBUG
+#ifndef NDEBUG
 #include <utils/Logger/InterfaceLogger.hpp>
 #endif
 
@@ -17,7 +17,7 @@ using httplib::Result, httplib::Error;
 using httplib::MultipartFormDataItems;
 using httplib::MultipartFormData;
 
-#ifdef NDEBUG
+#ifndef NDEBUG
 using Utils::Logger::get_logger;
 #endif
 
@@ -51,8 +51,7 @@ string Query::query(
     Result result;
     string full_path = _get_path(path);
 
-    #ifdef NDEBUG
-
+    #ifndef NDEBUG
     get_logger()->debug("Query::query::method", (
         method == EnumQueryMethod::GET ? "GET"
         : method == EnumQueryMethod::POST ? "POST"
@@ -78,8 +77,6 @@ string Query::query(
             file.content_type
         ));
     }
-
-
     #endif
 
     httplib::Client cli("https://api.telegram.org");
@@ -115,10 +112,8 @@ string Query::query(
         throw runtime_error(to_string(result.error()));
     }
 
-    #ifdef NDEBUG
-
+    #ifndef NDEBUG
     get_logger()->debug("Query::query::result->body", result->body);
-
     #endif
 
     return result->body;

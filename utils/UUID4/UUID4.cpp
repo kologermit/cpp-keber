@@ -1,12 +1,18 @@
 #include <utils/UUID4/UUID4.hpp>
-#include <utils/Logger/InterfaceLogger.hpp>
 #include <uuid/uuid.h>
 #include <string>
 
+#ifndef NDEBUG
+#include <utils/Logger/InterfaceLogger.hpp>
+#endif
+
 namespace Utils::UUID4 {
 
-using Utils::Logger::get_logger;
 using std::string;
+
+#ifndef NDEBUG
+using Utils::Logger::get_logger;
+#endif
 
 string generate_str() {
     uuid_t uuid;
@@ -15,10 +21,8 @@ string generate_str() {
     char uuid_str[37];
     uuid_unparse(uuid, uuid_str);
 
-    #ifdef NDEBUG
-
+    #ifndef NDEBUG
     get_logger()->debug("UUID::generate_str", uuid_str);
-
     #endif
     
     return string(uuid_str);

@@ -1,14 +1,35 @@
 cmake_minimum_required(VERSION 3.15)
-project(CPP-KEBER)
+project(CPP-KEBER CXX)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_EXTENSIONS ON)
 set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
-set(CMAKE_BUILD_TYPE "Release")
-set(CMAKE_SHARED_LINKER_FLAGS "-static -static-libgcc -static-libstdc++")
+set(CMAKE_SHARED_LINKER_FLAGS "-static -static-libgcc -static-libstdc++ -Wl,--no-warn-rwx-segments")
+set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++ -static -Wl,--as-needed -Wl,--no-warn-rwx-segments")
 set(CMAKE_MODULE_PATH "${CMAKE_BINARY_DIR};${CMAKE_MODULE_PATH};./bot;./utils;.")
+set(BUILD_SHARED_LIBS OFF)
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DNDEBUG")
 
-include(./build/Release/generators/conan_toolchain.cmake)
+include(./build/${CMAKE_BUILD_TYPE}/generators/conan_toolchain.cmake)
+
+add_compile_options(
+    -std=c++20 
+    -Wall 
+    -Wextra 
+    -pedantic 
+    -Werror 
+    -Wconversion
+    -Wno-error=deprecated-declarations
+    -Wno-unused-command-line-argument
+)
+
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    add_compile_options(-g3 -O0 -D_GLIBCXX_DEBUG)
+    message(STATUS "Debug mode enabled")
+else()
+    add_compile_options(-O3 -DNDEBUG -flto=auto)
+    message(STATUS "Release mode enabled")
+endif()
 
 include_directories(
     .
@@ -22,6 +43,9 @@ find_package(Sqlpp11 REQUIRED)
 find_package(spdlog REQUIRED)
 find_package(libuuid REQUIRED)
 find_package(httplib REQUIRED)
+find_package(OpenSSL REQUIRED)
+
+set(OPENSSL_USE_STATIC_LIBS TRUE)
 
 set(ALL_LINK_LIBRARIES 
     libuuid::libuuid
@@ -30,40 +54,14 @@ set(ALL_LINK_LIBRARIES
     fmt::fmt
     httplib::httplib
     nlohmann_json::nlohmann_json
+    OpenSSL::SSL
+    OpenSSL::Crypto
+    -pthread
+    -ldl
+    -lresolv
 )
 
-set(
-    UTILS_RELEASES
-    ./utils/Env/Env.cpp
-    ./utils/Logger/FileDailyLogger.cpp
-    ./utils/Logger/InterfaceLogger.cpp
-    ./utils/Logger/JSONSTDOutLogger.cpp
-    ./utils/Logger/StdOutLogger.cpp
-    ./utils/Random/Random.cpp
-    ./utils/TGBotApi/Bot/Bot.cpp
-    ./utils/TGBotApi/CallbackQuery/CallbackQuery.cpp
-    ./utils/TGBotApi/Chat/Chat.cpp
-    ./utils/TGBotApi/File/File.cpp
-    ./utils/TGBotApi/Message/Keyboard/InlineButton.cpp
-    ./utils/TGBotApi/Message/Keyboard/InlineKeyboard.cpp
-    ./utils/TGBotApi/Message/Keyboard/ReplyButton.cpp
-    ./utils/TGBotApi/Message/Keyboard/ReplyKeyboard.cpp
-    ./utils/TGBotApi/Message/Message.cpp
-    ./utils/TGBotApi/Query/Query.cpp
-    ./utils/TGBotApi/User/User.cpp
-    ./utils/UUID4/UUID4.cpp
-)
-
-add_library(UTILS_LIB STATIC ${UTILS_RELEASES})
-target_link_libraries(UTILS_LIB ${ALL_LINK_LIBRARIES})
-target_include_directories(UTILS_LIB PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-
-
-option(DEBUG_ARGS "Build debug" OFF)
-if (DEBUG_ARGS) 
-    add_compile_definitions(DEBUG_LOGGER=1)
-    add_compile_options(-g3 -O0)
-endif()
+add_subdirectory(utils)
 
 option(BUILD_BOT "Build bot" OFF)
 if (BUILD_BOT)

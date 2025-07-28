@@ -13,6 +13,7 @@ PROCESS_ARG_WITH_SPACE = f' {PROCESS_ARG} '
 PROCESS = argv.count(PROCESS_ARG)
 DESCRIPTION_KEY = 'description'
 SCRIPTS_KEY = 'scripts'
+WORKING_DIR_KEY = 'working_dir'
 
 COMMAND_KEY_DATA_IS_NOT_DICT_ERROR = f'File: {{file}}. Key: {{key}}. Key \'{SCRIPTS_KEY}\' not found'
 JSON_DECODE_ERROR = 'Cannot json decode file {file}'
@@ -86,11 +87,13 @@ class Script:
     __action__: tuple[str]
     __scripts__: tuple[str]
     __description__: str
+    __working_dir__: str
 
-    def __init__(self, action: tuple[str], scripts: tuple[str], description: str = EMPTY_STR):
+    def __init__(self, action: tuple[str], scripts: tuple[str], working_dir: str = "", description: str = EMPTY_STR):
         self.__action__     = deepcopy(action)
         self.__scripts__   = deepcopy(scripts)
         self.__description__= deepcopy(description)
+        self.__working_dir__ = deepcopy(working_dir)
 
     def get_action(self) -> tuple[str]:
         return self.__action__
@@ -100,6 +103,9 @@ class Script:
     
     def get_description(self) -> str:
         return self.__description__
+
+    def get_working_dir(self) -> str:
+        return self.__working_dir__
 
 def main() -> int:
     load_env_file()
@@ -158,6 +164,7 @@ def main() -> int:
             scripts[action] = Script(
                 action=action, 
                 scripts=tuple(map(str, value[SCRIPTS_KEY])),
+                working_dir=str(value.get(WORKING_DIR_KEY, path.curdir)),
                 description=str(value.get(DESCRIPTION_KEY, EMPTY_STR))
             )
     
@@ -185,7 +192,7 @@ def main() -> int:
                 final_script\
                     .replace(USAGE_COMMAND, USAGE_COMMAND+PROCESS_ARG_WITH_SPACE*(PROCESS+1)), 
                 shell=True, 
-                cwd=path.curdir
+                cwd=script.get_working_dir()
             )
         except KeyboardInterrupt:
             print(KEYBOARD_INTERRUPT_MSG)

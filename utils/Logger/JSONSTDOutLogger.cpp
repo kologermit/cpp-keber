@@ -47,7 +47,7 @@ void print_event(ostream& stream, string_view level, string_view event, string_v
         json_data[MESSAGE_KEY] = string(message);
     }
     string json_str = json_data.dump(1);
-    // json_str.erase(remove(json_str.begin(), json_str.end(), '\n'), json_str.end());
+    json_str.erase(remove(json_str.begin(), json_str.end(), '\n'), json_str.end());
     stream << json_str << endl;
 }
 

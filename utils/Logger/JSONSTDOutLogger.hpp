@@ -6,11 +6,13 @@ namespace Utils::Logger {
 
 struct JSONSTDOutLogger : InterfaceLogger {
 
-    #ifdef NDEBUG
-    explicit JSONSTDOutLogger(const EnumLoggerLevel& level=EnumLoggerLevel::DEBUG);
-    #else
-    explicit JSONSTDOutLogger(const EnumLoggerLevel& level=EnumLoggerLevel::INFO);
-    #endif
+    explicit JSONSTDOutLogger(const EnumLoggerLevel& level=
+        #ifndef NDEBUG
+        EnumLoggerLevel::DEBUG
+        #else
+        EnumLoggerLevel::INFO
+        #endif
+    );
 
     void info(string_view event, string_view message) const override;
     void warning(string_view event, string_view message) const override;

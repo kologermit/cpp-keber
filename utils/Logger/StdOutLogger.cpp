@@ -8,6 +8,8 @@ using std::cout, std::cerr, std::endl;
 StdOutLogger::StdOutLogger(const EnumLoggerLevel& level):
 _level(level)
 {}
+
+
 void StdOutLogger::debug(string_view event, string_view message) const {
     if (_level <= EnumLoggerLevel::DEBUG) {
         cout << "[DEBUG] [" << event << "] -- " << message << endl;

@@ -6,3 +6,5 @@
 !CMakeLists.txt
 !Middlewares
 !Program.cpp
+!logger.cpp
+!congig.cpp
