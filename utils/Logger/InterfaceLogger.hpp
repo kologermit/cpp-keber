@@ -11,7 +11,6 @@ using std::shared_ptr;
 using std::string_view;
 using std::unique_ptr;
 using std::exception;
-using Utils::Types::const_string;
 using Utils::Types::const_c_string;
 
 enum EnumLoggerLevel {

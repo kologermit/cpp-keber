@@ -47,32 +47,28 @@ find_package(OpenSSL REQUIRED)
 
 set(OPENSSL_USE_STATIC_LIBS TRUE)
 
-set(ALL_LINK_LIBRARIES 
-    libuuid::libuuid
-    sqlpp11::sqlpp11
-    spdlog::spdlog
-    fmt::fmt
-    httplib::httplib
-    nlohmann_json::nlohmann_json
-    OpenSSL::SSL
-    OpenSSL::Crypto
-    -pthread
-    -ldl
-    -lresolv
-)
+# set(ALL_LINK_LIBRARIES 
+#     libuuid::libuuid
+#     sqlpp11::sqlpp11
+#     spdlog::spdlog
+#     fmt::fmt
+#     httplib::httplib
+#     nlohmann_json::nlohmann_json
+#     OpenSSL::SSL
+#     OpenSSL::Crypto
+#     -pthread
+#     -ldl
+#     -lresolv
+# )
 
 add_subdirectory(utils)
 
 option(BUILD_BOT "Build bot" OFF)
 if (BUILD_BOT)
-    add_executable(
-        BOT 
-        ./bot/main.cpp
-    )
+    add_subdirectory(bot)
     target_link_libraries(
         BOT
         UTILS_LIB
-        ${ALL_LINK_LIBRARIES}
     )
 endif()
 

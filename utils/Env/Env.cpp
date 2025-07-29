@@ -26,7 +26,7 @@ string Get(string_view variable, string_view _default) {
         return string(_default);
     }
     #ifndef NDEBUG
-    get_logger()->debug("Env::Get::"+string(res), _default);
+    get_logger()->debug("Env::Get::"+string(variable), res);
     #endif
     return string(res);
 }

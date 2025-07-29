@@ -5,7 +5,7 @@
         "scripts": [
             "cmake ../.. -B . -DBUILD_BOT=ON -DCMAKE_BUILD_TYPE=Debug",
             "cmake --build . --target BOT",
-            "chmod 777 BOT || true"
+            "chmod 777 bot/BOT || true"
         ]
     },
     "build_release": {
@@ -14,19 +14,19 @@
         "scripts": [
             "cmake ../.. -B . -DBUILD_BOT=ON -DCMAKE_BUILD_TYPE=Release",
             "cmake --build . --target BOT",
-            "chmod 777 BOT || true"
+            "chmod 777 bot/BOT || true"
         ]
     },
     "run_debug": {
         "description": "Run ./build/Debug/BOT",
         "scripts": [
-            "./build/Debug/BOT"
+            "./build/Debug/bot/BOT"
         ]
     },
     "run_release": {
         "description": "Run ./build/Release/BOT",
         "scripts": [
-            "./build/Release/BOT"
+            "./build/Release/bot/BOT"
         ]
     },
     "build_debug_and_run": {

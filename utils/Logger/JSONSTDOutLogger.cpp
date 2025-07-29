@@ -17,32 +17,13 @@ constexpr const_c_string LEVEL_KEY = "level";
 constexpr const_c_string MESSAGE_KEY = "message";
 constexpr const_c_string EVENT_KEY = "event";
 
-struct TryParseResult {
-    json json_result{};
-    bool ok = false;
-};
-
-TryParseResult try_parse(string_view json_text) {
-    try {
-        return TryParseResult{
-            .json_result = json::parse(json_text),
-            .ok = true
-        };
-    } catch (const parse_error& e) {
-        return TryParseResult {
-            .ok = false
-        };
-    }
-}
-
 void print_event(ostream& stream, string_view level, string_view event, string_view message) {
     json json_data{
-            {LEVEL_KEY, string(level)}, 
-            {EVENT_KEY, string(event)}
-        };
-    auto parse_result = try_parse(message);
-    if (parse_result.ok) {
-        json_data[MESSAGE_KEY] = parse_result.json_result;
+        {LEVEL_KEY, string(level)}, 
+        {EVENT_KEY, string(event)}
+    };
+    if (json::accept(message)) {
+        json_data[MESSAGE_KEY] = json::parse(message);
     } else {
         json_data[MESSAGE_KEY] = string(message);
     }

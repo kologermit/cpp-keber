@@ -23,6 +23,7 @@ ROOT_IS_NOT_DICT_ERROR = 'File: {file}. Root is not dict!'
 SCRIPT_NOT_FOUND_ERROR = 'Script \'{script}\' not found!'
 VALUE_IS_NOT_TYPE_ERROR = 'File: {file}. Key: {key}. Key {key2}. Type is not {type}'
 VALUE_TYPE_IS_NOT_DICT_ERROR = 'File: {file}. Key: {key}. Type is not dict!'
+WORKING_DIR_NOT_FOUND_ERROR = 'Working dir {dir} not found!'
 
 FILE_BASENAME = path.basename(__file__)
 USAGE_COMMAND = f'python3 {FILE_BASENAME}'
@@ -197,6 +198,9 @@ def main() -> int:
         except KeyboardInterrupt:
             print(KEYBOARD_INTERRUPT_MSG)
             return SUCCESS_RETURN_CODE
+        except FileNotFoundError:
+            print(dump_message(WORKING_DIR_KEY, dir=script.get_working_dir()))
+            return ERROR_RETURN_CODE
         if result.returncode != 0:
             return result.returncode
 

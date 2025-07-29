@@ -1,0 +1,6 @@
+*
+!.gitignore
+!InterfaceConfig.hpp
+!InterfaceConfig.cpp
+!Config.hpp
+!Config.cpp

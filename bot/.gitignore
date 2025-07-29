@@ -2,9 +2,4 @@
 !.gitignore
 !CMakeLists.txt
 !main.cpp
-!conanfile.txt
-!CMakeLists.txt
-!Middlewares
-!Program.cpp
-!logger.cpp
-!congig.cpp
+!src
