@@ -12,20 +12,20 @@ using std::make_shared;
 using std::map;
 using fmt::format;
 
-void FileDailyLogger::info(string_view file, int line, string_view event, string_view message) const {
-    _logger->info(get_text_from_message_and_event(file, line, event, message));
+void FileDailyLogger::info(string_view event, string_view message, string_view file, int line) const {
+    _logger->info(get_text_from_message_and_event(event, message, file, line));
 }
 
-void FileDailyLogger::warning(string_view file, int line, string_view event, string_view message) const {
-    _logger->warn(get_text_from_message_and_event(file, line, event, message));
+void FileDailyLogger::warning(string_view event, string_view message, string_view file, int line) const {
+    _logger->warn(get_text_from_message_and_event(event, message, file, line));
 }
 
-void FileDailyLogger::error(string_view file, int line, string_view event, string_view message) const {
-    _logger->error(get_text_from_message_and_event(file, line, event, message));
+void FileDailyLogger::error(string_view event, string_view message, string_view file, int line) const {
+    _logger->error(get_text_from_message_and_event(event, message, file, line));
 }
 
-void FileDailyLogger::debug(string_view file, int line, string_view event, string_view message) const {
-    _logger->debug(get_text_from_message_and_event(file, line, event, message));
+void FileDailyLogger::debug(string_view event, string_view message, string_view file, int line) const {
+    _logger->debug(get_text_from_message_and_event(event, message, file, line));
 }
 
 FileDailyLogger::FileDailyLogger(string_view dir) {
@@ -43,12 +43,20 @@ FileDailyLogger::FileDailyLogger(string_view dir) {
 }
 
 string FileDailyLogger::get_text_from_message_and_event(
-    string_view file, int line,
-    string_view event, string_view message) const {
+    string_view event, string_view message,
+    string_view file, int line
+) const {
+    if (!file.empty() && line > 0) {
+        return format(
+            "[{}::{}:{}] -- {}",
+            event,
+            file,
+            line,
+            message
+        );
+    }
     return format(
-        "[{}:{}:{}] -- {}",
-        get_filename(file),
-        line,
+        "[{}] -- {}",
         event,
         message
     );

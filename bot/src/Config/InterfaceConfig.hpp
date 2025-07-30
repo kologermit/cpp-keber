@@ -47,6 +47,7 @@ struct NotInitializedConfigException : exception {
 
 struct InterfaceConfig {
 
+    virtual bool                     is_help()              const noexcept = 0;
     virtual const string&            get_bot_token()        const noexcept = 0;
     virtual const vector<long long>& get_admins()           const noexcept = 0;
     virtual const string&            get_webhook_url()      const noexcept = 0;

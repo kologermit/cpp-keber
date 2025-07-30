@@ -17,10 +17,10 @@ struct JSONSTDOutLogger : InterfaceLogger {
         #endif
     );
 
-    void info(string_view file, int line, string_view event, string_view message) const override;
-    void warning(string_view file, int line, string_view event, string_view message) const override;
-    void error(string_view file, int line, string_view event, string_view message) const override;
-    void debug(string_view file, int line, string_view event, string_view message) const override;
+    void info(string_view event, string_view message, string_view file, int line) const override;
+    void warning(string_view event, string_view message, string_view file, int line) const override;
+    void error(string_view event, string_view message, string_view file, int line) const override;
+    void debug(string_view event, string_view message, string_view file, int line) const override;
 
     private:
     const EnumLoggerLevel _level;

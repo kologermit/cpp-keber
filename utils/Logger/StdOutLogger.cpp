@@ -10,31 +10,38 @@ _level(level)
 {}
 
 void StdOutLogger::print_event(ostream& out, string_view file, int line, string_view level, string_view event, string_view message) const {
-    out 
-        << "[" << get_filename(file)
-        << "::" << line 
-        << "::" << level 
-        << "] [" << event 
-        << "] -- " << message << endl;
+    if (!file.empty() && line > 0) {
+        out 
+            << "[" << level
+            << "::" << file
+            << ":" << line
+            << "] [" << event 
+            << "] -- " << message << endl;
+    } else {
+        out 
+            << "[" << level << "] "
+            << "[" << event << "] "
+            << "-- " << message << endl;
+    }
 }
 
 
-void StdOutLogger::debug(string_view file, int line, string_view event, string_view message) const {
+void StdOutLogger::debug(string_view event, string_view message, string_view file, int line) const {
     if (_level <= EnumLoggerLevel::DEBUG) {
         print_event(cout, file, line, "DEBUG", event, message);
     }
 }
-void StdOutLogger::info(string_view file, int line, string_view event, string_view message) const {
+void StdOutLogger::info(string_view event, string_view message, string_view file, int line) const {
     if (_level <= EnumLoggerLevel::INFO) {
         print_event(cout, file, line, "INFO", event, message);
     }
 }
-void StdOutLogger::warning(string_view file, int line, string_view event, string_view message) const {
+void StdOutLogger::warning(string_view event, string_view message, string_view file, int line) const {
     if (_level <= EnumLoggerLevel::WARNING) {
         print_event(cout, file, line, "WARNING", event, message);
     }
 }
-void StdOutLogger::error(string_view file, int line, string_view event, string_view message) const {
+void StdOutLogger::error(string_view event, string_view message, string_view file, int line) const {
     if (_level <= EnumLoggerLevel::ERROR) {
         print_event(clog, file, line, "DEBUG", event, message);
     }

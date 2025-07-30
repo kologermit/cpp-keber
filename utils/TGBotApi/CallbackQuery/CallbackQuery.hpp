@@ -8,7 +8,7 @@ namespace Utils::TGBotApi::CallbackQuery {
 using std::unique_ptr;
 using nlohmann::json;
 
-struct CallbackQuery : virtual InterfaceCallbackQuery {
+struct CallbackQuery : InterfaceCallbackQuery {
 
     string                  get_id()      const noexcept override;
     string                  get_data()    const noexcept override;

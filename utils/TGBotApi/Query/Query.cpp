@@ -12,6 +12,7 @@
 namespace Utils::TGBotApi::Query {
 
 using std::ios, std::ifstream, std::streamsize;
+using std::to_string;
 using fmt::format;
 using httplib::Result, httplib::Error;
 using httplib::MultipartFormDataItems;
@@ -52,30 +53,30 @@ string Query::query(
     string full_path = _get_path(path);
 
     #ifndef NDEBUG
-    get_logger()->debug(__FILE__, __LINE__, "Query::query::method", (
+    get_logger()->debug("Method", (
         method == EnumQueryMethod::GET ? "GET"
         : method == EnumQueryMethod::POST ? "POST"
         : "UNKNOWN"
-    ));
-    get_logger()->debug(__FILE__, __LINE__, "Query::query::path", path);
-    get_logger()->debug(__FILE__, __LINE__, "Query::query::full_path", full_path);
-    get_logger()->debug(__FILE__, __LINE__, "Query::query::params_is_empty", std::to_string(params.empty()));
+    ), __FILE__, __LINE__);
+    get_logger()->debug("Path", path, __FILE__, __LINE__);
+    get_logger()->debug("Full_path", full_path, __FILE__, __LINE__);
+    get_logger()->debug("Params_is_empty", to_string(params.empty()), __FILE__, __LINE__);
     for (auto param : params) {
-        get_logger()->debug(__FILE__, __LINE__, "Query::query::params", param.first + " : " + param.second);
+        get_logger()->debug("Params", param.first + " : " + param.second, __FILE__, __LINE__);
     }
-    get_logger()->debug(__FILE__, __LINE__, "Query::query::headers_is_empty", std::to_string(headers.empty()));
+    get_logger()->debug("Headers_is_empty", to_string(headers.empty()), __FILE__, __LINE__);
     for (auto header : headers) {
-        get_logger()->debug(__FILE__, __LINE__, "Query::query::headers", header.first + " : " + header.second);
+        get_logger()->debug("Headers", header.first + " : " + header.second, __FILE__, __LINE__);
     }
-    get_logger()->debug(__FILE__, __LINE__, "Query::query::files::is_empty", std::to_string(files.empty()));
+    get_logger()->debug("Files_is_empty", to_string(files.empty()), __FILE__, __LINE__);
     for (auto file : files) {
-        get_logger()->debug(__FILE__, __LINE__, "Query::query::files", format(
+        get_logger()->debug("Files", format(
             "name={}; filename={}; filepath={}; content_type={}",
             file.name,
             file.filename,
             file.filepath,
             file.content_type
-        ));
+        ), __FILE__, __LINE__);
     }
     #endif
 
@@ -113,7 +114,7 @@ string Query::query(
     }
 
     #ifndef NDEBUG
-    get_logger()->debug(__FILE__, __LINE__, "Query::query::result->body", result->body);
+    get_logger()->debug("Result->body", result->body, __FILE__, __LINE__);
     #endif
 
     return result->body;

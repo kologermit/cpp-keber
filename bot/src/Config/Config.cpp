@@ -5,6 +5,7 @@
 #include <filesystem>
 #include <charconv>
 #include <map>
+#include <algorithm>
 
 #ifndef NDEBUG
 #include <utils/Logger/InterfaceLogger.hpp>
@@ -22,6 +23,8 @@ using std::ios;
 using std::from_chars;
 using std::errc;
 using std::map;
+using std::find_if;
+using std::find;
 
 #ifndef NDEBUG
 using Utils::Logger::get_logger;
@@ -33,6 +36,10 @@ void throw_if_empty_config(string_view str, string_view config_name) {
     if (str.empty()) {
         throw ConfigNotFoundException(config_name);
     }
+}
+
+bool Config::is_help() const noexcept {
+    return _is_help;
 }
 
 const string& Config::get_bot_token() const noexcept {
@@ -101,6 +108,12 @@ const string& Config::get_shared_path() const noexcept {
 
 Config::Config(int argc, const char* argv[]) {
 
+    #ifndef NDEBUG
+    for (int i = 0; i < argc; i++) {
+        get_logger()->debug("ARGV", argv[i], __FILE__, __LINE__);
+    }
+    #endif
+
     string ENV_FILE_KEY = "--env-file";
     string json_file_name;
     for (int i = 0; i < argc && json_file_name.empty(); i++) {
@@ -134,7 +147,7 @@ Config::Config(int argc, const char* argv[]) {
         }
         json_env = json::parse(read);
         #ifndef NDEBUG
-        get_logger()->debug(__FILE__, __LINE__, "Bot::Config::json_parse", json_env.dump());
+        get_logger()->debug("json_parse", json_env.dump(), __FILE__, __LINE__);
         #endif
     }
 
@@ -145,6 +158,15 @@ Config::Config(int argc, const char* argv[]) {
         bool is_throw = true;
     };
 
+    ;
+
+    if ((_is_help = find_if(argv, argv + argc, [](const char* argument) {
+        static const vector<string> HELP_KEYS{"--help", "help"};
+        return find(HELP_KEYS.begin(), HELP_KEYS.end(), argument) != HELP_KEYS.end();
+    }) != (argv+argc))) {
+        return;
+    }
+    
     string admins_str, db_port_str, listen_port_str;
 
     for (auto& config : vector<ConfigParseParam>{
@@ -166,12 +188,12 @@ Config::Config(int argc, const char* argv[]) {
     })  {
         #ifndef NDEBUG
         if (!config.config_value.empty()) {
-            get_logger()->debug(__FILE__, __LINE__, "Bot::Config::" + config.param + "::Default", config.config_value);
+            get_logger()->debug( config.param + "::Default", config.config_value, __FILE__, __LINE__);
         }
         #endif
         config.config_value = Utils::Env::Get(config.param, config.config_value);
         #ifndef NDEBUG
-        get_logger()->debug(__FILE__, __LINE__, "Bot::Config::" + config.param + "::Env", config.config_value);
+        get_logger()->debug(config.param + "::Env", config.config_value, __FILE__, __LINE__);
         #endif
         if (!json_env.empty() && json_env.contains(config.param)) {
             if (config.is_string) {
@@ -180,7 +202,7 @@ Config::Config(int argc, const char* argv[]) {
                 config.config_value = to_string(json_env[config.param]);
             }
             #ifndef NDEBUG
-            get_logger()->debug(__FILE__, __LINE__, "Bot::Config::" + config.param + "::JSON", config.config_value);
+            get_logger()->debug(config.param + "::JSON", config.config_value, __FILE__, __LINE__);
             #endif
         }
         string key = "--" + config.param;
@@ -193,7 +215,7 @@ Config::Config(int argc, const char* argv[]) {
             }
             config.config_value = argv[i+1];
             #ifndef NDEBUG
-            get_logger()->debug(__FILE__, __LINE__, "Bot::Config::" + config.param + "::argv", config.config_value);
+            get_logger()->debug(config.param + "::argv", config.config_value, __FILE__, __LINE__);
             #endif
             break;
         }
@@ -201,7 +223,7 @@ Config::Config(int argc, const char* argv[]) {
             throw ConfigNotFoundException(config.param);
         }
         #ifndef NDEBUG
-        get_logger()->debug(__FILE__, __LINE__, "Bot::Config::" + config.param + "::RESULT", config.config_value);
+        get_logger()->debug(config.param + "::RESULT", config.config_value, __FILE__, __LINE__);
         #endif
     }
 
@@ -223,6 +245,8 @@ Config::Config(int argc, const char* argv[]) {
         _admins = json::parse(admins_str).get<vector<long long> >();
     } catch (const json::parse_error&) {
         throw ConfigParseFailedException("BOT_ADMINS: invalid json (" + admins_str + ")");
+    } catch (const json::type_error&) {
+        throw ConfigParseFailedException("BOT_ADMINS: invalid type (" + admins_str + ")");
     }
 }
 

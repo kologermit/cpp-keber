@@ -11,12 +11,12 @@ using std::string_view;
 using nlohmann::json;
 
 struct User : virtual InterfaceUser {
-    explicit User(
+    User(
         long long id,
         string_view name, 
         string_view username = ""
     );
-    explicit User(const json&);
+    User(const json&);
 
     long long get_id() const noexcept override;
     string get_name() const noexcept override;

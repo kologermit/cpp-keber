@@ -6,6 +6,7 @@ namespace Bot::Config {
 
 struct Config : InterfaceConfig {
 
+    bool                     is_help()              const noexcept override;
     const string&            get_bot_token()        const noexcept override;
     const vector<long long>& get_admins()           const noexcept override;
     const string&            get_webhook_url()      const noexcept override;
@@ -27,6 +28,7 @@ struct Config : InterfaceConfig {
 
     private:
 
+    bool   _is_help = false;
     string _bot_token = "";
     vector<long long> _admins;
     string _webhook_url = "";
