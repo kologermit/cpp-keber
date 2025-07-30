@@ -52,24 +52,24 @@ string Query::query(
     string full_path = _get_path(path);
 
     #ifndef NDEBUG
-    get_logger()->debug("Query::query::method", (
+    get_logger()->debug(__FILE__, __LINE__, "Query::query::method", (
         method == EnumQueryMethod::GET ? "GET"
         : method == EnumQueryMethod::POST ? "POST"
         : "UNKNOWN"
     ));
-    get_logger()->debug("Query::query::path", path);
-    get_logger()->debug("Query::query::full_path", full_path);
-    get_logger()->debug("Query::query::params_is_empty", std::to_string(params.empty()));
+    get_logger()->debug(__FILE__, __LINE__, "Query::query::path", path);
+    get_logger()->debug(__FILE__, __LINE__, "Query::query::full_path", full_path);
+    get_logger()->debug(__FILE__, __LINE__, "Query::query::params_is_empty", std::to_string(params.empty()));
     for (auto param : params) {
-        get_logger()->debug("Query::query::params", param.first + " : " + param.second);
+        get_logger()->debug(__FILE__, __LINE__, "Query::query::params", param.first + " : " + param.second);
     }
-    get_logger()->debug("Query::query::headers_is_empty", std::to_string(headers.empty()));
+    get_logger()->debug(__FILE__, __LINE__, "Query::query::headers_is_empty", std::to_string(headers.empty()));
     for (auto header : headers) {
-        get_logger()->debug("Query::query::headers", header.first + " : " + header.second);
+        get_logger()->debug(__FILE__, __LINE__, "Query::query::headers", header.first + " : " + header.second);
     }
-    get_logger()->debug("Query::query::files::is_empty", std::to_string(files.empty()));
+    get_logger()->debug(__FILE__, __LINE__, "Query::query::files::is_empty", std::to_string(files.empty()));
     for (auto file : files) {
-        get_logger()->debug("Query::query::files", format(
+        get_logger()->debug(__FILE__, __LINE__, "Query::query::files", format(
             "name={}; filename={}; filepath={}; content_type={}",
             file.name,
             file.filename,
@@ -113,7 +113,7 @@ string Query::query(
     }
 
     #ifndef NDEBUG
-    get_logger()->debug("Query::query::result->body", result->body);
+    get_logger()->debug(__FILE__, __LINE__, "Query::query::result->body", result->body);
     #endif
 
     return result->body;

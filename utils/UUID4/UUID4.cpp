@@ -22,7 +22,7 @@ string generate_str() {
     uuid_unparse(uuid, uuid_str);
 
     #ifndef NDEBUG
-    get_logger()->debug("UUID::generate_str", uuid_str);
+    get_logger()->debug(__FILE__, __LINE__, "UUID::generate_str", uuid_str);
     #endif
     
     return string(uuid_str);

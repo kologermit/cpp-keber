@@ -4,6 +4,7 @@
 #include <string_view>
 #include <vector>
 #include <exception>
+#include <memory>
 
 namespace Bot::Config {
 
@@ -11,6 +12,7 @@ using std::string;
 using std::vector;
 using std::exception;
 using std::string_view;
+using std::unique_ptr;
 
 struct ConfigNotFoundException : exception {
     ConfigNotFoundException(string_view config_name);
@@ -25,6 +27,16 @@ struct ConfigNotFoundException : exception {
 
 struct ConfigParseFailedException : exception {
     ConfigParseFailedException(string_view message);
+
+    const char* what() const noexcept override;
+
+    private:
+
+    string _message;
+};
+
+struct NotInitializedConfigException : exception {
+    NotInitializedConfigException(string_view message);
 
     const char* what() const noexcept override;
 
@@ -48,7 +60,12 @@ struct InterfaceConfig {
     virtual const string&            get_db_password()      const noexcept = 0;
     virtual const string&            get_yt_service_url()   const noexcept = 0;
     virtual const string&            get_task_service_url() const noexcept = 0;
+    virtual const string&            get_tmp_path()         const noexcept = 0;
+    virtual const string&            get_logs_path()        const noexcept = 0;
+    virtual const string&            get_shared_path()      const noexcept = 0;
 
 };
+
+const InterfaceConfig* get_config(unique_ptr<InterfaceConfig> config = nullptr);
 
 }

@@ -12,26 +12,26 @@ using std::make_shared;
 using std::map;
 using fmt::format;
 
-void FileDailyLogger::info(string_view event, string_view message) const {
-    _logger->info(get_text_from_message_and_event(event, message));
+void FileDailyLogger::info(string_view file, int line, string_view event, string_view message) const {
+    _logger->info(get_text_from_message_and_event(file, line, event, message));
 }
 
-void FileDailyLogger::warning(string_view event, string_view message) const {
-    _logger->warn(get_text_from_message_and_event(event, message));
+void FileDailyLogger::warning(string_view file, int line, string_view event, string_view message) const {
+    _logger->warn(get_text_from_message_and_event(file, line, event, message));
 }
 
-void FileDailyLogger::error(string_view event, string_view message) const {
-    _logger->error(get_text_from_message_and_event(event, message));
+void FileDailyLogger::error(string_view file, int line, string_view event, string_view message) const {
+    _logger->error(get_text_from_message_and_event(file, line, event, message));
 }
 
-void FileDailyLogger::debug(string_view event, string_view message) const {
-    _logger->debug(get_text_from_message_and_event(event, message));
+void FileDailyLogger::debug(string_view file, int line, string_view event, string_view message) const {
+    _logger->debug(get_text_from_message_and_event(file, line, event, message));
 }
 
-FileDailyLogger::FileDailyLogger() {
-    string dir = "./logs", name = "main";
+FileDailyLogger::FileDailyLogger(string_view dir) {
+    string name = "main";
     EnumLoggerLevel level = EnumLoggerLevel::DEBUG;
-    _logger = daily_logger_mt(name, dir, 0, 0);
+    _logger = daily_logger_mt(name, string(dir), 0, 0);
     _logger->sinks().push_back(make_shared<stdout_color_sink_mt>());
 
     _logger->set_level(map<EnumLoggerLevel, level_enum> {
@@ -42,9 +42,13 @@ FileDailyLogger::FileDailyLogger() {
     }[level]);
 }
 
-string FileDailyLogger::get_text_from_message_and_event(string_view event, string_view message) const {
+string FileDailyLogger::get_text_from_message_and_event(
+    string_view file, int line,
+    string_view event, string_view message) const {
     return format(
-        "[{}] -- {}",
+        "[{}:{}:{}] -- {}",
+        get_filename(file),
+        line,
         event,
         message
     );

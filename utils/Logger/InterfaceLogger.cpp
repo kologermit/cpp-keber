@@ -25,4 +25,13 @@ shared_ptr<InterfaceLogger> get_logger(unique_ptr<InterfaceLogger> logger) {
     return _logger; 
 }
 
+string get_filename(string_view file) {
+    string full_path(file);
+    size_t find = full_path.rfind('/');
+    if (find != std::string::npos) {
+        return full_path.substr(find + 1);
+    }
+    return full_path;
+}
+
 }

@@ -21,12 +21,12 @@ string Get(string_view variable, string_view _default) {
     const_c_string res = getenv(variable.data());
     if (res == nullptr) {
         #ifndef NDEBUG
-        get_logger()->debug("Env::Get::"+string(variable), _default);
+        get_logger()->debug(__FILE__, __LINE__, "Env::Get::"+string(variable), _default);
         #endif
         return string(_default);
     }
     #ifndef NDEBUG
-    get_logger()->debug("Env::Get::"+string(variable), res);
+    get_logger()->debug(__FILE__, __LINE__, "Env::Get::"+string(variable), res);
     #endif
     return string(res);
 }

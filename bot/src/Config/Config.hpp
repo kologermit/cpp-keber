@@ -19,6 +19,9 @@ struct Config : InterfaceConfig {
     const string&            get_db_password()      const noexcept override;
     const string&            get_yt_service_url()   const noexcept override;
     const string&            get_task_service_url() const noexcept override;
+    const string&            get_tmp_path()         const noexcept override;
+    const string&            get_logs_path()        const noexcept override;
+    const string&            get_shared_path()      const noexcept override;
 
     Config(int argc, const char* argv[]);
 
@@ -37,6 +40,9 @@ struct Config : InterfaceConfig {
     string _db_password = "qwerty";
     string _yt_service_url = "yt";
     string _task_service_url = "task";
+    string _tmp_path = "/tmp";
+    string _logs_path = "./logs/bot";
+    string _shared_path = "./shared";
 
 };
 
