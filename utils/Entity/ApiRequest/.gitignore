@@ -1,0 +1,6 @@
+*
+!.gitignore
+!ApiRequest.hpp
+!InterfaceApiRequestFactory.hpp
+!ApiRequestFactory.hpp
+!ApiRequestFactory.cpp

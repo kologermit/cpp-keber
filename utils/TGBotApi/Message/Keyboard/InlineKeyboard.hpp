@@ -2,22 +2,20 @@
 
 #include <vector>
 #include <memory>
-#include <utils/TGBotApi/Message/Keyboard/InterfaceInlineKeyboard.hpp>
+#include <utils/TGBotApi/Message/Keyboard/InlineButton.hpp>
 
 namespace Utils::TGBotApi::Message::Keyboard {
     
 using std::shared_ptr;
 using std::vector;
 
-struct InlineKeyboard : virtual InterfaceInlineKeyboard {
+struct InlineKeyboard {
 
-    string get_json() const noexcept override;
+    string get_json() const noexcept;
 
-    explicit InlineKeyboard(vector<vector<shared_ptr<InterfaceInlineButton> > >&& _buttons);
+    InlineKeyboard(vector<vector<shared_ptr<InlineButton> > >&& buttons);
 
-    private:
-
-    vector<vector<shared_ptr<InterfaceInlineButton> > > _buttons;
+    vector<vector<shared_ptr<InlineButton> > > buttons;
 
 };
 

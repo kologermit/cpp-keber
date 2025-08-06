@@ -8,15 +8,15 @@ using nlohmann::json;
 using Utils::TGBotApi::JSONKeys::INLINE_KEYBOARD_KEY;
 using Utils::TGBotApi::JSONKeys::RESIZE_KEYBOARD_KEY;
 
-InlineKeyboard::InlineKeyboard(vector<vector<shared_ptr<InterfaceInlineButton> > >&& buttons):
-_buttons(buttons)
+InlineKeyboard::InlineKeyboard(vector<vector<shared_ptr<InlineButton> > >&& buttons):
+buttons(buttons)
 {}
 
 string InlineKeyboard::get_json() const noexcept {
     json result = {
         {RESIZE_KEYBOARD_KEY, true}
     };
-    for (const auto& lane : _buttons) {
+    for (const auto& lane : buttons) {
         json lane_json;
         for (const auto& button : lane) {
             json button_json = json::parse(button->get_json());

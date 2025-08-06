@@ -46,7 +46,7 @@ using httplib::Params;
 using std::to_string, std::map, std::move;
 
 Bot::Bot(string_view token, const json& json_bot):
-    User(json_bot),
+    _user(json_bot),
     _token(token),
     _secret_token(UUID4::generate_str()),
     _can_join_groups(json_bot[CAN_JOIN_GROUPS_KEY]),
@@ -64,11 +64,31 @@ const json Bot::_get_me_raw_json(string_view token) {
     return result;
 }
 
-bool Bot::can_join_groups() const noexcept { return _can_join_groups; }
-bool Bot::can_read_all_group_messages() const noexcept { return _can_read_all_group_messages; }
-bool Bot::supports_inline_queries() const noexcept { return _supports_inline_queries; }
-bool Bot::can_connect_to_business() const noexcept { return _can_connect_to_business; }
-bool Bot::has_main_web_app() const noexcept { return _has_main_web_app; }
+long long Bot::get_id() const noexcept {
+    return _user.id;
+}
+const string& Bot::get_name() const noexcept {
+    return _user.name;
+}
+const string& Bot::get_username() const noexcept {
+    return _user.username;
+}
+
+bool Bot::can_join_groups() const noexcept { 
+    return _can_join_groups; 
+}
+bool Bot::can_read_all_group_messages() const noexcept { 
+    return _can_read_all_group_messages; 
+}
+bool Bot::supports_inline_queries() const noexcept { 
+    return _supports_inline_queries; 
+}
+bool Bot::can_connect_to_business() const noexcept { 
+    return _can_connect_to_business; 
+}
+bool Bot::has_main_web_app() const noexcept { 
+    return _has_main_web_app; 
+}
 
 bool Bot::delete_webhook() const { 
     return *Query(_token).query_parse_json<bool>(
@@ -89,7 +109,7 @@ bool Bot::set_webhook(string_view webhook_url) const {
     ).result; 
 }
 
-unique_ptr<InterfaceMessage> Bot::send_message(const SendMessageParameters& message_parameters) const {
+unique_ptr<Message> Bot::send_message(const SendMessageParameters& message_parameters) const {
     string path = map<EnumContentType, string>{
         {EnumContentType::TEXT, "sendMessage"},
         {EnumContentType::DOCUMENT, "sendDocument"},
@@ -152,7 +172,7 @@ unique_ptr<InterfaceMessage> Bot::send_message(const SendMessageParameters& mess
     ).result);
 }
 
-unique_ptr<InterfaceMessage> Bot::edit_text(long long chat_id, long long message_id, string_view text) const {
+unique_ptr<Message> Bot::edit_text(long long chat_id, long long message_id, string_view text) const {
     return move(Query(_token).query_parse_json<Message>(
         EnumQueryMethod::POST,
         "editMessageText",
@@ -165,7 +185,7 @@ unique_ptr<InterfaceMessage> Bot::edit_text(long long chat_id, long long message
 
 }
 
-unique_ptr<InterfaceMessage> Bot::edit_caption(long long chat_id, long long message_id, string_view caption) const {
+unique_ptr<Message> Bot::edit_caption(long long chat_id, long long message_id, string_view caption) const {
     return move(Query(_token).query_parse_json<Message>(
         EnumQueryMethod::POST,
         "editMessageCaption",

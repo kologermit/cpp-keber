@@ -1,3 +1,7 @@
 *
 !.gitignore
 !Config
+!Server
+!Bot
+!Entity
+!EntityFactory

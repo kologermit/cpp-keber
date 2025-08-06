@@ -10,8 +10,7 @@ services:
     build:
       target: bot
     networks:
-      - bot_to_cache
-      - bot_to_db
+      - bot_to_postgres
       - nginx_to_bot
     volumes:
       - bot_logs:/logs:rw

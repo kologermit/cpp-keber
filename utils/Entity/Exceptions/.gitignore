@@ -1,0 +1,6 @@
+*
+!.gitignore
+!FailedUpdateException.hpp
+!FailedInsertException.hpp
+!FailedDeleteException.hpp
+!FailedSelectException.hpp

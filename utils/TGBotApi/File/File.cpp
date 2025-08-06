@@ -1,5 +1,4 @@
 #include <filesystem>
-#include <stdexcept>
 #include <utils/TGBotApi/File/File.hpp>
 #include <utils/Types.hpp>
 #include <fmt/core.h>
@@ -9,7 +8,6 @@ namespace Utils::TGBotApi::File {
 
 using fmt::format;
 using std::to_string;
-using std::runtime_error;
 using std::filesystem::exists;
 using std::filesystem::is_regular_file;
 using std::filesystem::file_size;
@@ -35,7 +33,7 @@ EnumResultCheckFile is_correct_file(string_view filepath) {
 void throw_if_not_correct_file(string_view filepath) {
     EnumResultCheckFile check_result = is_correct_file(filepath);
     if (is_correct_file(filepath) != EnumResultCheckFile::OK) {
-        throw runtime_error(format(
+        throw NotCorrentFileException(format(
             "{}: {} is {}",
             "Utils::TGBotApi::File::throw_if_not_correct_file",
             filepath,

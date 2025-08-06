@@ -15,10 +15,10 @@ using httplib::Params;
 using httplib::Headers;
 using nlohmann::json;
 using std::vector;
+using std::exception;
 using std::unique_ptr;
 using std::string, std::string_view;
 using std::optional, std::nullopt;
-using std::runtime_error;
 using fmt::format;
 using std::make_unique;
 using Utils::TGBotApi::JSONKeys::RESULT_KEY;
@@ -90,6 +90,37 @@ inline json Query::query_raw_json(
     return json::parse(query(method, path, params, headers, files));
 }
 
+struct QueryJsonResultException : exception {
+
+    QueryJsonResultException(string_view message):
+    _message(message) {}
+
+    const char* what() const noexcept override {
+        return _message.data();
+    }
+
+    private:
+
+    string _message;
+
+};
+
+struct QueryResultException : exception {
+
+    QueryResultException(string_view message):
+    _message(message) {}
+
+    const char* what() const noexcept override {
+        return _message.data();
+    }
+
+    private:
+
+    string _message;
+
+};
+
+
 template<typename ResultType>
 Query::QueryResult<ResultType> Query::query_parse_json(
     EnumQueryMethod method,
@@ -101,7 +132,7 @@ Query::QueryResult<ResultType> Query::query_parse_json(
     auto json_result = query_raw_json(method, path, params, headers, files);
 
     if (!bool(json_result[OK_KEY])) {
-        throw runtime_error(format(
+        throw QueryJsonResultException(format(
             "Utils::TGBotApi::Query::query_parse_json: {} -- {}",
             string(json_result[ERROR_CODE_KEY]),
             string(json_result[DESCRIPTION_KEY])

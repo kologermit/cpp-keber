@@ -9,7 +9,6 @@
 !conanfile.py
 !requirements.txt
 !docker
-!conanprofile.txt
 !.env.example
 !CMakeLists.txt
 !Dockerfile
@@ -17,5 +16,5 @@
 !utils
 !scripts
 !manager.py
-!test_code
 !nginx
+!postgres

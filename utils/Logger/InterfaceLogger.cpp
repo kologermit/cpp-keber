@@ -3,7 +3,6 @@
 
 namespace Utils::Logger {
 
-using std::runtime_error;
 using std::shared_ptr;
 using std::move;
 

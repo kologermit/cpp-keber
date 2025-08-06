@@ -179,6 +179,7 @@ Config::Config(int argc, const char* argv[]) {
         {"DB_HOST", _db_host},
         {"DB_NAME", _db_name},
         {"DB_PORT", db_port_str, false, false},
+        {"DB_USER", _db_user, false, false},
         {"DB_PASSWORD", _db_password},
         {"YT_SERVICE_URL", _yt_service_url},
         {"TASK_SERVICE_URL", _task_service_url},

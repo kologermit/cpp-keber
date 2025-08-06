@@ -2,11 +2,13 @@
 
 #include <string_view>
 #include <map>
+#include <exception>
 #include <utils/Types.hpp>
 
 namespace Utils::TGBotApi::File {
 
 using std::string_view, std::string, std::map;
+using std::exception;
 
 enum EnumResultCheckFile {
     NOT_FOUND,
@@ -24,6 +26,22 @@ enum EnumContentType {
     TEXT,
     UNKNOWN
 };
+
+struct NotCorrentFileException : exception {
+
+    NotCorrentFileException(string_view message):
+    _message(message) {}
+
+    const char* what() const noexcept override {
+        return _message.data();
+    }
+
+    private:
+
+    string _message;
+
+};
+
 
 const map<EnumContentType, string> convert_map_content_type = {
     {EnumContentType::PHOTO, "PHOTO"},

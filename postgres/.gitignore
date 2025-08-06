@@ -1,0 +1,4 @@
+*
+!.gitignore
+!generate-schema.sql
+!generate-users.sh

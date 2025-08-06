@@ -2,22 +2,20 @@
 
 #include <vector>
 #include <memory>
-#include <utils/TGBotApi/Message/Keyboard/InterfaceReplyKeyboard.hpp>
+#include <utils/TGBotApi/Message/Keyboard/ReplyButton.hpp>
 
 namespace Utils::TGBotApi::Message::Keyboard {
 
 using std::shared_ptr;
 using std::vector;
 
-struct ReplyKeyboard : virtual InterfaceReplyKeyboard {
+struct ReplyKeyboard {
 
-    string get_json() const noexcept override;
+    string get_json() const noexcept;
 
-    ReplyKeyboard(vector<vector<shared_ptr<InterfaceReplyButton> > >&& buttons = {});
+    ReplyKeyboard(vector<vector<shared_ptr<ReplyButton> > >&& buttons = {});
 
-    private:
-
-    vector<vector<shared_ptr<InterfaceReplyButton> > > _buttons;
+    vector<vector<shared_ptr<ReplyButton> > > buttons;
 
 };
 

@@ -25,13 +25,13 @@ using fmt::format;
 using std::make_unique, std::move;
 
 Message::Message(const json& json_message):
-_id(json_message[MESSAGE_ID_KEY]),
-_text(
+id(json_message[MESSAGE_ID_KEY]),
+text(
     json_message.contains(TEXT_KEY)
     ? string(json_message[TEXT_KEY])
     : json_message.value(CAPTION_KEY, "")
 ),
-_file_download_id(
+file_download_id(
     // document
     json_message.contains(DOCUMENT_KEY)
     ? json_message[DOCUMENT_KEY][FILE_ID_KEY]
@@ -47,7 +47,7 @@ _file_download_id(
 
     : ""
 ),
-_file_content_type(
+file_content_type(
     // document
     json_message.contains(DOCUMENT_KEY)
     ? EnumContentType::DOCUMENT
@@ -61,9 +61,9 @@ _file_content_type(
     : json_message.contains(AUDIO_KEY)
     ? EnumContentType::AUDIO
 
-    : EnumContentType::UNKNOWN
+    : EnumContentType::TEXT
 ),
-_file_name(
+file_name(
     json_message.contains(DOCUMENT_KEY) ? string(json_message[DOCUMENT_KEY][FILE_NAME_KEY])
     : json_message.contains(PHOTO_KEY) ? format(
         "{}_{}.jpg",
@@ -74,57 +74,41 @@ _file_name(
     : json_message.contains(AUDIO_KEY) ? string(json_message[AUDIO_KEY][FILE_NAME_KEY])
     : ""
 ),
-_file_size(
+file_size(
     json_message.contains(DOCUMENT_KEY) ? (long long)(json_message[DOCUMENT_KEY][FILE_SIZE_KEY])
     : json_message.contains(PHOTO_KEY) ? (long long)(json_message[PHOTO_KEY].back()[FILE_SIZE_KEY])
     : json_message.contains(VIDEO_KEY) ? (long long)(json_message[VIDEO_KEY][FILE_SIZE_KEY])
     : json_message.contains(AUDIO_KEY) ? (long long)(json_message[AUDIO_KEY][FILE_SIZE_KEY])
     : 0
 ),
-_from(make_unique<User>(json_message[FROM_KEY])),
-_chat(make_unique<Chat>(json_message[CHAT_KEY])),
-_reply_message(
+from(make_unique<User>(json_message[FROM_KEY])),
+chat(make_unique<Chat>(json_message[CHAT_KEY])),
+reply_message(
     json_message.contains(REPLY_TO_MESSAGE_KEY)
     ? make_unique<Message>(json_message[REPLY_TO_MESSAGE_KEY])
     : nullptr
 ) {}
 
-long long Message::get_id() const noexcept {
-    return _id;
-}
-
-const InterfaceUser* Message::get_from() const noexcept {
-    return _from.get();
-}
-
-const InterfaceChat* Message::get_chat() const noexcept {
-    return _chat.get();
-}
-
-string Message::get_text() const noexcept {
-    return _text;
-}
-
-string Message::get_file_download_id() const noexcept {
-    return _file_download_id;
-}
-
-EnumContentType Message::get_file_content_type() const noexcept {
-    return _file_content_type;
-}
-
-string Message::get_file_name() const noexcept {
-    return _file_name;
-}
-
-long long Message::get_file_size() const noexcept {
-    return _file_size;
-}
-const InterfaceMessage* Message::get_reply_message() const noexcept {
-    if (_reply_message == nullptr) {
-        return nullptr;
-    }
-    return _reply_message.get();
-}
+Message::Message(
+    long long         id,
+    string_view       text,
+    string_view       file_download_id,
+    EnumContentType   file_content_type,
+    string_view       file_name,
+    long long         file_size,
+    unique_ptr<User>    from,
+    unique_ptr<Chat>    chat,
+    unique_ptr<Message> reply_message
+):
+id(id),
+text(text),
+file_download_id(file_download_id),
+file_content_type(file_content_type),
+file_name(file_name),
+file_size(file_size),
+from(move(from)),
+chat(move(chat)),
+reply_message(move(reply_message))
+{}
 
 }

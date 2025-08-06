@@ -1,20 +1,33 @@
 #pragma once
 
-#include <utils/TGBotApi/Chat/InterfaceChat.hpp>
 #include <utils/TGBotApi/User/User.hpp>
 #include <nlohmann/json.hpp>
 
 namespace Utils::TGBotApi::Chat {
 
+enum EnumChatType {
+    PRIVATE,
+    GROUP,
+    SUPERGROUP,
+    CHANNEL,
+    UNKNOWN
+};
+
 using Utils::TGBotApi::User::User;
 using nlohmann::json;
+using std::string_view;
 
-struct Chat : virtual InterfaceChat, User  {
-    EnumChatType get_type() const noexcept override;
-    explicit Chat(const json&);
+struct Chat : User  {
 
-    private:
-    EnumChatType _type;
+    Chat(const json&);
+    Chat(
+        long long id,
+        string_view name, 
+        string_view username = "",
+        EnumChatType type = EnumChatType::PRIVATE
+    );
+
+    EnumChatType type;
 };
 
 }

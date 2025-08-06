@@ -1,36 +1,48 @@
 #pragma once
 
-#include <utils/TGBotApi/Message/InterfaceMessage.hpp>
+#include <string>
+#include <string_view>
+#include <memory>
 #include <nlohmann/json.hpp>
+#include <utils/TGBotApi/File/File.hpp>
+#include <utils/TGBotApi/User/User.hpp>
+#include <utils/TGBotApi/Chat/Chat.hpp>
 
 namespace Utils::TGBotApi::Message {
 
+using std::string_view;
+using std::string;
+using std::unique_ptr;
+using Utils::TGBotApi::File::EnumContentType;
+using Utils::TGBotApi::Chat::Chat;
+using Utils::TGBotApi::User::User;
 using nlohmann::json;
 
-struct Message : InterfaceMessage {
-    long long         get_id()                const noexcept override;
-    string            get_text()              const noexcept override;
-    string            get_file_download_id()  const noexcept override;
-    EnumContentType   get_file_content_type() const noexcept override;
-    string            get_file_name()         const noexcept override;
-    long long         get_file_size()         const noexcept override;
-    const InterfaceUser*    get_from()             const noexcept override;
-    const InterfaceChat*    get_chat()             const noexcept override;
-    const InterfaceMessage* get_reply_message()    const noexcept override;
+struct Message {
 
-    explicit Message(const json&);
+    Message(
+        long long         id,
+        string_view       text = "",
+        string_view       file_download_id = "",
+        EnumContentType   file_content_type = EnumContentType::TEXT,
+        string_view       file_name = "",
+        long long         file_size = 0,
+        unique_ptr<User>    from = nullptr,
+        unique_ptr<Chat>    chat = nullptr,
+        unique_ptr<Message> reply_message = nullptr
+    );
 
-    private:
+    Message(const json&);
 
-    long long         _id;
-    string            _text;
-    string            _file_download_id;
-    EnumContentType   _file_content_type;
-    string            _file_name;
-    long long         _file_size;
-    unique_ptr<InterfaceUser>    _from;
-    unique_ptr<InterfaceChat>    _chat;
-    unique_ptr<InterfaceMessage> _reply_message;
+    long long         id;
+    string            text;
+    string            file_download_id;
+    EnumContentType   file_content_type;
+    string            file_name;
+    long long         file_size;
+    unique_ptr<User>    from;
+    unique_ptr<Chat>    chat;
+    unique_ptr<Message> reply_message;
 };
 
 }

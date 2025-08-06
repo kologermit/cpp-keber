@@ -1,12 +1,11 @@
 *
 !.gitignore
 !bot.yml
-!db.yml
+!postgres.yml
 !downloader.yml
 !nginx.yml
 !networks.yml
 !cron.yml
-!cache.yml
 !parents.yml
 !certbot.yml
 !cleaner.yml

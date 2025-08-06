@@ -110,7 +110,7 @@ string Query::query(
     }
 
     if (result.error() != Error::Success) {
-        throw runtime_error(to_string(result.error()));
+        throw QueryResultException(to_string(result.error()));
     }
 
     #ifndef NDEBUG

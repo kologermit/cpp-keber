@@ -5,7 +5,7 @@
 !User
 !Message.cpp
 !JSONKeys.hpp
-!InterfaceJSONEncode.hpp
+!JSONEncode.hpp
 !Message
 !Chat
 !File

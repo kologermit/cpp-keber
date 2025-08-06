@@ -6,6 +6,16 @@ namespace Utils::TGBotApi::Chat {
 using Utils::TGBotApi::JSONKeys::TYPE_KEY;
 using std::map, std::string;
 
+Chat::Chat(
+    long long id,
+    string_view name, 
+    string_view username,
+    EnumChatType type
+):
+    User(id, name, username),
+    type(type)
+{}
+
 Chat::Chat(const json& json_chat): 
     User(json_chat)
     {
@@ -18,11 +28,7 @@ Chat::Chat(const json& json_chat):
         
         auto find_result = chat_type_map.find(json_chat[TYPE_KEY]);
 
-        _type = find_result == chat_type_map.end() ? EnumChatType::UNKNOWN : find_result->second;
+        type = find_result == chat_type_map.end() ? EnumChatType::UNKNOWN : find_result->second;
     }
-
-EnumChatType Chat::get_type() const noexcept {
-    return _type;
-}
 
 }

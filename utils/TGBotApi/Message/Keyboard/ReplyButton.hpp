@@ -1,21 +1,20 @@
 #pragma once
 
-#include <utils/TGBotApi/Message/Keyboard/InterfaceReplyButton.hpp>
+#include <string>
+#include <string_view>
 
 namespace Utils::TGBotApi::Message::Keyboard {
 
 using std::string_view;
+using std::string;
 
-struct ReplyButton : virtual InterfaceReplyButton {
+struct ReplyButton {
 
-    string get_json() const noexcept override;
-    string get_text() const noexcept override;
+    string get_json() const noexcept;
 
     ReplyButton(string_view text);
 
-    private:
-
-    string _text;
+    string text;
 
 };
 

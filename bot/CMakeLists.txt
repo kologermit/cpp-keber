@@ -20,14 +20,14 @@ target_include_directories(BOT PRIVATE
 target_compile_definitions(BOT PRIVATE $<$<CONFIG:Release>:NDEBUG=1>)
 
 target_link_libraries(BOT
+    openssl::openssl
+    libpqxx::pqxx
     libuuid::libuuid
-    sqlpp11::sqlpp11
+    datetime::datetime
     spdlog::spdlog
     fmt::fmt
     httplib::httplib
     nlohmann_json::nlohmann_json
-    OpenSSL::SSL
-    OpenSSL::Crypto
     pthread
     dl
     resolv

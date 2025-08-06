@@ -20,6 +20,5 @@ services:
       - DOWNLOAD_URL=${BOT_WEBHOOK_URL}
     networks:
       - bot_to_downloader
-      - downloader_to_db
-      - downloader_to_cache
+      - downloader_to_postgres
       - cron_to_downloader

@@ -16,14 +16,14 @@ target_compile_definitions(UTILS_LIB PRIVATE $<$<CONFIG:Release>:NDEBUG=1>)
 
 target_link_libraries(UTILS_LIB
     PRIVATE
+    datetime::datetime
     libuuid::libuuid
-    sqlpp11::sqlpp11
+    libpqxx::pqxx
     spdlog::spdlog
     fmt::fmt
     httplib::httplib
     nlohmann_json::nlohmann_json
-    OpenSSL::SSL
-    OpenSSL::Crypto
+    openssl::openssl
     pthread
     dl
     resolv

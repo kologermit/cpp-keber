@@ -1,8 +1,33 @@
 {
     "remove_build": {
-        "descrioption": "Remove ./build and ./CMakeUserPresets.json for rebuild project",
+        "description": "Remove ./build and ./CMakeUserPresets.json for rebuild project",
         "scripts": [
             "rm -rf ./build ./CMakeUserPresets.json"
+        ]
+    },
+    "install_deps": {
+        "scripts": [
+            "@@ venv venv",
+            "@@ venv requirements",
+            "@@ conan build"
+        ]
+    },
+    "build_all_release": {
+        "scripts": [
+            "@@ conan build",
+            "@@ bot build_release"
+        ]
+    },
+    "build_all_debug": {
+        "scripts": [
+            "@@ conan build",
+            "@@ bot build_debug"
+        ]
+    },
+    "build_all": {
+        "scripts": [
+            "@@ project build_all_release",
+            "@@ project build_all_debug"
         ]
     }
 }
