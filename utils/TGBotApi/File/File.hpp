@@ -18,12 +18,12 @@ enum EnumResultCheckFile {
 };
 
 enum EnumContentType {
+    UNKNOWN,
     PHOTO,
     VIDEO,
     AUDIO,
     DOCUMENT,
     TEXT,
-    UNKNOWN
 };
 
 struct NotCorrentFileException : exception {

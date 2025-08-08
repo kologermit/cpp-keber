@@ -19,7 +19,8 @@ using Utils::TGBotApi::Chat::Chat;
 using ptrChat = std::unique_ptr<Chat>;
 
 using Utils::TGBotApi::Bot::Bot;
-using ptrBot = std::unique_ptr<Bot>;
+using Utils::TGBotApi::Bot::InterfaceBot;
+using ptrBot = std::unique_ptr<InterfaceBot>;
 
 using Utils::TGBotApi::Message::Message;
 using ptrMessage = std::unique_ptr<Message>;

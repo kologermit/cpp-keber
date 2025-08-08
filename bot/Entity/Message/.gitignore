@@ -1,0 +1,6 @@
+*
+!.gitignore
+!Message.hpp
+!InterfaceMessageRepository.hpp
+!MessageRepository.hpp
+!MessageRepository.cpp
