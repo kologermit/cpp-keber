@@ -1,9 +1,11 @@
 #include <bot/Config/Config.hpp>
 #include <bot/Entity/User/UserRepository.hpp>
+#include <bot/Entity/Chat/ChatRepository.hpp>
 #include <bot/Entity/Message/MessageRepository.hpp>
 #include <utils/Entity/ApiRequest/ApiRequestRepository.hpp>
 #include <utils/Logger/StdOutLogger.hpp>
 #include <utils/TGBotApi/Types.hpp>
+#include <fmt/core.h>
 
 using Bot::Config::get_config;
 using Bot::Config::Config;
@@ -13,6 +15,9 @@ using Bot::Entity::User::User;
 using Bot::Entity::Message::Message;
 using Bot::Entity::Message::MessageRepository;
 using Bot::Entity::Message::InterfaceMessageRepository;
+using Bot::Entity::Chat::Chat;
+using Bot::Entity::Chat::ChatRepository;
+using Bot::Entity::Chat::InterfaceChatRepository;
 using Utils::Logger::get_logger;
 using Utils::Logger::StdOutLogger;
 using Utils::TGBotApi::Bot::SendMessageParameters;
@@ -26,6 +31,7 @@ using Utils::Entity::ApiRequest::EnumRequestService;
 using std::make_unique;
 using std::unique_ptr;
 using nlohmann::json;
+using fmt::format;
 
 auto logger = get_logger(make_unique<StdOutLogger>());
 
@@ -41,19 +47,15 @@ int main(int argc, const char* argv[]) {
     
     unique_ptr<InterfaceApiRequestRepository> api_request_repository = make_unique<ApiRequestRepository>(config->get_db_conn_url());
     unique_ptr<InterfaceUserRepository> user_repository = make_unique<UserRepository>(config->get_db_conn_url());
+    unique_ptr<InterfaceChatRepository> chat_repository = make_unique<ChatRepository>(config->get_db_conn_url());
     unique_ptr<InterfaceMessageRepository> message_repository = make_unique<MessageRepository>(config->get_db_conn_url());
-    
-    user_repository->get_by_telegram_user(TGUser(
-        bot->get_id(),
-        bot->get_name(),
-        bot->get_username()
-    ));
 
     httplib::Server server;
 
     server.Post(config->get_webhook_path(), [
-        &user_repository, 
         &bot, 
+        &user_repository, 
+        &chat_repository,
         &api_request_repository,
         &message_repository
     ](const httplib::Request& req, httplib::Response& res) {
@@ -73,10 +75,11 @@ int main(int argc, const char* argv[]) {
             TGMessage msg(update["message"]);
 
             auto user = user_repository->get_by_telegram_user(*msg.from);
+            auto chat = chat_repository->get_by_telegram_chat(*msg.chat);
             auto message = message_repository->get_by_telegram_message(msg);
 
             auto answer_message = bot->send_message(SendMessageParameters{
-                .chat_id = user->telegram_id,
+                .chat_id = chat->telegram_id,
                 .text = user->name + " " + user->username,
                 .reply_message_id = message->telegram_id
             });
@@ -99,6 +102,8 @@ int main(int argc, const char* argv[]) {
         .text = "START BOT"
     });
 
+    user_repository->get_by_telegram_user(*start_message->from);
+    chat_repository->get_by_telegram_chat(*start_message->chat);
     message_repository->get_by_telegram_message(*start_message);
 
     logger->info("START BOT", format(

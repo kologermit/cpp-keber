@@ -1,0 +1,6 @@
+*
+!.gitignore
+!Chat.hpp
+!InterfaceCharRepository.hpp
+!ChatRepository.hpp
+!ChatRepository.cpp
