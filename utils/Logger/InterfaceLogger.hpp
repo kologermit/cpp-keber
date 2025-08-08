@@ -3,7 +3,6 @@
 #include <memory>
 #include <exception>
 #include <string_view>
-#include <utils/Types.hpp>
 
 namespace Utils::Logger {
 
@@ -12,7 +11,8 @@ using std::string_view;
 using std::unique_ptr;
 using std::exception;
 using std::string;
-using Utils::Types::const_c_string;
+
+constexpr const char* DATETIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
 enum EnumLoggerLevel {
     DEBUG,
@@ -34,7 +34,7 @@ struct NotInitializedLoggerException : exception {
 
     NotInitializedLoggerException();
 
-    const_c_string what() const noexcept override;
+    const char* what() const noexcept override;
 
 };
 

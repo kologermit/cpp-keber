@@ -3,7 +3,6 @@
 #include <string>
 #include <string_view>
 #include <memory>
-#include <utils/Types.hpp>
 #include <utils/TGBotApi/Message/Keyboard/InlineKeyboard.hpp>
 #include <utils/TGBotApi/Message/Keyboard/ReplyKeyboard.hpp>
 #include <utils/TGBotApi/JSONKeys.hpp>
@@ -14,7 +13,6 @@
 namespace Utils::TGBotApi::Bot {
 
 using std::string_view, std::string, std::unique_ptr;
-using Utils::Types::const_c_string;
 using Utils::TGBotApi::User::User;
 using Utils::TGBotApi::Message::Message;
 using Utils::TGBotApi::File::EnumContentType;
@@ -22,7 +20,7 @@ using Utils::TGBotApi::JSONKeys::HTML_KEY;
 using Utils::TGBotApi::Message::Keyboard::InlineKeyboard;
 using Utils::TGBotApi::Message::Keyboard::ReplyKeyboard;
 
-constexpr const_c_string SECRET_HEADER = "X-Telegram-Bot-Api-Secret-Token";
+constexpr const char* SECRET_HEADER = "X-Telegram-Bot-Api-Secret-Token";
 
 struct SendMessageParameters {
     long long                  chat_id;

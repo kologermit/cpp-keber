@@ -1,7 +1,5 @@
 #pragma once
 
-#include <utils/Types.hpp>
-
 namespace Utils::Random {
 
 void init();

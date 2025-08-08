@@ -8,8 +8,8 @@ using std::move;
 
 NotInitializedLoggerException::NotInitializedLoggerException() {}
 
-const_c_string NotInitializedLoggerException::what() const noexcept {
-    static const_c_string message = "logger not initialized!";
+const char* NotInitializedLoggerException::what() const noexcept {
+    static const char* message = "logger not initialized!";
     return message;
 }
 

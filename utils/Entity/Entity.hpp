@@ -3,18 +3,25 @@
 #include <datetime/datetime.h>
 #include <optional>
 #include <string>
+#include <string_view>
+#include <memory>
+#include <map>
 #include <pqxx/pqxx>
+
+#define GET_PAIR_OF_OBJECT_AND_STRINGOBJECT(obj) {obj, #obj}
 
 namespace Utils::Entity {
 
 using std::nullopt;
 using std::optional;
 using std::string;
+using std::string_view;
+using std::map;
+using std::unique_ptr;
 using jed_utils::datetime;
 using pqxx::row;
+using pqxx::connection;
 
-constexpr const char* DATE_FORMAT = "yyyy-MM-dd";
-constexpr const char* TIME_FORMAT = "HH:mm:ss";
 constexpr const char* DATETIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
 enum EntityColumns {
@@ -25,9 +32,12 @@ enum EntityColumns {
 };
 
 constexpr const char* ID_COLUMN = "\"id\"";
+constexpr const char* NAME_COLUMN = "\"name\"";
 constexpr const char* CREATED_AT_COLUMN = "\"created_at\"";
 constexpr const char* UPDATED_AT_COLUMN = "\"updated_at\"";
 constexpr const char* DELETED_AT_COLUMN = "\"deleted_at\"";
+
+void create_rows_in_enum_table_if_empty(connection& conn, const char* table, const map<int, string>& map_int_to_string);
 
 struct Entity {
 

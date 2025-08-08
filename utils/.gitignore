@@ -2,7 +2,6 @@
 !.gitignore
 !Env
 !Random
-!Types.hpp
 !Logger
 !TGBotApi
 !UUID4

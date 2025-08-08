@@ -1,4 +1,4 @@
-#include <bot/src/Config/InterfaceConfig.hpp>
+#include <bot/Config/InterfaceConfig.hpp>
 
 namespace Bot::Config {
 

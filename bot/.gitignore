@@ -1,5 +1,8 @@
 *
 !.gitignore
 !CMakeLists.txt
+!Config
+!Entity
+!Server
+!Bot
 !main.cpp
-!src

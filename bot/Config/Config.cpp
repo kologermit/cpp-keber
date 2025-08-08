@@ -1,6 +1,7 @@
-#include <bot/src/Config/Config.hpp>
+#include <bot/Config/Config.hpp>
 #include <utils/Env/Env.hpp>
 #include <nlohmann/json.hpp>
+#include <fmt/core.h>
 #include <fstream>
 #include <filesystem>
 #include <charconv>
@@ -25,6 +26,7 @@ using std::errc;
 using std::map;
 using std::find_if;
 using std::find;
+using fmt::format;
 
 #ifndef NDEBUG
 using Utils::Logger::get_logger;
@@ -84,6 +86,10 @@ const string& Config::get_db_user() const noexcept {
 
 const string& Config::get_db_password() const noexcept {
     return _db_password;
+}
+
+const string& Config::get_db_conn_url() const noexcept {
+    return _db_conn_url;
 }
 
 const string& Config::get_yt_service_url() const noexcept {
@@ -227,6 +233,15 @@ Config::Config(int argc, const char* argv[]) {
         get_logger()->debug(config.param + "::RESULT", config.config_value, __FILE__, __LINE__);
         #endif
     }
+
+    _db_conn_url = format(
+        "host={} port={} dbname={} user={} password={}",
+        _db_host,
+        _db_port,
+        _db_name,
+        _db_user,
+        _db_password
+    );
 
     for (auto& config : map<string, pair<int&, string> >{
         {"LISTEN_PORT", {_listen_port, listen_port_str} },

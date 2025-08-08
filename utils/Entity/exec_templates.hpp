@@ -1,0 +1,154 @@
+#pragma once
+
+#include <utils/Entity/Entity.hpp>
+#include <utils/Entity/Exceptions/FailedUpdateException.hpp>
+#include <utils/Entity/Exceptions/FailedInsertException.hpp>
+#include <utils/Logger/InterfaceLogger.hpp>
+#include <fmt/core.h>
+
+namespace Utils::Entity {
+
+using Utils::Entity::Exceptions::FailedUpdateException;
+using Utils::Entity::Exceptions::FailedInsertException;
+using Utils::Logger::get_logger;
+using std::pair;
+using std::make_unique;
+using fmt::format;
+using pqxx::work;
+using pqxx::result;
+using pqxx::row;
+using pqxx::nontransaction;
+using pqxx::work;
+
+template<typename EntityT>
+unique_ptr<EntityT> exec_insert(connection& conn, const char* table, const map<string, string>& data) {
+    nontransaction tx{conn};
+
+    string sql_columns = "";
+    string sql_values = "";
+
+    for (const auto& iter : data) {
+        sql_columns += format(
+            " {},",
+            iter.first
+        );
+
+        sql_values += format(
+            " {},",
+            tx.quote(iter.second)
+        );
+    }
+
+    if (sql_columns.ends_with(",")) {
+        sql_columns.erase(sql_columns.end()-1);
+    }
+
+    if (sql_values.ends_with(",")) {
+        sql_values.erase(sql_values.end()-1);
+    }
+
+    const string sql_query = format(
+        "INSERT INTO {} ({}) VALUES ({}) RETURNING *",
+        table,
+        sql_columns,
+        sql_values
+    );
+
+    #ifndef NDEBUG
+    get_logger()->debug("exec_insert::sql_query", sql_query, __FILE__, __LINE__);
+    #endif
+
+    result res = tx.exec(sql_query);
+
+    for (const row& r : res) {
+        return make_unique<EntityT>(r);
+    }
+
+    throw FailedInsertException("api request wasnt returned");
+}
+
+template<typename EntityT>
+unique_ptr<EntityT> exec_update_by_id(connection& conn, const char* table, const map<string, string>& data, int id) {
+    nontransaction tx{conn};
+
+    string sql_query = format(
+        "UPDATE {} SET",
+        table
+    );
+
+    for (const auto& iter : data) {
+        sql_query += format(
+            " {} = {},",
+            iter.first,
+            tx.quote(iter.second)
+        );
+    }
+
+    if (sql_query.ends_with(",")) {
+        sql_query.erase(sql_query.end()-1);
+    }
+
+    sql_query += format(
+        " WHERE {} = {} RETURNING *",
+        ID_COLUMN,
+        tx.quote(id)
+    );
+
+    #ifndef NDEBUG
+    get_logger()->debug("exec_update_by_id::sql", sql_query, __FILE__, __LINE__);
+    #endif
+
+    result res = tx.exec(sql_query);
+
+    for (const row& r : res) {
+        return make_unique<EntityT>(r);
+    }
+
+    throw FailedUpdateException("no one row updated");
+}
+
+template<typename EntityT>
+unique_ptr<EntityT> exec_select(connection& conn, const char* table, const map<string, string>& where, bool check_deleted = true) {
+    nontransaction tx{conn};
+
+    string sql_where = "";
+    for (const auto& cond : where) {
+        sql_where += format(
+            " {} = {} AND",
+            cond.first,
+            tx.quote(cond.second)
+        );
+    }
+
+    if (sql_where.ends_with("AND")) {
+        sql_where.erase(sql_where.end()-3, sql_where.end());
+    }
+    
+    string sql_query = format(
+        "SELECT * FROM {} WHERE {}",
+        table,
+        sql_where
+    );
+
+    if (check_deleted) {
+        sql_query += format(
+            " AND {} IS NULL",
+            DELETED_AT_COLUMN
+        );
+    }
+
+    #ifndef NDEBUG
+    get_logger()->debug("exec_select_by_id::sql", sql_query, __FILE__, __LINE__);
+    #endif
+
+    result res = tx.exec(sql_query);
+
+    for (const row& r : res) {
+        return make_unique<EntityT>(r);
+    }
+    
+    return nullptr;
+
+}
+
+}

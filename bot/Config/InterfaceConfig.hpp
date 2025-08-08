@@ -59,6 +59,7 @@ struct InterfaceConfig {
     virtual const string&            get_db_name()          const noexcept = 0;
     virtual const string&            get_db_user()          const noexcept = 0;
     virtual const string&            get_db_password()      const noexcept = 0;
+    virtual const string&            get_db_conn_url()      const noexcept = 0;
     virtual const string&            get_yt_service_url()   const noexcept = 0;
     virtual const string&            get_task_service_url() const noexcept = 0;
     virtual const string&            get_tmp_path()         const noexcept = 0;

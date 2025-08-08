@@ -5,6 +5,7 @@
 #include <string>
 #include <string_view>
 #include <memory>
+#include <map>
 
 namespace Utils::Entity::ApiRequest {
 
@@ -12,6 +13,7 @@ using std::string;
 using std::string_view;
 using std::move;
 using std::to_string;
+using std::map;
 using nlohmann::json;
 
 enum EnumRequestService {
@@ -19,10 +21,21 @@ enum EnumRequestService {
     NGINX,
     BOT,
     TASK,
-    YT,
+    YOUTUBE,
     MERGER,
     CRON,
     PROMETHEUS,
+};
+
+const map<int, string> map_enum_to_service_name{
+    {EnumRequestService::UNKNOWN, "UNKNOWN"},
+    {EnumRequestService::NGINX, "NGINX"},
+    {EnumRequestService::BOT, "BOT"},
+    {EnumRequestService::TASK, "TASK"},
+    {EnumRequestService::YOUTUBE, "YOUTUBE"},
+    {EnumRequestService::MERGER, "MERGER"},
+    {EnumRequestService::CRON, "CRON"},
+    {EnumRequestService::PROMETHEUS, "PROMETHEUS"},
 };
 
 enum ApiRequestColumns {
@@ -32,17 +45,14 @@ enum ApiRequestColumns {
     RESPONSE,
 };
 
+constexpr const char* API_REQUESTS_TABLE = "\"api_requests\"";
+constexpr const char* API_REQUEST_SERVICES_TABLE = "\"api_request_services\"";
 constexpr const char* FROM_COLUMN = "\"from\"";
 constexpr const char* TO_COLUMN = "\"to\"";
 constexpr const char* REQUEST_COLUMN = "\"request\"";
 constexpr const char* RESPONSE_COLUMN = "\"response\"";
 
 struct ApiRequest : Entity {
-
-    static const char* TABLE_NAME() {
-        static const char* table_name = "\"api_requests\"";
-        return table_name;
-    }
 
     EnumRequestService from;
     EnumRequestService to;
@@ -60,6 +70,19 @@ struct ApiRequest : Entity {
         json response = json()
     ):
         Entity(id, created_at, updated_at, deleted_at),
+        from(from),
+        to(to),
+        request(request),
+        response(response)
+    {}
+
+    ApiRequest(
+        EnumRequestService from = EnumRequestService::UNKNOWN,
+        EnumRequestService to = EnumRequestService::UNKNOWN,
+        json request = json(),
+        json response = json()
+    ):
+        Entity(0, nullopt, nullopt, nullopt),
         from(from),
         to(to),
         request(request),

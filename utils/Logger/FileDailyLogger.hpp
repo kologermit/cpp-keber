@@ -1,7 +1,6 @@
 #pragma once
 
 #include <spdlog/spdlog.h>
-#include <utils/Types.hpp>
 #include <utils/Logger/InterfaceLogger.hpp>
 
 namespace Utils::Logger {

@@ -1,9 +1,11 @@
 #include <iostream>
 #include <utils/Logger/StdOutLogger.hpp>
+#include <datetime/datetime.h>
 
 namespace Utils::Logger {
 
 using std::cout, std::clog, std::endl;
+using jed_utils::datetime;
 
 StdOutLogger::StdOutLogger(const EnumLoggerLevel& level):
 _level(level)
@@ -12,10 +14,12 @@ _level(level)
 void StdOutLogger::print_event(ostream& out, string_view file, int line, string_view level, string_view event, string_view message) const {
     if (!file.empty() && line > 0) {
         out 
-            << "[" << level
-            << "::" << file
+            << "["
+            << datetime().to_string(DATETIME_FORMAT)
+            << "][" << level
+            << "][" << file
             << ":" << line
-            << "] [" << event 
+            << "][" << event 
             << "] -- " << message << endl;
     } else {
         out 

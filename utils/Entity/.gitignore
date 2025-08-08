@@ -1,5 +1,7 @@
 *
 !.gitignore
 !Entity.hpp
+!Entity.cpp
 !ApiRequest
 !Exceptions
+!exec_templates.hpp
