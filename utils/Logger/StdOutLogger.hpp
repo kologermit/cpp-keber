@@ -10,7 +10,7 @@ using std::ostream;
 
 struct StdOutLogger : InterfaceLogger {
     explicit StdOutLogger(const EnumLoggerLevel& level=
-        #ifndef NDEBIG
+        #ifndef NDEBUG
         EnumLoggerLevel::DEBUG
         #else
         EnumLoggerLevel::INFO

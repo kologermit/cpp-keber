@@ -13,7 +13,14 @@ _level(level)
 
 void StdOutLogger::print_event(ostream& out, string_view file, int line, string_view level, string_view event, string_view message) const {
     out << "[" << datetime().to_string(DATETIME_FORMAT) << "][" << level << "]";
-    if (!file.empty() && line > 0) {
+    bool is_debug = 
+    #ifndef NDEBUG
+    true
+    #else
+    false
+    #endif
+    ;
+    if (!file.empty() && line > 0 && is_debug) {
         out 
             << "[" << file
             << ":" << line << "]";

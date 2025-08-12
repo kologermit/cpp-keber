@@ -14,7 +14,7 @@ struct InterfaceMessageRepository {
 
     virtual unique_ptr<Message> get_by_id(int id) = 0;
     virtual unique_ptr<Message> get_by_chat_id_and_telegram_id(long long chat_telegram_id, long long telegram_id) = 0;
-    virtual unique_ptr<Message> get_by_telegram_message(const TGMessage& tg_message, bool check_created = false) = 0;
+    virtual unique_ptr<Message> get_by_telegram_message(const TGMessage& tg_message, int user_id, int chat_id, bool check_created = false) = 0;
     virtual unique_ptr<Message> create(const Message& message) = 0;
     virtual unique_ptr<Message> update(const Message& message, vector<int> columns) = 0;
     virtual unique_ptr<Message> del(int id) = 0;

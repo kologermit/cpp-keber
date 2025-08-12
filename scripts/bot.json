@@ -12,7 +12,7 @@
         "description": "Build release bot",
         "working_dir": "./build/Release",
         "scripts": [
-            "cmake ../.. -B . -DBUILD_BOT=ON -DCMAKE_BUILD_TYPE=Release",
+            "cmake ../.. -B . -DBUILD_BOT=ON -DNDEBUG=1 -DCMAKE_BUILD_TYPE=Release",
             "cmake --build . --target BOT",
             "chmod 777 bot/BOT || true"
         ]

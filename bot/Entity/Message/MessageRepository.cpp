@@ -20,7 +20,6 @@ using Utils::Entity::FailedInsertException;
 using Utils::Entity::FailedUpdateException;
 using Bot::Entity::User::USERS_TABLE;
 using Bot::Entity::Chat::CHATS_TABLE;
-using pqxx::work;
 using pqxx::result;
 using pqxx::row;
 using pqxx::nontransaction;
@@ -55,7 +54,7 @@ unique_ptr<Message> MessageRepository::get_by_chat_id_and_telegram_id(long long 
         MESSAGES_TABLE, TELEGRAM_ID_COLUMN, tx.quote(telegram_id)
     );
 
-    #ifndef NDENUG
+    #ifndef NDEBUG
     get_logger()->debug("get_by_chat_id_and_telegram_id::sql", sql_query);
     #endif
 
@@ -69,7 +68,7 @@ unique_ptr<Message> MessageRepository::get_by_chat_id_and_telegram_id(long long 
     return nullptr;
 }
 
-unique_ptr<Message> MessageRepository::get_by_telegram_message(const TGMessage& tg_message, bool check_created) {
+unique_ptr<Message> MessageRepository::get_by_telegram_message(const TGMessage& tg_message, int chat_id, int user_id, bool check_created) {
     unique_ptr<Message> reply_message;
 
     if (check_created) {
@@ -80,52 +79,19 @@ unique_ptr<Message> MessageRepository::get_by_telegram_message(const TGMessage& 
     }
 
     if (tg_message.reply_message != nullptr) {
-        reply_message = get_by_telegram_message(*tg_message.reply_message, true);
+        reply_message = get_by_telegram_message(*tg_message.reply_message, true, chat_id, user_id);
     }
 
-    work tx{_db};
-
-    const string sql_query = format(
-        "WITH\
-            user_cte AS (SELECT {} FROM {} WHERE {} = {}),\
-            chat_cte AS (SELECT {} FROM {} WHERE {} = {}),\
-            reply_message_cte AS (SELECT {} FROM {} WHERE {} = {}) \
-        INSERT INTO {} ({}, {}, {}, {}, {}, {}, {}, {}) \
-        SELECT \
-            {}, {}, {}, {}, {},\
-            (SELECT {} FROM user_cte),\
-            (SELECT {} FROM chat_cte),\
-            (SELECT {} FROM reply_message_cte LIMIT 1)\
-        RETURNING *;",
-        ID_COLUMN, USERS_TABLE, TELEGRAM_ID_COLUMN, tx.quote(tg_message.from->id),
-        ID_COLUMN, CHATS_TABLE, TELEGRAM_ID_COLUMN, tx.quote(tg_message.chat->id),
-        ID_COLUMN, MESSAGES_TABLE, TELEGRAM_ID_COLUMN, tx.quote(tg_message.reply_message != nullptr ? tg_message.reply_message->id : -1),
-        MESSAGES_TABLE, TELEGRAM_ID_COLUMN, TEXT_COLUMN, FILE_DOWNLOAD_ID_COLUMN, FILE_NAME_COLUMN, FILE_CONTENT_TYPE_COLUMN, 
-            USER_ID_COLUMN, CHAT_ID_COLUMN, REPLY_MESSAGE_ID_COLUMN,
-        tx.quote(tg_message.id), tx.quote(tg_message.text), tx.quote(tg_message.file_download_id), tx.quote(tg_message.file_name), 
-        tx.quote(static_cast<int>(tg_message.file_content_type)),
-        ID_COLUMN,
-        ID_COLUMN,
-        ID_COLUMN
-    );
-
-    #ifndef NDEBUG
-    get_logger()->debug("sql", sql_query, __FILE__, __LINE__);
-    #endif
-
-    tx.exec("ROLLBACK");
-    tx.exec("BEGIN");
-
-    result res = tx.exec(sql_query);
-
-    tx.commit();
-
-    for (const row& r : res) {
-        return make_unique<Message>(r);
-    }
-
-    throw FailedInsertException("no one row");
-
+    return create(Message(
+        tg_message.id,
+        tg_message.text,
+        tg_message.file_download_id,
+        tg_message.file_name,
+        tg_message.file_content_type,
+        chat_id,
+        user_id,
+        (reply_message == nullptr ? 0 : reply_message->id)
+    ));
 }
 
 unique_ptr<Message> MessageRepository::create(const Message& message) {
@@ -135,7 +101,7 @@ unique_ptr<Message> MessageRepository::create(const Message& message) {
         {TEXT_COLUMN, message.text},
         {FILE_DOWNLOAD_ID_COLUMN, message.file_download_id},
         {FILE_NAME_COLUMN, message.file_name}, 
-        {FILE_CONTENT_TYPE_COLUMN, to_string(message.file_content_type)},
+        {FILE_CONTENT_TYPE_COLUMN, to_string(static_cast<int>(message.file_content_type))},
         {USER_ID_COLUMN, to_string(message.user_id)},
         {CHAT_ID_COLUMN, to_string(message.chat_id)},
     };

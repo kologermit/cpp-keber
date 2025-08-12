@@ -10,11 +10,9 @@ namespace Utils::Entity {
 using std::pair;
 using std::make_unique;
 using fmt::format;
-using pqxx::work;
 using pqxx::result;
 using pqxx::row;
 using pqxx::nontransaction;
-using pqxx::work;
 
 #ifndef NDEBUG
 using Utils::Logger::get_logger;

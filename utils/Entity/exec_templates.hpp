@@ -14,11 +14,9 @@ using Utils::Logger::get_logger;
 using std::pair;
 using std::make_unique;
 using fmt::format;
-using pqxx::work;
 using pqxx::result;
 using pqxx::row;
 using pqxx::nontransaction;
-using pqxx::work;
 
 template<typename EntityT>
 unique_ptr<EntityT> exec_insert(connection& conn, const char* table, const map<string, string>& data) {
@@ -48,7 +46,7 @@ unique_ptr<EntityT> exec_insert(connection& conn, const char* table, const map<s
     }
 
     const string sql_query = format(
-        "INSERT INTO {} ({}) VALUES ({}) RETURNING *",
+        "INSERT INTO {} ({}) VALUES ({}) RETURNING *;",
         table,
         sql_columns,
         sql_values
@@ -89,7 +87,7 @@ unique_ptr<EntityT> exec_update_by_id(connection& conn, const char* table, const
     }
 
     sql_query += format(
-        " WHERE {} = {} RETURNING *",
+        " WHERE {} = {} RETURNING *;",
         ID_COLUMN,
         tx.quote(id)
     );
@@ -125,7 +123,8 @@ unique_ptr<EntityT> exec_select(connection& conn, const char* table, const map<s
     }
     
     string sql_query = format(
-        "SELECT * FROM {} WHERE {}",
+        "SELECT {}.* FROM {} WHERE {}",
+        table,
         table,
         sql_where
     );
@@ -136,6 +135,8 @@ unique_ptr<EntityT> exec_select(connection& conn, const char* table, const map<s
             DELETED_AT_COLUMN
         );
     }
+
+    sql_query += ";";
 
     #ifndef NDEBUG
     get_logger()->debug("exec_select_by_id::sql", sql_query, __FILE__, __LINE__);
