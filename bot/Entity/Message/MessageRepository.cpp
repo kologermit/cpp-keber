@@ -31,8 +31,8 @@ using std::make_unique;
 using Utils::Logger::get_logger;
 #endif
 
-MessageRepository::MessageRepository(string_view conn_url):
-_db(conn_url.data()) {
+MessageRepository::MessageRepository(connection& db):
+_db(db) {
     create_rows_in_enum_table_if_empty(_db, MESSAGE_CONTENT_TYPES_TABLE, map_content_type_to_string);
 }
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <datetime/datetime.h>
+#include <utils/Datetime.hpp>
 #include <optional>
 #include <string>
 #include <string_view>
@@ -19,10 +19,9 @@ using std::string_view;
 using std::map;
 using std::unique_ptr;
 using jed_utils::datetime;
+using Utils::Datetime::DATETIME_FORMAT;
 using pqxx::row;
 using pqxx::connection;
-
-constexpr const char* DATETIME_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
 enum EntityColumns {
     ID,

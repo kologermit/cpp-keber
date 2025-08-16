@@ -19,7 +19,6 @@ target_link_libraries(UTILS_LIB
     datetime::datetime
     libuuid::libuuid
     libpqxx::pqxx
-    spdlog::spdlog
     fmt::fmt
     httplib::httplib
     nlohmann_json::nlohmann_json

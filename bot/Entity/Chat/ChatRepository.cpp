@@ -13,8 +13,8 @@ using Utils::Entity::DELETED_AT_COLUMN;
 using Utils::Entity::DATETIME_FORMAT;
 using jed_utils::datetime;
 
-ChatRepository::ChatRepository(string_view conn_url):
-_db(conn_url.data()) {
+ChatRepository::ChatRepository(connection& db):
+_db(db) {
     create_rows_in_enum_table_if_empty(_db, CHAT_TYPES_TABLE, map_chat_type_to_string);
 }
 

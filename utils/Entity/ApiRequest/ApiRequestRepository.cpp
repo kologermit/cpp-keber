@@ -28,8 +28,8 @@ using Utils::Logger::get_logger;
 #endif
 
 
-ApiRequestRepository::ApiRequestRepository(string_view conn_str):
-_db(conn_str.data()) 
+ApiRequestRepository::ApiRequestRepository(connection& db):
+_db(db) 
 {
     create_rows_in_enum_table_if_empty(_db, API_REQUEST_SERVICES_TABLE, map_enum_to_service_name);
 }

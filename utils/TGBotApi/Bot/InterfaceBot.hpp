@@ -12,7 +12,7 @@
 
 namespace Utils::TGBotApi::Bot {
 
-using std::string_view, std::string, std::unique_ptr;
+using std::string_view, std::string, std::unique_ptr, std::shared_ptr;
 using Utils::TGBotApi::User::User;
 using Utils::TGBotApi::Message::Message;
 using Utils::TGBotApi::File::EnumContentType;
@@ -56,5 +56,7 @@ struct InterfaceBot {
 
     ~InterfaceBot() = default;
 };
+
+shared_ptr<InterfaceBot> get_bot(unique_ptr<InterfaceBot> bot = nullptr);
 
 }

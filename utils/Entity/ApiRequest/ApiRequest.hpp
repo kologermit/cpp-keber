@@ -52,6 +52,8 @@ constexpr const char* TO_COLUMN = "\"to\"";
 constexpr const char* REQUEST_COLUMN = "\"request\"";
 constexpr const char* RESPONSE_COLUMN = "\"response\"";
 
+constexpr const char* FROM_HEADER = "FROM_SERVICE";
+
 struct ApiRequest : Entity {
 
     EnumRequestService from;

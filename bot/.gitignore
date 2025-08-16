@@ -4,6 +4,6 @@
 !Config
 !Entity
 !Server
-!Bot
-!Handler
+!BotHandler
+!HTTPHandler
 !main.cpp

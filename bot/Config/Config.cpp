@@ -8,10 +8,6 @@
 #include <map>
 #include <algorithm>
 
-#ifndef NDEBUG
-#include <utils/Logger/InterfaceLogger.hpp>
-#endif
-
 namespace Bot::Config {
 
 using std::pair;
@@ -27,10 +23,6 @@ using std::map;
 using std::find_if;
 using std::find;
 using fmt::format;
-
-#ifndef NDEBUG
-using Utils::Logger::get_logger;
-#endif
 
 using nlohmann::json;
 
@@ -113,13 +105,6 @@ const string& Config::get_shared_path() const noexcept {
 }
 
 Config::Config(int argc, const char* argv[]) {
-
-    #ifndef NDEBUG
-    for (int i = 0; i < argc; i++) {
-        get_logger()->debug("ARGV", argv[i], __FILE__, __LINE__);
-    }
-    #endif
-
     string ENV_FILE_KEY = "--env-file";
     string json_file_name;
     for (int i = 0; i < argc && json_file_name.empty(); i++) {
@@ -152,9 +137,6 @@ Config::Config(int argc, const char* argv[]) {
             throw ConfigParseFailedException(ENV_FILE_KEY + " (" + json_file_name + "): cannot parse json!");
         }
         json_env = json::parse(read);
-        #ifndef NDEBUG
-        get_logger()->debug("json_parse", json_env.dump(), __FILE__, __LINE__);
-        #endif
     }
 
     struct ConfigParseParam {
@@ -193,24 +175,13 @@ Config::Config(int argc, const char* argv[]) {
         {"LOGS_PATH", _logs_path},
         {"SHARED_PATH", _shared_path},
     })  {
-        #ifndef NDEBUG
-        if (!config.config_value.empty()) {
-            get_logger()->debug( config.param + "::Default", config.config_value, __FILE__, __LINE__);
-        }
-        #endif
         config.config_value = Utils::Env::Get(config.param, config.config_value);
-        #ifndef NDEBUG
-        get_logger()->debug(config.param + "::Env", config.config_value, __FILE__, __LINE__);
-        #endif
         if (!json_env.empty() && json_env.contains(config.param)) {
             if (config.is_string) {
                 config.config_value = string(json_env[config.param]);
             } else {
                 config.config_value = to_string(json_env[config.param]);
             }
-            #ifndef NDEBUG
-            get_logger()->debug(config.param + "::JSON", config.config_value, __FILE__, __LINE__);
-            #endif
         }
         string key = "--" + config.param;
         for (int i = 0; i < argc; i++) {
@@ -221,17 +192,11 @@ Config::Config(int argc, const char* argv[]) {
                 throw ConfigParseFailedException(key + ": value not found");
             }
             config.config_value = argv[i+1];
-            #ifndef NDEBUG
-            get_logger()->debug(config.param + "::argv", config.config_value, __FILE__, __LINE__);
-            #endif
             break;
         }
         if (config.config_value.empty() && config.is_throw) {
             throw ConfigNotFoundException(config.param);
         }
-        #ifndef NDEBUG
-        get_logger()->debug(config.param + "::RESULT", config.config_value, __FILE__, __LINE__);
-        #endif
     }
 
     _db_conn_url = format(

@@ -1,0 +1,4 @@
+*
+!.gitignore
+!InterfaceHTTPHandler.hpp
+!CheckHealth

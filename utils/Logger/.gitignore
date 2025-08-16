@@ -2,9 +2,5 @@
 !.gitignore
 !InterfaceLogger.hpp
 !InterfaceLogger.cpp
-!FileDailyLogger.cpp
-!FileDailyLogger.hpp
-!StdOutLogger.cpp
-!StdOutLogger.hpp
-!JSONSTDOutLogger.hpp
-!JSONSTDOutLogger.cpp
+!Logger.hpp
+!Logger.cpp

@@ -39,7 +39,6 @@ include_directories(
 
 find_package(fmt REQUIRED)
 find_package(nlohmann_json REQUIRED)
-find_package(spdlog REQUIRED)
 find_package(libuuid REQUIRED)
 find_package(httplib REQUIRED)
 find_package(OpenSSL REQUIRED)

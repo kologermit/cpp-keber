@@ -17,11 +17,11 @@ struct MessageRepository : InterfaceMessageRepository {
     unique_ptr<Message> update(const Message& message, vector<int> columns) override;
     unique_ptr<Message> del(int id) override;
 
-    MessageRepository(string_view conn_url);
+    MessageRepository(connection& db);
 
     private:
 
-    connection _db;
+    connection& _db;
 };
 
 }

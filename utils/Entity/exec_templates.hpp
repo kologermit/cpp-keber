@@ -56,13 +56,14 @@ unique_ptr<EntityT> exec_insert(connection& conn, const char* table, const map<s
     get_logger()->debug("exec_insert::sql_query", sql_query, __FILE__, __LINE__);
     #endif
 
-    result res = tx.exec(sql_query);
+    auto res = tx.exec(sql_query);
 
-    for (const row& r : res) {
-        return make_unique<EntityT>(r);
+    if (res.empty()) {
+        throw FailedInsertException("row wasnt inserted");
     }
 
-    throw FailedInsertException("api request wasnt returned");
+    return make_unique<EntityT>(res.one_row());
+
 }
 
 template<typename EntityT>
@@ -96,13 +97,13 @@ unique_ptr<EntityT> exec_update_by_id(connection& conn, const char* table, const
     get_logger()->debug("exec_update_by_id::sql", sql_query, __FILE__, __LINE__);
     #endif
 
-    result res = tx.exec(sql_query);
+    auto res = tx.exec(sql_query);
 
-    for (const row& r : res) {
-        return make_unique<EntityT>(r);
+    if (res.empty()) {
+        throw FailedUpdateException("row wasnt updated");
     }
 
-    throw FailedUpdateException("no one row updated");
+    return make_unique<EntityT>(res.one_row());
 }
 
 template<typename EntityT>
@@ -142,13 +143,13 @@ unique_ptr<EntityT> exec_select(connection& conn, const char* table, const map<s
     get_logger()->debug("exec_select_by_id::sql", sql_query, __FILE__, __LINE__);
     #endif
 
-    result res = tx.exec(sql_query);
+    auto res = tx.exec(sql_query);
 
-    for (const row& r : res) {
-        return make_unique<EntityT>(r);
+    if (res.empty()) {
+        return nullptr;
     }
-    
-    return nullptr;
+
+    return make_unique<EntityT>(res.one_row());
 
 }
 

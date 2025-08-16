@@ -20,7 +20,7 @@ using Utils::Logger::get_logger;
 
 void create_rows_in_enum_table_if_empty(connection& conn, const char* table, const map<int, string>& map_int_to_string) {
     const string select_sql_query = format(
-        "SELECT * FROM {}",
+        "SELECT * FROM {} LIMIT 1;",
         table
     );
 
@@ -54,6 +54,8 @@ void create_rows_in_enum_table_if_empty(connection& conn, const char* table, con
     if (insert_sql_query.ends_with(",")) {
         insert_sql_query.erase(insert_sql_query.end()-1);
     }
+
+    insert_sql_query += ";";
 
     #ifndef NDEBUG
     get_logger()->debug("create_rows_in_enum_table_if_empty::insert", insert_sql_query, __FILE__, __LINE__);

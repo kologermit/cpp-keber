@@ -16,11 +16,11 @@ struct UserRepository : InterfaceUserRepository {
     unique_ptr<User> update(const User& user, vector<int> columns) override;
     unique_ptr<User> del(int id) override;
 
-    UserRepository(string_view conn_url);
+    UserRepository(connection& db);
 
     private:
 
-    connection _db;
+    connection& _db;
 };
 
 }

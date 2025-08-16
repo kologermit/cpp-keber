@@ -14,11 +14,11 @@ struct ApiRequestRepository : InterfaceApiRequestRepository {
     unique_ptr<ApiRequest> update(const ApiRequest& request, const vector<int>& columns) override;
     unique_ptr<ApiRequest> del(int id) override;
 
-    ApiRequestRepository(string_view conn_url);
+    ApiRequestRepository(connection& _db);
 
     private:
 
-    connection _db;
+    connection& _db;
 
 };
 

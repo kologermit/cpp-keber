@@ -12,7 +12,6 @@ class CPPKeberRecipe(ConanFile):
         self.requires("libpqxx/7.10.1")
         self.requires("nlohmann_json/3.12.0")
         self.requires("fmt/11.2.0")
-        self.requires("spdlog/1.15.3")
         self.requires("cpp-datetime-library/1.0.2")
         self.requires("openssl/3.5.2")
 

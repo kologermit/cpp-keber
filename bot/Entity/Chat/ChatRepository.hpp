@@ -15,11 +15,11 @@ struct ChatRepository : InterfaceChatRepository {
     unique_ptr<Chat> update(const Chat& chat, vector<int> columns) override;
     unique_ptr<Chat> del(int id) override;
 
-    ChatRepository(string_view conn_url);
+    ChatRepository(connection& db);
 
     private:
 
-    connection _db;
+    connection& _db;
 };
 
 }

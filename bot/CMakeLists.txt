@@ -24,7 +24,6 @@ target_link_libraries(BOT
     libpqxx::pqxx
     libuuid::libuuid
     datetime::datetime
-    spdlog::spdlog
     fmt::fmt
     httplib::httplib
     nlohmann_json::nlohmann_json

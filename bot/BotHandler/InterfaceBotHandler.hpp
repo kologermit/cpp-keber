@@ -3,7 +3,7 @@
 #include <bot/Entity/Repositories.hpp>
 #include <utils/TGBotApi/Types.hpp>
 
-namespace Bot::Handler {
+namespace Bot::BotHandler {
 
 using Bot::Entity::Repositories::Repositories;
 using Bot::Entity::Message::Message;
@@ -14,9 +14,7 @@ using Utils::TGBotApi::Types::ptrMessage;
 using std::shared_ptr;
 
 struct BotHandlerContext {
-
-    shared_ptr<Repositories> repositories;
-    shared_ptr<InterfaceBot> bot;
+    
     Message& message;
     Chat& chat;
     User& user;

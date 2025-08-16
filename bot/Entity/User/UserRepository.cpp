@@ -12,8 +12,8 @@ using Utils::Entity::DELETED_AT_COLUMN;
 using Utils::Entity::ID_COLUMN;
 using Utils::Entity::DATETIME_FORMAT;
 
-UserRepository::UserRepository(string_view conn_url):
-_db(conn_url.data())
+UserRepository::UserRepository(connection& db):
+_db(db)
 {
     create_rows_in_enum_table_if_empty(_db, USER_SCREENS_TABLE, map_user_screen_to_string);
 }
