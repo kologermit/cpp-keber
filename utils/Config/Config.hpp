@@ -1,8 +1,8 @@
 #pragma once
 
-#include <bot/Config/InterfaceConfig.hpp>
+#include <utils/Config/InterfaceConfig.hpp>
 
-namespace Bot::Config {
+namespace Utils::Config {
 
 struct Config : InterfaceConfig {
 

@@ -6,7 +6,7 @@
 #include <exception>
 #include <memory>
 
-namespace Bot::Config {
+namespace Utils::Config {
 
 using std::string;
 using std::vector;

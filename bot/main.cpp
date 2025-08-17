@@ -1,5 +1,5 @@
-#include <bot/Config/Config.hpp>
 #include <bot/Server/Server.hpp>
+#include <utils/Config/Config.hpp>
 #include <utils/Logger/Logger.hpp>
 #include <utils/Random/Random.hpp>
 
@@ -7,8 +7,8 @@ using Utils::Logger::get_logger;
 using Utils::Logger::Logger;
 using TGBot = Utils::TGBotApi::Bot::Bot;
 using Utils::TGBotApi::Bot::get_bot;
-using Bot::Config::get_config;
-using Bot::Config::Config;
+using Utils::Config::get_config;
+using Utils::Config::Config;
 using Bot::Entity::Repositories::Repositories;
 using Bot::Entity::Repositories::get_repositories;
 using Bot::Server::Server;

@@ -1,6 +1,6 @@
-#include <bot/Config/InterfaceConfig.hpp>
+#include <utils/Config/InterfaceConfig.hpp>
 
-namespace Bot::Config {
+namespace Utils::Config {
 
 using std::move;
 

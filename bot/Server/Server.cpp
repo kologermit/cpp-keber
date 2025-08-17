@@ -1,10 +1,10 @@
 #include <bot/Server/Server.hpp>
-#include <bot/Config/InterfaceConfig.hpp>
 #include <bot/BotHandler/NotFound/NotFound.hpp>
 #include <bot/HTTPHandler/CheckHealth/CheckHealth.hpp>
 #include <utils/Logger/InterfaceLogger.hpp>
 #include <utils/Random/Random.hpp>
 #include <utils/JSONKeys.hpp>
+#include <utils/Config/InterfaceConfig.hpp>
 
 namespace Bot::Server {
 
@@ -37,6 +37,7 @@ using Utils::TGBotApi::Query::POST;
 using Utils::TGBotApi::File::convert_map_content_type;
 using Utils::TGBotApi::File::TEXT;
 using Utils::Random::rand_int;
+using Utils::Config::get_config;
 using Utils::JSONKeys::ERROR_KEY;
 using Utils::JSONKeys::PATH_KEY;
 using Utils::JSONKeys::STATUS_KEY;
@@ -49,7 +50,6 @@ using Bot::HTTPHandler::CheckHealth::CheckHealth;
 using Bot::HTTPHandler::RequestHandlerMethod;
 using Bot::BotHandler::NotFound::NotFound;
 using Bot::BotHandler::BotHandlerContext;
-using Bot::Config::get_config;
 using Bot::Entity::Message::Message;
 using Bot::Entity::Chat::Chat;
 using Bot::Entity::User::User;

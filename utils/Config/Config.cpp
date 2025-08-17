@@ -1,4 +1,4 @@
-#include <bot/Config/Config.hpp>
+#include <utils/Config/Config.hpp>
 #include <utils/Env/Env.hpp>
 #include <nlohmann/json.hpp>
 #include <fmt/core.h>
@@ -8,7 +8,7 @@
 #include <map>
 #include <algorithm>
 
-namespace Bot::Config {
+namespace Utils::Config {
 
 using std::pair;
 using std::to_string;
