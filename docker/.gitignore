@@ -3,7 +3,7 @@
 !bot.yml
 !postgres.yml
 !downloader.yml
-!nginx.yml
+!caddy.yml
 !networks.yml
 !cron.yml
 !parents.yml

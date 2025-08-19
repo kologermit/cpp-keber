@@ -1,0 +1,23 @@
+volumes:
+  shared:
+  caddy-data:
+
+services:
+  caddy:
+    extends:
+      file: ./parents.yml
+      service: parent
+    image: ${CADDY_IMAGE}
+    working_dir: /shared
+    ports:
+      - ${CADDY_HTTP_PORT}:80
+      - ${CADDY_HTTPS_PORT}:443
+    environment:
+      - DOMAINS=${CADDY_DOMAINS}
+      - EMAIL=${CADDY_EMAIL}
+    volumes:
+      - ../Caddyfile:/etc/caddy/Caddyfile:ro
+      - shared:/shared:ro
+      - caddy-data:/data
+    networks:
+      - default
