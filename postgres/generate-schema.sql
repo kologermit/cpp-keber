@@ -120,7 +120,7 @@ CREATE TABLE IF NOT EXISTS user_access_types (
 );
 CREATE TABLE IF NOT EXISTS user_accesses (
     id          SERIAL PRIMARY KEY,
-    user_id     INT NOT NULL REFERENCES user(id),
+    user_id     INT NOT NULL REFERENCES users(id),
     type        INT NOT NULL REFERENCES user_access_types(id),
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,

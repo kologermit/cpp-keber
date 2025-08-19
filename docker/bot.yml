@@ -7,13 +7,24 @@ services:
     extends:
       file: ./parents.yml
       service: custom_service
-    build:
-      target: bot
+    build: ..
     networks:
-      - bot_to_postgres
-      - nginx_to_bot
+      - default
     volumes:
-      - bot_logs:/logs:rw
-      - bot_tmp:/tmp:rw
-    ports:
-      - ${BOT_EXTERNAL_PORT:-127.0.0.1:8080}:${BOT_PORT:-8080}
+      - bot_logs:/logs/bot:rw
+      - ../build/Debug/bot/BOT:/app:ro
+    environment:
+      - BOT_TOKEN=${BOT_TOKEN}
+      - BOT_ADMINS=${BOT_ADMINS}
+      - WEBHOOK_URL=${BOT_WEBHOOK_URL}
+      - WEBHOOK_PATH=/webhook
+      - DB_HOST=postgres
+      - DB_NAME=${POSTGRES_DB}
+      - DB_PORT=5432
+      - DB_USER=${BOT_USER}
+      - DB_PASSWORD=${BOT_PASSWORD}
+      - LISTEN_IP=0.0.0.0
+      - LISTEN_PORT=8080
+      - TMP_PATH=/tmp/bot
+      - LOGS_PATH=/logs/bot
+      - SHARED_PATH=/shared/

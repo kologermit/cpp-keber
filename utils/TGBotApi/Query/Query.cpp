@@ -81,6 +81,7 @@ string Query::query(
     #endif
 
     httplib::Client cli("https://api.telegram.org");
+    cli.enable_server_certificate_verification(false);
     
     if (method == EnumQueryMethod::GET) {
         result = cli.Get(full_path, params, headers);

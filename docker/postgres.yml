@@ -6,22 +6,22 @@ services:
     extends:
       file: ./parents.yml
       service: parent
-    image: ${DB_IMAGE:-postgres:17-alpine}
+    image: ${POSTGRES_IMAGE}
     user: postgres
     volumes:
       - ../postgres/generate-schema.sql:/docker-entrypoint-initdb.d/50-init.sql:ro
       - ../postgres/generate-users.sh:/docker-entrypoint-initdb.d/60-init.sh:ro
       - postgres_data:/var/lib/postgresql/data:rw
     environment:
-      - POSTGRES_USER=${DB_USER:-postgres}
-      - POSTGRES_PASSWORD=${DB_PASSWORD:-qwerty}
-      - POSTGRES_DB=${DB_NAME:-bot}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
       - PGDATA=/var/lib/postgresql/data
-      - BOT_PASSWORD=${BOT_DB_PASSWORD:-qwerty}
-      - BOT_USER=${BOT_DB_USER:-bot}
-      - READER_USER=${DB_READER_USER:-reader}
-      - READER_PASSWORD=${DB_READER_PASSWORD:-qwerty}
+      - BOT_PASSWORD=${BOT_PASSWORD}
+      - BOT_USER=${BOT_USER}
+      - READER_USER=${READER_USER}
+      - READER_PASSWORD=${READER_PASSWORD}
     ports:
-      - ${DB_EXTERNAL_PORT:-127.0.0.1:5432}:5432
+      - ${POSTGRES_EXTERNAL_PORT}:5432
     networks:
       - default

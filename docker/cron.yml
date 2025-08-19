@@ -1,8 +1,0 @@
-services:
-  cron:
-    extends:
-      file: ./parents.yml
-      service: custom_service
-    networks:
-      - cron_to_cleaner
-      - cron_to_downloader

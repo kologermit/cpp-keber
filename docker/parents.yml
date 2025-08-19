@@ -1,6 +1,6 @@
 services:
   parent:
-    restart: ${CONTAINER_RESTART:-always}
+    restart: ${CONTAINER_RESTART}
     stop_signal: SIGINT
     cap_drop:  
       - ALL
@@ -12,8 +12,8 @@ services:
     deploy:  
       resources:
         limits:
-          cpus: ${CONTAINER_CPUS_LIMIT:-1.0}
-          memory: ${CONTAINER_MEMORY_LIMIT:-512M}
+          cpus: ${CONTAINER_CPUS_LIMIT}
+          memory: ${CONTAINER_MEMORY_LIMIT}
     ulimits:  
       nproc: 1024
       nofile:  
@@ -31,9 +31,5 @@ services:
     build:
       context: ..
       args:
-        - BUILDER_IMAGE=${BUILDER_IMAGE:-debian}
-        - BASE_IMAGE=${BASE_IMAGE:-busybox}
-        - GROUP_ID=${GROUP_ID:-1001}
-        - USER_ID=${USER_ID:-1001}
+        - RUNNER_IMAGE=${RUNNER_IMAGE}
     user: runner
-    env_file: ../.env
