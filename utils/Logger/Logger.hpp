@@ -3,11 +3,13 @@
 #include <string_view>
 #include <iostream>
 #include <fstream>
+#include <mutex>
 #include <utils/Logger/InterfaceLogger.hpp>
 
 namespace Utils::Logger {
 
 using std::ostream, std::ofstream;
+using std::mutex;
 
 struct Logger : InterfaceLogger {
     explicit Logger(
@@ -39,6 +41,7 @@ struct Logger : InterfaceLogger {
     private:
     const EnumLoggerLevel _level;
     mutable ofstream _file;
+    mutable mutex _mutex;
 
     
 };

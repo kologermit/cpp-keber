@@ -13,7 +13,8 @@ bool NotFound::check(shared_ptr<BotHandlerContext>) {
 ptrMessage NotFound::handle(shared_ptr<BotHandlerContext> context) {
     return get_bot()->send_message({
         .chat_id = context->chat.telegram_id,
-        .text = "Не понял!"
+        .text = "Не понял!",
+        .reply_message_id = context->message.telegram_id,
     });
 }
 

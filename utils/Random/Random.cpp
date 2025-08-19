@@ -1,6 +1,7 @@
 #include <utils/Random/Random.hpp>
 #include <random>
 #include <ctime>
+#include <cmath>
 
 namespace Utils::Random {
 
@@ -11,7 +12,7 @@ void init() {
 }
 
 int rand_int(int start, int end) {
-    return (std::rand() % (end - start)) + start;
+    return (std::rand() % (abs(end - start) + 1)) + start;
 }
 
 }

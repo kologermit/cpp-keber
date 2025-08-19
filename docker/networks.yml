@@ -1,7 +1,2 @@
 networks:
-  nginx_to_bot:
-  bot_to_postgres:
-  bot_to_downloader:
-  downloader_to_postgres:
-  cron_to_downloader:
-  cron_to_cleaner:
+  default:

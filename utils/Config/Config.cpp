@@ -229,6 +229,10 @@ Config::Config(int argc, const char* argv[]) {
     } catch (const json::type_error&) {
         throw ConfigParseFailedException("BOT_ADMINS: invalid type (" + admins_str + ")");
     }
+
+    if (_admins.empty()) {
+        throw ConfigParseFailedException("BOT_ADMINS: empty array (" + admins_str + ")");
+    }
 }
 
 }

@@ -1,5 +1,6 @@
 #include <bot/Server/Server.hpp>
 #include <bot/BotHandler/NotFound/NotFound.hpp>
+#include <bot/BotHandler/Dice/Dice.hpp>
 #include <bot/HTTPHandler/CheckHealth/CheckHealth.hpp>
 #include <utils/Logger/InterfaceLogger.hpp>
 #include <utils/Random/Random.hpp>
@@ -50,6 +51,7 @@ using Bot::HTTPHandler::CheckHealth::CheckHealth;
 using Bot::HTTPHandler::RequestHandlerMethod;
 using Bot::BotHandler::NotFound::NotFound;
 using Bot::BotHandler::BotHandlerContext;
+using Bot::BotHandler::Dice::Dice;
 using Bot::Entity::Message::Message;
 using Bot::Entity::Chat::Chat;
 using Bot::Entity::User::User;
@@ -67,6 +69,7 @@ request_handlers(move(request_handlers))
 
 Server::Server()
 {
+    bot_handlers.emplace_back(make_unique<Dice>());
     bot_handlers.emplace_back(make_unique<NotFound>());
     request_handlers.emplace_back(make_unique<CheckHealth>());
 }
@@ -170,6 +173,12 @@ void Server::run() noexcept {
                 if (res.headers.find(FROM_HEADER) != res.headers.end()) {
                     api_request.from = static_cast<EnumRequestService>(stoi(res.headers.find(FROM_HEADER)->second));
                 }
+                if (json::accept(req.body)) {
+                    api_request.request[BODY_KEY] = json::parse(req.body);
+                }
+                if (json::accept(res.body)) {
+                    api_request.response[BODY_KEY] = json::parse(res.body);
+                }
                 get_repositories()->api_request_repository->create(api_request);
             } catch (const exception& er) {
                 res.status = 500;
@@ -238,11 +247,27 @@ json BotHandler::handle(const Request& req, Response& res) {
     });
 
     ptrMessage result_tg_message;
-    for (auto& handler : _bot_handlers) {
-        if (handler->check(context)) {
-            result_tg_message = handler->handle(context);
-            break;
+    try {
+        for (auto& handler : _bot_handlers) {
+            if (handler->check(context)) {
+                result_tg_message = handler->handle(context);
+                break;
+            }
         }
+    } catch (const exception& err) {
+        get_logger()->error("BOT_HANDLER::EXCEPTION", format(
+            "({}): {}",
+            handle_id,
+            err.what()
+        ));
+        get_bot()->send_message({
+            .chat_id = context->chat.telegram_id,
+            .text = format(
+                "<b>Произошла ошибка: </b><i>{}</i>",
+                err.what()
+            ),
+            .reply_message_id = context->message.telegram_id,
+        });
     }
 
     if (result_tg_message != nullptr) {

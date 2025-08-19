@@ -24,5 +24,4 @@ services:
     ports:
       - ${DB_EXTERNAL_PORT:-127.0.0.1:5432}:5432
     networks:
-      - bot_to_postgres
-      - downloader_to_postgres
+      - default

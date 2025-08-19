@@ -1,4 +1,5 @@
 *
 !.gitignore
 !NotFound
+!Dice
 !InterfaceBotHandler.hpp

@@ -7,6 +7,7 @@
 namespace Utils::Logger {
 
 using std::cout, std::clog, std::endl;
+using std::lock_guard;
 using jed_utils::datetime;
 using Utils::Datetime::DATE_FORMAT;
 using std::filesystem::exists;
@@ -36,6 +37,7 @@ void Logger::print_event(
         bool is_yellow,
         bool is_red
     ) const {
+    lock_guard lg(_mutex);
     if (is_green) {
         out << "\033[32m";
     }
