@@ -1,5 +1,8 @@
 *
 !.gitignore
+!Start
+!Menu
+!Access
 !NotFound
 !Dice
 !InterfaceBotHandler.hpp

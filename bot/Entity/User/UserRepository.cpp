@@ -7,7 +7,7 @@ using Utils::Entity::Exceptions::FailedUpdateException;
 using Utils::Entity::create_rows_in_enum_table_if_empty;
 using Utils::Entity::exec_insert;
 using Utils::Entity::exec_update_by_id;
-using Utils::Entity::exec_select;
+using Utils::Entity::exec_select_one;
 using Utils::Entity::DELETED_AT_COLUMN;
 using Utils::Entity::ID_COLUMN;
 using Utils::Entity::DATETIME_FORMAT;
@@ -19,13 +19,13 @@ _db(db)
 }
 
 unique_ptr<User> UserRepository::get_by_id(int id) {
-    return exec_select<User>(_db, USERS_TABLE, {
+    return exec_select_one<User>(_db, USERS_TABLE, {
         {ID_COLUMN, to_string(id)}
     });
 }
 
 unique_ptr<User> UserRepository::get_by_telegram_id(long long telegram_id) {
-    return exec_select<User>(_db, USERS_TABLE, {
+    return exec_select_one<User>(_db, USERS_TABLE, {
         {TELEGRAM_ID_COLUMN, to_string(telegram_id)}
     });
 }

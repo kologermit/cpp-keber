@@ -38,9 +38,7 @@ using Utils::TGBotApi::Message::Keyboard::ReplyKeyboard;
 using ptrReplyKeyboard = std::unique_ptr<ReplyKeyboard>;
 
 using Utils::TGBotApi::Message::Keyboard::ReplyButton;
-using ptrReplyButton = std::unique_ptr<ReplyButton>;
-using ReplyButtons = std::vector<std::vector<ReplyButton> >;
-using ptrReplyButtons = std::unique_ptr<ReplyButtons>;
+using ReplyButtons = std::vector<std::vector<std::shared_ptr<ReplyButton> > >;
 
 using Utils::TGBotApi::CallbackQuery::CallbackQuery;
 using ptrCallbackQuery = std::unique_ptr<CallbackQuery>;

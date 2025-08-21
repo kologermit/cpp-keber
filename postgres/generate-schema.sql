@@ -113,21 +113,21 @@ EXECUTE FUNCTION update_updated_at();
 
 
 
-CREATE TABLE IF NOT EXISTS user_access_types (
+CREATE TABLE IF NOT EXISTS access_types (
     id          INT PRIMARY KEY,
     name        VARCHAR(255) NOT NULL,
     created_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
-CREATE TABLE IF NOT EXISTS user_accesses (
+CREATE TABLE IF NOT EXISTS accesses (
     id          SERIAL PRIMARY KEY,
     user_id     INT NOT NULL REFERENCES users(id),
-    type        INT NOT NULL REFERENCES user_access_types(id),
+    type        INT NOT NULL REFERENCES access_types(id),
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP NULL,
-    CONSTRAINT fk_user_access_type FOREIGN KEY (type) REFERENCES user_access_types(id)
+    CONSTRAINT fk_ccess_type FOREIGN KEY (type) REFERENCES access_types(id)
 );
-CREATE TRIGGER trigger_update_api_request_updated_at
-BEFORE UPDATE ON user_accesses
+CREATE TRIGGER trigger_update_accesses_updated_at
+BEFORE UPDATE ON accesses
 FOR EACH ROW
 EXECUTE FUNCTION update_updated_at();

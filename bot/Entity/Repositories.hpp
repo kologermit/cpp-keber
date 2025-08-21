@@ -4,6 +4,7 @@
 #include <bot/Entity/Message/InterfaceMessageRepository.hpp>
 #include <bot/Entity/User/InterfaceUserRepository.hpp>
 #include <bot/Entity/Chat/InterfaceChatRepository.hpp>
+#include <bot/Entity/Access/InterfaceAccessRepository.hpp>
 #include <pqxx/pqxx>
 #include <stdexcept>
 
@@ -13,6 +14,7 @@ using Utils::Entity::ApiRequest::InterfaceApiRequestRepository;
 using Bot::Entity::Message::InterfaceMessageRepository;
 using Bot::Entity::User::InterfaceUserRepository;
 using Bot::Entity::Chat::InterfaceChatRepository;
+using Bot::Entity::Access::InterfaceAccessRepository;
 using pqxx::connection;
 using std::shared_ptr;
 using std::unique_ptr;
@@ -33,6 +35,7 @@ class Repositories {
     shared_ptr<InterfaceMessageRepository> message_repository;
     shared_ptr<InterfaceUserRepository> user_repository;
     shared_ptr<InterfaceChatRepository> chat_repository;
+    shared_ptr<InterfaceAccessRepository> access_repository;
 
 };
 

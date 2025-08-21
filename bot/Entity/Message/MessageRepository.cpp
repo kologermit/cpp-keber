@@ -9,7 +9,7 @@
 
 namespace Bot::Entity::Message {
 
-using Utils::Entity::exec_select;
+using Utils::Entity::exec_select_one;
 using Utils::Entity::exec_insert;
 using Utils::Entity::exec_update_by_id;
 using Utils::Entity::create_rows_in_enum_table_if_empty;
@@ -37,7 +37,7 @@ _db(db) {
 }
 
 unique_ptr<Message> MessageRepository::get_by_id(int id) {
-    return exec_select<Message>(_db, MESSAGES_TABLE, {
+    return exec_select_one<Message>(_db, MESSAGES_TABLE, {
         {ID_COLUMN, to_string(id)},
     });
 }

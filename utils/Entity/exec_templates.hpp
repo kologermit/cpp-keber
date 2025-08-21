@@ -5,6 +5,7 @@
 #include <utils/Entity/Exceptions/FailedInsertException.hpp>
 #include <utils/Logger/InterfaceLogger.hpp>
 #include <fmt/core.h>
+#include <vector>
 
 namespace Utils::Entity {
 
@@ -13,6 +14,7 @@ using Utils::Entity::Exceptions::FailedInsertException;
 using Utils::Logger::get_logger;
 using std::pair;
 using std::make_unique;
+using std::vector;
 using fmt::format;
 using pqxx::result;
 using pqxx::row;
@@ -106,8 +108,7 @@ unique_ptr<EntityT> exec_update_by_id(connection& conn, const char* table, const
     return make_unique<EntityT>(res.one_row());
 }
 
-template<typename EntityT>
-unique_ptr<EntityT> exec_select(connection& conn, const char* table, const map<string, string>& where, bool check_deleted = true) {
+inline result exec_select(connection& conn, const char* table, const map<string, string>& where, bool check_deleted = true) {
     nontransaction tx{conn};
 
     string sql_where = "";
@@ -140,10 +141,15 @@ unique_ptr<EntityT> exec_select(connection& conn, const char* table, const map<s
     sql_query += ";";
 
     #ifndef NDEBUG
-    get_logger()->debug("exec_select_by_id::sql", sql_query, __FILE__, __LINE__);
+    get_logger()->debug("exec_select::sql", sql_query, __FILE__, __LINE__);
     #endif
 
-    auto res = tx.exec(sql_query);
+    return tx.exec(sql_query);
+}
+
+template<typename EntityT>
+unique_ptr<EntityT> exec_select_one(connection& conn, const char* table, const map<string, string>& where, bool check_deleted = true) {
+    auto res = exec_select(conn, table, where, check_deleted);
 
     if (res.empty()) {
         return nullptr;
@@ -151,6 +157,19 @@ unique_ptr<EntityT> exec_select(connection& conn, const char* table, const map<s
 
     return make_unique<EntityT>(res.one_row());
 
+}
+
+template<typename EntityT>
+vector<unique_ptr<EntityT> > exec_select_many(connection& conn, const char* table, const map<string, string>& where, bool check_deleted = true) {
+    auto res = exec_select(conn, table, where, check_deleted);
+
+    vector<unique_ptr<EntityT> > vector_result;
+
+    for (const auto& r : res) {
+        vector_result.emplace_back(make_unique<EntityT>(r));
+    }
+
+    return vector_result;
 }
 
 }

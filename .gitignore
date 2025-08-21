@@ -19,3 +19,4 @@
 !nginx
 !postgres
 !test_code
+!Caddyfile

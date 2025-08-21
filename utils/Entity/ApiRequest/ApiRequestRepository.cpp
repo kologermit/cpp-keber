@@ -35,7 +35,7 @@ _db(db)
 }
 
 unique_ptr<ApiRequest> ApiRequestRepository::get_by_id(int id, bool check_deleted) {
-    return exec_select<ApiRequest>(_db, API_REQUESTS_TABLE, {
+    return exec_select_one<ApiRequest>(_db, API_REQUESTS_TABLE, {
         {ID_COLUMN, to_string(id)}
     }, check_deleted);
 }

@@ -5,7 +5,7 @@ namespace Bot::Entity::Chat {
 
 using Utils::Entity::FailedUpdateException;
 using Utils::Entity::create_rows_in_enum_table_if_empty;
-using Utils::Entity::exec_select;
+using Utils::Entity::exec_select_one;
 using Utils::Entity::exec_insert;
 using Utils::Entity::exec_update_by_id;
 using Utils::Entity::ID_COLUMN;
@@ -19,13 +19,13 @@ _db(db) {
 }
 
 unique_ptr<Chat> ChatRepository::get_by_id(int id) {
-    return exec_select<Chat>(_db, CHATS_TABLE, {
+    return exec_select_one<Chat>(_db, CHATS_TABLE, {
         {ID_COLUMN, to_string(id)}
     });
 }
 
 unique_ptr<Chat> ChatRepository::get_by_telegram_id(long long telegram_id) {
-    return exec_select<Chat>(_db, CHATS_TABLE, {
+    return exec_select_one<Chat>(_db, CHATS_TABLE, {
         {TELEGRAM_ID_COLUMN, to_string(telegram_id)}
     });
 }

@@ -1,0 +1,7 @@
+*
+!.gitignore
+!Access.hpp
+!Access.cpp
+!InterfaceAccessRepository.hpp
+!AccessRepository.hpp
+!AccessRepository.cpp

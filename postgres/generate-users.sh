@@ -4,7 +4,12 @@ set -e
 echo "
     CREATE USER $BOT_USER WITH PASSWORD '$BOT_PASSWORD';
     GRANT SELECT, INSERT, UPDATE ON TABLE
-    users, chats, messages, user_screens, chat_types, message_content_types, api_request_services, api_requests TO $BOT_USER;
+        users, user_screens, 
+        chats, chat_types, 
+        messages, message_content_types, 
+        api_requests, api_request_services,
+        accesses, access_types
+    TO $BOT_USER;
     GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO $BOT_USER;
     CREATE ROLE $READER_USER WITH
         LOGIN

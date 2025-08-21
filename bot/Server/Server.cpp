@@ -1,6 +1,8 @@
 #include <bot/Server/Server.hpp>
 #include <bot/BotHandler/NotFound/NotFound.hpp>
 #include <bot/BotHandler/Dice/Dice.hpp>
+#include <bot/BotHandler/Menu/Menu.hpp>
+#include <bot/BotHandler/Start/Start.hpp>
 #include <bot/HTTPHandler/CheckHealth/CheckHealth.hpp>
 #include <utils/Logger/InterfaceLogger.hpp>
 #include <utils/Random/Random.hpp>
@@ -49,9 +51,7 @@ using Utils::JSONKeys::RESULT_KEY;
 using TGMessage = Utils::TGBotApi::Message::Message;
 using Bot::HTTPHandler::CheckHealth::CheckHealth;
 using Bot::HTTPHandler::RequestHandlerMethod;
-using Bot::BotHandler::NotFound::NotFound;
 using Bot::BotHandler::BotHandlerContext;
-using Bot::BotHandler::Dice::Dice;
 using Bot::Entity::Message::Message;
 using Bot::Entity::Chat::Chat;
 using Bot::Entity::User::User;
@@ -69,8 +69,10 @@ request_handlers(move(request_handlers))
 
 Server::Server()
 {
-    bot_handlers.emplace_back(make_unique<Dice>());
-    bot_handlers.emplace_back(make_unique<NotFound>());
+    bot_handlers.emplace_back(make_unique<Bot::BotHandler::Dice::Dice>());
+    bot_handlers.emplace_back(make_unique<Bot::BotHandler::Start::Start>());
+    bot_handlers.emplace_back(make_unique<Bot::BotHandler::Menu::Menu>());
+    bot_handlers.emplace_back(make_unique<Bot::BotHandler::NotFound::NotFound>());
     request_handlers.emplace_back(make_unique<CheckHealth>());
 }
 
