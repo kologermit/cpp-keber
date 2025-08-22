@@ -55,7 +55,7 @@ unique_ptr<Message> MessageRepository::get_by_chat_id_and_telegram_id(long long 
     );
 
     #ifndef NDEBUG
-    get_logger()->debug("get_by_chat_id_and_telegram_id::sql", sql_query);
+    get_logger()->debug("get_by_chat_id_and_telegram_id::sql", sql_query, __FILE__, __LINE__);
     #endif
 
 

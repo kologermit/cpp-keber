@@ -2,18 +2,12 @@
 
 #include <bot/BotHandler/InterfaceBotHandler.hpp>
 
-namespace Bot::BotHandler::Menu {
+namespace Bot::BotHandler::NotFoundHandler {
 
-using std::string_view;
-
-struct Menu : InterfaceBotHandler {
-
+struct NotFoundHandler : InterfaceBotHandler {
+    const string& get_name() const noexcept override;
     bool check(shared_ptr<BotHandlerContext> context) override;
     ptrMessage handle(shared_ptr<BotHandlerContext> context) override;
-    static ptrMessage to_menu(shared_ptr<BotHandlerContext> context, string_view text = "");
-
 };
-
-
 
 }

@@ -19,6 +19,7 @@ using Bot::HTTPHandler::InterfaceHTTPHandler;
 using Utils::TGBotApi::Bot::InterfaceBot;
 
 struct Server : InterfaceServer {
+    void stop() override;
     void run() noexcept override;
 
     Server(

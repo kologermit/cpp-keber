@@ -1,9 +1,10 @@
 #include <bot/Server/Server.hpp>
-#include <bot/BotHandler/NotFound/NotFound.hpp>
-#include <bot/BotHandler/Dice/Dice.hpp>
-#include <bot/BotHandler/Menu/Menu.hpp>
-#include <bot/BotHandler/Start/Start.hpp>
-#include <bot/HTTPHandler/CheckHealth/CheckHealth.hpp>
+#include <bot/BotHandler/NotFoundHandler/NotFoundHandler.hpp>
+#include <bot/BotHandler/DiceHandler/DiceHandler.hpp>
+#include <bot/BotHandler/MenuHandler/MenuHandler.hpp>
+#include <bot/BotHandler/StartHandler/StartHandler.hpp>
+#include <bot/BotHandler/AccessHandler/AccessHandler.hpp>
+#include <bot/HTTPHandler/CheckHealthHandler/CheckHealthHandler.hpp>
 #include <utils/Logger/InterfaceLogger.hpp>
 #include <utils/Random/Random.hpp>
 #include <utils/JSONKeys.hpp>
@@ -17,6 +18,7 @@ using std::make_unique;
 using std::to_string;
 using std::exception;
 using std::string;
+using std::string_view;
 using std::stoi;
 using nlohmann::json;
 using httplib::Request;
@@ -49,12 +51,13 @@ using Utils::JSONKeys::METHOD_KEY;
 using Utils::JSONKeys::PATTERN_KEY;
 using Utils::JSONKeys::RESULT_KEY;
 using TGMessage = Utils::TGBotApi::Message::Message;
-using Bot::HTTPHandler::CheckHealth::CheckHealth;
+using Bot::HTTPHandler::CheckHealthHandler::CheckHealthHandler;
 using Bot::HTTPHandler::RequestHandlerMethod;
 using Bot::BotHandler::BotHandlerContext;
-using Bot::Entity::Message::Message;
-using Bot::Entity::Chat::Chat;
 using Bot::Entity::User::User;
+using Bot::Entity::Chat::Chat;
+using Bot::Entity::Message::Message;
+using Bot::Entity::Access::Access;
 using Bot::Entity::User::map_user_screen_to_string;
 using Bot::Entity::Repositories::get_repositories;
 using Bot::Entity::Message::TELEGRAM_ID_COLUMN;
@@ -69,14 +72,20 @@ request_handlers(move(request_handlers))
 
 Server::Server()
 {
-    bot_handlers.emplace_back(make_unique<Bot::BotHandler::Dice::Dice>());
-    bot_handlers.emplace_back(make_unique<Bot::BotHandler::Start::Start>());
-    bot_handlers.emplace_back(make_unique<Bot::BotHandler::Menu::Menu>());
-    bot_handlers.emplace_back(make_unique<Bot::BotHandler::NotFound::NotFound>());
-    request_handlers.emplace_back(make_unique<CheckHealth>());
+    bot_handlers.emplace_back(make_unique<Bot::BotHandler::DiceHandler::DiceHandler>());
+    bot_handlers.emplace_back(make_unique<Bot::BotHandler::StartHandler::StartHandler>());
+    bot_handlers.emplace_back(make_unique<Bot::BotHandler::MenuHandler::MenuHandler>());
+    bot_handlers.emplace_back(make_unique<Bot::BotHandler::AccessHandler::AccessHandler>());
+    bot_handlers.emplace_back(make_unique<Bot::BotHandler::NotFoundHandler::NotFoundHandler>());
+    request_handlers.emplace_back(make_unique<CheckHealthHandler>());
 }
 
 struct BotHandler : InterfaceHTTPHandler {
+
+    const string& get_name() const noexcept override {
+        static const string name = "BotHandler";
+        return name;
+    }
 
     const string& get_pattern() const noexcept override {
         return get_config()->get_webhook_path(); 
@@ -98,6 +107,11 @@ struct BotHandler : InterfaceHTTPHandler {
 };
 
 struct NotFoundHandler : InterfaceHTTPHandler {
+    const string& get_name() const noexcept override {
+        static const string name = "NotFoundHandler";
+        return name;
+    }
+
     const string& get_pattern() const noexcept override {
         static const string pattern = ".*";
         return pattern;
@@ -133,6 +147,10 @@ struct NotFoundHandlerDELETE : NotFoundHandler {
     }
 };
 
+void Server::stop() {
+    _server.stop();
+}
+
 void Server::run() noexcept {
     request_handlers.emplace_back(make_unique<BotHandler>(bot_handlers));
     request_handlers.emplace_back(make_unique<NotFoundHandlerGET>());
@@ -149,7 +167,8 @@ void Server::run() noexcept {
                 res.status = 200;
                 auto result = _request_handler->handle(req, res);
                 get_logger()->info("SERVER::REQUEST", format(
-                    "({}) {} {}",
+                    "({}/{}) {} {}",
+                    _request_handler->get_name(),
                     req.method,
                     res.status,
                     req.path
@@ -224,9 +243,15 @@ json BotHandler::handle(const Request& req, Response& res) {
     }
 
     TGMessage tg_message(json_body[MESSAGE_KEY]);
-    auto user = get_repositories()->user_repository->get_by_telegram_user(*tg_message.from);
-    auto chat = get_repositories()->chat_repository->get_by_telegram_chat(*tg_message.chat);
-    auto message = get_repositories()->message_repository->get_by_telegram_message(tg_message, user->id, chat->id);
+    shared_ptr<User> user(get_repositories()->user_repository->get_by_telegram_user(*tg_message.from));
+    shared_ptr<Chat> chat(get_repositories()->chat_repository->get_by_telegram_chat(*tg_message.chat));
+    shared_ptr<Message> message(get_repositories()->message_repository->get_by_telegram_message(tg_message, user->id, chat->id));
+    vector<shared_ptr<Access> > shared_accesses;
+    auto accesses = get_repositories()->access_repository->get_by_user_id(user->id);
+    for (auto& access : accesses) {
+        shared_accesses.emplace_back(move(access));
+    }
+
 
     int handle_id = rand_int(1, 1000000);
 
@@ -243,43 +268,47 @@ json BotHandler::handle(const Request& req, Response& res) {
     ), __FILE__, __LINE__);
 
     shared_ptr<BotHandlerContext> context(new BotHandlerContext{
-        .message = *message,
-        .chat = *chat,
-        .user = *user,
+        .message = message,
+        .chat = chat,
+        .user = user,
+        .accesses = shared_accesses,
     });
 
     ptrMessage result_tg_message;
+    string_view handler_name;
     try {
         for (auto& handler : _bot_handlers) {
             if (handler->check(context)) {
+                handler_name = handler->get_name();
                 result_tg_message = handler->handle(context);
                 break;
             }
         }
     } catch (const exception& err) {
         get_logger()->error("BOT_HANDLER::EXCEPTION", format(
-            "({}): {}",
+            "({}): {}", 
             handle_id,
             err.what()
-        ));
+        ), __FILE__, __LINE__);
         get_bot()->send_message({
-            .chat_id = context->chat.telegram_id,
+            .chat_id = context->chat->telegram_id,
             .text = format(
                 "<b>Произошла ошибка: </b><i>{}</i>",
                 err.what()
             ),
-            .reply_message_id = context->message.telegram_id,
+            .reply_message_id = context->message->telegram_id,
         });
     }
 
     if (result_tg_message != nullptr) {
         get_logger()->info("BOT_HANDLER::MESSAGE_ANSWER", format(
-            "{}: ({}){} {}",
+            "{} ({}): ({}){} {}",
             handle_id,
+            handler_name,
             convert_map_content_type.at(result_tg_message->file_content_type),
             result_tg_message->file_name,
             result_tg_message->text
-        ));
+        ), __FILE__, __LINE__);
         auto result_message = get_repositories()->message_repository->get_by_telegram_message(*result_tg_message, user->id, chat->id);
         return {{ID_KEY, result_message->id}, {TELEGRAM_ID_COLUMN, result_message->telegram_id}};
     }

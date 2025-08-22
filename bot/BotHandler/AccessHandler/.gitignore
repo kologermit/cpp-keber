@@ -1,0 +1,4 @@
+*
+!.gitignore
+!AccessHandler.hpp
+!AccessHandler.cpp

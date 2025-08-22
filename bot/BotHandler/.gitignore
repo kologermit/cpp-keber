@@ -1,8 +1,10 @@
 *
 !.gitignore
-!Start
-!Menu
-!Access
-!NotFound
-!Dice
+!StartHandler
+!MenuHandler
+!AccessHandler
+!NotFoundHandler
+!DiceHandler
+!AccessHandler
 !InterfaceBotHandler.hpp
+!Keys.hpp

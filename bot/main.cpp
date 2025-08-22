@@ -1,7 +1,9 @@
 #include <bot/Server/Server.hpp>
+#include <bot/Signal/Signal.hpp>
 #include <utils/Config/Config.hpp>
 #include <utils/Logger/Logger.hpp>
 #include <utils/Random/Random.hpp>
+#include <csignal>
 
 using Utils::Logger::get_logger;
 using Utils::Logger::Logger;
@@ -12,7 +14,10 @@ using Utils::Config::Config;
 using Bot::Entity::Repositories::Repositories;
 using Bot::Entity::Repositories::get_repositories;
 using Bot::Server::Server;
+using Bot::Server::get_server;
+using Bot::Signal::signal_handler;
 using std::make_unique;
+using std::signal;
 
 int main(int argc, const char* argv[]) {
     get_config(make_unique<Config>(argc, argv));
@@ -25,14 +30,15 @@ int main(int argc, const char* argv[]) {
 
     get_bot(make_unique<TGBot>(get_config()->get_bot_token()));
     get_repositories(make_unique<Repositories>(get_config()->get_db_conn_url()));
-
-    Server server;
+    get_server(make_unique<Server>());
+    signal(SIGINT, signal_handler);
+    signal(SIGTERM, signal_handler);
     get_bot()->set_webhook(get_config()->get_webhook_url());
     get_bot()->send_message({
         .chat_id = get_config()->get_admins()[0],
         .text = "START BOT",
     });
-    server.run();
+    get_server()->run();
 
     return 0;
 }

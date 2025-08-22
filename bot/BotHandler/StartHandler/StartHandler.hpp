@@ -2,9 +2,10 @@
 
 #include <bot/BotHandler/InterfaceBotHandler.hpp>
 
-namespace Bot::BotHandler::Start {
+namespace Bot::BotHandler::StartHandler {
 
-struct Start : InterfaceBotHandler {
+struct StartHandler : InterfaceBotHandler {
+    const string& get_name() const noexcept override;
     bool check(shared_ptr<BotHandlerContext> context) override;
     ptrMessage handle(shared_ptr<BotHandlerContext> context) override;
 };
