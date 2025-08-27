@@ -5,17 +5,21 @@
 #include <utils/TGBotApi/Types.hpp>
 #include <fmt/core.h>
 #include <map>
+#include <algorithm>
+#include <cctype>
 
 namespace Bot::BotHandler::AccessHandler {
 
 using std::make_unique;
 using std::make_shared;
 using std::map;
+using std::ranges::all_of;
+using std::isdigit;
 using fmt::format;
-using Bot::Entity::User::ACCESS;
-using Bot::Entity::User::SCREEN;
-using Bot::Entity::Repositories::get_repositories;
-using Bot::BotHandler::MenuHandler::MenuHandler;
+using Entity::User::ACCESS;
+using Entity::User::SCREEN;
+using Entity::Repositories::get_repositories;
+using MenuHandler::MenuHandler;
 using Utils::TGBotApi::Bot::get_bot;
 using Utils::TGBotApi::Types::ReplyKeyboard;
 using Utils::TGBotApi::Types::ReplyButtons;
@@ -27,9 +31,11 @@ const string& AccessHandler::get_name() const noexcept {
 }
 
 bool AccessHandler::check(shared_ptr<BotHandlerContext> context) {
-    return
-    (context->access.full || context->access.access) 
-    && context->user->screen == ACCESS;
+    return (context->access.full || context->access.access)
+    && context->user->screen == ACCESS
+    && context->message->text.size() <= 20
+    && (context->message->text.starts_with("@") ||
+        all_of(context->message->text, [](char c) {return isdigit(c);}));
 }
 
 ptrMessage AccessHandler::handle(shared_ptr<BotHandlerContext> context) {
@@ -38,7 +44,7 @@ ptrMessage AccessHandler::handle(shared_ptr<BotHandlerContext> context) {
 
 ptrMessage AccessHandler::to_access(shared_ptr<BotHandlerContext> context) {
     string access_answer = "";
-    for (auto& word_access : map<const char*, bool>{
+    for (auto&[fst, snd] : map<const char*, bool>{
         {BASE_WORD, context->access.base},
         {FULL_WORD, context->access.full},
         {ACCESS_WORD, context->access.access},
@@ -47,8 +53,8 @@ ptrMessage AccessHandler::to_access(shared_ptr<BotHandlerContext> context) {
         {DOCKER_WORD, context->access.docker},
         {SERVER_WORD, context->access.server},
     }) {
-        if (word_access.second) {
-            access_answer += string(word_access.first) + " ";
+        if (snd) {
+            access_answer += string(fst) + " ";
         }
     }
 

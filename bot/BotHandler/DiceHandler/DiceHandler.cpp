@@ -6,8 +6,6 @@
 #include <regex>
 #include <string>
 
-#include <iostream>
-
 namespace Bot::BotHandler::DiceHandler {
 
 using Utils::TGBotApi::Bot::get_bot;
@@ -21,12 +19,12 @@ using std::string;
 const string DICE_COMMAND = "/dice";
 const string D_COMMAND = "/d";
 
-bool DiceHandler::is_dice_command(const string& text) const noexcept {
+bool DiceHandler::is_dice_command(const string& text) noexcept {
     static const regex pattern("^\\" + DICE_COMMAND + "(\\d{0,6})$");
     return regex_match(text, pattern);
 }
 
-bool DiceHandler::is_d_command(const string& text) const noexcept {
+bool DiceHandler::is_d_command(const string& text) noexcept {
     static const regex pattern("^\\" + D_COMMAND + "(\\d{0,6})$");
     return regex_match(text, pattern);
 }

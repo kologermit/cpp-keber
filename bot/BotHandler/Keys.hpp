@@ -23,6 +23,6 @@ constexpr const char* NOT_ANDERSTAND_PHRASE = "Не понял!";
 constexpr const char* IN_DEVELOP_PHRASE = "Находится в разработке";
 constexpr const char* START_PHRASE = "Приветствую в CPP-KEBER!";
 constexpr const char* DICE_PHRASE = "Бросок кубика на <b>{}</b>\nРезультат: <b>{}</b>";
-constexpr const char* ACCESS_PHRASE = "Ваши права: {}";
+constexpr const char* ACCESS_PHRASE = "Ваши права: {}\n\nОтправь тег или id пользователя";
 
 }

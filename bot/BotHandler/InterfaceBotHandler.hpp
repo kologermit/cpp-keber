@@ -31,6 +31,8 @@ struct InterfaceBotHandler {
     virtual bool check(shared_ptr<BotHandlerContext> context) = 0;
     virtual ptrMessage handle(shared_ptr<BotHandlerContext> context) = 0;
 
+    virtual ~InterfaceBotHandler() = default;
+
 };
 
 }
