@@ -2,11 +2,13 @@
 
 #include <string_view>
 #include <string>
+#include <nlohmann/json.hpp>
 
 namespace Utils::TGBotApi::Message::Keyboard {
 
 using std::string_view;
 using std::string;
+using nlohmann::json;
 
 struct InlineButton {
 
@@ -20,7 +22,7 @@ struct InlineButton {
     string url;
     string callback_data;
 
-    string get_json() const noexcept;
+    [[nodiscard]] json get_json() const noexcept;
 
 };
 

@@ -17,16 +17,24 @@ using std::ranges::all_of;
 using std::isdigit;
 using std::unique_ptr;
 using std::stoi;
+using std::to_string;
 using fmt::format;
+using nlohmann::json;
 using Entity::User::ACCESS;
 using Entity::User::SCREEN;
 using Entity::User::User;
 using Entity::Repositories::get_repositories;
 using MenuHandler::MenuHandler;
+using Utils::Entity::ID_COLUMN;
 using Utils::TGBotApi::Bot::get_bot;
 using Utils::TGBotApi::Types::ReplyKeyboard;
 using Utils::TGBotApi::Types::ReplyButtons;
 using Utils::TGBotApi::Types::ReplyButton;
+using Utils::TGBotApi::Types::ReplyLane;
+using Utils::TGBotApi::Types::InlineKeyboard;
+using Utils::TGBotApi::Types::InlineButtons;
+using Utils::TGBotApi::Types::InlineButton;
+using Utils::TGBotApi::Types::InlineLane;
 
 const string& AccessHandler::get_name() const noexcept {
     static const string& name = "AccessHandler";
@@ -55,7 +63,7 @@ ptrMessage AccessHandler::handle(shared_ptr<BotHandlerContext> context) {
             .reply_message_id = context->message->telegram_id,
         });
     }
-    ReplyButtons buttons;
+    InlineButtons buttons;
     auto find_user_access = get_repositories()->access_repository->get_by_user_id(find_user->id);
     for (auto&[fst, snd] : map<const char*, bool>{
         {BASE_WORD, find_user_access.base},
@@ -66,8 +74,8 @@ ptrMessage AccessHandler::handle(shared_ptr<BotHandlerContext> context) {
         {DOCKER_WORD, find_user_access.docker},
         {SERVER_WORD, find_user_access.server},
     }) {
-        auto button = make_shared<ReplyButton>(format("{} {}", fst, (snd ? SUCCESS_SYMBOL : ERROR_SYMBOL)));
-        buttons.push_back(vector<shared_ptr<ReplyButton>>(1, button));
+        auto button = make_shared<InlineButton>(format("{} {}", fst, (snd ? SUCCESS_SYMBOL : ERROR_SYMBOL)), "", to_string(find_user->id));
+        buttons.push_back(InlineLane(1, button));
     }
     return get_bot()->send_message( {
         .chat_id = context->chat->telegram_id,
@@ -78,7 +86,7 @@ ptrMessage AccessHandler::handle(shared_ptr<BotHandlerContext> context) {
                 "@" + find_user->username
             ),
         .reply_message_id = context->message->telegram_id,
-        .reply_keyboard = make_unique<ReplyKeyboard>(move(buttons))
+        .inline_keyboard = make_unique<InlineKeyboard>(move(buttons))
     });
 }
 

@@ -1,10 +1,8 @@
 #include <utils/TGBotApi/Message/Keyboard/InlineKeyboard.hpp>
 #include <utils/TGBotApi/JSONKeys.hpp>
-#include <nlohmann/json.hpp>
 
 namespace Utils::TGBotApi::Message::Keyboard {
 
-using nlohmann::json;
 using Utils::TGBotApi::JSONKeys::INLINE_KEYBOARD_KEY;
 using Utils::TGBotApi::JSONKeys::RESIZE_KEYBOARD_KEY;
 
@@ -17,10 +15,15 @@ string InlineKeyboard::get_json() const noexcept {
         {RESIZE_KEYBOARD_KEY, true}
     };
     for (const auto& lane : buttons) {
+        if (buttons.empty()) {
+            continue;
+        }
         json lane_json;
         for (const auto& button : lane) {
-            json button_json = json::parse(button->get_json());
-            lane_json.push_back(button_json);
+            if (button == nullptr) {
+                continue;
+            }
+            lane_json.push_back(button->get_json());
         }
         result[INLINE_KEYBOARD_KEY].push_back(lane_json);
     }

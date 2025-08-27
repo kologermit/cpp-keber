@@ -12,35 +12,35 @@
 
 namespace Utils::TGBotApi::Types {
 
-using Utils::TGBotApi::User::User;
+using TGBotApi::User::User;
 using ptrUser = std::unique_ptr<User>;
 
-using Utils::TGBotApi::Chat::Chat;
+using TGBotApi::Chat::Chat;
 using ptrChat = std::unique_ptr<Chat>;
 
-using Utils::TGBotApi::Bot::Bot;
-using Utils::TGBotApi::Bot::InterfaceBot;
+using TGBotApi::Bot::Bot;
+using TGBotApi::Bot::InterfaceBot;
 using ptrBot = std::unique_ptr<InterfaceBot>;
 
-using Utils::TGBotApi::Message::Message;
+using TGBotApi::Message::Message;
 using ptrMessage = std::unique_ptr<Message>;
 
-using Utils::TGBotApi::Message::Keyboard::InlineKeyboard;
+using TGBotApi::Message::Keyboard::InlineKeyboard;
 using ptrInlineKeyboard = std::unique_ptr<InlineKeyboard>;
 
-using Utils::TGBotApi::Message::Keyboard::InlineButton;
-using ptrInlineButton = std::shared_ptr<InlineButton>;
-using InlineLane = std::vector<ptrInlineButton>;
+using TGBotApi::Message::Keyboard::InlineButton;
+using InlineLane = std::vector<std::shared_ptr<InlineButton> >;
 using InlineButtons = std::vector<InlineLane>;
 using ptrInlineButtons = std::unique_ptr<InlineButtons>;
 
-using Utils::TGBotApi::Message::Keyboard::ReplyKeyboard;
+using TGBotApi::Message::Keyboard::ReplyKeyboard;
 using ptrReplyKeyboard = std::unique_ptr<ReplyKeyboard>;
 
-using Utils::TGBotApi::Message::Keyboard::ReplyButton;
-using ReplyButtons = std::vector<std::vector<std::shared_ptr<ReplyButton> > >;
+using TGBotApi::Message::Keyboard::ReplyButton;
+using ReplyLane = std::vector<std::shared_ptr<ReplyButton> >;
+using ReplyButtons = std::vector<ReplyLane>;
 
-using Utils::TGBotApi::CallbackQuery::CallbackQuery;
+using TGBotApi::CallbackQuery::CallbackQuery;
 using ptrCallbackQuery = std::unique_ptr<CallbackQuery>;
 
 

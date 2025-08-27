@@ -1,10 +1,8 @@
 #include <utils/TGBotApi/Message/Keyboard/InlineButton.hpp>
 #include <utils/TGBotApi/JSONKeys.hpp>
-#include <nlohmann/json.hpp>
 
 namespace Utils::TGBotApi::Message::Keyboard {
 
-using nlohmann::json;
 using Utils::TGBotApi::JSONKeys::TEXT_KEY;
 using Utils::TGBotApi::JSONKeys::URL_KEY;
 using Utils::TGBotApi::JSONKeys::CALLBACK_DATA_KEY;
@@ -19,7 +17,7 @@ url(url),
 callback_data(callback_data)
 {}
 
-string InlineButton::get_json() const noexcept {
+json InlineButton::get_json() const noexcept {
     json result{
         {TEXT_KEY, text},
     };
@@ -29,7 +27,7 @@ string InlineButton::get_json() const noexcept {
     if (!callback_data.empty()) {
         result[CALLBACK_DATA_KEY] = callback_data;
     }
-    return result.dump();
+    return result;
 }
 
 }
