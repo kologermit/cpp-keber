@@ -48,10 +48,10 @@ ptrMessage MenuHandler::to_menu(shared_ptr<BotHandlerContext> context, string_vi
 
     const map<pair<size_t, size_t>, pair<bool, string_view> > buttons_with_access{
         {{0, 0}, {context->access.access, ACCESS_WORD}},
-        {{0, 1}, {context->access.task, TASK_WORD}},
+        {{1, 0}, {context->access.task, TASK_WORD}},
         {{1, 1}, {context->access.youtube, YOUTUBE_WORD}},
-        {{0, 2}, {context->access.docker, DOCKER_WORD}},
-        {{1, 2}, {context->access.server, SERVER_WORD}},
+        {{2, 0}, {context->access.docker, DOCKER_WORD}},
+        {{2, 1}, {context->access.server, SERVER_WORD}},
     };
 
     for (const auto&[fst, snd] : buttons_with_access) {
