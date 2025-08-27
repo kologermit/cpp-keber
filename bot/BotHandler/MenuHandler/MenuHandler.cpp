@@ -55,10 +55,8 @@ ptrMessage MenuHandler::to_menu(shared_ptr<BotHandlerContext> context, string_vi
     };
 
     for (const auto&[fst, snd] : buttons_with_access) {
-        size_t button_x = fst.first;
-        size_t button_y = fst.second;
-        bool button_access = snd.first;
-        string_view button_text = snd.second;
+        const auto [button_x, button_y] = fst;
+        const auto [button_access, button_text] = snd;
 
         if (context->access.full || button_access) {
             buttons[button_x][button_y] = make_shared<ReplyButton>(button_text);

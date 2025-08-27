@@ -35,8 +35,10 @@ string ReplyKeyboard::get_json() const noexcept {
             if (button == nullptr) {
                 continue;
             }
-            json button_json = json::parse(button->get_json());
-            lane_json.push_back(button_json);
+            lane_json.push_back(button->get_json());
+        }
+        if (lane_json.empty()) {
+            continue;
         }
         result[KEYBOARD_KEY].push_back(lane_json);
     }
