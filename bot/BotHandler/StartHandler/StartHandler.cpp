@@ -3,13 +3,18 @@
 #include <bot/BotHandler/Keys.hpp>
 #include <bot/Entity/Repositories.hpp>
 #include <utils/TGBotApi/Bot/InterfaceBot.hpp>
+#include <set>
 
 namespace Bot::BotHandler::StartHandler {
 
 using Utils::TGBotApi::Bot::get_bot;
-using Bot::Entity::User::START;
-using Bot::Entity::Repositories::get_repositories;
-using Bot::BotHandler::MenuHandler::MenuHandler;
+using Entity::User::START;
+using Entity::User::MENU;
+using Entity::User::ACCESS;
+using Entity::User::EnumUserScreen;
+using Entity::Repositories::get_repositories;
+using MenuHandler::MenuHandler;
+using std::set;
 
 const string& StartHandler::get_name() const noexcept {
     static const string name = "StartHandler";
@@ -17,12 +22,18 @@ const string& StartHandler::get_name() const noexcept {
 }
 
 bool StartHandler::check(shared_ptr<BotHandlerContext> context) {
+    static const set<EnumUserScreen> back_screens{
+        ACCESS,
+        START,
+        MENU,
+    };
     return 
         (context->access.full || context->access.base)
         && (
             context->message->text.starts_with(START_COMMAND)
             || context->message->text.starts_with(MENU_COMMAND)
             || context->user->screen == START
+            || (context->message->text == BACK_WORD && back_screens.contains(context->user->screen))
         );
 }
 

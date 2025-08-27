@@ -65,6 +65,9 @@ ptrMessage AccessHandler::to_access(shared_ptr<BotHandlerContext> context) {
         .chat_id = context->chat->telegram_id,
         .text = format(ACCESS_PHRASE, access_answer),
         .reply_message_id = context->message->telegram_id,
+        .reply_keyboard = make_unique<ReplyKeyboard>(ReplyButtons{
+            {make_shared<ReplyButton>(BACK_WORD)}
+        })
     });
 }
 
