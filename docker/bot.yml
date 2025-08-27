@@ -14,7 +14,7 @@ services:
       - default
     volumes:
       - bot_logs:/logs/bot:rw
-      - ../build/Debug/bot/BOT:/app:ro
+      - ../build/${BOT_BUILD}/bot/BOT:/app:ro
     environment:
       - BOT_TOKEN=${BOT_TOKEN}
       - BOT_ADMINS=${BOT_ADMINS}
