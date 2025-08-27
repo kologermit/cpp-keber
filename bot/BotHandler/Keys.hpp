@@ -29,6 +29,6 @@ constexpr const char* START_PHRASE = "Приветствую в CPP-KEBER!";
 constexpr const char* DICE_PHRASE = "Бросок кубика на <b>{}</b>\nРезультат: <b>{}</b>";
 constexpr const char* ACCESS_PHRASE = "Ваши права: {}\n\nОтправь тег или id пользователя";
 
-constexpr const char* USER_TEMPLATE = "<b>Имя:</b> <code>{}</code>\n<b>ID:</b> <code>{}</code>\n<b>Тег:</b> <code>{}</code>";
+constexpr const char* USER_TEMPLATE = "<b>Имя:</b> <code>{}</code>\n<b>ID:</b> <code>{}</code>\n<b>TG ID:</b> <code>{}</code>\n<b>Тег:</b> <code>{}</code>";
 
 }
