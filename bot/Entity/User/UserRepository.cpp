@@ -45,6 +45,11 @@ unique_ptr<User> UserRepository::get_by_telegram_user(const TGUser& tg_user) {
     ));
 }
 
+unique_ptr<User> UserRepository::get_by_username(string_view username) {
+    return exec_select_one<User>(_db, USERS_TABLE, {{USERNAME_COLUMN, username.data()}});
+}
+
+
 unique_ptr<User> UserRepository::create(const User& user) {
     return exec_insert<User>(_db, USERS_TABLE, map<string, string>{
         {TELEGRAM_ID_COLUMN, to_string(user.telegram_id)},
