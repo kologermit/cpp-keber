@@ -20,6 +20,7 @@ constexpr const char* ADD_WORD = "➕Добавить";
 constexpr const char* DELETE_WORD = "❌Удалить";
 
 constexpr const char* NOT_ANDERSTAND_PHRASE = "Не понял!";
+constexpr const char* IN_DEVELOP_PHRASE = "Находится в разработке";
 constexpr const char* START_PHRASE = "Приветствую в CPP-KEBER!";
 constexpr const char* DICE_PHRASE = "Бросок кубика на <b>{}</b>\nРезультат: <b>{}</b>";
 constexpr const char* ACCESS_PHRASE = "Ваши права: {}";

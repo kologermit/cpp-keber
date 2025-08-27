@@ -3,6 +3,7 @@
 #include <bot/BotHandler/Keys.hpp>
 #include <bot/Entity/Repositories.hpp>
 #include <utils/TGBotApi/Types.hpp>
+#include <algorithm>
 
 namespace Bot::BotHandler::MenuHandler {
 
@@ -19,6 +20,7 @@ using std::make_shared;
 using std::move;
 using std::map;
 using std::pair;
+using std::set;
 
 const string& MenuHandler::get_name() const noexcept {
     static const string& name = "MenuHandler";
@@ -26,16 +28,27 @@ const string& MenuHandler::get_name() const noexcept {
 }
 
 bool MenuHandler::check(shared_ptr<BotHandlerContext> context) {
-    return (context->access.full || context->access.base) && context->user->screen == MENU;
+    static const set<string> words{
+        ACCESS_WORD,
+        TASK_WORD,
+        YOUTUBE_WORD,
+        DOCKER_WORD,
+        SERVER_WORD,
+    };
+    return
+        (context->access.full || context->access.base)
+        && context->user->screen == MENU
+        && words.find(context->message->text) != words.end();
 }
 
 ptrMessage MenuHandler::handle(shared_ptr<BotHandlerContext> context) {
     if (context->message->text == ACCESS_WORD) {
         return AccessHandler::to_access(context);
     }
+
     return get_bot()->send_message({
         .chat_id = context->chat->telegram_id,
-        .text = MENU_WORD,
+        .text = IN_DEVELOP_PHRASE,
         .reply_message_id = context->message->telegram_id,
     });
 }
