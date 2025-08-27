@@ -113,7 +113,7 @@ unique_ptr<Message> Bot::send_message(const SendMessageParameters& message_param
     string path = map<EnumContentType, string>{
         {EnumContentType::TEXT, "sendMessage"},
         {EnumContentType::DOCUMENT, "sendDocument"},
-        {EnumContentType::VIDEO, "sendVidep"},
+        {EnumContentType::VIDEO, "sendVideo"},
         {EnumContentType::PHOTO, "sendPhoto"},
         {EnumContentType::AUDIO, "sendAudio"},
     }[message_parameters.content_type];

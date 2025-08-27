@@ -7,10 +7,10 @@ namespace Utils::TGBotApi::Message::Keyboard {
 
 using std::make_shared;
 using nlohmann::json;
-using Utils::TGBotApi::JSONKeys::KEYBOARD_KEY;
-using Utils::TGBotApi::JSONKeys::RESIZE_KEYBOARD_KEY;
-using Utils::TGBotApi::JSONKeys::REMOVE_KEYBOARD_KEY;
-using Utils::TGBotApi::JSONKeys::ONE_TIME_KEYBOARD_KEY;
+using JSONKeys::KEYBOARD_KEY;
+using JSONKeys::RESIZE_KEYBOARD_KEY;
+using JSONKeys::REMOVE_KEYBOARD_KEY;
+using JSONKeys::ONE_TIME_KEYBOARD_KEY;
 
 ReplyKeyboard::ReplyKeyboard(vector<vector<shared_ptr<ReplyButton> > >&& buttons): 
 buttons(buttons)
@@ -27,8 +27,14 @@ string ReplyKeyboard::get_json() const noexcept {
         {ONE_TIME_KEYBOARD_KEY, false},
     };
     for (const auto& lane : buttons) {
+        if (lane.empty()) {
+            continue;
+        }
         json lane_json;
         for (const auto& button : lane) {
+            if (button == nullptr) {
+                continue;
+            }
             json button_json = json::parse(button->get_json());
             lane_json.push_back(button_json);
         }
