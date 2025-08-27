@@ -16,9 +16,9 @@ struct Logger : InterfaceLogger {
         string_view path="./logs/",
         const EnumLoggerLevel& level=
         #ifndef NDEBUG
-        EnumLoggerLevel::DEBUG
+        DEBUG
         #else
-        EnumLoggerLevel::INFO
+        INFO
         #endif
     );
     
@@ -28,14 +28,14 @@ struct Logger : InterfaceLogger {
     void error(string_view event, string_view message, string_view file, int line) const override;
     void print_event(
         ostream& out, 
-        string_view file, 
-        int line, 
-        string_view level, 
-        string_view event, 
-        string_view message, 
-        bool is_green=false,
-        bool is_yellow=false,
-        bool is_red=false
+        string_view file,
+        int line,
+        string_view level,
+        string_view event,
+        string_view message,
+        bool is_green,
+        bool is_yellow,
+        bool is_red
     ) const override;
 
     private:

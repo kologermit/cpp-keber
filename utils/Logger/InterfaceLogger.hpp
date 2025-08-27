@@ -3,7 +3,6 @@
 #include <memory>
 #include <exception>
 #include <string_view>
-#include <ostream>
 #include <utils/Datetime.hpp>
 
 namespace Utils::Logger {
@@ -13,7 +12,7 @@ using std::string_view;
 using std::unique_ptr;
 using std::exception;
 using std::string;
-using Utils::Datetime::DATETIME_FORMAT;
+using Datetime::DATETIME_FORMAT;
 
 enum EnumLoggerLevel {
     DEBUG,
@@ -25,17 +24,17 @@ enum EnumLoggerLevel {
 using std::ostream;
 
 struct InterfaceLogger {
-    virtual void info(string_view event, string_view message, int line) const = 0;
+    virtual void info(string_view event, string_view message, string_view file, int line) const = 0;
     virtual void warning(string_view event, string_view message, string_view file, int line) const = 0;
     virtual void error(string_view event, string_view message, string_view file, int line) const = 0;
     virtual void debug(string_view event, string_view message, string_view file, int line) const = 0;
     virtual void print_event(
         ostream& out, 
-        string_view file, 
-        int line, 
-        string_view level, 
-        string_view event, 
-        string_view message, 
+        string_view file,
+        int line,
+        string_view level,
+        string_view event,
+        string_view message,
         bool is_green,
         bool is_yellow,
         bool is_red
@@ -44,11 +43,11 @@ struct InterfaceLogger {
     virtual ~InterfaceLogger() = default;
 };
 
-struct NotInitializedLoggerException : exception {
+struct NotInitializedLoggerException final : exception {
 
     NotInitializedLoggerException() = default;
 
-    const char* what() const noexcept override;
+    [[nodiscard]] const char* what() const noexcept override;
 
 };
 

@@ -28,14 +28,14 @@ _level(level)
 
 void Logger::print_event(
         ostream& out, 
-        [[maybe_unused]] string_view file, 
-        [[maybe_unused]] int line, 
-        string_view level, 
-        string_view event, 
-        string_view message, 
-        bool is_green,
-        bool is_yellow,
-        bool is_red
+        [[maybe_unused]] const string_view file,
+        [[maybe_unused]] const int line,
+        const string_view level,
+        const string_view event,
+        const string_view message,
+        const bool is_green,
+        const bool is_yellow,
+        const bool is_red
     ) const {
     lock_guard lg(_mutex);
     if (is_green) {
@@ -66,26 +66,26 @@ void Logger::print_event(
 
 void Logger::debug(string_view event, string_view message, string_view file, int line) const {
     if (_level <= EnumLoggerLevel::DEBUG) {
-        print_event(cout, file, line, "DEBUG", event, message, false, true);
-        print_event(_file, file, line, "DEBUG", event, message);
+        print_event(cout, file, line, "DEBUG", event, message, false, true, false);
+        print_event(_file, file, line, "DEBUG", event, message, false, false, false);
     }
 }
 void Logger::info(string_view event, string_view message, string_view file, int line) const {
     if (_level <= EnumLoggerLevel::INFO) {
-        print_event(cout, file, line, "INFO", event, message, true);
-        print_event(_file, file, line, "INFO", event, message);
+        print_event(cout, file, line, "INFO", event, message, true, false, false);
+        print_event(_file, file, line, "INFO", event, message, false, false, false);
     }
 }
 void Logger::warning(string_view event, string_view message, string_view file, int line) const {
     if (_level <= EnumLoggerLevel::WARNING) {
-        print_event(cout, file, line, "WARNING", event, message, false, true);
-        print_event(_file, file, line, "WARNING", event, message);
+        print_event(cout, file, line, "WARNING", event, message, false, true, false);
+        print_event(_file, file, line, "WARNING", event, message, false, false, false);
     }
 }
 void Logger::error(string_view event, string_view message, string_view file, int line) const {
     if (_level <= EnumLoggerLevel::ERROR) {
         print_event(clog, file, line, "ERROR", event, message, false, false, true);
-        print_event(_file, file, line, "ERROR", event, message);
+        print_event(_file, file, line, "ERROR", event, message, false, false, false);
     }
 }
 
