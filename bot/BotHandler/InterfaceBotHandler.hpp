@@ -9,7 +9,7 @@ using Bot::Entity::Repositories::Repositories;
 using Bot::Entity::Message::Message;
 using Bot::Entity::Chat::Chat;
 using Bot::Entity::User::User;
-using Bot::Entity::Access::Access;
+using Bot::Entity::Access::UserAccess;
 using Utils::TGBotApi::Bot::InterfaceBot;
 using Utils::TGBotApi::Types::ptrMessage;
 using std::shared_ptr;
@@ -21,7 +21,7 @@ struct BotHandlerContext {
     shared_ptr<Message> message;
     shared_ptr<Chat> chat;
     shared_ptr<User> user;
-    vector<shared_ptr<Access> > accesses;
+    UserAccess access;
 
 };
 

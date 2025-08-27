@@ -18,9 +18,12 @@ const string& StartHandler::get_name() const noexcept {
 
 bool StartHandler::check(shared_ptr<BotHandlerContext> context) {
     return 
-        context->message->text.starts_with(START_COMMAND)
-        || context->message->text.starts_with(MENU_COMMAND)
-        || context->user->screen == START;
+        (context->access.full || context->access.base)
+        && (
+            context->message->text.starts_with(START_COMMAND)
+            || context->message->text.starts_with(MENU_COMMAND)
+            || context->user->screen == START
+        );
 }
 
 ptrMessage StartHandler::handle(shared_ptr<BotHandlerContext> context) {

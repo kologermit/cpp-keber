@@ -37,7 +37,9 @@ const string& DiceHandler::get_name() const noexcept {
 }
 
 bool DiceHandler::check(shared_ptr<BotHandlerContext> context) {
-    return is_dice_command(context->message->text) || is_d_command(context->message->text);
+    return 
+    (context->access.full || context->access.base)
+    && (is_dice_command(context->message->text) || is_d_command(context->message->text));
 }
 
 ptrMessage DiceHandler::handle(shared_ptr<BotHandlerContext> context) {

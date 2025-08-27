@@ -15,6 +15,7 @@ using pqxx::row;
 using jed_utils::datetime;
 
 enum EnumAccessType {
+    BASE,
     FULL,
     ACCESS,
     YOUTUBE,
@@ -24,6 +25,7 @@ enum EnumAccessType {
 };
 
 const map<int, string> map_access_type_to_string{
+    GET_PAIR_OF_OBJECT_AND_STRINGOBJECT(BASE),
     GET_PAIR_OF_OBJECT_AND_STRINGOBJECT(FULL),
     GET_PAIR_OF_OBJECT_AND_STRINGOBJECT(ACCESS),
     GET_PAIR_OF_OBJECT_AND_STRINGOBJECT(YOUTUBE),
@@ -41,6 +43,16 @@ constexpr const char* ACCESSES_TABLE = "\"accesses\"";
 constexpr const char* ACCESS_TYPES_TABLE = "\"access_types\"";
 constexpr const char* USER_ID_COLUMN = "\"user_id\"";
 constexpr const char* TYPE_COLUMN = "\"type\"";
+
+struct UserAccess {
+    bool base = false;
+    bool full = false;
+    bool access = false;
+    bool youtube = false;
+    bool task = false;
+    bool docker = false;
+    bool server = false;
+};
 
 struct Access : Entity {
 
@@ -67,15 +79,9 @@ struct Access : Entity {
     string get_data_by_column(int column) const {
         switch (column)
         {
-        case USER_ID:
-            return to_string(user_id);
-            break;
-        case TYPE:
-            return to_string(type);
-            break; 
-        default:
-            return "";
-            break;
+        case USER_ID: return to_string(user_id);
+        case TYPE: return to_string(type);
+        default: return "";
         }
     }
 

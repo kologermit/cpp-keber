@@ -4,12 +4,12 @@
 namespace Utils::Logger {
 
 using std::shared_ptr;
+using std::make_shared;
 using std::move;
-
-NotInitializedLoggerException::NotInitializedLoggerException() {}
+using std::forward;
 
 const char* NotInitializedLoggerException::what() const noexcept {
-    static const char* message = "logger not initialized!";
+    static const auto message = "logger not initialized!";
     return message;
 }
 
@@ -19,7 +19,7 @@ shared_ptr<InterfaceLogger> get_logger(unique_ptr<InterfaceLogger> logger) {
         throw NotInitializedLoggerException();
     }
     if (_logger == nullptr) {
-        _logger = shared_ptr<InterfaceLogger>(move(logger));
+        _logger = move(logger);
     }
     return _logger; 
 }

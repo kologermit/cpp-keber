@@ -23,7 +23,7 @@ const string& MenuHandler::get_name() const noexcept {
 }
 
 bool MenuHandler::check(shared_ptr<BotHandlerContext> context) {
-    return context->user->screen == MENU;
+    return (context->access.full || context->access.base) && context->user->screen == MENU;
 }
 
 ptrMessage MenuHandler::handle(shared_ptr<BotHandlerContext> context) {

@@ -5,19 +5,39 @@ namespace Bot::Entity::Access {
 
 using Utils::Entity::create_rows_in_enum_table_if_empty;
 using Utils::Entity::exec_select_many;
+using Utils::Entity::exec_select_one;
 using Utils::Entity::exec_insert;
 using Utils::Entity::exec_update_by_id;
 using Utils::Entity::FailedUpdateException;
 using Utils::Entity::DELETED_AT_COLUMN;
 using Utils::Entity::DATETIME_FORMAT;
+using std::map;
 
 AccessRepository::AccessRepository(connection& db):
 _db(db) {
     create_rows_in_enum_table_if_empty(_db, ACCESS_TYPES_TABLE, map_access_type_to_string);
 }
 
-vector<unique_ptr<Access> > AccessRepository::get_by_user_id(int user_id) {
-    return exec_select_many<Access>(_db, ACCESSES_TABLE, {{USER_ID_COLUMN, to_string(user_id)}});
+UserAccess AccessRepository::get_by_user_id(int user_id) {
+    auto accesses = exec_select_many<Access>(_db, ACCESSES_TABLE, {{USER_ID_COLUMN, to_string(user_id)}});
+    
+    UserAccess user_access;
+    
+    const map<EnumAccessType, bool&> type_to_member = {
+        {BASE, user_access.base},
+        {FULL, user_access.full},
+        {ACCESS, user_access.access},
+        {YOUTUBE, user_access.youtube},
+        {TASK, user_access.task},
+        {DOCKER, user_access.docker},
+        {SERVER, user_access.server}
+    };
+    
+    for (auto& access : accesses) {
+        type_to_member.at(access->type) = true;
+    }
+    
+    return user_access;
 }
 
 unique_ptr<Access> AccessRepository::create(const Access& access) {

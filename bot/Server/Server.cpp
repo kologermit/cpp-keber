@@ -9,6 +9,7 @@
 #include <utils/Random/Random.hpp>
 #include <utils/JSONKeys.hpp>
 #include <utils/Config/InterfaceConfig.hpp>
+#include <algorithm>
 
 namespace Bot::Server {
 
@@ -20,6 +21,7 @@ using std::exception;
 using std::string;
 using std::string_view;
 using std::stoi;
+using std::find;
 using nlohmann::json;
 using httplib::Request;
 using httplib::Response;
@@ -58,6 +60,7 @@ using Bot::Entity::User::User;
 using Bot::Entity::Chat::Chat;
 using Bot::Entity::Message::Message;
 using Bot::Entity::Access::Access;
+using Bot::Entity::Access::FULL;
 using Bot::Entity::User::map_user_screen_to_string;
 using Bot::Entity::Repositories::get_repositories;
 using Bot::Entity::Message::TELEGRAM_ID_COLUMN;
@@ -246,12 +249,19 @@ json BotHandler::handle(const Request& req, Response& res) {
     shared_ptr<User> user(get_repositories()->user_repository->get_by_telegram_user(*tg_message.from));
     shared_ptr<Chat> chat(get_repositories()->chat_repository->get_by_telegram_chat(*tg_message.chat));
     shared_ptr<Message> message(get_repositories()->message_repository->get_by_telegram_message(tg_message, user->id, chat->id));
-    vector<shared_ptr<Access> > shared_accesses;
-    auto accesses = get_repositories()->access_repository->get_by_user_id(user->id);
-    for (auto& access : accesses) {
-        shared_accesses.emplace_back(move(access));
-    }
+    auto access = get_repositories()->access_repository->get_by_user_id(user->id);
 
+    if (!access.full && find(
+            get_config()->get_admins().begin(), 
+            get_config()->get_admins().end(), 
+            user->telegram_id
+        ) != get_config()->get_admins().end()) {
+            Access admin_access;
+            admin_access.type = FULL;
+            admin_access.user_id = user->id;
+            get_repositories()->access_repository->create(admin_access);
+            access = get_repositories()->access_repository->get_by_user_id(user->id);
+    }
 
     int handle_id = rand_int(1, 1000000);
 
@@ -271,7 +281,7 @@ json BotHandler::handle(const Request& req, Response& res) {
         .message = message,
         .chat = chat,
         .user = user,
-        .accesses = shared_accesses,
+        .access = access,
     });
 
     ptrMessage result_tg_message;

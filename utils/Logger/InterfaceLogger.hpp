@@ -25,10 +25,10 @@ enum EnumLoggerLevel {
 using std::ostream;
 
 struct InterfaceLogger {
-    virtual void info(string_view event, string_view message, string_view file = "", int line = 0) const = 0;
-    virtual void warning(string_view event, string_view message, string_view file = "", int line = 0) const = 0;
-    virtual void error(string_view event, string_view message, string_view file = "", int line = 0) const = 0;
-    virtual void debug(string_view event, string_view message, string_view file = "", int line = 0) const = 0;
+    virtual void info(string_view event, string_view message, int line) const = 0;
+    virtual void warning(string_view event, string_view message, string_view file, int line) const = 0;
+    virtual void error(string_view event, string_view message, string_view file, int line) const = 0;
+    virtual void debug(string_view event, string_view message, string_view file, int line) const = 0;
     virtual void print_event(
         ostream& out, 
         string_view file, 
@@ -36,17 +36,17 @@ struct InterfaceLogger {
         string_view level, 
         string_view event, 
         string_view message, 
-        bool is_green=false,
-        bool is_yellow=false,
-        bool is_red=false
+        bool is_green,
+        bool is_yellow,
+        bool is_red
     ) const = 0;
 
-    ~InterfaceLogger() = default;
+    virtual ~InterfaceLogger() = default;
 };
 
 struct NotInitializedLoggerException : exception {
 
-    NotInitializedLoggerException();
+    NotInitializedLoggerException() = default;
 
     const char* what() const noexcept override;
 

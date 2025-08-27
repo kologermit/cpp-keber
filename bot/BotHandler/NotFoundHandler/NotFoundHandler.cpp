@@ -12,8 +12,8 @@ const string& NotFoundHandler::get_name() const noexcept {
     return name;
 }
 
-bool NotFoundHandler::check(shared_ptr<BotHandlerContext>) {
-    return true;
+bool NotFoundHandler::check(shared_ptr<BotHandlerContext> context) {
+    return context->access.full || context->access.base;
 }
 
 ptrMessage NotFoundHandler::handle(shared_ptr<BotHandlerContext> context) {
