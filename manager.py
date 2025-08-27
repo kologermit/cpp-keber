@@ -96,6 +96,8 @@ class Script:
         self.__scripts__   = deepcopy(scripts)
         self.__description__= deepcopy(description)
         self.__working_dir__ = deepcopy(working_dir)
+        if not working_dir.startswith('/'):
+            self.__working_dir__ = path.join(ABSOLUTE_DIR, working_dir)
 
     def get_action(self) -> tuple[str]:
         return self.__action__
