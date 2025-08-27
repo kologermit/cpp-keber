@@ -54,11 +54,11 @@ ptrMessage MenuHandler::to_menu(shared_ptr<BotHandlerContext> context, string_vi
         {{1, 2}, {context->access.server, SERVER_WORD}},
     };
 
-    for (const auto& button : buttons_with_access) {
-        size_t button_x = button.first.first;
-        size_t button_y = button.first.second;
-        bool button_access = button.second.first;
-        string_view button_text = button.second.second;
+    for (const auto&[fst, snd] : buttons_with_access) {
+        size_t button_x = fst.first;
+        size_t button_y = fst.second;
+        bool button_access = snd.first;
+        string_view button_text = snd.second;
 
         if (context->access.full || button_access) {
             buttons[button_x][button_y] = make_shared<ReplyButton>(button_text);
