@@ -31,9 +31,10 @@ HELP_COMMANDS = ['help', '--help']
 HELP_STR = f'To get help run {USAGE_COMMAND} {HELP_COMMANDS[0]}'
 START_SCRIPT_MSG = f'{FILE_BASENAME}[{{process}}]: {{script}}'
 KEYBOARD_INTERRUPT_MSG = 'KeyboardInterrupt (Crtl+C)'
+ABSOLUTE_DIR = path.dirname(path.abspath(__file__))
 
 EMPTY_STR = ''
-FOLDER_WITH_SCRIPTS = './scripts'
+FOLDER_WITH_SCRIPTS = path.join(ABSOLUTE_DIR, './scripts')
 ENV_FILE = '.env'
 ENV_FILE_SPLIT_SYMBOL = '='
 ENV_FILE_COMMENT_SYMBOL = '#'
