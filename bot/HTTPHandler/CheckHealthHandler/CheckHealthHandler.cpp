@@ -17,7 +17,7 @@ const string& CheckHealthHandler::get_pattern() const noexcept {
 }
 
 json CheckHealthHandler::handle(const Request&, Response&) {
-    return {"active"};
+    return "active";
 }
 
 }
