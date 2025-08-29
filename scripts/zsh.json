@@ -1,0 +1,11 @@
+{
+  "add_completions": {
+    "description": "Add shortcut to manager.py to zsh. Activates after reboot",
+    "scripts": [
+      "mkdir -p ~/.zsh_completions",
+      "rm -rf ~/.zsh_completions/_manager",
+      "cp zsh_manager_completions ~/.zsh_completions/_manager",
+      "echo \"fpath=(~/.zsh_completions \\$fpath)\ncompinit\" >> ~/.zshrc"
+    ]
+  }
+}

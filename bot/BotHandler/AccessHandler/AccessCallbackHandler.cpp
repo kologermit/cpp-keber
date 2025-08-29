@@ -46,6 +46,7 @@ namespace Bot::BotHandler::AccessHandler {
             return nullptr;
         }
 
+        get_bot()->answer_callback_query(context->callback->telegram_id);
         for (auto& access : get_repositories()->access_repository->get_raw_by_user_id(user->id)) {
             if (access->type == access_type) {
                 get_repositories()->access_repository->del(access->id);
@@ -75,5 +76,4 @@ namespace Bot::BotHandler::AccessHandler {
             get_repositories()->access_repository->get_by_user_id(user->id)
         );
     }
-
 }
