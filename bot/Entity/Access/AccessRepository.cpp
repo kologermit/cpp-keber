@@ -17,10 +17,12 @@ AccessRepository::AccessRepository(connection& db):
 _db(db) {
     create_rows_in_enum_table_if_empty(_db, ACCESS_TYPES_TABLE, map_access_type_to_string);
 }
+vector<unique_ptr<Access> > AccessRepository::get_raw_by_user_id(int user_id) {
+    return exec_select_many<Access>(_db, ACCESSES_TABLE, {{USER_ID_COLUMN, to_string(user_id)}});
+}
+
 
 UserAccess AccessRepository::get_by_user_id(int user_id) {
-    auto accesses = exec_select_many<Access>(_db, ACCESSES_TABLE, {{USER_ID_COLUMN, to_string(user_id)}});
-    
     UserAccess user_access;
     
     const map<EnumAccessType, bool&> type_to_member = {
@@ -33,7 +35,7 @@ UserAccess AccessRepository::get_by_user_id(int user_id) {
         {SERVER, user_access.server}
     };
     
-    for (auto& access : accesses) {
+    for (auto& access : get_raw_by_user_id(user_id)) {
         type_to_member.at(access->type) = true;
     }
     

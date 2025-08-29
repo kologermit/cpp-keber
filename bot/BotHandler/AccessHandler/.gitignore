@@ -2,3 +2,5 @@
 !.gitignore
 !AccessHandler.hpp
 !AccessHandler.cpp
+!AccessCallbackHandler.hpp
+!AccessCallbackHandler.cpp

@@ -6,7 +6,8 @@ echo "
     GRANT SELECT, INSERT, UPDATE ON TABLE
         users, user_screens, 
         chats, chat_types, 
-        messages, message_content_types, 
+        messages, message_content_types,
+        callbacks,
         api_requests, api_request_services,
         accesses, access_types
     TO $BOT_USER;

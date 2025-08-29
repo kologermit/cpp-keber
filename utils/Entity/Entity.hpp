@@ -45,7 +45,7 @@ struct Entity {
     datetime           updated_at;
     optional<datetime> deleted_at;
 
-    Entity(
+    explicit Entity(
         int id = 0, 
         optional<datetime> created_at = nullopt, 
         optional<datetime> updated_at = nullopt, 
@@ -65,14 +65,14 @@ struct Entity {
         deleted_at(deleted_at)
     {}
 
-    Entity(const row& entity_row):
+    explicit Entity(const row& entity_row):
     id(entity_row[ID_COLUMN].get<int>().value()),
     created_at(datetime::parse(DATETIME_FORMAT, entity_row[CREATED_AT_COLUMN].get<string>().value())),
     updated_at(datetime::parse(DATETIME_FORMAT, entity_row[UPDATED_AT_COLUMN].get<string>().value())),
     deleted_at(
         entity_row[DELETED_AT_COLUMN].is_null()
         ? nullopt
-        : optional<datetime>(datetime::parse(DATETIME_FORMAT, entity_row[DELETED_AT_COLUMN].get<string>().value()))
+        : optional(datetime::parse(DATETIME_FORMAT, entity_row[DELETED_AT_COLUMN].get<string>().value()))
     ){}
 
 };

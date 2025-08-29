@@ -8,6 +8,7 @@ using std::shared_ptr;
 using std::unique_ptr;
 
 struct InterfaceServer {
+    virtual ~InterfaceServer() = default;
 
     virtual void run() noexcept = 0;
     virtual void stop() = 0;

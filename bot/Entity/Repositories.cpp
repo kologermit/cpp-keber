@@ -3,6 +3,7 @@
 #include <bot/Entity/User/UserRepository.hpp>
 #include <bot/Entity/Chat/ChatRepository.hpp>
 #include <bot/Entity/Access/AccessRepository.hpp>
+#include <bot/Entity/Callback/CallbackRepository.hpp>
 #include <utils/Entity/ApiRequest/ApiRequestRepository.hpp>
 
 namespace Bot::Entity::Repositories {
@@ -13,11 +14,13 @@ using Bot::Entity::Message::MessageRepository;
 using Bot::Entity::User::UserRepository;
 using Bot::Entity::Chat::ChatRepository;
 using Bot::Entity::Access::AccessRepository;
+using Bot::Entity::Callback::CallbackRepository;
 
 Repositories::Repositories(string_view conn_str):
     _db(conn_str.data()),
     api_request_repository(make_shared<ApiRequestRepository>(_db)),
     message_repository(make_shared<MessageRepository>(_db)),
+    callback_repository(make_shared<CallbackRepository>(_db)),
     user_repository(make_shared<UserRepository>(_db)),
     chat_repository(make_shared<ChatRepository>(_db)),
     access_repository(make_shared<AccessRepository>(_db))

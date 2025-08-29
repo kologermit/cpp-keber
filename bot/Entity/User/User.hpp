@@ -115,25 +115,11 @@ struct User : Entity {
     string get_data_by_column(int column) const {
         switch (column)
         {
-        case TELEGRAM_ID:
-            return to_string(telegram_id);
-            break;
-
-        case NAME:
-            return name;
-            break; 
-
-        case USERNAME:
-            return username;
-            break;
-
-        case SCREEN:
-            return to_string(screen);
-            break;
-        
-        default:
-            return "";
-            break;
+            case TELEGRAM_ID: return to_string(telegram_id);
+            case NAME: return name;
+            case USERNAME: return username;
+            case SCREEN: return to_string(screen);
+            default: return "";
         }
     }
 

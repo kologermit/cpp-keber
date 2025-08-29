@@ -15,7 +15,7 @@ using pqxx::row;
 using pqxx::nontransaction;
 
 #ifndef NDEBUG
-using Utils::Logger::get_logger;
+using Logger::get_logger;
 #endif
 
 void create_rows_in_enum_table_if_empty(connection& conn, const char* table, const map<int, string>& map_int_to_string) {

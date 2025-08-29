@@ -4,12 +4,12 @@
 #include <bot/BotHandler/MenuHandler/MenuHandler.hpp>
 #include <bot/BotHandler/StartHandler/StartHandler.hpp>
 #include <bot/BotHandler/AccessHandler/AccessHandler.hpp>
+#include <bot/BotHandler/AccessHandler/AccessCallbackHandler.hpp>
 #include <bot/HTTPHandler/CheckHealthHandler/CheckHealthHandler.hpp>
 #include <utils/Logger/InterfaceLogger.hpp>
 #include <utils/Random/Random.hpp>
 #include <utils/JSONKeys.hpp>
 #include <utils/Config/InterfaceConfig.hpp>
-#include <algorithm>
 
 namespace Bot::Server {
 
@@ -21,7 +21,7 @@ using std::exception;
 using std::string;
 using std::string_view;
 using std::stoi;
-using std::find;
+using std::ranges::find;
 using nlohmann::json;
 using httplib::Request;
 using httplib::Response;
@@ -37,6 +37,7 @@ using Utils::Entity::ApiRequest::EnumRequestService;
 using Utils::TGBotApi::Bot::SECRET_HEADER;
 using Utils::TGBotApi::Bot::get_bot;
 using Utils::TGBotApi::JSONKeys::MESSAGE_KEY;
+using Utils::TGBotApi::JSONKeys::CALLBACK_QUERY_KEY;
 using Utils::TGBotApi::JSONKeys::ID_KEY;
 using Utils::TGBotApi::Types::ptrMessage;
 using Utils::TGBotApi::Query::GET;
@@ -53,6 +54,7 @@ using Utils::JSONKeys::METHOD_KEY;
 using Utils::JSONKeys::PATTERN_KEY;
 using Utils::JSONKeys::RESULT_KEY;
 using TGMessage = Utils::TGBotApi::Message::Message;
+using TGCallback = Utils::TGBotApi::CallbackQuery::CallbackQuery;
 using Bot::HTTPHandler::CheckHealthHandler::CheckHealthHandler;
 using Bot::HTTPHandler::RequestHandlerMethod;
 using Bot::BotHandler::BotHandlerContext;
@@ -60,6 +62,7 @@ using Bot::Entity::User::User;
 using Bot::Entity::Chat::Chat;
 using Bot::Entity::Message::Message;
 using Bot::Entity::Access::Access;
+using Bot::Entity::Callback::Callback;
 using Bot::Entity::Access::FULL;
 using Bot::Entity::User::map_user_screen_to_string;
 using Bot::Entity::Repositories::get_repositories;
@@ -79,11 +82,12 @@ Server::Server()
     bot_handlers.emplace_back(make_unique<Bot::BotHandler::StartHandler::StartHandler>());
     bot_handlers.emplace_back(make_unique<Bot::BotHandler::MenuHandler::MenuHandler>());
     bot_handlers.emplace_back(make_unique<Bot::BotHandler::AccessHandler::AccessHandler>());
+    bot_handlers.emplace_back(make_unique<Bot::BotHandler::AccessHandler::AccessCallbackHandler>());
     bot_handlers.emplace_back(make_unique<Bot::BotHandler::NotFoundHandler::NotFoundHandler>());
     request_handlers.emplace_back(make_unique<CheckHealthHandler>());
 }
 
-struct BotHandler : InterfaceHTTPHandler {
+struct BotHandler final : InterfaceHTTPHandler {
 
     const string& get_name() const noexcept override {
         static const string name = "BotHandler";
@@ -126,26 +130,26 @@ struct NotFoundHandler : InterfaceHTTPHandler {
     }
 };
 
-struct NotFoundHandlerGET : NotFoundHandler {
-    RequestHandlerMethod get_method() const noexcept {
+struct NotFoundHandlerGET final : NotFoundHandler {
+    RequestHandlerMethod get_method() const noexcept override {
         return RequestHandlerMethod::GET;
     }
 };
 
-struct NotFoundHandlerPOST : NotFoundHandler {
-    RequestHandlerMethod get_method() const noexcept {
+struct NotFoundHandlerPOST final : NotFoundHandler {
+    RequestHandlerMethod get_method() const noexcept override {
         return RequestHandlerMethod::POST;
     }
 };
 
-struct NotFoundHandlerPATCH : NotFoundHandler {
-    RequestHandlerMethod get_method() const noexcept {
+struct NotFoundHandlerPATCH final : NotFoundHandler {
+    RequestHandlerMethod get_method() const noexcept override {
         return RequestHandlerMethod::PATCH;
     }
 };
 
-struct NotFoundHandlerDELETE : NotFoundHandler {
-    RequestHandlerMethod get_method() const noexcept {
+struct NotFoundHandlerDELETE final : NotFoundHandler {
+    RequestHandlerMethod get_method() const noexcept override {
         return RequestHandlerMethod::DELETE;
     }
 };
@@ -191,10 +195,10 @@ void Server::run() noexcept {
                         {BODY_KEY, res.body},
                     }
                 );
-                if (req.headers.find(FROM_HEADER) != req.headers.end()) {
+                if (req.headers.contains(FROM_HEADER)) {
                     api_request.from = static_cast<EnumRequestService>(stoi(req.headers.find(FROM_HEADER)->second));
                 }
-                if (res.headers.find(FROM_HEADER) != res.headers.end()) {
+                if (res.headers.contains(FROM_HEADER)) {
                     api_request.from = static_cast<EnumRequestService>(stoi(res.headers.find(FROM_HEADER)->second));
                 }
                 if (json::accept(req.body)) {
@@ -239,28 +243,42 @@ json BotHandler::handle(const Request& req, Response& res) {
         find_key == req.headers.end() 
         || !get_bot()->check_secret_token(find_key->second)
         || !json::accept(req.body)
-        || !(json_body = json::parse(req.body)).contains(MESSAGE_KEY)
+        || (
+            !(json_body = json::parse(req.body)).contains(MESSAGE_KEY)
+            && !json_body.contains(CALLBACK_QUERY_KEY)
+        )
     ){
         res.status = 401;
         return {{ERROR_KEY, "unauthorized"}};
     }
 
-    TGMessage tg_message(json_body[MESSAGE_KEY]);
+    TGMessage tg_message(
+        json_body.contains(MESSAGE_KEY)
+        ? json_body[MESSAGE_KEY]
+        : json_body[CALLBACK_QUERY_KEY][MESSAGE_KEY]
+    );
     shared_ptr<User> user(get_repositories()->user_repository->get_by_telegram_user(*tg_message.from));
     shared_ptr<Chat> chat(get_repositories()->chat_repository->get_by_telegram_chat(*tg_message.chat));
     shared_ptr<Message> message(get_repositories()->message_repository->get_by_telegram_message(tg_message, user->id, chat->id));
+    shared_ptr<Callback> callback;
+
+    if (json_body.contains(CALLBACK_QUERY_KEY)) {
+        callback = get_repositories()->callback_repository->get_by_telegram_callback(
+            TGCallback(json_body[CALLBACK_QUERY_KEY]),
+            message->id,
+            user->id,
+            chat->id
+        );
+    }
+
     auto access = get_repositories()->access_repository->get_by_user_id(user->id);
 
-    if (!access.full && find(
-            get_config()->get_admins().begin(), 
-            get_config()->get_admins().end(), 
-            user->telegram_id
-        ) != get_config()->get_admins().end()) {
-            Access admin_access;
-            admin_access.type = FULL;
-            admin_access.user_id = user->id;
-            get_repositories()->access_repository->create(admin_access);
-            access = get_repositories()->access_repository->get_by_user_id(user->id);
+    if (!access.full && find(get_config()->get_admins(), user->telegram_id) != get_config()->get_admins().end()) {
+        Access admin_access;
+        admin_access.type = FULL;
+        admin_access.user_id = user->id;
+        get_repositories()->access_repository->create(admin_access);
+        access = get_repositories()->access_repository->get_by_user_id(user->id);
     }
 
     int handle_id = rand_int(1, 1000000);
@@ -279,6 +297,7 @@ json BotHandler::handle(const Request& req, Response& res) {
 
     shared_ptr<BotHandlerContext> context(new BotHandlerContext{
         .message = message,
+        .callback = callback,
         .chat = chat,
         .user = user,
         .access = access,

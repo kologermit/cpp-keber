@@ -23,6 +23,7 @@ enum RequestHandlerMethod {
 };
 
 struct InterfaceHTTPHandler {
+    virtual ~InterfaceHTTPHandler() = default;
 
     virtual const string& get_name() const noexcept = 0;
     virtual RequestHandlerMethod get_method() const noexcept = 0;

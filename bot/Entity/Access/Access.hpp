@@ -79,9 +79,9 @@ struct Access : Entity {
     string get_data_by_column(int column) const {
         switch (column)
         {
-        case USER_ID: return to_string(user_id);
-        case TYPE: return to_string(type);
-        default: return "";
+            case USER_ID: return to_string(user_id);
+            case TYPE: return to_string(type);
+            default: return "";
         }
     }
 

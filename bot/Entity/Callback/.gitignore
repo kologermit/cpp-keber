@@ -1,0 +1,7 @@
+*
+!.gitignore
+!Callback.hpp
+!Callback.cpp
+!InterfaceCallbackRepository.hpp
+!CallbackRepository.hpp
+!CallbackRepository.cpp
