@@ -22,6 +22,8 @@ using std::string;
 using std::string_view;
 using std::stoi;
 using std::ranges::find;
+using std::optional;
+using std::nullopt;
 using nlohmann::json;
 using httplib::Request;
 using httplib::Response;
@@ -252,26 +254,33 @@ json BotHandler::handle(const Request& req, Response& res) {
         return {{ERROR_KEY, "unauthorized"}};
     }
 
-    bool is_callback = json_body.contains(CALLBACK_QUERY_KEY);
+    auto tg_callback = (
+        json_body.contains(CALLBACK_QUERY_KEY)
+        ? optional(TGCallback(json_body[CALLBACK_QUERY_KEY]))
+        : nullopt
+    );
 
     TGMessage tg_message(
-        is_callback
+        tg_callback.has_value()
         ? json_body[CALLBACK_QUERY_KEY][MESSAGE_KEY]
         : json_body[MESSAGE_KEY]
     );
-    shared_ptr<User> user(get_repositories()->user_repository->get_by_telegram_user(*tg_message.from));
+    shared_ptr<User> user(get_repositories()->user_repository->get_by_telegram_user(
+        tg_callback.has_value()
+        ? *tg_callback.value().from
+        : *tg_message.from
+    ));
     shared_ptr<Chat> chat(get_repositories()->chat_repository->get_by_telegram_chat(*tg_message.chat));
     shared_ptr<Message> message(get_repositories()->message_repository->get_by_telegram_message(
         tg_message,
         user->id,
         chat->id,
-        is_callback
+        tg_callback.has_value()
     ));
     shared_ptr<Callback> callback;
-
-    if (is_callback) {
+    if (tg_callback.has_value()) {
         callback = get_repositories()->callback_repository->get_by_telegram_callback(
-            TGCallback(json_body[CALLBACK_QUERY_KEY]),
+            tg_callback.value(),
             message->id,
             user->id,
             chat->id
