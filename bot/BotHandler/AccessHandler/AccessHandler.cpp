@@ -128,8 +128,10 @@ namespace Bot::BotHandler::AccessHandler {
             }
         }
 
-        context->user->screen = ACCESS;
-        get_repositories()->user_repository->update(*context->user, {SCREEN});
+        User user;
+        user.id = context->user->id;
+        user.screen = ACCESS;
+        get_repositories()->user_repository->update(user, {SCREEN});
 
         return get_bot()->send_message({
             .chat_id = context->chat->telegram_id,
