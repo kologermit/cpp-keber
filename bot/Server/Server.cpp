@@ -260,10 +260,6 @@ json BotHandler::handle(const Request& req, Response& res) {
         : nullopt
     );
 
-    // debug
-    get_logger()->debug("tg_callback::id", tg_callback.value().id, __FILE__, __LINE__);
-    // debug
-
     TGMessage tg_message(
         tg_callback.has_value()
         ? json_body[CALLBACK_QUERY_KEY][MESSAGE_KEY]
@@ -283,9 +279,6 @@ json BotHandler::handle(const Request& req, Response& res) {
     ));
     shared_ptr<Callback> callback;
     if (tg_callback.has_value()) {
-        // debug
-        get_logger()->debug("tg_callback::id2", tg_callback.value().id, __FILE__, __LINE__);
-        // debug
 
         callback = get_repositories()->callback_repository->get_by_telegram_callback(
             tg_callback.value(),
@@ -293,18 +286,9 @@ json BotHandler::handle(const Request& req, Response& res) {
             user->id,
             chat->id
         );
-
-        // debug
-        get_logger()->debug("callback::telegram_id", callback->telegram_id, __FILE__, __LINE__);
-        // debug
     }
 
     auto access = get_repositories()->access_repository->get_by_user_id(user->id);
-
-
-    // debug
-    get_logger()->debug("Access1::full", access.full ? "true" : "false", __FILE__, __LINE__);
-    // debug
 
     if (!access.full && find(get_config()->get_admins(), user->telegram_id) != get_config()->get_admins().end()) {
         Access admin_access;
@@ -312,9 +296,6 @@ json BotHandler::handle(const Request& req, Response& res) {
         admin_access.user_id = user->id;
         get_repositories()->access_repository->create(admin_access);
         access = get_repositories()->access_repository->get_by_user_id(user->id);
-        // debug
-        get_logger()->debug("Access2::full", access.full ? "true" : "false", __FILE__, __LINE__);
-        // debug
     }
 
     int handle_id = rand_int(1, 1000000);

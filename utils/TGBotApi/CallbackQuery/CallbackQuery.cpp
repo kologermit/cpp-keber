@@ -15,10 +15,6 @@ using Utils::TGBotApi::Message::Message;
 using Utils::TGBotApi::User::User;
 using std::make_unique, std::move;
 
-// debug
-using Utils::Logger::get_logger;
-// debug
-
 CallbackQuery::CallbackQuery(const json& json_callback_query):
 id(json_callback_query[ID_KEY]),
 data(json_callback_query[DATA_KEY]),
@@ -31,12 +27,6 @@ message(
     json_callback_query.contains(MESSAGE_KEY)
     ? make_unique<Message>(json_callback_query[MESSAGE_KEY])
     : nullptr
-) {
-    // debug
-    get_logger()->debug("json::callback", json_callback_query.dump(), __FILE__, __LINE__);
-    get_logger()->debug("json::callback::telegram_id", json_callback_query[ID_KEY].get<string>(), __FILE__, __LINE__);
-    get_logger()->debug("json::callback::local::telegram_id", id, __FILE__, __LINE__);
-    // debug
-}
+) {}
 
 }

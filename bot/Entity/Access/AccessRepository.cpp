@@ -40,13 +40,7 @@ UserAccess AccessRepository::get_by_user_id(int user_id) {
         {SERVER, user_access.server}
     };
 
-    auto raw_accesses = get_raw_by_user_id(user_id);
-
-    // debug
-    get_logger()->debug("access::size", to_string(raw_accesses.size()), __FILE__, __LINE__);
-    // debug
-    
-    for (auto& access : raw_accesses) {
+    for (auto& access : get_raw_by_user_id(user_id) {
         type_to_member.at(access->type) = true;
     }
     

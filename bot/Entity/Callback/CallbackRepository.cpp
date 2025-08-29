@@ -7,10 +7,6 @@ namespace Bot::Entity::Callback {
     using Utils::Entity::exec_insert;
     using Utils::Entity::ID_COLUMN;
 
-    // debug
-    using Utils::Logger::get_logger;
-    // debug
-
     unique_ptr<Callback> CallbackRepository::get_by_id(int id) {
         return exec_select_one<Callback>(_db, CALLBACKS_TABLE, {{ID_COLUMN, to_string(id)}});
     }
@@ -25,10 +21,6 @@ namespace Bot::Entity::Callback {
         int user_id,
         int chat_id
     ) {
-        // debug
-        get_logger()->debug("callback_telegram_id", tg_callback.id, __FILE__, __LINE__);
-        // debug
-
         return create(Callback(
             tg_callback.id,
             tg_callback.data,
