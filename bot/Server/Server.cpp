@@ -256,7 +256,7 @@ json BotHandler::handle(const Request& req, Response& res) {
 
     TGMessage tg_message(
         is_callback
-        : json_body[CALLBACK_QUERY_KEY][MESSAGE_KEY]
+        ? json_body[CALLBACK_QUERY_KEY][MESSAGE_KEY]
         : json_body[MESSAGE_KEY]
     );
     shared_ptr<User> user(get_repositories()->user_repository->get_by_telegram_user(*tg_message.from));
