@@ -11,6 +11,7 @@ using std::unique_ptr;
 using std::vector;
 
 struct InterfaceMessageRepository {
+    virtual ~InterfaceMessageRepository() = default;
 
     virtual unique_ptr<Message> get_by_id(int id) = 0;
     virtual unique_ptr<Message> get_by_chat_id_and_telegram_id(long long chat_telegram_id, long long telegram_id) = 0;

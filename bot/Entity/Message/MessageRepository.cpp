@@ -68,12 +68,11 @@ unique_ptr<Message> MessageRepository::get_by_chat_id_and_telegram_id(long long 
     return nullptr;
 }
 
-unique_ptr<Message> MessageRepository::get_by_telegram_message(const TGMessage& tg_message, int chat_id, int user_id, bool check_created) {
+unique_ptr<Message> MessageRepository::get_by_telegram_message(const TGMessage& tg_message, int user_id, int chat_id, bool check_created) {
     unique_ptr<Message> reply_message;
 
     if (check_created) {
-        auto message = get_by_chat_id_and_telegram_id(tg_message.chat->id, tg_message.id);
-        if (message != nullptr) {
+        if (auto message = get_by_chat_id_and_telegram_id(tg_message.chat->id, tg_message.id); message != nullptr) {
             return message;
         }
     }
