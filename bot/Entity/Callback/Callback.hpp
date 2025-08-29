@@ -70,7 +70,7 @@ namespace Bot::Entity::Callback {
         {}
 
         Callback(const row& callback_row):
-        telegram_id(callback_row[TELEGRAM_ID].get<string>().value()),
+        telegram_id(callback_row[TELEGRAM_ID_COLUMN].get<string>().value()),
         data(callback_row[DATA_COLUMN].get<string>().value()),
         message_id(callback_row[MESSAGE_ID_COLUMN].get<int>().value()),
         user_id(callback_row[USER_ID_COLUMN].get<int>().value()),
