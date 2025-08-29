@@ -22,6 +22,7 @@ namespace Bot::BotHandler::AccessHandler {
 
     // debug
     using Utils::Logger::get_logger;
+    using std::to_string;
     // debug
 
     const string& AccessCallbackHandler::get_name() const noexcept {
@@ -30,6 +31,11 @@ namespace Bot::BotHandler::AccessHandler {
     }
 
     bool AccessCallbackHandler::check(shared_ptr<BotHandlerContext> context) {
+        // debug
+        get_logger()->debug("is_callback", (context->callback != nullptr ? "true" : "false"), __FILE__, __LINE__);
+        get_logger()->debug("json::data", context->callback->data, __FILE__, __LINE__);
+        // debug
+
         return (context->access.full || context->access.access)
             && context->callback != nullptr
             && json::accept(context->callback->data)

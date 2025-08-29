@@ -81,8 +81,8 @@ Server::Server()
     bot_handlers.emplace_back(make_unique<Bot::BotHandler::DiceHandler::DiceHandler>());
     bot_handlers.emplace_back(make_unique<Bot::BotHandler::StartHandler::StartHandler>());
     bot_handlers.emplace_back(make_unique<Bot::BotHandler::MenuHandler::MenuHandler>());
-    bot_handlers.emplace_back(make_unique<Bot::BotHandler::AccessHandler::AccessHandler>());
     bot_handlers.emplace_back(make_unique<Bot::BotHandler::AccessHandler::AccessCallbackHandler>());
+    bot_handlers.emplace_back(make_unique<Bot::BotHandler::AccessHandler::AccessHandler>());
     bot_handlers.emplace_back(make_unique<Bot::BotHandler::NotFoundHandler::NotFoundHandler>());
     request_handlers.emplace_back(make_unique<CheckHealthHandler>());
 }

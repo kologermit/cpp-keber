@@ -19,14 +19,8 @@ namespace Bot::Entity::Callback {
         const TGCallback& tg_callback,
         int message_id,
         int user_id,
-        int chat_id,
-        bool check_created
+        int chat_id
     ) {
-        if (check_created) {
-            if (auto callback = get_by_telegram_id(tg_callback.id); callback != nullptr) {
-                return callback;
-            }
-        }
         return create(Callback(
             tg_callback.id,
             tg_callback.data,

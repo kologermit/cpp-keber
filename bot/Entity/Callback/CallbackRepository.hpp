@@ -15,8 +15,7 @@ namespace Bot::Entity::Callback {
             const TGCallback& tg_callback,
             int message_id,
             int user_id,
-            int chat_id,
-            bool check_created
+            int chat_id
         ) override;
         unique_ptr<Callback> create(const Callback& callback) override;
 

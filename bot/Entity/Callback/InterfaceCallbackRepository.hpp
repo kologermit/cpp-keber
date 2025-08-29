@@ -18,8 +18,7 @@ namespace Bot::Entity::Callback {
             const TGCallback& tg_callback,
             int message_id,
             int user_id,
-            int chat_id,
-            bool check_created = true
+            int chat_id
         ) = 0;
         virtual unique_ptr<Callback> create(const Callback& callback) = 0;
 
