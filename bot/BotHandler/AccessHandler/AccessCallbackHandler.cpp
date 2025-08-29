@@ -4,6 +4,10 @@
 #include <bot/BotHandler/Keys.hpp>
 #include <fmt/core.h>
 
+// debug
+#include <utils/Logger/InterfaceLogger.hpp>
+// debug
+
 namespace Bot::BotHandler::AccessHandler {
 
     using Bot::Entity::Repositories::get_repositories;
@@ -15,6 +19,10 @@ namespace Bot::BotHandler::AccessHandler {
     using nlohmann::json;
     using std::stoi;
     using std::string_view;
+
+    // debug
+    using Utils::Logger::get_logger;
+    // debug
 
     const string& AccessCallbackHandler::get_name() const noexcept {
         static const string name = "AccessCallbackHandler";
@@ -30,11 +38,19 @@ namespace Bot::BotHandler::AccessHandler {
     }
 
     ptrMessage AccessCallbackHandler::handle(shared_ptr<BotHandlerContext> context) {
+        // debug
+         get_logger()->debug("1", "1", __FILE__, __LINE__);
+        // debug
+
         auto data = json::parse(context->callback->data);
         int user_id = data[1];
         auto access_type = static_cast<EnumAccessType>(data[2]);
         const bool access_value = data[3];
         const string word = data[4];
+
+        // debug
+        get_logger()->debug("2", "2", __FILE__, __LINE__);
+        // debug
 
         auto user = get_repositories()->user_repository->get_by_id(user_id);
         if (user == nullptr) {
@@ -46,6 +62,10 @@ namespace Bot::BotHandler::AccessHandler {
             return nullptr;
         }
 
+        // debug
+        get_logger()->debug("3", "3", __FILE__, __LINE__);
+        // debug
+
         get_bot()->answer_callback_query(context->callback->telegram_id);
         for (auto& access : get_repositories()->access_repository->get_raw_by_user_id(user->id)) {
             if (access->type == access_type) {
@@ -53,12 +73,21 @@ namespace Bot::BotHandler::AccessHandler {
             }
         }
 
+        // debug
+        get_logger()->debug("4", "4", __FILE__, __LINE__);
+        // debug
+
         if (access_value) {
             Access access;
             access.user_id = user->id;
             access.type = access_type;
             get_repositories()->access_repository->create(access);
         }
+
+
+        // debug
+        get_logger()->debug("5", "5", __FILE__, __LINE__);
+        // debug
 
         try {
             get_bot()->send_message(SendMessageParameters{
@@ -70,10 +99,22 @@ namespace Bot::BotHandler::AccessHandler {
             });
         } catch (...) {}
 
-        return AccessHandler::send_message_with_access_keyboard(
+
+        // debug
+        get_logger()->debug("6", "6", __FILE__, __LINE__);
+        // debug
+
+        auto result_message = AccessHandler::send_message_with_access_keyboard(
             context,
             *user,
             get_repositories()->access_repository->get_by_user_id(user->id)
         );
+
+
+        // debug
+        get_logger()->debug("7", "7", __FILE__, __LINE__);
+        // debug
+
+        return result_message;
     }
 }
