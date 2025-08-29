@@ -13,6 +13,11 @@ using Utils::Entity::DELETED_AT_COLUMN;
 using Utils::Entity::DATETIME_FORMAT;
 using std::map;
 
+// debug
+using Utils::Logger::get_logger;
+using std::to_string;
+// debug
+
 AccessRepository::AccessRepository(connection& db):
 _db(db) {
     create_rows_in_enum_table_if_empty(_db, ACCESS_TYPES_TABLE, map_access_type_to_string);
@@ -34,8 +39,14 @@ UserAccess AccessRepository::get_by_user_id(int user_id) {
         {DOCKER, user_access.docker},
         {SERVER, user_access.server}
     };
+
+    auto raw_accesses = get_raw_by_user_id(user_id);
+
+    // debug
+    get_logger()->debug("access::size", to_string(raw_accesses.size()), __FILE__, __LINE__);
+    // debug
     
-    for (auto& access : get_raw_by_user_id(user_id)) {
+    for (auto& access : raw_accesses) {
         type_to_member.at(access->type) = true;
     }
     
