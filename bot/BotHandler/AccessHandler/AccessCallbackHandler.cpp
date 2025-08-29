@@ -35,7 +35,9 @@ namespace Bot::BotHandler::AccessHandler {
         get_logger()->debug("is_callback", (context->callback != nullptr ? "true" : "false"), __FILE__, __LINE__);
         get_logger()->debug("json::data", context->callback->data, __FILE__, __LINE__);
         get_logger()->debug("json::accept", (json::accept(context->callback->data) ? "true" : "false"), __FILE__, __LINE__);
-        // get_logger()->debug("json::data", context->callback->data, __FILE__, __LINE__);
+        get_logger()->debug("json::parse", json::parse(context->callback->data)[0].get<string>(), __FILE__, __LINE__);
+        get_logger()->debug("ACCESS_CALLBACK_NAME", ACCESS_CALLBACK_NAME, __FILE__, __LINE__);
+        get_logger()->debug("json::is", (json::parse(context->callback->data)[0].get<string>() == ACCESS_CALLBACK_NAME ? "true" : "false"), __FILE__, __LINE__);
         // debug
 
         return (context->access.full || context->access.access)
