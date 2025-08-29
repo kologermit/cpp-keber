@@ -79,7 +79,7 @@ unique_ptr<Message> MessageRepository::get_by_telegram_message(const TGMessage& 
     }
 
     if (tg_message.reply_message != nullptr) {
-        reply_message = get_by_telegram_message(*tg_message.reply_message, true, chat_id, user_id);
+        reply_message = get_by_telegram_message(*tg_message.reply_message, chat_id, user_id, check_created);
     }
 
     return create(Message(

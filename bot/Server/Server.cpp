@@ -259,7 +259,12 @@ json BotHandler::handle(const Request& req, Response& res) {
     );
     shared_ptr<User> user(get_repositories()->user_repository->get_by_telegram_user(*tg_message.from));
     shared_ptr<Chat> chat(get_repositories()->chat_repository->get_by_telegram_chat(*tg_message.chat));
-    shared_ptr<Message> message(get_repositories()->message_repository->get_by_telegram_message(tg_message, user->id, chat->id));
+    shared_ptr<Message> message(get_repositories()->message_repository->get_by_telegram_message(
+        tg_message,
+        user->id,
+        chat->id,
+        json_body.contains(CALLBACK_QUERY_KEY)
+    ));
     shared_ptr<Callback> callback;
 
     if (json_body.contains(CALLBACK_QUERY_KEY)) {
