@@ -1,0 +1,35 @@
+{
+  "stop": {
+    "description": "Stop postgres container",
+    "scripts": [
+      "docker compose stop -t 1 postgres"
+    ]
+  },
+  "up": {
+    "description": "Up postgres container",
+    "scripts": [
+      "docker compose up -d postgres"
+    ]
+  },
+  "remove": {
+    "description": "Remove postgres container",
+    "scripts": [
+      "docker compose rm -sfv postgres"
+    ]
+  },
+  "remove_data": {
+    "description": "Remove volume with postgres data",
+    "scripts": [
+      "docker volume rm ${COMPOSE_PROJECT_NAME}_postgres-data"
+    ]
+  },
+  "recreate_data": {
+    "description": "Stop postgres container. Remove data. Up container",
+    "scripts": [
+      "@@ postgres stop",
+      "@@ postgres remove",
+      "@@ postgres remove_data",
+      "@@ postgres up"
+    ]
+  }
+}
