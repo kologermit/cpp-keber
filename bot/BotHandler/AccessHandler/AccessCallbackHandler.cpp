@@ -56,7 +56,8 @@ namespace Bot::BotHandler::AccessHandler {
 
     ptrMessage AccessCallbackHandler::handle(shared_ptr<BotHandlerContext> context) {
         // debug
-         get_logger()->debug("1", "1", __FILE__, __LINE__);
+        get_logger()->debug("1", "1", __FILE__, __LINE__);
+        get_logger()->debug("telegram_id", context->callback->telegram_id, __FILE__, __LINE__);
         // debug
 
         auto data = json::parse(context->callback->data);
