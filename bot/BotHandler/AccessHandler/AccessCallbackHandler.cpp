@@ -38,6 +38,11 @@ namespace Bot::BotHandler::AccessHandler {
         get_logger()->debug("json::parse", json::parse(context->callback->data)[0].get<string>(), __FILE__, __LINE__);
         get_logger()->debug("ACCESS_CALLBACK_NAME", ACCESS_CALLBACK_NAME, __FILE__, __LINE__);
         get_logger()->debug("json::is", (json::parse(context->callback->data)[0].get<string>() == ACCESS_CALLBACK_NAME ? "true" : "false"), __FILE__, __LINE__);
+        get_logger()->debug("cond1", ((context->access.full || context->access.access) ? "true" : "false"), __FILE__, __LINE__);
+        get_logger()->debug("cond_full", ((context->access.full || context->access.access)
+            && context->callback != nullptr
+            && json::accept(context->callback->data)
+            && json::parse(context->callback->data)[0].get<string>() == ACCESS_CALLBACK_NAME ? "true" : "false"), __FILE__, __LINE__);
         // debug
 
         return (context->access.full || context->access.access)
