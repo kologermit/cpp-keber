@@ -56,7 +56,7 @@ ptrMessage MenuHandler::handle(shared_ptr<BotHandlerContext> context) {
 
 ptrMessage MenuHandler::to_menu(shared_ptr<BotHandlerContext> context, string_view text) {
     User user;
-    user.id = context->user.id;
+    user.id = context->user->id;
     user.screen = MENU;
     get_repositories()->user_repository->update(user, {SCREEN});
 
