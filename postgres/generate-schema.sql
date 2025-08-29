@@ -106,8 +106,8 @@ CREATE TABLE IF NOT EXISTS callbacks (
     CONSTRAINT fk_callbacks_chat FOREIGN KEY (chat_id) REFERENCES chats(id)
 );
 CREATE INDEX IF NOT EXISTS idx_callbacks_telegram_id ON callbacks(telegram_id);
-CREATE TRIGGER trigger_update_messages_updated_at
-    BEFORE UPDATE ON messages
+CREATE TRIGGER trigger_update_callbacks_updated_at
+    BEFORE UPDATE ON callbacks
     FOR EACH ROW
 EXECUTE FUNCTION update_updated_at();
 
