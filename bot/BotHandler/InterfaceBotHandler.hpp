@@ -19,11 +19,11 @@ using std::vector;
 
 struct BotHandlerContext {
     
-    shared_ptr<Message> message;
-    shared_ptr<Callback> callback;
-    shared_ptr<Chat> chat;
-    shared_ptr<User> user;
-    UserAccess access;
+    shared_ptr<const Message> message;
+    shared_ptr<const Callback> callback;
+    shared_ptr<const Chat> chat;
+    shared_ptr<const User> user;
+    const UserAccess access;
 
 };
 

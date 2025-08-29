@@ -293,6 +293,10 @@ json BotHandler::handle(const Request& req, Response& res) {
             user->id,
             chat->id
         );
+
+        // debug
+        get_logger()->debug("callback::telegram_id", callback->telegram_id, __FILE__, __LINE__);
+        // debug
     }
 
     auto access = get_repositories()->access_repository->get_by_user_id(user->id);
