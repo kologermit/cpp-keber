@@ -40,7 +40,7 @@ UserAccess AccessRepository::get_by_user_id(int user_id) {
         {SERVER, user_access.server}
     };
 
-    for (auto& access : get_raw_by_user_id(user_id) {
+    for (auto& access : get_raw_by_user_id(user_id)) {
         type_to_member.at(access->type) = true;
     }
     
