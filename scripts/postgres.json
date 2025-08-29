@@ -20,7 +20,7 @@
   "remove_data": {
     "description": "Remove volume with postgres data",
     "scripts": [
-      "docker volume rm ${COMPOSE_PROJECT_NAME}_postgres-data"
+      "docker volume rm ${COMPOSE_PROJECT_NAME}_postgres_data"
     ]
   },
   "recreate_data": {
