@@ -20,3 +20,4 @@
 !postgres
 !test_code
 !Caddyfile
+!zsh_manager_completions

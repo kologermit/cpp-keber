@@ -1,0 +1,24 @@
+#compdef manager.py
+
+local -a scripts
+
+scripts=($(python3 manager.py help | jq -r '.info.available_scripts | keys[] | gsub(" "; ":")' 2>/dev/null))
+
+local -a files=(${(u)scripts%%:*})
+local -a file_scripts
+
+case $CURRENT in
+    2)
+        _describe "file" files
+        ;;
+    3)
+        local selected_file="${words[2]}"
+        local -a matching_scripts=()
+        for item in $scripts; do
+            if [[ "${item%%:*}" == "$selected_file" ]]; then
+                matching_scripts+=("${item#*:}")
+            fi
+        done
+        _describe "script" matching_scripts
+        ;;
+esac
