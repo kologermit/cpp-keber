@@ -283,6 +283,10 @@ json BotHandler::handle(const Request& req, Response& res) {
     ));
     shared_ptr<Callback> callback;
     if (tg_callback.has_value()) {
+        // debug
+        get_logger()->debug("tg_callback::id2", tg_callback.value().id, __FILE__, __LINE__);
+        // debug
+
         callback = get_repositories()->callback_repository->get_by_telegram_callback(
             tg_callback.value(),
             message->id,
