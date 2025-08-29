@@ -280,12 +280,20 @@ json BotHandler::handle(const Request& req, Response& res) {
 
     auto access = get_repositories()->access_repository->get_by_user_id(user->id);
 
+
+    // debug
+    get_logger()->debug("Access1::full", access.full ? "true" : "false", __FILE__, __LINE__);
+    // debug
+
     if (!access.full && find(get_config()->get_admins(), user->telegram_id) != get_config()->get_admins().end()) {
         Access admin_access;
         admin_access.type = FULL;
         admin_access.user_id = user->id;
         get_repositories()->access_repository->create(admin_access);
         access = get_repositories()->access_repository->get_by_user_id(user->id);
+        // debug
+        get_logger()->debug("Access2::full", access.full ? "true" : "false", __FILE__, __LINE__);
+        // debug
     }
 
     int handle_id = rand_int(1, 1000000);
