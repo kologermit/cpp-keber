@@ -13,6 +13,7 @@ using Utils::TGBotApi::Types::ReplyButton;
 using Utils::TGBotApi::Types::ReplyButtons;
 using AccessHandler::AccessHandler;
 using Entity::Repositories::get_repositories;
+using Entity::User::User;
 using Entity::User::MENU;
 using Entity::User::SCREEN;
 using std::make_unique;
@@ -54,8 +55,10 @@ ptrMessage MenuHandler::handle(shared_ptr<BotHandlerContext> context) {
 }
 
 ptrMessage MenuHandler::to_menu(shared_ptr<BotHandlerContext> context, string_view text) {
-    context->user->screen = MENU;
-    get_repositories()->user_repository->update(*context->user, {SCREEN});
+    User user;
+    user.id = context->user.id;
+    user.screen = MENU;
+    get_repositories()->user_repository->update(user, {SCREEN});
 
     ReplyButtons buttons(3, vector<shared_ptr<ReplyButton> >(3, nullptr));
 
