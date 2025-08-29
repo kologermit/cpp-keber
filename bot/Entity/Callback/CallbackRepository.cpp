@@ -40,6 +40,7 @@ namespace Bot::Entity::Callback {
         return exec_insert<Callback>(_db, CALLBACKS_TABLE, {
             {TELEGRAM_ID_COLUMN, callback.telegram_id},
             {MESSAGE_ID_COLUMN, to_string(callback.message_id)},
+            {DATA_COLUMN, callback.data},
             {CHAT_ID_COLUMN, to_string(callback.chat_id)},
             {USER_ID_COLUMN, to_string(callback.user_id)},
         });

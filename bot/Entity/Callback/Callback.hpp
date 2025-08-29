@@ -17,6 +17,7 @@ namespace Bot::Entity::Callback {
     enum CallbackColumn {
         TELEGRAM_ID,
         MESSAGE_ID,
+        DATA,
         USER_ID,
         CHAT_ID,
     };
@@ -80,6 +81,7 @@ namespace Bot::Entity::Callback {
             {
                 case TELEGRAM_ID: return telegram_id;
                 case MESSAGE_ID: return to_string(message_id);
+                case DATA: return data;
                 case USER_ID: return to_string(user_id);
                 case CHAT_ID: return to_string(chat_id);
                 default: return "";

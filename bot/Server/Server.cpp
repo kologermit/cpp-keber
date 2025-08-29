@@ -252,10 +252,12 @@ json BotHandler::handle(const Request& req, Response& res) {
         return {{ERROR_KEY, "unauthorized"}};
     }
 
+    bool is_callback = json_body.contains(CALLBACK_QUERY_KEY);
+
     TGMessage tg_message(
-        json_body.contains(MESSAGE_KEY)
-        ? json_body[MESSAGE_KEY]
+        is_callback
         : json_body[CALLBACK_QUERY_KEY][MESSAGE_KEY]
+        : json_body[MESSAGE_KEY]
     );
     shared_ptr<User> user(get_repositories()->user_repository->get_by_telegram_user(*tg_message.from));
     shared_ptr<Chat> chat(get_repositories()->chat_repository->get_by_telegram_chat(*tg_message.chat));
@@ -263,11 +265,11 @@ json BotHandler::handle(const Request& req, Response& res) {
         tg_message,
         user->id,
         chat->id,
-        json_body.contains(CALLBACK_QUERY_KEY)
+        is_callback
     ));
     shared_ptr<Callback> callback;
 
-    if (json_body.contains(CALLBACK_QUERY_KEY)) {
+    if (is_callback) {
         callback = get_repositories()->callback_repository->get_by_telegram_callback(
             TGCallback(json_body[CALLBACK_QUERY_KEY]),
             message->id,
