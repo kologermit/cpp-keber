@@ -260,6 +260,10 @@ json BotHandler::handle(const Request& req, Response& res) {
         : nullopt
     );
 
+    // debug
+    get_logger()->debug("tg_callback::id", tg_callback.value().id, __FILE__, __LINE__);
+    // debug
+
     TGMessage tg_message(
         tg_callback.has_value()
         ? json_body[CALLBACK_QUERY_KEY][MESSAGE_KEY]
