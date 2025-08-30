@@ -2,7 +2,7 @@
 
 #include <bot/BotHandler/InterfaceBotHandler.hpp>
 
-namespace Bot::BotHandler::YouTubeHandler::Media {
+namespace Bot::BotHandler::YouTubeHandler::MediaHandler {
 
     constexpr const char* YOUTUBE_MEDIA_CALLBACK_HANDLER_NAME = "ymch";
 

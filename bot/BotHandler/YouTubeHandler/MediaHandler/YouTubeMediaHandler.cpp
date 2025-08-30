@@ -1,4 +1,4 @@
-#include <bot/BotHandler/YouTubeHandler/Media/YouTubeMediaHandler.hpp>
+#include <bot/BotHandler/YouTubeHandler/MediaHandler/YouTubeMediaHandler.hpp>
 #include <bot/BotHandler/YouTubeHandler/YouTubeHandler.hpp>
 #include <bot/BotHandler/Keys.hpp>
 #include <bot/Entity/Repositories.hpp>
@@ -7,7 +7,7 @@
 #include <fmt/core.h>
 #include <sstream>
 
-namespace Bot::BotHandler::YouTubeHandler::Media {
+namespace Bot::BotHandler::YouTubeHandler::MediaHandler {
 
     using Bot::Entity::Repositories::get_repositories;
     using Bot::Entity::User::User;

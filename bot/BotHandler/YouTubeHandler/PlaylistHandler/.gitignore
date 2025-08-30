@@ -1,0 +1,4 @@
+*
+!.gitignore
+!YouTubePlaylistHandler.hpp
+!YouTubePlaylistHandler.cpp

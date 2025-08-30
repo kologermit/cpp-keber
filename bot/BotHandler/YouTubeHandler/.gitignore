@@ -2,5 +2,5 @@
 !.gitignore
 !YouTubeHandler.hpp
 !YouTubeHandler.cpp
-!Media
-!Playlist
+!MediaHandler
+!PlaylistHandler

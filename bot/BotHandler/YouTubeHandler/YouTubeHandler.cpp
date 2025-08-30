@@ -1,10 +1,13 @@
 #include <bot/BotHandler/YouTubeHandler/YouTubeHandler.hpp>
 #include <bot/BotHandler/YouTubeHandler/Media/YouTubeMediaHandler.hpp>
+#include <bot/BotHandler/YouTubeHandler/PlayilstHandler/YouTubePlaylistHandler.hpp>
 #include <bot/BotHandler/MenuHandler/MenuHandler.hpp>
 #include <bot/BotHandler/Keys.hpp>
 #include <bot/Entity/Repositories.hpp>
 #include <utils/TGBotApi/Types.hpp>
 #include <set>
+
+#include "YouTubeApi/InterfaceYouTubeApi.hpp"
 
 namespace Bot::BotHandler::YouTubeHandler {
 
@@ -13,6 +16,7 @@ namespace Bot::BotHandler::YouTubeHandler {
     using Entity::User::User;
     using Entity::Repositories::get_repositories;
     using Media::YouTubeMediaHandler;
+    using Playlist::YouTubePlaylistHandler;
     using MenuHandler::MenuHandler;
     using Utils::TGBotApi::Bot::get_bot;
     using Utils::TGBotApi::Types::ReplyKeyboard;
@@ -64,6 +68,10 @@ namespace Bot::BotHandler::YouTubeHandler {
 
         if (context->message->text == VIDEO_WORD || context->message->text == AUDIO_WORD) {
             return YouTubeMediaHandler::to_youtube_media(context, context->message->text == VIDEO_WORD);
+        }
+
+        if (context->message->text == AUDIO_PLAYLIST_WORD || context->message->text == VIDEO_PLAYLIST_WORD) {
+            return YouTubePlaylistHandler::to_youtube_playlist(context, context->message->text == VIDEO_PLAYLIST_WORD);
         }
 
         return get_bot()->send_message( {
