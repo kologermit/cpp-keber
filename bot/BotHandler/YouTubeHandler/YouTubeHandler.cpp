@@ -1,5 +1,5 @@
 #include <bot/BotHandler/YouTubeHandler/YouTubeHandler.hpp>
-#include <bot/BotHandler/YouTubeHandler/Media/YouTubeMediaHandler.hpp>
+#include <bot/BotHandler/YouTubeHandler/MediaHandler/YouTubeMediaHandler.hpp>
 #include <bot/BotHandler/YouTubeHandler/PlayilstHandler/YouTubePlaylistHandler.hpp>
 #include <bot/BotHandler/MenuHandler/MenuHandler.hpp>
 #include <bot/BotHandler/Keys.hpp>
@@ -15,7 +15,7 @@ namespace Bot::BotHandler::YouTubeHandler {
     using Entity::User::SCREEN;
     using Entity::User::User;
     using Entity::Repositories::get_repositories;
-    using Media::YouTubeMediaHandler;
+    using MediaHandler::YouTubeMediaHandler;
     using Playlist::YouTubePlaylistHandler;
     using MenuHandler::MenuHandler;
     using Utils::TGBotApi::Bot::get_bot;
