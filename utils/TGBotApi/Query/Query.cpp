@@ -61,12 +61,12 @@ string Query::query(
     get_logger()->debug("Path", path, __FILE__, __LINE__);
     get_logger()->debug("Full_path", full_path, __FILE__, __LINE__);
     get_logger()->debug("Params_is_empty", to_string(params.empty()), __FILE__, __LINE__);
-    for (auto param : params) {
-        get_logger()->debug("Params", param.first + " : " + param.second, __FILE__, __LINE__);
+    for (const auto&[param, value] : params) {
+        get_logger()->debug("Params", param + " : " + value, __FILE__, __LINE__);
     }
     get_logger()->debug("Headers_is_empty", to_string(headers.empty()), __FILE__, __LINE__);
-    for (auto header : headers) {
-        get_logger()->debug("Headers", header.first + " : " + header.second, __FILE__, __LINE__);
+    for (const auto&[header, value] : headers) {
+        get_logger()->debug("Headers", header + " : " + value, __FILE__, __LINE__);
     }
     get_logger()->debug("Files_is_empty", to_string(files.empty()), __FILE__, __LINE__);
     for (auto file : files) {

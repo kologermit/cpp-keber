@@ -34,7 +34,11 @@ namespace Bot::BotHandler {
     constexpr const char* ACCESS_PHRASE = "<b>Ваши права:</b> <code>{}</code>\n\n<i>Отправь тег или id пользователя</i>";
     constexpr const char* ADD_ACCESS_PHRASE = "<b>Добавлен доступ для {} пользователем</b> <code>{}</code>";
     constexpr const char* REMOVE_ACCESS_PHRASE = "<b>Удалён доступ для {} пользователем</b> <code>{}</code>";
+    constexpr const char* SEND_MEDIA_URL_PHRASE = "<b>Отправь одну или несколько ссылок {}, чтобы поставить на скачивание\n\nОдна строка - одна ссылка</b>";
+    constexpr const char* MEDIA_NOT_FOUND_PHRASE = "<b>{} не найдено (<code>{}</code>)!</b>";
+    constexpr const char* DOWNLOAD_MEDIA_PHRASE = "<b>Добавить {} ({}) в очередь скачивания?</b>\n{}";
 
     constexpr const char* USER_TEMPLATE = "<b>Имя:</b> <code>{}</code>\n<b>ID:</b> <code>{}</code>\n<b>TG ID:</b> <code>{}</code>\n<b>Тег:</b> <code>{}</code>";
+    constexpr const char* MEDIA_TEMPLATE = "<b>{} | {}</b>\n<code>{}</code>";
 
 }

@@ -1,0 +1,4 @@
+*
+!.gitignore
+!YouTubeMediaHandler.hpp
+!YouTubeMediaHandler.cpp

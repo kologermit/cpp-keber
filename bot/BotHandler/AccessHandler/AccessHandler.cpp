@@ -48,11 +48,17 @@ namespace Bot::BotHandler::AccessHandler {
         && context->callback == nullptr
         && context->user->screen == ACCESS
         && context->message->text.size() <= 20
-        && (context->message->text.starts_with("@") ||
-            all_of(context->message->text, [](char c) {return isdigit(c);}));
+        && (
+            context->message->text.starts_with("@")
+            || all_of(context->message->text, [](char c) {return isdigit(c);})
+            || context->message->text == BACK_WORD
+        );
     }
 
     ptrMessage AccessHandler::handle(shared_ptr<BotHandlerContext> context) {
+        if (context->message->text == BACK_WORD) {
+            return MenuHandler::to_menu(context);
+        }
         unique_ptr<User> find_user = nullptr;
         if (context->message->text.starts_with("@")) {
             find_user = get_repositories()->user_repository->get_by_username(context->message->text.substr(1));

@@ -1,7 +1,7 @@
 import sys; sys.path.extend(['../'*i for i in range(10)]+['.'])
 from config import LOGS_DIR, LISTEN_IP, LISTEN_PORT, PROJECT_NAME
 from utils.Python.logger import init as init_logger, logger, log_err_with_code
-from bottle import route, run, response
+from bottle import route, run, response, request
 from pytubefix import YouTube, Channel, Playlist
 from pytubefix.exceptions import RegexMatchError, VideoUnavailable
 from json import dumps
@@ -27,7 +27,7 @@ def get_video_dict(v: YouTube) -> dict:
     return {
         'title': v.title,
         'video_id': v.video_id,
-        'url': v.watch_url,
+        'video_url': v.watch_url,
         'thumbnail_url': v.thumbnail_url,
         'year': v.publish_date.year
     }
@@ -36,24 +36,25 @@ def get_channel_dict(c: Channel) -> dict:
     return {
         'channel_id': c.channel_id,
         'title': c.channel_name,
-        'url': c.channel_url,
+        'channel_url': c.channel_url,
     }
 
 def get_playlist_dict(p: Playlist) -> dict:
     return {
         'playlist_id': p.playlist_id,
         'title': p.title,
+        'playlist_url': p.playlist_url,
         'views': p.views,
         'thumbnail_url': p.thumbnail_url,
     }
 
-@route('/video/<video_id>')
+@route('/video')
 @middleware
-def video(video_id: str):
+def video():
     try:
-        v = YouTube(f'https://youtube.com/watch?v={video_id}', use_oauth=USE_OAUTH)
+        v = YouTube(dict(request.query)["url"], use_oauth=USE_OAUTH)
         _ = v.title
-    except RegexMatchError:
+    except (RegexMatchError, KeyError):
         return generate_json_response({'message': 'Video not found'}, 400)
     except VideoUnavailable:
         return generate_json_response({'message': 'Video Unavailable'}, 400)
@@ -63,12 +64,12 @@ def video(video_id: str):
         'channel': get_channel_dict(c),
     })
 
-@route('/playlist/<playlist_id>')
+@route('/playlist')
 @middleware
-def playlist(playlist_id: str):
+def playlist():
     try:
-        p = Playlist(f'https://youtube.com/playlist?list={playlist_id}', use_oauth=USE_OAUTH)
-    except RegexMatchError:
+        p = Playlist(dict(request.query)["url"], use_oauth=USE_OAUTH)
+    except (RegexMatchError, KeyError):
         return generate_json_response({'message': 'Playlist not found'}, 400)
     return generate_json_response({
         'playlist': get_playlist_dict(p),

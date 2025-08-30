@@ -4,7 +4,7 @@
 
 namespace Utils::Config {
 
-struct Config : InterfaceConfig {
+struct Config final : InterfaceConfig {
 
     bool                     is_help()              const noexcept override;
     const string&            get_bot_token()        const noexcept override;
@@ -19,7 +19,7 @@ struct Config : InterfaceConfig {
     const string&            get_db_user()          const noexcept override;
     const string&            get_db_password()      const noexcept override;
     const string&            get_db_conn_url()      const noexcept override;
-    const string&            get_yt_service_url()   const noexcept override;
+    const string&            get_youtube_api_url()  const noexcept override;
     const string&            get_task_service_url() const noexcept override;
     const string&            get_tmp_path()         const noexcept override;
     const string&            get_logs_path()        const noexcept override;
@@ -30,9 +30,9 @@ struct Config : InterfaceConfig {
     private:
 
     bool   _is_help = false;
-    string _bot_token = "";
+    string _bot_token;
     vector<long long> _admins;
-    string _webhook_url = "";
+    string _webhook_url;
     string _webhook_path = "/webhook";
     string _listen_ip = "0.0.0.0";
     int    _listen_port = 8080;
@@ -41,8 +41,8 @@ struct Config : InterfaceConfig {
     string _db_name = "bot";
     string _db_user = "bot";
     string _db_password = "qwerty";
-    string _db_conn_url = "";
-    string _yt_service_url = "yt";
+    string _db_conn_url;
+    string _youtube_api_url = "youtube_api";
     string _task_service_url = "task";
     string _tmp_path = "/tmp";
     string _logs_path = "./logs/bot";

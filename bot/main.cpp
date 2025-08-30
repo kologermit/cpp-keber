@@ -2,7 +2,7 @@
 #include <bot/Signal/Signal.hpp>
 #include <utils/Config/Config.hpp>
 #include <utils/Logger/Logger.hpp>
-#include <utils/Random/Random.hpp>
+#include <utils/YouTubeApi/YouTubeApi.hpp>
 #include <csignal>
 
 using Utils::Logger::get_logger;
@@ -11,6 +11,8 @@ using TGBot = Utils::TGBotApi::Bot::Bot;
 using Utils::TGBotApi::Bot::get_bot;
 using Utils::Config::get_config;
 using Utils::Config::Config;
+using Utils::YouTubeApi::YouTubeApi;
+using Utils::YouTubeApi::get_youtube_api;
 using Bot::Entity::Repositories::Repositories;
 using Bot::Entity::Repositories::get_repositories;
 using Bot::Server::Server;
@@ -28,6 +30,7 @@ int main(int argc, const char* argv[]) {
         return 0;
     }
 
+    get_youtube_api(make_unique<YouTubeApi>());
     get_bot(make_unique<TGBot>(get_config()->get_bot_token()));
     get_repositories(make_unique<Repositories>(get_config()->get_db_conn_url()));
     get_server(make_unique<Server>());

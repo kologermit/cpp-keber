@@ -21,10 +21,8 @@ namespace Bot::BotHandler::StartHandler {
 
     bool StartHandler::check(shared_ptr<BotHandlerContext> context) {
         static const set back_screens{
-            EnumUserScreen::ACCESS,
             EnumUserScreen::START,
             EnumUserScreen::MENU,
-            EnumUserScreen::YOUTUBE,
         };
         return
             (context->access.full || context->access.base)

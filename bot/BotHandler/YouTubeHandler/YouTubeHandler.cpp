@@ -1,4 +1,6 @@
 #include <bot/BotHandler/YouTubeHandler/YouTubeHandler.hpp>
+#include <bot/BotHandler/YouTubeHandler/Media/YouTubeMediaHandler.hpp>
+#include <bot/BotHandler/MenuHandler/MenuHandler.hpp>
 #include <bot/BotHandler/Keys.hpp>
 #include <bot/Entity/Repositories.hpp>
 #include <utils/TGBotApi/Types.hpp>
@@ -10,6 +12,8 @@ namespace Bot::BotHandler::YouTubeHandler {
     using Entity::User::SCREEN;
     using Entity::User::User;
     using Entity::Repositories::get_repositories;
+    using Media::YouTubeMediaHandler;
+    using MenuHandler::MenuHandler;
     using Utils::TGBotApi::Bot::get_bot;
     using Utils::TGBotApi::Types::ReplyKeyboard;
     using Utils::TGBotApi::Types::ReplyButton;
@@ -45,6 +49,7 @@ namespace Bot::BotHandler::YouTubeHandler {
         static const set<string> buttons{
             AUDIO_WORD, VIDEO_WORD,
             AUDIO_PLAYLIST_WORD, VIDEO_PLAYLIST_WORD,
+            BACK_WORD,
         };
         return (context->access.full || context->access.youtube)
         && context->user->screen == YOUTUBE
@@ -53,9 +58,17 @@ namespace Bot::BotHandler::YouTubeHandler {
     }
 
     ptrMessage YouTubeHandler::handle(shared_ptr<BotHandlerContext> context) {
+        if (context->message->text == BACK_WORD) {
+            return MenuHandler::to_menu(context);
+        }
+
+        if (context->message->text == VIDEO_WORD || context->message->text == AUDIO_WORD) {
+            return YouTubeMediaHandler::to_youtube_media(context, context->message->text == VIDEO_WORD);
+        }
+
         return get_bot()->send_message( {
             .chat_id = context->chat->telegram_id,
-            .text = context->message->text,
+            .text = IN_DEVELOP_PHRASE,
             .reply_message_id = context->message->telegram_id,
         });
     }
