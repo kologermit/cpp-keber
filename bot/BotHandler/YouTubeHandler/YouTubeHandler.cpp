@@ -14,7 +14,7 @@ namespace Bot::BotHandler::YouTubeHandler {
     using Entity::User::User;
     using Entity::Repositories::get_repositories;
     using MediaHandler::YouTubeMediaHandler;
-    using Playlist::YouTubePlaylistHandler;
+    using PlaylistHandler::YouTubePlaylistHandler;
     using MenuHandler::MenuHandler;
     using Utils::TGBotApi::Bot::get_bot;
     using Utils::TGBotApi::Types::ReplyKeyboard;
