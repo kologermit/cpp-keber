@@ -30,12 +30,16 @@ namespace Utils::YouTubeApi {
 
         auto result = clt.Get(request_url.data(), params, {});
 
+        #ifndef NDEBUG
+        get_logger()->debug("Url", url, __FILE__, __LINE__);
+        get_logger()->debug("Config", get_config()->get_youtube_api_url(), __FILE__, __LINE__);
+        #endif
+
         if (result.error() != Error::Success) {
             throw runtime_error("YouTubeApi::get_video: " + to_string(result.error()));
         }
 
         #ifndef NDEBUG
-        get_logger()->debug("Url", url, __FILE__, __LINE__);
         get_logger()->debug("Error", to_string(result.error()), __FILE__, __LINE__);
         get_logger()->debug("Status", to_string(result->status), __FILE__, __LINE__);
         get_logger()->debug("Body", result->body, __FILE__, __LINE__);
