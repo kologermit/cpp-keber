@@ -6,7 +6,7 @@ namespace Utils::YouTubeApi {
     using std::invalid_argument;
     using std::move;
 
-    shared_ptr<InterfaceYouTubeApi> get_youtube_api(unique_ptr<YoutubeApi> youtube_api) {
+    shared_ptr<InterfaceYouTubeApi> get_youtube_api(unique_ptr<InterfaceYouTubeApi> youtube_api) {
         static shared_ptr<InterfaceYouTubeApi> _youtube_api;
 
         if (_youtube_api == nullptr && youtube_api == nullptr) {
