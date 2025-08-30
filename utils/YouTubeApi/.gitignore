@@ -1,6 +1,6 @@
 *
 !.gitignore
 !InterfaceYouTubeApi.hpp
-!interfaceYouTubeApi.cpp
+!InterfaceYouTubeApi.cpp
 !YouTubeApi.hpp
 !YouTubeApi.cpp
