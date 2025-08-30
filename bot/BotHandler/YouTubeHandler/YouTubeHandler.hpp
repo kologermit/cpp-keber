@@ -4,12 +4,12 @@
 
 namespace Bot::BotHandler::YouTubeHandler {
 
-    struct YouTubeHandler final : InterfaceBotHandler {
-        const string& get_name() const noexcept override;
-        bool check(shared_ptr<BotHandlerContext> context) override;
-        ptrMessage handle(shared_ptr<BotHandlerContext> context) override;
+struct YouTubeHandler final : InterfaceBotHandler {
+    const string& get_name() const noexcept override;
+    bool check(shared_ptr<BotHandlerContext> context) override;
+    ptrMessage handle(shared_ptr<BotHandlerContext> context) override;
 
-        static ptrMessage to_youtube(shared_ptr<BotHandlerContext> context);
-    };
+    static ptrMessage to_youtube(shared_ptr<BotHandlerContext> context);
+};
 
 }
