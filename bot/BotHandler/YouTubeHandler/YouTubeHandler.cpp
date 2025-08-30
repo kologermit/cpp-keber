@@ -1,13 +1,11 @@
 #include <bot/BotHandler/YouTubeHandler/YouTubeHandler.hpp>
 #include <bot/BotHandler/YouTubeHandler/MediaHandler/YouTubeMediaHandler.hpp>
-#include <bot/BotHandler/YouTubeHandler/PlayilstHandler/YouTubePlaylistHandler.hpp>
+#include <bot/BotHandler/YouTubeHandler/PlaylistHandler/YouTubePlaylistHandler.hpp>
 #include <bot/BotHandler/MenuHandler/MenuHandler.hpp>
 #include <bot/BotHandler/Keys.hpp>
 #include <bot/Entity/Repositories.hpp>
 #include <utils/TGBotApi/Types.hpp>
 #include <set>
-
-#include "YouTubeApi/InterfaceYouTubeApi.hpp"
 
 namespace Bot::BotHandler::YouTubeHandler {
 
