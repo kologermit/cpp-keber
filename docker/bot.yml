@@ -27,7 +27,7 @@ services:
       - DB_PASSWORD=${BOT_PASSWORD}
       - LISTEN_IP=0.0.0.0
       - LISTEN_PORT=8080
-      - YOUTUBE_API_URL=http://youtube_api
+      - YOUTUBE_API_URL=http://youtube_api:8080
       - TMP_PATH=/tmp/bot
       - LOGS_PATH=/logs/bot
       - SHARED_PATH=/shared/
