@@ -25,6 +25,7 @@ namespace Bot::BotHandler::YouTubeHandler::Media {
     using Utils::YouTubeApi::Video;
     using Utils::YouTubeApi::Channel;
     using fmt::format;
+    using nlohmann::json;
     using std::unique_ptr;
     using std::make_unique;
     using std::make_shared;
@@ -94,12 +95,30 @@ namespace Bot::BotHandler::YouTubeHandler::Media {
                 answer
             ),
             .reply_message_id = context->message->telegram_id,
-            .inline_keyboard = make_unique<InlineKeyboard>(InlineButtons{
-                {
-                    make_shared<InlineButton>(ADD_WORD, "", "123"),
-                    make_shared<InlineButton>(DELETE_WORD, "", "123")
+            .inline_keyboard = make_unique<InlineKeyboard>(context->user->screen == YOUTUBE_VIDEO
+                ? InlineButtons{
+                    {make_shared<InlineButton>(DELETE_WORD, "", "delete")},
+                    {
+                        make_shared<InlineButton>(ADD_720P_QUALITY_PHRASE, "", json{
+                            YOUTUBE_MEDIA_CALLBACK_HANDLER_NAME,
+                            VIDEO_720P,
+                        }.dump()),
+                        make_shared<InlineButton>(ADD_BEST_QUALITY_PHRASE, "", json{
+                            YOUTUBE_MEDIA_CALLBACK_HANDLER_NAME,
+                            VIDEO_BEST,
+                        }.dump())
+                    }
                 }
-            })
+                : InlineButtons{
+                    {
+                        make_shared<InlineButton>(DELETE_WORD, "", "delete"),
+                        make_shared<InlineButton>(ADD_WORD, "", json{
+                            YOUTUBE_MEDIA_CALLBACK_HANDLER_NAME,
+                            AUDIO,
+                        }.dump())
+                    }
+                }
+            )
         });
     }
 }

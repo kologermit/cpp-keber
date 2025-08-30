@@ -1,0 +1,4 @@
+*
+!.gitignore
+!CallbackDeleterHandler.hpp
+!CallbackDeleterHandler.cpp

@@ -6,5 +6,6 @@
 !NotFoundHandler
 !DiceHandler
 !YouTubeHandler
+!CallbackDeleterHandler
 !InterfaceBotHandler.hpp
 !Keys.hpp

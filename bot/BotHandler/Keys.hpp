@@ -28,6 +28,8 @@ namespace Bot::BotHandler {
 
     constexpr const char* NOT_ANDERSTAND_PHRASE = "Не понял!";
     constexpr const char* USER_NOT_FOUND_PHRASE = "Пользователь {} не найден!";
+	constexpr const char* ADD_BEST_QUALITY_PHRASE = "➕Добавить (лучшее качество)";
+    constexpr const char* ADD_720P_QUALITY_PHRASE = "➕Добавить (720p)";
     constexpr const char* IN_DEVELOP_PHRASE = "Находится в разработке";
     constexpr const char* START_PHRASE = "Приветствую в CPP-KEBER!";
     constexpr const char* DICE_PHRASE = "Бросок кубика на <b>{}</b>\nРезультат: <b>{}</b>";
