@@ -42,7 +42,7 @@ struct Config final : InterfaceConfig {
     string _db_user = "bot";
     string _db_password = "qwerty";
     string _db_conn_url;
-    string _youtube_api_url = "youtube_api";
+    string _youtube_api_url = "http://youtube_api";
     string _task_service_url = "task";
     string _tmp_path = "/tmp";
     string _logs_path = "./logs/bot";
