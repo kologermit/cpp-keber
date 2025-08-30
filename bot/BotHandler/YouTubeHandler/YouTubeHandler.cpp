@@ -18,7 +18,7 @@ namespace Bot::BotHandler::YouTubeHandler {
     using std::make_unique;
     using std::set;
 
-    static ptrMessage YouTubeHandler::to_youtube(shared_ptr<BotHandlerContext> context) {
+    ptrMessage YouTubeHandler::to_youtube(shared_ptr<BotHandlerContext> context) {
         User user;
         user.id = context->user->id;
         user.screen = YOUTUBE;
