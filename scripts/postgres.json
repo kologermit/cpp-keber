@@ -1,20 +1,32 @@
 {
+  "up": {
+    "description": "Up bot container",
+    "scripts": [
+      "docker compose up -d bot"
+    ]
+  },
   "stop": {
     "description": "Stop postgres container",
     "scripts": [
       "docker compose stop -t 1 postgres"
     ]
   },
-  "up": {
-    "description": "Up postgres container",
-    "scripts": [
-      "docker compose up -d postgres"
-    ]
-  },
   "remove": {
     "description": "Remove postgres container",
     "scripts": [
       "docker compose rm -sfv postgres"
+    ]
+  },
+  "logs": {
+    "description": "All logs postgres container",
+    "scripts": [
+      "docker compose logs -f postgres"
+    ]
+  },
+  "logs20": {
+    "description": "Logs postgres container (20 lines)",
+    "scripts": [
+      "docker compose logs --tail 20 -f postgres"
     ]
   },
   "remove_data": {

@@ -25,10 +25,10 @@ enum RequestHandlerMethod {
 struct InterfaceHTTPHandler {
     virtual ~InterfaceHTTPHandler() = default;
 
-    virtual const string& get_name() const noexcept = 0;
-    virtual RequestHandlerMethod get_method() const noexcept = 0;
-    virtual const string& get_pattern() const noexcept = 0;
-    virtual json handle(const Request& req, Response& res) = 0;
+    [[nodiscard]] virtual const string& get_name() const noexcept = 0;
+    [[nodiscard]] virtual RequestHandlerMethod get_method() const noexcept = 0;
+    [[nodiscard]] virtual const string& get_pattern() const noexcept = 0;
+    [[nodiscard]] virtual json handle(const Request& req, Response& res) = 0;
 
 };
 

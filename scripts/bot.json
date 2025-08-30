@@ -17,30 +17,34 @@
             "chmod 777 bot/BOT || true"
         ]
     },
-    "run_debug": {
-        "description": "Run ./build/Debug/BOT",
+    "up": {
+        "description": "Up bot container",
         "scripts": [
-            "./build/Debug/bot/BOT"
+            "docker compose up -d bot"
         ]
     },
-    "run_release": {
-        "description": "Run ./build/Release/BOT",
+    "stop": {
+        "description": "Stop bot container",
         "scripts": [
-            "./build/Release/bot/BOT"
+            "docker compose stop -t 1 bot"
         ]
     },
-    "build_debug_and_run": {
-        "description": "Build bot and run ./build/Debug/BOT",
+    "remove": {
+        "description": "Remove bot container",
         "scripts": [
-            "@@ bot build_debug",
-            "@@ bot run_debug"
+            "docker compose rm -sfv bot"
         ]
     },
-    "build_release_and_run": {
-        "description": "Build bot and run ./build/Release/BOT",
+    "logs": {
+        "description": "All logs bot container",
         "scripts": [
-            "@@ bot build_release",
-            "@@ bot run_release"
+            "docker compose logs -f bot"
+        ]
+    },
+    "logs20": {
+        "description": "Logs bot container (20 lines)",
+        "scripts": [
+            "docker compose logs --tail 20 -f bot"
         ]
     }
 }

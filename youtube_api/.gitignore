@@ -1,0 +1,5 @@
+*
+!.gitignore
+!requirements.txt
+!main.py
+!entrypoint.sh

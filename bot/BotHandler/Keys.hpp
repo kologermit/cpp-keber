@@ -21,6 +21,10 @@ namespace Bot::BotHandler {
     constexpr const char* SERVER_WORD = "🖥️Сервер";
     constexpr const char* ADD_WORD = "➕Добавить";
     constexpr const char* DELETE_WORD = "❌Удалить";
+    constexpr const char* AUDIO_WORD = "🔊Аудио";
+    constexpr const char* VIDEO_WORD = "🎬Видео";
+    constexpr const char* AUDIO_PLAYLIST_WORD = "▶️🔊Аудио-Плейлист";
+    constexpr const char* VIDEO_PLAYLIST_WORD = "▶️🎬Видео-Плейлист";
 
     constexpr const char* NOT_ANDERSTAND_PHRASE = "Не понял!";
     constexpr const char* USER_NOT_FOUND_PHRASE = "Пользователь {} не найден!";

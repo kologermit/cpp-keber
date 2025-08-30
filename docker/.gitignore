@@ -2,10 +2,7 @@
 !.gitignore
 !bot.yml
 !postgres.yml
-!downloader.yml
 !caddy.yml
 !networks.yml
-!cron.yml
 !parents.yml
-!certbot.yml
-!cleaner.yml
+!youtube_api.yml

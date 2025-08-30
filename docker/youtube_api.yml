@@ -1,0 +1,24 @@
+volumes:
+  youtube_api_venv:
+  youtube_api_logs:
+
+services:
+  youtube_api:
+    extends:
+      file: parents.yml
+      service: parent
+    image: ${PYTHON_IMAGE}
+    working_dir: /
+    entrypoint: sh /app/entrypoint.sh
+    ports:
+      - ${YOUTUBE_API_EXTERNAL_PORT}:8080
+    environment:
+      - LOGS_DIR=/logs
+      - BOT_URL=http://bot:8080
+    volumes:
+      - youtube_api_venv:/venv
+      - youtube_api_logs:/logs
+      - ../utils/Python:/utils/Python:ro
+      - ../youtube_api:/app:ro
+    networks:
+      - default

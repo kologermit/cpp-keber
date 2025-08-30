@@ -5,6 +5,7 @@
 #include <bot/BotHandler/StartHandler/StartHandler.hpp>
 #include <bot/BotHandler/AccessHandler/AccessHandler.hpp>
 #include <bot/BotHandler/AccessHandler/AccessCallbackHandler.hpp>
+#include <bot/BotHandler/YouTubeHandler/YouTubeHandler.hpp>
 #include <bot/HTTPHandler/CheckHealthHandler/CheckHealthHandler.hpp>
 #include <utils/Logger/InterfaceLogger.hpp>
 #include <utils/Random/Random.hpp>
@@ -85,6 +86,7 @@ Server::Server()
     bot_handlers.emplace_back(make_unique<Bot::BotHandler::MenuHandler::MenuHandler>());
     bot_handlers.emplace_back(make_unique<Bot::BotHandler::AccessHandler::AccessCallbackHandler>());
     bot_handlers.emplace_back(make_unique<Bot::BotHandler::AccessHandler::AccessHandler>());
+    bot_handlers.emplace_back(make_unique<Bot::BotHandler::YouTubeHandler::YouTubeHandler>());
     bot_handlers.emplace_back(make_unique<Bot::BotHandler::NotFoundHandler::NotFoundHandler>());
     request_handlers.emplace_back(make_unique<CheckHealthHandler>());
 }
@@ -104,7 +106,7 @@ struct BotHandler final : InterfaceHTTPHandler {
         return RequestHandlerMethod::POST;
     }
 
-    BotHandler(vector<unique_ptr<InterfaceBotHandler> >& bot_handlers):
+    explicit BotHandler(vector<unique_ptr<InterfaceBotHandler> >& bot_handlers):
     _bot_handlers(bot_handlers) {}
 
     json handle(const Request& req, Response& res) override;

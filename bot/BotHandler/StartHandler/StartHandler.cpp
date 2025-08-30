@@ -7,41 +7,40 @@
 
 namespace Bot::BotHandler::StartHandler {
 
-using Utils::TGBotApi::Bot::get_bot;
-using Entity::User::START;
-using Entity::User::MENU;
-using Entity::User::ACCESS;
-using Entity::User::EnumUserScreen;
-using Entity::Repositories::get_repositories;
-using MenuHandler::MenuHandler;
-using std::set;
+    using Utils::TGBotApi::Bot::get_bot;
+    using Entity::User::EnumUserScreen;
+    using Entity::User::EnumUserScreen;
+    using Entity::Repositories::get_repositories;
+    using MenuHandler::MenuHandler;
+    using std::set;
 
-const string& StartHandler::get_name() const noexcept {
-    static const string name = "StartHandler";
-    return name;
-}
+    const string& StartHandler::get_name() const noexcept {
+        static const string name = "StartHandler";
+        return name;
+    }
 
-bool StartHandler::check(shared_ptr<BotHandlerContext> context) {
-    static const set<EnumUserScreen> back_screens{
-        ACCESS,
-        START,
-        MENU,
-    };
-    return 
-        (context->access.full || context->access.base)
-        && (
-            context->message->text.starts_with(START_COMMAND)
-            || context->message->text.starts_with(MENU_COMMAND)
-            || context->user->screen == START
-            || (context->message->text == BACK_WORD && back_screens.contains(context->user->screen))
+    bool StartHandler::check(shared_ptr<BotHandlerContext> context) {
+        static const set back_screens{
+            EnumUserScreen::ACCESS,
+            EnumUserScreen::START,
+            EnumUserScreen::MENU,
+            EnumUserScreen::YOUTUBE,
+        };
+        return
+            (context->access.full || context->access.base)
+            && (
+                context->message->text.starts_with(START_COMMAND)
+                || context->message->text.starts_with(MENU_COMMAND)
+                || context->user->screen == EnumUserScreen::START
+                || (context->message->text == BACK_WORD && back_screens.contains(context->user->screen))
+            );
+    }
+
+    ptrMessage StartHandler::handle(shared_ptr<BotHandlerContext> context) {
+        return MenuHandler::to_menu(context,
+            context->message->text.starts_with(START_COMMAND) ?
+            START_PHRASE : ""
         );
-}
-
-ptrMessage StartHandler::handle(shared_ptr<BotHandlerContext> context) {
-    return MenuHandler::to_menu(context,
-        context->message->text.starts_with(START_COMMAND) ?
-        START_PHRASE : ""
-    );
-}
+    }
 
 }

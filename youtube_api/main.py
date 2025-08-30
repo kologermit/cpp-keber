@@ -1,0 +1,87 @@
+import sys; sys.path.extend(['../'*i for i in range(10)]+['.'])
+from config import LOGS_DIR, LISTEN_IP, LISTEN_PORT, PROJECT_NAME
+from utils.Python.logger import init as init_logger, logger, log_err_with_code
+from bottle import route, run, response
+from pytubefix import YouTube, Channel, Playlist
+from pytubefix.exceptions import RegexMatchError, VideoUnavailable
+from json import dumps
+
+USE_OAUTH = True
+
+def middleware(f):
+    def _(*args, **kwargs) -> str:
+        try:
+            return f(*args, **kwargs)
+        except Exception as err:
+            log_err_with_code(err)
+            return generate_json_response({'message': 'Internal Error', 'error': str(err)}, 500)
+    return _
+
+def generate_json_response(data, status: int=200) -> str:
+    response.status = status
+    response.set_header('Content-Type', 'application/json')
+    response.set_header('Cache-Control', 'no-cache')
+    return dumps(data)
+
+def get_video_dict(v: YouTube) -> dict:
+    return {
+        'title': v.title,
+        'video_id': v.video_id,
+        'url': v.watch_url,
+        'thumbnail_url': v.thumbnail_url,
+        'year': v.publish_date.year
+    }
+
+def get_channel_dict(c: Channel) -> dict:
+    return {
+        'channel_id': c.channel_id,
+        'title': c.channel_name,
+        'url': c.channel_url,
+    }
+
+def get_playlist_dict(p: Playlist) -> dict:
+    return {
+        'playlist_id': p.playlist_id,
+        'title': p.title,
+        'views': p.views,
+        'thumbnail_url': p.thumbnail_url,
+    }
+
+@route('/video/<video_id>')
+@middleware
+def video(video_id: str):
+    try:
+        v = YouTube(f'https://youtube.com/watch?v={video_id}', use_oauth=USE_OAUTH)
+        _ = v.title
+    except RegexMatchError:
+        return generate_json_response({'message': 'Video not found'}, 400)
+    except VideoUnavailable:
+        return generate_json_response({'message': 'Video Unavailable'}, 400)
+    c = Channel(v.channel_url, use_oauth=USE_OAUTH)
+    return generate_json_response({
+        'video': get_video_dict(v),
+        'channel': get_channel_dict(c),
+    })
+
+@route('/playlist/<playlist_id>')
+@middleware
+def playlist(playlist_id: str):
+    try:
+        p = Playlist(f'https://youtube.com/playlist?list={playlist_id}', use_oauth=USE_OAUTH)
+    except RegexMatchError:
+        return generate_json_response({'message': 'Playlist not found'}, 400)
+    return generate_json_response({
+        'playlist': get_playlist_dict(p),
+        'videos': [
+            v.watch_url
+            for v in p.videos
+        ]
+    })
+
+def main():
+    init_logger(LOGS_DIR)
+    logger.info(f'Start service {PROJECT_NAME} on {LISTEN_IP}:{LISTEN_PORT}')
+    run(host=LISTEN_IP, port=LISTEN_PORT)
+
+if __name__ == '__main__':
+    main()

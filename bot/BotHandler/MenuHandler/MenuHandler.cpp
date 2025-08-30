@@ -1,5 +1,6 @@
 #include <bot/BotHandler/MenuHandler/MenuHandler.hpp>
 #include <bot/BotHandler/AccessHandler/AccessHandler.hpp>
+#include <bot/BotHandler/YouTubeHandler/YouTubeHandler.hpp>
 #include <bot/BotHandler/Keys.hpp>
 #include <bot/Entity/Repositories.hpp>
 #include <utils/TGBotApi/Types.hpp>
@@ -12,6 +13,7 @@ using Utils::TGBotApi::Types::ReplyKeyboard;
 using Utils::TGBotApi::Types::ReplyButton;
 using Utils::TGBotApi::Types::ReplyButtons;
 using AccessHandler::AccessHandler;
+using YouTubeHandler::YouTubeHandler;
 using Entity::Repositories::get_repositories;
 using Entity::User::User;
 using Entity::User::MENU;
@@ -39,12 +41,16 @@ bool MenuHandler::check(shared_ptr<BotHandlerContext> context) {
     return
         (context->access.full || context->access.base)
         && context->user->screen == MENU
-        && words.find(context->message->text) != words.end();
+        && words.contains(context->message->text);
 }
 
 ptrMessage MenuHandler::handle(shared_ptr<BotHandlerContext> context) {
     if (context->message->text == ACCESS_WORD) {
         return AccessHandler::to_access(context);
+    }
+
+    if (context->message->text == YOUTUBE_WORD) {
+        return YouTubeHandler::to_youtube(context);
     }
 
     return get_bot()->send_message({
