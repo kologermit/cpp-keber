@@ -78,18 +78,20 @@ namespace Utils::YouTubeApi {
     }
 
     unique_ptr<Playlist> YouTubeApi::get_playlist(string_view url) {
-        auto json_playlist = send_request("/playlist", url);
-        if (json_playlist == nullptr) {
+        auto json_body = send_request("/playlist", url);
+        if (json_body == nullptr) {
             return nullptr;
         }
 
+        json json_playlist = json_body->at("playlist");
+
         return make_unique<Playlist>(move(Playlist{
-            .playlist_id = json_playlist->at("playlist_id"),
-            .title = json_playlist->at("title"),
-            .playlist_url = json_playlist->at("playlist_url"),
-            .views = json_playlist->at("views"),
-            .thumbnail_url = json_playlist->at("thumbnail_url"),
-            .video_urls = json_playlist->at("video_urls"),
+            .playlist_id = json_playlist["playlist_id"],
+            .title = json_playlist["title"],
+            .playlist_url = json_playlist["playlist_url"],
+            .views = json_playlist["views"],
+            .thumbnail_url = json_playlist["thumbnail_url"],
+            .video_urls = json_body->at("video_urls"),
         }));
     }
 
