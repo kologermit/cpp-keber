@@ -73,7 +73,7 @@ def playlist():
         return generate_json_response({'message': 'Playlist not found'}, 400)
     return generate_json_response({
         'playlist': get_playlist_dict(p),
-        'videos': [
+        'video_urls': [
             v.watch_url
             for v in p.videos
         ]
