@@ -64,11 +64,67 @@ namespace Bot::BotHandler::YouTubeHandler::PlaylistHandler {
             return YouTubeHandler::to_youtube(context);
         }
 
+        const char* PLAYLIST_TYPE_WORD = (
+            context->user->screen == YOUTUBE_PLAYLIST_VIDEO
+            ? VIDEO_PLAYLIST_WORD
+            : AUDIO_PLAYLIST_WORD
+        );
+
+        istringstream stream(context->message->text);
+        string buffer, answer;
+        int count = 0;
+        for (; getline(stream, buffer); count++) {
+            if (buffer.empty()) {
+                continue;
+            }
+            auto playlist = get_youtube_api()->get_playlist(buffer);
+            if (playlist == nullptr) {
+                return get_bot()->send_message( {
+                    .chat_id = context->chat->telegram_id,
+                    .text = format(MEDIA_NOT_FOUND_PHRASE, PLAYLIST_TYPE_WORD, buffer),
+                    .reply_message_id = context->message->telegram_id,
+                });
+            }
+
+            answer += "\n\n" + format(MEDIA_TEMPLATE,
+                playlist->title,
+                playlist->video_urls.size(),
+                playlist->playlist_url
+            );
+        }
+
         return get_bot()->send_message( {
             .chat_id = context->chat->telegram_id,
-            .text = IN_DEVELOP_PHRASE,
+            .text = format(DOWNLOAD_MEDIA_PHRASE,
+                PLAYLIST_TYPE_WORD,
+                count,
+                answer
+            ),
             .reply_message_id = context->message->telegram_id,
+            .inline_keyboard = make_unique<InlineKeyboard>(context->user->screen == YOUTUBE_PLAYLIST_VIDEO
+                ? InlineButtons{
+                    {make_shared<InlineButton>(DELETE_WORD, "", "delete")},
+                    {
+                        make_shared<InlineButton>(ADD_720P_QUALITY_PHRASE, "", json{
+                            YOUTUBE_PLAYLIST_CALLBACK_HANDLER_NAME,
+                            VIDEO_720P,
+                        }.dump()),
+                        make_shared<InlineButton>(ADD_BEST_QUALITY_PHRASE, "", json{
+                            YOUTUBE_PLAYLIST_CALLBACK_HANDLER_NAME,
+                            VIDEO_BEST,
+                        }.dump())
+                    }
+                }
+                : InlineButtons{
+                    {
+                        make_shared<InlineButton>(DELETE_WORD, "", "delete"),
+                        make_shared<InlineButton>(ADD_WORD, "", json{
+                            YOUTUBE_PLAYLIST_CALLBACK_HANDLER_NAME,
+                            AUDIO,
+                        }.dump())
+                    }
+                }
+            )
         });
     }
-
 }
