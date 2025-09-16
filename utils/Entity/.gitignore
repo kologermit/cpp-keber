@@ -4,4 +4,5 @@
 !Entity.cpp
 !ApiRequest
 !Exceptions
+!Repository.hpp
 !exec_templates.hpp

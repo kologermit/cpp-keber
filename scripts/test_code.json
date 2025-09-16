@@ -1,32 +1,41 @@
 {
-    "build_debug": {
-        "description": "Build debug test_code",
-        "working_dir": "./build/Debug",
+    "build_debug_clang": {
+        "description": "Build release test_code with GCC",
+        "working_dir": "./build/Release",
         "scripts": [
-            "cmake ../.. -B . -DBUILD_TEST_CODE=ON -DCMAKE_BUILD_TYPE=Debug",
-            "cmake --build . --target TEST_CODE",
-            "chmod 777 test_code/TEST_CODE || true"
+            "cmake ../.. -B . -DBUILD_TEST_CODE=ON -DCMAKE_BUILD_TYPE=Debug -DCOMPILER=clang",
+            "cmake --build . --parallel $(nproc) --target TEST_CODE",
+            "chmod 777 TEST_CODE || true"
         ]
     },
+    "build_debug_gcc": {
+        "description": "Build release test_code with GCC",
+        "working_dir": "./build/Release",
+        "scripts": [
+            "cmake ../.. -B . -DBUILD_TEST_CODE=ON -DCMAKE_BUILD_TYPE=Debug -DCOMPILER=gcc",
+            "cmake --build . --parallel $(nproc) --target TEST_CODE",
+            "chmod 777 TEST_CODE || true"
+        ]
+    },   
     "build_release": {
         "description": "Build release test_code",
         "working_dir": "./build/Release",
         "scripts": [
             "cmake ../.. -B . -DBUILD_TEST_CODE=ON -DCMAKE_BUILD_TYPE=Release",
             "cmake --build . --target TEST_CODE",
-            "chmod 777 test_code/TEST_CODE || true"
+            "chmod 777 TEST_CODE || true"
         ]
     },
     "run_debug": {
         "description": "Run ./build/Debug/TEST_CODE",
         "scripts": [
-            "./build/Debug/test_code/TEST_CODE"
+            "./build/Debug/TEST_CODE"
         ]
     },
     "run_release": {
         "description": "Run ./build/Release/TEST_CODE",
         "scripts": [
-            "./build/Release/test_code/TEST_CODE"
+            "./build/Release/TEST_CODE"
         ]
     },
     "build_debug_and_run": {

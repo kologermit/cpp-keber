@@ -1,0 +1,4 @@
+*
+!.gitignore
+!clang-toolchain.cmake
+!gcc-toolchain.cmake

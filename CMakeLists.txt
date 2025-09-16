@@ -1,11 +1,16 @@
 cmake_minimum_required(VERSION 3.15)
+
+if (NOT DEFINED COMPILER)
+    set(COMPILER "gcc")
+endif()
+
+include("./cmake/${COMPILER}-toolchain.cmake")
+
 project(CPP-KEBER CXX)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
 set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
-# set(CMAKE_SHARED_LINKER_FLAGS "-static -static-libgcc -static-libstdc++ -Wl,--no-warn-rwx-segments")
-# set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++ -static -Wl,--as-needed -Wl,--no-warn-rwx-segments")
 set(CMAKE_MODULE_PATH "${CMAKE_BINARY_DIR};${CMAKE_MODULE_PATH};./bot;./utils;.")
 set(BUILD_SHARED_LIBS OFF)
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DNDEBUG")
@@ -60,13 +65,35 @@ endif()
 
 option(BUILD_TEST_CODE "Build test" OFF)
 if (BUILD_TEST_CODE)
-    add_executable(
-        TEST_CODE 
-        ./test_code/test_code.cpp
+    file(GLOB_RECURSE TEST_SOURCES
+            LIST_DIRECTORIES false
+            "./test_code/*.cpp"
     )
+
+    add_executable(TEST_CODE ${TEST_SOURCES})
+
+    target_include_directories(TEST_CODE PRIVATE
+            .
+            ./test_code
+            ./bot
+            ./utils
+    )
+
+    target_link_libraries(TEST_CODE
+            openssl::openssl
+            libpqxx::pqxx
+            libuuid::libuuid
+            datetime::datetime
+            fmt::fmt
+            httplib::httplib
+            nlohmann_json::nlohmann_json
+            pthread
+            dl
+            resolv
+    )
+
     target_link_libraries(
-        TEST_CODE
-        UTILS_LIB
-        ${ALL_LINK_LIBRARIES}
+            TEST_CODE
+            UTILS_LIB
     )
 endif()

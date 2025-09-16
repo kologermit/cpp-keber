@@ -3,14 +3,13 @@
 
 namespace Utils::Config {
 
-    using std::move;
     using std::runtime_error;
 
     const InterfaceConfig* get_config(unique_ptr<InterfaceConfig> config) {
         static unique_ptr<InterfaceConfig> _config = nullptr;
 
         if (config != nullptr && _config == nullptr) {
-            _config = move(config);
+            _config = std::move(config);
         }
 
         if (_config == nullptr) {

@@ -16,9 +16,9 @@ using std::pair;
 using std::nullopt;
 using httplib::Params;
 
-struct Bot : InterfaceBot {
+struct Bot final : InterfaceBot {
     
-    Bot(string_view token);
+    explicit Bot(string_view token);
 
     long long           get_id()                                                                       const noexcept override;
     const string&       get_name()                                                                     const noexcept override;
@@ -40,7 +40,7 @@ struct Bot : InterfaceBot {
     private:
 
     explicit Bot(string_view, const json&);
-    static const json _get_me_raw_json(string_view token);
+    static json _get_me_raw_json(string_view token);
 
     User _user;
     string _token;

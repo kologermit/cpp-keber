@@ -14,6 +14,7 @@ namespace Utils::Config {
     using std::pair;
     using std::to_string;
     using std::ifstream;
+    using std::streamsize;
     using std::filesystem::exists;
     using std::filesystem::is_regular_file;
     using std::filesystem::file_size;
@@ -131,8 +132,8 @@ namespace Utils::Config {
             }
 
             ifstream json_file(json_file_name, ios::binary);
-            auto size = file_size(json_file_name);
-            string read(size, '\0');
+            streamsize size = static_cast<streamsize>(file_size(json_file_name));
+            string read(static_cast<size_t>(size), '\0');
             json_file.read(read.data(), size);
 
             if (!json::accept(read)) {
@@ -220,7 +221,7 @@ namespace Utils::Config {
             if (!config_str.empty()) {
                 auto [_, ec] = from_chars(config_str.data(), config_str.data() + config_str.size(), config_value);
                 if (ec != errc()) {
-                    throw invalid_argument("Failed to parse " + param + ": invalid value (" + config_str + ")");
+                    throw invalid_argument(format("Failed to parse {}: invalid_value ({})", param, config_str));
                 }
             }
         }

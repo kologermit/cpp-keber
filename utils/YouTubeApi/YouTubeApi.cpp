@@ -17,7 +17,6 @@ namespace Utils::YouTubeApi {
     using nlohmann::json;
     using std::runtime_error;
     using std::to_string;
-    using std::move;
     using std::make_unique;
 
     #ifndef NDEBUG
@@ -61,7 +60,7 @@ namespace Utils::YouTubeApi {
         const auto& json_video = json_body->at("video");
         const auto& json_channel = json_body->at("channel");
 
-        return make_unique<pair<Video, Channel> >(move(pair{
+        return make_unique<pair<Video, Channel> >(pair{
             Video{
                 .title = json_video["title"],
                 .video_id = json_video["video_id"],
@@ -74,7 +73,7 @@ namespace Utils::YouTubeApi {
                 .title = json_channel["title"],
                 .channel_url = json_channel["channel_url"],
             }
-        }));
+        });
     }
 
     unique_ptr<Playlist> YouTubeApi::get_playlist(string_view url) {
@@ -85,14 +84,14 @@ namespace Utils::YouTubeApi {
 
         json json_playlist = json_body->at("playlist");
 
-        return make_unique<Playlist>(move(Playlist{
+        return make_unique<Playlist>(Playlist{
             .playlist_id = json_playlist["playlist_id"],
             .title = json_playlist["title"],
             .playlist_url = json_playlist["playlist_url"],
             .views = json_playlist["views"],
             .thumbnail_url = json_playlist["thumbnail_url"],
             .video_urls = json_body->at("video_urls"),
-        }));
+        });
     }
 
 

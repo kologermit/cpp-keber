@@ -15,12 +15,11 @@ struct InterfaceUserRepository {
     virtual ~InterfaceUserRepository() = default;
 
     virtual unique_ptr<User> get_by_id(int id) = 0;
-    virtual unique_ptr<User> get_by_telegram_id(long long telegram_id) = 0;
     virtual unique_ptr<User> get_by_telegram_user(const TGUser& tg_user) = 0;
     virtual unique_ptr<User> get_by_username(string_view username) = 0;
     virtual unique_ptr<User> create(const User& user) = 0;
-    virtual unique_ptr<User> update(const User& user, vector<int> columns) = 0;
-    virtual unique_ptr<User> del(int id) = 0;
+    virtual unique_ptr<User> update(const User& user) = 0;
+    virtual unique_ptr<User> del(int id, bool is_soft = true) = 0;
 
 };
 

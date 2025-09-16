@@ -1,0 +1,18 @@
+volumes:
+  rabbitmq_data:
+
+services:
+  rabbitmq:
+    extends:
+      file: parents.yml
+      service: parent
+    user: 1000:1000
+    image: ${RABBITMQ_IMAGE}
+    ports:
+      - ${RABBITMQ_EXTERNAL_PORT}:5672
+      - ${RABBITMQ_WEB_UI_EXTERNAL_PORT}:15672
+    environment:
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq

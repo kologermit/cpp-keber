@@ -10,47 +10,48 @@ $$ LANGUAGE plpgsql;
 
 
 CREATE TABLE IF NOT EXISTS user_screens (
-    id         SERIAL PRIMARY KEY,
+    id         INT UNIQUE NOT NULL,
     name       VARCHAR(255) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+CREATE INDEX IF NOT EXISTS idx_user_screens ON user_screens(id);
+
 CREATE TABLE IF NOT EXISTS users (
-    id          SERIAL PRIMARY KEY,
+    id          BIGINT UNIQUE NOT NULL,
     name        VARCHAR(255) NOT NULL,
     username    VARCHAR(255) NULL,
     screen      INT NOT NULL DEFAULT 1 REFERENCES user_screens(id),
-    telegram_id BIGINT UNIQUE NOT NULL,
     created_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at  TIMESTAMP NULL,
     CONSTRAINT fk_users_screen FOREIGN KEY (screen) REFERENCES user_screens(id)
 );
-CREATE INDEX idx_users_telegram_id ON users(telegram_id);
-CREATE INDEX IF NOT EXISTS ids_users_username ON users(username) WHERE username != '';
+CREATE INDEX IF NOT EXISTS idx_users ON users(id);
+CREATE INDEX IF NOT EXISTS ids_users_username ON users(username);
 CREATE TRIGGER trigger_update_users_updated_at
 BEFORE UPDATE ON users
 FOR EACH ROW
 EXECUTE FUNCTION update_updated_at();
 
 
-
 CREATE TABLE IF NOT EXISTS chat_types (
-    id         SERIAL PRIMARY KEY,
+    id         BIGINT UNIQUE NOT NULL,
     name       VARCHAR(255) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+CREATE INDEX IF NOT EXISTS idx_chat_types ON chat_types(id);
+
 CREATE TABLE IF NOT EXISTS chats (
-    id          SERIAL PRIMARY KEY,
+    id          BIGINT UNIQUE NOT NULL,
     name        VARCHAR(255) NOT NULL,
     username    VARCHAR(255) NULL,
-    telegram_id BIGINT UNIQUE NOT NULL,
     type        INT NOT NULL REFERENCES chat_types(id),
     created_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at  TIMESTAMP NULL,
     CONSTRAINT fk_chat_types FOREIGN KEY (type) REFERENCES chat_types(id)
 );
-CREATE INDEX idx_chats_telegram_id ON chats(telegram_id);
+CREATE INDEX idx_chats ON chats(id);
 CREATE INDEX IF NOT EXISTS idx_chats_username ON chats(username) WHERE username = '';
 CREATE TRIGGER trigger_update_chats_updated_at
 BEFORE UPDATE ON chats
@@ -58,41 +59,40 @@ FOR EACH ROW
 EXECUTE FUNCTION update_updated_at();
 
 
-
 CREATE TABLE IF NOT EXISTS message_content_types (
-    id         SERIAL PRIMARY KEY,
+    id         INT UNIQUE NOT NULL,
     name       VARCHAR(255) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+CREATE INDEX IF NOT EXISTS idx_message_content_types ON message_content_types(id);
 CREATE TABLE IF NOT EXISTS messages (
-    id                  SERIAL PRIMARY KEY,
-    telegram_id         BIGINT NOT NULL,
+    id                  BIGINT NOT NULL,
     text                VARCHAR(6000) NULL,
     file_download_id    VARCHAR(255) NULL,
     file_name           VARCHAR(255) NULL,
     file_content_type   INT NOT NULL,
     chat_id             INT NOT NULL,
     user_id             INT NOT NULL,
-    reply_message_id    INT NULL,
+    reply_id            INT NULL,
     created_at          TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at          TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at          TIMESTAMP NULL,
     
     CONSTRAINT fk_messages_user FOREIGN KEY (user_id) REFERENCES users(id),
     CONSTRAINT fk_messages_chat FOREIGN KEY (chat_id) REFERENCES chats(id),
-    CONSTRAINT fk_messages_reply FOREIGN KEY (reply_message_id) REFERENCES messages(id),
+    CONSTRAINT fk_messages_reply FOREIGN KEY (reply_id) REFERENCES messages(id),
     CONSTRAINT fk_message_content_types FOREIGN KEY (file_content_type) REFERENCES message_content_types(id)
 );
-CREATE INDEX IF NOT EXISTS idx_messages_telegram_id_and_chat_id ON messages(telegram_id, chat_id);
+CREATE INDEX IF NOT EXISTS idx_messages_id_and_chat_id ON messages(id, chat_id);
 CREATE INDEX IF NOT EXISTS idx_messages_user_id ON messages(user_id);
+CREATE INDEX IF NOT EXISTS idx_messages_reply_id ON messages(reply_id);
 CREATE TRIGGER trigger_update_messages_updated_at
 BEFORE UPDATE ON messages
 FOR EACH ROW
 EXECUTE FUNCTION update_updated_at();
 
 CREATE TABLE IF NOT EXISTS callbacks (
-    id                  SERIAL PRIMARY KEY,
-    telegram_id         VARCHAR(255) NOT NULL,
+    id                  VARCHAR(255) NOT NULL,
     data                VARCHAR(1000) NOT NULL,
     message_id          INT NOT NULL,
     user_id             INT NOT NULL,
@@ -105,7 +105,7 @@ CREATE TABLE IF NOT EXISTS callbacks (
     CONSTRAINT fk_callbacks_user FOREIGN KEY (user_id) REFERENCES users(id),
     CONSTRAINT fk_callbacks_chat FOREIGN KEY (chat_id) REFERENCES chats(id)
 );
-CREATE INDEX IF NOT EXISTS idx_callbacks_telegram_id ON callbacks(telegram_id);
+CREATE INDEX IF NOT EXISTS idx_callbacks ON callbacks(id);
 CREATE TRIGGER trigger_update_callbacks_updated_at
     BEFORE UPDATE ON callbacks
     FOR EACH ROW
@@ -113,10 +113,11 @@ EXECUTE FUNCTION update_updated_at();
 
 
 CREATE TABLE IF NOT EXISTS api_request_services (
-    id         INT PRIMARY KEY,
+    id         INT NOT NULL,
     name       VARCHAR(255) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+CREATE INDEX IF NOT EXISTS idx_api_request_services ON api_request_services(id);
 CREATE TABLE IF NOT EXISTS api_requests (
     id         SERIAL PRIMARY KEY,
     "from"     INT NOT NULL REFERENCES api_request_services(id),
@@ -138,10 +139,11 @@ EXECUTE FUNCTION update_updated_at();
 
 
 CREATE TABLE IF NOT EXISTS access_types (
-    id          INT PRIMARY KEY,
+    id          INT NOT NULL,
     name        VARCHAR(255) NOT NULL,
     created_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+CREATE INDEX IF NOT EXISTS idx_access_types ON access_types(id);
 CREATE TABLE IF NOT EXISTS accesses (
     id          SERIAL PRIMARY KEY,
     user_id     INT NOT NULL REFERENCES users(id),

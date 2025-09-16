@@ -73,7 +73,7 @@ namespace Bot::BotHandler::YouTubeHandler::PlaylistHandler {
         istringstream stream(context->message->text);
         string buffer, answer;
         int count = 0;
-        for (; getline(stream, buffer); count++) {
+        while (getline(stream, buffer)) {
             if (buffer.empty()) {
                 continue;
             }
@@ -91,6 +91,8 @@ namespace Bot::BotHandler::YouTubeHandler::PlaylistHandler {
                 playlist->video_urls.size(),
                 playlist->playlist_url
             );
+
+            count++;
         }
 
         return get_bot()->send_message( {

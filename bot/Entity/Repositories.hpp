@@ -12,11 +12,11 @@
 namespace Bot::Entity::Repositories {
 
 using Utils::Entity::ApiRequest::InterfaceApiRequestRepository;
-using Bot::Entity::Message::InterfaceMessageRepository;
-using Bot::Entity::User::InterfaceUserRepository;
-using Bot::Entity::Chat::InterfaceChatRepository;
-using Bot::Entity::Access::InterfaceAccessRepository;
-using Bot::Entity::Callback::InterfaceCallbackRepository;
+using Message::InterfaceMessageRepository;
+using User::InterfaceUserRepository;
+using Chat::InterfaceChatRepository;
+using Access::InterfaceAccessRepository;
+using Callback::InterfaceCallbackRepository;
 using pqxx::connection;
 using std::shared_ptr;
 using std::unique_ptr;
@@ -31,7 +31,7 @@ class Repositories {
 
     public:
 
-    Repositories(string_view conn_str);
+    explicit Repositories(string_view conn_str);
 
     shared_ptr<InterfaceApiRequestRepository> api_request_repository;
     shared_ptr<InterfaceMessageRepository> message_repository;

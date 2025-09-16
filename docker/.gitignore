@@ -6,3 +6,4 @@
 !networks.yml
 !parents.yml
 !youtube_api.yml
+!rabbitmq.yml

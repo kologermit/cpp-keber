@@ -77,7 +77,8 @@ struct Query {
     private: 
     string_view _token;
     string _get_path(string_view path);
-    string _read_file(string_view filename);
+
+    static string _read_file(string_view filename);
 };
 
 inline json Query::query_raw_json(
@@ -92,10 +93,10 @@ inline json Query::query_raw_json(
 
 struct QueryJsonResultException : exception {
 
-    QueryJsonResultException(string_view message):
+    explicit QueryJsonResultException(string_view message):
     _message(message) {}
 
-    const char* what() const noexcept override {
+    [[nodiscard]] const char* what() const noexcept override {
         return _message.data();
     }
 
@@ -107,10 +108,10 @@ struct QueryJsonResultException : exception {
 
 struct QueryResultException : exception {
 
-    QueryResultException(string_view message):
+    explicit QueryResultException(string_view message):
     _message(message) {}
 
-    const char* what() const noexcept override {
+    [[nodiscard]] const char* what() const noexcept override {
         return _message.data();
     }
 
@@ -131,7 +132,7 @@ Query::QueryResult<ResultType> Query::query_parse_json(
 ) {
     auto json_result = query_raw_json(method, path, params, headers, files);
 
-    if (!bool(json_result[OK_KEY])) {
+    if (!static_cast<bool>(json_result[OK_KEY])) {
         throw QueryJsonResultException(format(
             "Utils::TGBotApi::Query::query_parse_json: {} -- {}",
             string(json_result[ERROR_CODE_KEY]),

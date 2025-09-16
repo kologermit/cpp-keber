@@ -71,7 +71,7 @@ namespace Bot::BotHandler::YouTubeHandler::MediaHandler {
         istringstream stream(context->message->text);
         string buffer, answer;
         int count = 0;
-        for (; getline(stream, buffer); count++) {
+        while (getline(stream, buffer)) {
             if (buffer.empty()) {
                 continue;
             }
@@ -85,6 +85,7 @@ namespace Bot::BotHandler::YouTubeHandler::MediaHandler {
             }
             const auto& [video, channel] = *result;
             answer += "\n\n" +  format(MEDIA_TEMPLATE, video.title, channel.title, video.video_url);
+            count++;
         }
 
         return get_bot()->send_message( {

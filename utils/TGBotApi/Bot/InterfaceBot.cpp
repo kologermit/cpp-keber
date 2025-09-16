@@ -14,7 +14,7 @@ shared_ptr<InterfaceBot> get_bot(unique_ptr<InterfaceBot> bot) {
     }
 
     if (_bot == nullptr) {
-        _bot = move(bot);
+        _bot = std::move(bot);
     }
 
     return _bot;

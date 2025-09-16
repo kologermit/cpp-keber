@@ -3,7 +3,6 @@
 #include <utils/TGBotApi/Query/Query.hpp>
 #include <fmt/core.h>
 #include <fstream>
-#include <sstream>
 
 #ifndef NDEBUG
 #include <utils/Logger/InterfaceLogger.hpp>
@@ -37,7 +36,7 @@ string Query::_read_file(string_view filename) {
     ifstream file(string(filename), ios::binary | ios::ate);
     streamsize size = file.tellg();
     file.seekg(0, ios::beg);
-    string buffer(size, '\0');
+    string buffer(static_cast<size_t>(size), '\0');
     file.read(buffer.data(), size);
     return buffer;
 }
