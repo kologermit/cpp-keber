@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.15)
 
-if (NOT DEFINED COMPILER)
-    set(COMPILER "gcc")
-endif()
+# if (NOT DEFINED COMPILER)
+#     set(COMPILER "gcc")
+# endif()
 
-include("./cmake/${COMPILER}-toolchain.cmake")
+# include("./cmake/${COMPILER}-toolchain.cmake")
 
 project(CPP-KEBER CXX)
 
@@ -18,7 +18,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DNDEBUG")
 include(./build/${CMAKE_BUILD_TYPE}/generators/conan_toolchain.cmake)
 
 add_compile_options(
-    -std=c++20 
+    # -std=c++20
     -Wall 
     -Wextra 
     -pedantic 

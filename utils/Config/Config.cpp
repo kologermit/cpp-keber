@@ -6,7 +6,7 @@
 #include <filesystem>
 #include <charconv>
 #include <map>
-#include <algorithm>
+#include <ranges>
 #include <stdexcept>
 
 namespace Utils::Config {

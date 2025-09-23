@@ -3,27 +3,20 @@
         "description": "Build deps to build/Release",
         "working_dir": "./build/Release",
         "scripts": [
-            "../../venv/bin/conan install ../.. --build missing -s build_type=Release"
+            "../../venv/bin/conan install ../.. --profile:host=../../Release-conanprofile --profile:build=../../Release-conanprofile --build missing -s build_type=Release"
         ]
     },
     "build_debug": {
         "description": "Build deps to build/Debug",
         "working_dir": "./build/Debug",
         "scripts": [
-            "../../venv/bin/conan install ../.. --build missing -s build_type=Debug"
-        ]
-    },
-    "set_profile": {
-        "description": "Set Conan profile",
-        "scripts": [
-            "./venv/bin/conan profile detect --force"
+            "../../venv/bin/conan install ../.. --profile:host=../../Debug-conanprofile --profile:build=../../Debug-conanprofile --build missing -s build_type=Debug"
         ]
     },
     "build": {
         "description": "Build Conan source files",
         "scripts": [
             "mkdir -p build/Debug build/Release",
-            "@@ conan set_profile",
             "@@ conan build_release",
             "@@ conan build_debug"
         ]

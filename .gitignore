@@ -18,3 +18,5 @@
 !zsh_manager_completions
 !docker
 !cmake
+!Debug-conanprofile
+!Release-conanprofile
