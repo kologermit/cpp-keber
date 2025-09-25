@@ -1,25 +1,22 @@
 #pragma once 
 
 #include <bot/Entity/Message/Message.hpp>
+#include <utils/Entity/Repository.hpp>
 #include <utils/TGBotApi/Types.hpp>
 #include <vector>
 
 namespace Bot::Entity::Message {
 
-using TGMessage = Utils::TGBotApi::Types::Message;
-using std::unique_ptr;
-using std::vector;
+    using TGMessage = Utils::TGBotApi::Types::Message;
+    using Utils::Entity::Repository;
+    using pqxx::connection;
+    using std::unique_ptr;
 
-struct InterfaceMessageRepository {
-    virtual ~InterfaceMessageRepository() = default;
+    struct InterfaceMessageRepository : Repository<Message> {
+        InterfaceMessageRepository(connection& db): Repository(db) {}
 
-    virtual unique_ptr<Message> get_by_id(int id) = 0;
-    virtual unique_ptr<Message> get_by_chat_id_and_telegram_id(long long chat_telegram_id, long long telegram_id) = 0;
-    virtual unique_ptr<Message> get_by_telegram_message(const TGMessage& tg_message, int user_id, int chat_id, bool check_created = false) = 0;
-    virtual unique_ptr<Message> create(const Message& message) = 0;
-    virtual unique_ptr<Message> update(const Message& message, vector<int> columns) = 0;
-    virtual unique_ptr<Message> del(int id) = 0;
-
-};
+        virtual unique_ptr<Message> get_by_chat_and_id(long long chat_id, long long id) = 0;
+        virtual unique_ptr<Message> get_by_telegram_message(const TGMessage& tg_message, bool check_created = false) = 0;
+    };
 
 }

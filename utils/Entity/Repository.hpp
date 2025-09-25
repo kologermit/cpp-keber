@@ -16,7 +16,7 @@ namespace Utils::Entity {
     struct Repository {
         virtual ~Repository() = default;
 
-        virtual unique_ptr<EntityT> get_by_id(int id, bool check_deleted);
+        virtual unique_ptr<EntityT> get_by_id(int id, bool check_deleted = true);
         virtual unique_ptr<EntityT> create(const EntityT& entity);
         virtual unique_ptr<EntityT> update(const EntityT& entity);
         virtual unique_ptr<EntityT> del(int id, bool is_soft = true);

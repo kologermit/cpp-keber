@@ -21,7 +21,7 @@ namespace Bot::Entity::User {
     using pqxx::row;
     using jed_utils::datetime;
 
-    enum EnumUserScreen {
+    enum EnumUserScreen : int {
         UNKNOWN,
         START,
         MENU,
@@ -32,7 +32,7 @@ namespace Bot::Entity::User {
         TASK, ADD_TASK_DESCRIPTION, ADD_TASK_DATE, EDIT_TASK_SUMMARY, EDIT_TASK_DESCRIPTION, EDIT_TASK_DATE,
         YOUTUBE, YOUTUBE_VIDEO, YOUTUBE_AUDIO, YOUTUBE_PLAYLIST_VIDEO, YOUTUBE_PLAYLIST_AUDIO,
     };
-    constexpr const char* USER_SCREENS_TABLE = "\"user_screens\"";
+    constexpr const char* USER_SCREENS_TABLE = "user_screens";
     const map<int, string> map_user_screen_to_string{
         {UNKNOWN, "UNKNOWN"},
         {MENU, "MENU"},
@@ -53,8 +53,8 @@ namespace Bot::Entity::User {
         {YOUTUBE_PLAYLIST_AUDIO, "YOUTUBE_PLAYLIST_AUDIO"},
     };
 
-    const auto USERNAME = make_shared<Column>("\"username\"");
-    const auto SCREEN = make_shared<Column>("\"screen\"");
+    const auto USERNAME = make_shared<Column>("username");
+    const auto SCREEN = make_shared<Column>("screen");
 
     struct User : Entity {
 
@@ -85,11 +85,21 @@ namespace Bot::Entity::User {
         {}
 
         static const char* get_table_name() noexcept;
+        map<const char*, optional<string> > to_map(bool is_full = false, bool add_id = false) const noexcept;
     };
 
     inline const char* User::get_table_name() noexcept {
-        static const char* table_name = "\"users\"";
+        static const char* table = "users";
+        return table;
+    }
 
-        return table_name;
+    map<const char*, optional<string> > User::to_map(bool is_full, bool add_id) const noexcept {
+        auto result = Entity::to_map(is_full, add_id);
+        
+        result[NAME->name] = name;
+        result[USERNAME->name] = username;
+        result[SCREEN->name] = to_string(screen);
+
+        return result;
     }
 }

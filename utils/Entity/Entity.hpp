@@ -45,25 +45,26 @@ namespace Utils::Entity {
         return table_name;
     }
 
-    inline auto ID = make_shared<Column>("id");
-    inline auto CREATED_AT = make_shared<Column>("created_at");
-    inline auto UPDATED_AT = make_shared<Column>("updated_at");
-    inline auto DELETED_AT = make_shared<Column>("deleted_at");
-    inline auto NAME = make_shared<Column>("name");
+    const auto ID = make_shared<Column>("id");
+    const auto CREATED_AT = make_shared<Column>("created_at");
+    const auto UPDATED_AT = make_shared<Column>("updated_at");
+    const auto DELETED_AT = make_shared<Column>("deleted_at");
+    const auto NAME = make_shared<Column>("name");
 
     inline Entity::Entity(int id, datetime created_at, datetime updated_at, optional<datetime> deleted_at):
         id(id), created_at(std::move(created_at)), updated_at(std::move(updated_at)), deleted_at(std::move(deleted_at)) {}
     inline Entity::Entity(const row& entity_row):
     id(entity_row[ID->name].get<int>().value()),
     created_at(datetime::parse(DATETIME_FORMAT, entity_row[CREATED_AT->name].get<string>().value())),
-    updated_at(datetime::parse(DATETIME_FORMAT, entity_row[UPDATED_AT->name].get<string>().value())) {
+    updated_at(datetime::parse(DATETIME_FORMAT, entity_row[UPDATED_AT->name].get<string>().value())) 
+    {
         if (const auto deleted_at_value = entity_row[DELETED_AT->name].get<string>();
             deleted_at_value.has_value()) {
             deleted_at = datetime::parse(DATETIME_FORMAT, deleted_at_value.value());
         }
     }
 
-    inline map<const char*, optional<string> > Entity::to_map(bool is_full, bool add_id) const noexcept {
+    map<const char*, optional<string> > Entity::to_map(bool is_full, bool add_id) const noexcept {
         map<const char*, optional<string> > result;
         if (add_id) {
             result[ID->name] = to_string(id);
