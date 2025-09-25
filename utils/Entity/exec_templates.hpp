@@ -27,20 +27,20 @@ namespace Utils::Entity {
         string sql_values;
 
         if (add_id) {
-            sql_columns = format(" {},", ID->name);
-            sql_values = format(" {},", entity.id);
+            sql_columns = format(" {},", tx.quote_name(ID->name));
+            sql_values = format(" {},", tx.quote_name(entity.id));
         }
 
         for (const auto& data : entity.to_map(false)) {
             const auto& [column, value] = data;
             sql_columns += format(
                 " {},",
-                column
+                tx.quote_name(column)
             );
 
             sql_values += format(
                 " {},",
-                value.has_value() ? tx.quote(value.value()) : "NULL"
+                tx.quote(value)
             );
         }
 
@@ -54,7 +54,7 @@ namespace Utils::Entity {
 
         const string sql_query = format(
             "INSERT INTO {} ({}) VALUES ({}) RETURNING *;",
-            EntityT::get_table_name(),
+            tx.quote_name(EntityT::get_table_name()),
             sql_columns,
             sql_values
         );
@@ -79,15 +79,15 @@ namespace Utils::Entity {
 
         string sql_query = format(
             "UPDATE {} SET",
-            EntityT::get_table_name()
+            tx.quote_name(EntityT::get_table_name())
         );
 
         for (const auto& iter : entity.to_map(false)) {
             const auto& [column, value] = iter;
             sql_query += format(
                 " {} = {},",
-                column,
-                value.has_value() ? tx.quote(value) : "NULL"
+                tx.quote_name(column),
+                tx.quote(value)
             );
         }
 
@@ -97,8 +97,8 @@ namespace Utils::Entity {
 
         sql_query += format(
             " WHERE {} = {} RETURNING *;",
-            ID->name,
-            tx.quote(to_string(entity.id))
+            tx.quote_name(ID->name),
+            tx.quote(entity.id)
         );
 
         #ifndef NDEBUG
@@ -121,7 +121,7 @@ namespace Utils::Entity {
         for (const auto&[column, value] : where) {
             sql_where += fmt::format(
                 " {} = {} AND",
-                column,
+                tx.quote_name(column),
                 tx.quote(value)
             );
         }
@@ -132,15 +132,15 @@ namespace Utils::Entity {
 
         string sql_query = fmt::format(
             "SELECT {}.* FROM {} WHERE {}",
-            table,
-            table,
+            tx.quote_name(table),
+            tx.quote_name(table),
             sql_where
         );
 
         if (check_deleted) {
             sql_query += format(
                 " AND {} IS NULL",
-                DELETED_AT->name
+                tx.quote_name(DELETED_AT->name)
             );
         }
 
@@ -184,17 +184,17 @@ namespace Utils::Entity {
         if (is_soft) {
             sql_query = fmt::format(
                 "UPDATE {} SET {} = {} WHERE {} = {} RETURNING *",
-                EntityT::get_table_name(),
-                DELETED_AT->name,
+                tx.quote_name(EntityT::get_table_name()),
+                tx.quote_name(DELETED_AT->name),
                 tx.quote(datetime().to_string(DATETIME_FORMAT)),
-                ID->name,
+                tx.quote_name(ID->name),
                 tx.quote(id)
             );
         } else {
             sql_query = fmt::format(
                 "DELETE FROM {} WHERE {} = {} RETURNING *",
-                EntityT::get_table_name(),
-                ID->name,
+                tx.quote_name(EntityT::get_table_name()),
+                tx.quote_name(ID->name),
                 tx.quote(id)
             );
         }
@@ -211,5 +211,4 @@ namespace Utils::Entity {
 
         return make_unique<EntityT>(res.one_row());
     }
-
 }

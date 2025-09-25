@@ -1,6 +1,7 @@
 #pragma once
 
 #include <utils/Entity/ApiRequest/ApiRequest.hpp>
+#include <utils/Entity/Repository.hpp>
 #include <memory>
 #include <vector>
 #include <exception>
@@ -10,14 +11,8 @@ namespace Utils::Entity::ApiRequest {
     using std::unique_ptr;
     using std::vector;
 
-    struct InterfaceApiRequestRepository {
-        virtual ~InterfaceApiRequestRepository() = default;
-
-        virtual unique_ptr<ApiRequest> get_by_id(int id, bool check_deleted = true) = 0;
-        virtual unique_ptr<ApiRequest> create(const ApiRequest& request) = 0;
-        virtual unique_ptr<ApiRequest> update(const ApiRequest& request) = 0;
-        virtual unique_ptr<ApiRequest> del(int id, bool is_soft) = 0;
-        virtual unique_ptr<ApiRequest> del(int id) = 0;
+    struct InterfaceApiRequestRepository : Repository<ApiRequest> {
+        explicit InterfaceApiRequestRepository(connection& db): Repository(db) {}
     };
 
 }

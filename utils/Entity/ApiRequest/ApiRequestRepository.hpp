@@ -9,17 +9,12 @@ namespace Utils::Entity::ApiRequest {
     using pqxx::connection;
 
     struct ApiRequestRepository final : InterfaceApiRequestRepository {
-        unique_ptr<ApiRequest> get_by_id(int id, bool check_deleted) override;
-        unique_ptr<ApiRequest> create(const ApiRequest& request) override;
-        unique_ptr<ApiRequest> update(const ApiRequest& request) override;
-        unique_ptr<ApiRequest> del(int id, bool is_soft) override;
-        unique_ptr<ApiRequest> del(int id) override;
 
-        explicit ApiRequestRepository(connection& db);
+        explicit ApiRequestRepository(connection& db): InterfaceApiRequestRepository(db) {
+            create_rows_in_enum_table_if_empty(db, API_REQUEST_SERVICES_TABLE, map_enum_to_service_name);
+        };
 
         private:
-
-        Repository<ApiRequest> _repository;
     };
 
 }

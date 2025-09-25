@@ -17,7 +17,7 @@ namespace Utils::Entity::ApiRequest {
     using std::map;
     using nlohmann::json;
 
-    enum EnumRequestService : int {
+    enum EnumRequestService : short {
         UNKNOWN,
         NGINX,
         BOT,
@@ -41,10 +41,10 @@ namespace Utils::Entity::ApiRequest {
 
     constexpr const char* FROM_HEADER = "FROM_SERVICE";
 
-    const auto FROM = make_shared<Column>("\"from\"");
-    const auto TO = make_shared<Column>("\"to\"");
-    const auto REQUEST = make_shared<Column>("\"request\"");
-    const auto RESPONSE = make_shared<Column>("\"response\"");
+    const auto FROM = make_shared<Column>("from");
+    const auto TO = make_shared<Column>("to");
+    const auto REQUEST = make_shared<Column>("request");
+    const auto RESPONSE = make_shared<Column>("response");
 
     struct ApiRequest : Entity {
 
@@ -94,7 +94,7 @@ namespace Utils::Entity::ApiRequest {
     }
 
     inline const char* ApiRequest::get_table_name() noexcept {
-        static const char* table_name = "\"api_requests\"";
+        static const char* table_name = "api_requests";
 
         return table_name;
     }

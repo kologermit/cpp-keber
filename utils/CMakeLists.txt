@@ -12,7 +12,7 @@ target_include_directories(UTILS_LIB PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_
 target_compile_definitions(UTILS_LIB PRIVATE $<$<CONFIG:Release>:NDEBUG=1>)
 
 target_link_libraries(UTILS_LIB
-    PRIVATE
+    PUBLIC
     datetime::datetime
     libuuid::libuuid
     libpqxx::pqxx

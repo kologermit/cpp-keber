@@ -1,11 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
 
-# if (NOT DEFINED COMPILER)
-#     set(COMPILER "gcc")
-# endif()
-
-# include("./cmake/${COMPILER}-toolchain.cmake")
-
 project(CPP-KEBER CXX)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -18,11 +12,10 @@ set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DNDEBUG")
 include(./build/${CMAKE_BUILD_TYPE}/generators/conan_toolchain.cmake)
 
 add_compile_options(
-    # -std=c++20
     -Wall 
     -Wextra 
     -pedantic 
-    -Werror 
+    -Werror
     -Wconversion
     -Wno-error=deprecated-declarations
     -Wno-unused-command-line-argument
@@ -36,11 +29,7 @@ else()
     message(STATUS "Release mode enabled")
 endif()
 
-include_directories(
-    .
-    ./bot
-    ./test_code
-)
+# include_directories(.)
 
 find_package(fmt REQUIRED)
 find_package(nlohmann_json REQUIRED)
@@ -73,27 +62,27 @@ if (BUILD_TEST_CODE)
     add_executable(TEST_CODE ${TEST_SOURCES})
 
     target_include_directories(TEST_CODE PRIVATE
-            .
-            ./test_code
-            ./bot
-            ./utils
+        .
+        ./test_code
+        ./bot
+        ./utils
     )
 
     target_link_libraries(TEST_CODE
-            openssl::openssl
-            libpqxx::pqxx
-            libuuid::libuuid
-            datetime::datetime
-            fmt::fmt
-            httplib::httplib
-            nlohmann_json::nlohmann_json
-            pthread
-            dl
-            resolv
+        openssl::openssl
+        libpqxx::pqxx
+        libuuid::libuuid
+        datetime::datetime
+        fmt::fmt
+        httplib::httplib
+        nlohmann_json::nlohmann_json
+        pthread
+        dl
+        resolv
     )
 
     target_link_libraries(
-            TEST_CODE
-            UTILS_LIB
+        TEST_CODE
+        UTILS_LIB
     )
 endif()

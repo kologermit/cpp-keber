@@ -12,37 +12,36 @@
 
 namespace Utils::TGBotApi::Types {
 
-using TGBotApi::User::User;
-using ptrUser = std::unique_ptr<User>;
+    using TGBotApi::User::User;
+    using ptrUser = std::unique_ptr<User>;
 
-using TGBotApi::Chat::Chat;
-using ptrChat = std::unique_ptr<Chat>;
+    using TGBotApi::Chat::Chat;
+    using ptrChat = std::unique_ptr<Chat>;
 
-using TGBotApi::Bot::Bot;
-using TGBotApi::Bot::InterfaceBot;
-using ptrBot = std::unique_ptr<InterfaceBot>;
+    using TGBotApi::Bot::Bot;
+    using TGBotApi::Bot::InterfaceBot;
+    using ptrBot = std::unique_ptr<InterfaceBot>;
 
-using TGBotApi::Message::Message;
-using ptrMessage = std::unique_ptr<Message>;
+    using TGBotApi::Message::Message;
+    using ptrMessage = std::unique_ptr<Message>;
 
-using TGBotApi::Message::Keyboard::InlineKeyboard;
-using ptrInlineKeyboard = std::unique_ptr<InlineKeyboard>;
+    using TGBotApi::Message::Keyboard::InlineKeyboard;
+    using ptrInlineKeyboard = std::unique_ptr<InlineKeyboard>;
 
-using TGBotApi::Message::Keyboard::InlineButton;
-using InlineLane = std::vector<std::shared_ptr<InlineButton> >;
-using InlineButtons = std::vector<InlineLane>;
-using ptrInlineButtons = std::unique_ptr<InlineButtons>;
+    using TGBotApi::Message::Keyboard::InlineButton;
+    using InlineLane = std::vector<std::shared_ptr<InlineButton> >;
+    using InlineButtons = std::vector<InlineLane>;
+    using ptrInlineButtons = std::unique_ptr<InlineButtons>;
 
-using TGBotApi::Message::Keyboard::ReplyKeyboard;
-using ptrReplyKeyboard = std::unique_ptr<ReplyKeyboard>;
+    using TGBotApi::Message::Keyboard::ReplyKeyboard;
+    using ptrReplyKeyboard = std::unique_ptr<ReplyKeyboard>;
 
-using TGBotApi::Message::Keyboard::ReplyButton;
-using ReplyLane = std::vector<std::shared_ptr<ReplyButton> >;
-using ReplyButtons = std::vector<ReplyLane>;
+    using TGBotApi::Message::Keyboard::ReplyButton;
+    using ReplyLane = std::vector<std::shared_ptr<ReplyButton> >;
+    using ReplyButtons = std::vector<ReplyLane>;
 
-using TGBotApi::CallbackQuery::CallbackQuery;
-using ptrCallbackQuery = std::unique_ptr<CallbackQuery>;
-
+    using TGBotApi::CallbackQuery::CallbackQuery;
+    using ptrCallbackQuery = std::unique_ptr<CallbackQuery>;
 
 
 }

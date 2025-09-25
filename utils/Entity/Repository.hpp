@@ -19,7 +19,7 @@ namespace Utils::Entity {
         virtual unique_ptr<EntityT> get_by_id(int id, bool check_deleted);
         virtual unique_ptr<EntityT> create(const EntityT& entity);
         virtual unique_ptr<EntityT> update(const EntityT& entity);
-        virtual unique_ptr<EntityT> del(int id, bool is_soft);
+        virtual unique_ptr<EntityT> del(int id, bool is_soft = true);
 
         explicit Repository(connection& _db);
 

@@ -19,12 +19,13 @@ namespace Utils::Entity {
     #endif
 
     void create_rows_in_enum_table_if_empty(connection& conn, const char* table, const map<int, string>& map_int_to_string) {
+        nontransaction tx{conn};
+
+
         const string select_sql_query = format(
             "SELECT * FROM {} LIMIT 1;",
-            table
+            tx.quote_name(table)
         );
-
-        nontransaction tx{conn};
 
         #ifndef NDEBUG
         get_logger()->debug("create_rows_in_enum_table_if_empty::select", select_sql_query, __FILE__, __LINE__);
@@ -38,9 +39,9 @@ namespace Utils::Entity {
 
         string insert_sql_query = format(
             "INSERT INTO {} ({}, {}) VALUES",
-            table,
-            ID->name,
-            NAME->name
+            tx.quote_name(table),
+            tx.quote_name(ID->name),
+            tx.quote_name(NAME->name)
         );
 
         for (const auto&[id, name] : map_int_to_string) {
