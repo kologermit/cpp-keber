@@ -79,6 +79,7 @@ CREATE TABLE IF NOT EXISTS messages (
     updated_at          TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at          TIMESTAMP NULL,
     
+    UNIQUE (id, chat_id),
     CONSTRAINT fk_messages_user FOREIGN KEY (user_id) REFERENCES users(id),
     CONSTRAINT fk_messages_chat FOREIGN KEY (chat_id) REFERENCES chats(id),
     CONSTRAINT fk_messages_reply FOREIGN KEY (reply_id, reply_chat_id) REFERENCES messages(id, chat_id),
