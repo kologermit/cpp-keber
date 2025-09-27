@@ -35,6 +35,7 @@ namespace Bot::Entity::User {
     constexpr const char* USER_SCREENS_TABLE = "user_screens";
     const map<int, string> map_user_screen_to_string{
         {UNKNOWN, "UNKNOWN"},
+        {START, "START"},
         {MENU, "MENU"},
         {DICE, "DICE"},
         {ACCESS, "ACCESS"},
