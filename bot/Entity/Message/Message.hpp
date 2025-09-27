@@ -34,7 +34,7 @@ namespace Bot::Entity::Message {
     const auto TEXT = make_shared<Column>("text");
     const auto FILE_DOWNLOAD_ID = make_shared<Column>("file_download_id");
     const auto FILE_NAME = make_shared<Column>("file_name");
-    const auto FILE_CONTENT_TYPE = make_shared<Column>("file_type");
+    const auto FILE_CONTENT_TYPE = make_shared<Column>("file_content_type");
     const auto CHAT_ID = make_shared<Column>("chat_id");
     const auto USER_ID = make_shared<Column>("user_id");
     const auto REPLY_MESSAGE_ID = make_shared<Column>("reply_message_id");
