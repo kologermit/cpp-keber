@@ -237,6 +237,14 @@ namespace Bot::Server {
             get_config()->get_listen_ip(),
             get_config()->get_listen_port()
         ), __FILE__, __LINE__);
+
+        auto start_message = get_bot()->send_message({
+            .chat_id = get_config()->get_admins()[0],
+            .text = "START BOT",
+        });
+        get_repositories()->user_repository->get_by_telegram_user(*start_message->from);
+        get_repositories()->chat_repository->get_by_telegram_chat(*start_message->chat);
+
         _server.listen(get_config()->get_listen_ip(), get_config()->get_listen_port());
     }
 

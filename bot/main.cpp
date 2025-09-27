@@ -37,10 +37,6 @@ int main(int argc, const char* argv[]) {
     signal(SIGINT, signal_handler);
     signal(SIGTERM, signal_handler);
     get_bot()->set_webhook(get_config()->get_webhook_url());
-    get_bot()->send_message({
-        .chat_id = get_config()->get_admins()[0],
-        .text = "START BOT",
-    });
     get_server()->run();
 
     return 0;
