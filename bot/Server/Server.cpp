@@ -279,7 +279,7 @@ namespace Bot::Server {
         shared_ptr<Chat> chat(get_repositories()->chat_repository->get_by_telegram_chat(*tg_message.chat));
         shared_ptr<Message> message(get_repositories()->message_repository->get_by_telegram_message(
             tg_message,
-            tg_callback.has_value()
+            true
         ));
         shared_ptr<Callback> callback;
         if (tg_callback.has_value()) {

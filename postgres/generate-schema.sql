@@ -88,12 +88,9 @@ CREATE TABLE IF NOT EXISTS messages (
     UNIQUE(id, chat_id),
     CONSTRAINT fk_messages_user FOREIGN KEY (user_id) REFERENCES users(id),
     CONSTRAINT fk_messages_chat FOREIGN KEY (chat_id) REFERENCES chats(id),
+    CONSTRAINT fk_messages_reply FOREIGN KEY (reply_message_id, reply_chat_id) REFERENCES messages(id, chat_id),
     CONSTRAINT fk_message_content_types FOREIGN KEY (file_content_type) REFERENCES message_content_types(id)
 );
-ALTER TABLE messages ADD CONSTRAINT fk_messages_reply 
-    FOREIGN KEY (reply_message_id, reply_chat_id) 
-    REFERENCES messages(id, chat_id)
-    NOT VALID;
 CREATE INDEX IF NOT EXISTS idx_messages_id_and_chat_id ON messages(id, chat_id);
 CREATE INDEX IF NOT EXISTS idx_messages_user_id ON messages(user_id);
 CREATE TRIGGER trigger_update_messages_updated_at
