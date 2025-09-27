@@ -20,7 +20,7 @@ namespace Bot::Entity::Chat {
     using jed_utils::datetime;
     using pqxx::row;
 
-    constexpr const char* CHAT_TYPES_TABLE = "\"chat_types\"";
+    constexpr const char* CHAT_TYPES_TABLE = "chat_types";
     const auto NAME = make_shared<Column>("name");
     const auto USERNAME = make_shared<Column>("username");
     const auto TYPE = make_shared<Column>("type");
