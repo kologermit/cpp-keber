@@ -24,6 +24,8 @@ CREATE TABLE IF NOT EXISTS users (
     created_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at  TIMESTAMP NULL,
+
+    UNIQUE(id),
     CONSTRAINT fk_users_screen FOREIGN KEY (screen) REFERENCES user_screens(id)
 );
 CREATE INDEX IF NOT EXISTS idx_users ON users(id);
@@ -49,6 +51,8 @@ CREATE TABLE IF NOT EXISTS chats (
     created_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at  TIMESTAMP NULL,
+
+    UNIQUE(id),
     CONSTRAINT fk_chat_types FOREIGN KEY (type) REFERENCES chat_types(id)
 );
 CREATE INDEX idx_chats ON chats(id);
@@ -62,7 +66,9 @@ EXECUTE FUNCTION update_updated_at();
 CREATE TABLE IF NOT EXISTS message_content_types (
     id         BIGINT UNIQUE NOT NULL,
     name       VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    UNIQUE(id)
 );
 CREATE INDEX IF NOT EXISTS idx_message_content_types ON message_content_types(id);
 CREATE TABLE IF NOT EXISTS messages (
@@ -79,7 +85,7 @@ CREATE TABLE IF NOT EXISTS messages (
     updated_at          TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at          TIMESTAMP NULL,
     
-    UNIQUE (id, chat_id),
+    UNIQUE(id, chat_id),
     CONSTRAINT fk_messages_user FOREIGN KEY (user_id) REFERENCES users(id),
     CONSTRAINT fk_messages_chat FOREIGN KEY (chat_id) REFERENCES chats(id),
     CONSTRAINT fk_messages_reply FOREIGN KEY (reply_id, reply_chat_id) REFERENCES messages(id, chat_id),
@@ -103,7 +109,8 @@ CREATE TABLE IF NOT EXISTS callbacks (
     updated_at          TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at          TIMESTAMP NULL,
 
-    CONSTRAINT fk_callbacks_message FOREIGN KEY (message_id) REFERENCES messages(id),
+    UNIQUE(id),
+    CONSTRAINT fk_messages_reply FOREIGN KEY (message_id, chat_id) REFERENCES messages(id, chat_id),
     CONSTRAINT fk_callbacks_user FOREIGN KEY (user_id) REFERENCES users(id),
     CONSTRAINT fk_callbacks_chat FOREIGN KEY (chat_id) REFERENCES chats(id)
 );
@@ -117,7 +124,9 @@ EXECUTE FUNCTION update_updated_at();
 CREATE TABLE IF NOT EXISTS api_request_services (
     id         BIGINT NOT NULL,
     name       VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    UNIQUE (id)
 );
 CREATE INDEX IF NOT EXISTS idx_api_request_services ON api_request_services(id);
 CREATE TABLE IF NOT EXISTS api_requests (
@@ -129,7 +138,7 @@ CREATE TABLE IF NOT EXISTS api_requests (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP NULL,
-    
+
     CONSTRAINT fk_api_request_services_from FOREIGN KEY ("from") REFERENCES api_request_services(id),
     CONSTRAINT fk_api_request_services_to FOREIGN KEY ("to") REFERENCES api_request_services(id)
 );
@@ -143,7 +152,9 @@ EXECUTE FUNCTION update_updated_at();
 CREATE TABLE IF NOT EXISTS access_types (
     id          BIGINT NOT NULL,
     name        VARCHAR(255) NOT NULL,
-    created_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    created_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    UNIQUE(id)
 );
 CREATE INDEX IF NOT EXISTS idx_access_types ON access_types(id);
 CREATE TABLE IF NOT EXISTS accesses (
