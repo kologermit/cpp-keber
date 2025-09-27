@@ -79,7 +79,7 @@ CREATE TABLE IF NOT EXISTS messages (
     file_content_type   BIGINT NOT NULL,
     chat_id             BIGINT NOT NULL,
     user_id             BIGINT NOT NULL,
-    reply_message_id            BIGINT NULL,
+    reply_message_id    BIGINT NULL,
     reply_chat_id       BIGINT NULL,
     created_at          TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at          TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -93,7 +93,6 @@ CREATE TABLE IF NOT EXISTS messages (
 );
 CREATE INDEX IF NOT EXISTS idx_messages_id_and_chat_id ON messages(id, chat_id);
 CREATE INDEX IF NOT EXISTS idx_messages_user_id ON messages(user_id);
-CREATE INDEX IF NOT EXISTS idx_messages_reply_id ON messages(reply_id);
 CREATE TRIGGER trigger_update_messages_updated_at
 BEFORE UPDATE ON messages
 FOR EACH ROW
