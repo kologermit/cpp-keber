@@ -38,14 +38,14 @@ namespace Bot::BotHandler::AccessHandler {
         auto user = get_repositories()->user_repository->get_by_id(user_id);
         if (user == nullptr) {
             get_bot()->answer_callback_query(
-                context->callback->telegram_id,
+                context->callback->id,
                 format(USER_NOT_FOUND_PHRASE, user_id),
                 true
             );
             return nullptr;
         }
 
-        get_bot()->answer_callback_query(context->callback->telegram_id);
+        get_bot()->answer_callback_query(context->callback->id);
         for (auto& access : get_repositories()->access_repository->get_raw_by_user_id(user->id)) {
             if (access->type == access_type) {
                 get_repositories()->access_repository->del(access->id);
@@ -53,15 +53,15 @@ namespace Bot::BotHandler::AccessHandler {
         }
 
         if (access_value) {
-            Access access;
-            access.user_id = user->id;
-            access.type = access_type;
-            get_repositories()->access_repository->create(access);
+            get_repositories()->access_repository->create(Access(
+                user->id,
+                access_type
+            ));
         }
 
         try {
             get_bot()->send_message(SendMessageParameters{
-                .chat_id = user->telegram_id,
+                .chat_id = user->id,
                 .text = (access_value
                     ? format(ADD_ACCESS_PHRASE, word, context->user->name)
                     : format(REMOVE_ACCESS_PHRASE, word, context->user->name)

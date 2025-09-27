@@ -47,7 +47,7 @@ namespace Bot::Entity::Message {
         );
 
         #ifndef NDEBUG
-        get_logger()->debug("get_by_chat_id_and_telegram_id::sql", sql_query, __FILE__, __LINE__);
+        get_logger()->debug("get_by_chat_id_and_id::sql", sql_query, __FILE__, __LINE__);
         #endif
 
 
@@ -82,6 +82,6 @@ namespace Bot::Entity::Message {
             tg_message.from->id,
             (reply_message == nullptr ? 0 : reply_message->id),
             tg_message.id
-        ));
+        ), true);
     }
 }

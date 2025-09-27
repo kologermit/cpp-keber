@@ -66,7 +66,7 @@ namespace Bot::Entity::User {
             string_view name = "",
             string_view username = "",
             EnumUserScreen screen = UNKNOWN,
-            int id = 0,
+            long long id = 0,
             datetime created_at = {},
             datetime updated_at = {},
             optional<datetime> deleted_at = nullopt
@@ -84,22 +84,19 @@ namespace Bot::Entity::User {
             screen(static_cast<EnumUserScreen>(user_row[SCREEN->name].get<int>().value()))
         {}
 
-        static const char* get_table_name() noexcept;
-        map<const char*, optional<string> > to_map(bool is_full = false, bool add_id = false) const noexcept;
+        static const char* get_table_name() noexcept {
+            static const char* table = "users";
+            return table;
+        }
+
+        map<const char*, optional<string> > to_map(bool is_full = false, bool add_id = false) const noexcept {
+            auto result = Entity::to_map(is_full, add_id);
+            
+            result[NAME->name] = name;
+            result[USERNAME->name] = username;
+            result[SCREEN->name] = to_string(screen);
+
+            return result;
+        }
     };
-
-    inline const char* User::get_table_name() noexcept {
-        static const char* table = "users";
-        return table;
-    }
-
-    map<const char*, optional<string> > User::to_map(bool is_full, bool add_id) const noexcept {
-        auto result = Entity::to_map(is_full, add_id);
-        
-        result[NAME->name] = name;
-        result[USERNAME->name] = username;
-        result[SCREEN->name] = to_string(screen);
-
-        return result;
-    }
 }

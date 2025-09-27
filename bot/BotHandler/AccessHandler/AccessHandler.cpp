@@ -27,7 +27,6 @@ namespace Bot::BotHandler::AccessHandler {
     using Entity::User::User;
     using Entity::Repositories::get_repositories;
     using MenuHandler::MenuHandler;
-    using Utils::Entity::ID_COLUMN;
     using Utils::TGBotApi::Bot::get_bot;
     using Utils::TGBotApi::Types::ReplyKeyboard;
     using Utils::TGBotApi::Types::ReplyButtons;
@@ -63,13 +62,13 @@ namespace Bot::BotHandler::AccessHandler {
         if (context->message->text.starts_with("@")) {
             find_user = get_repositories()->user_repository->get_by_username(context->message->text.substr(1));
         } else {
-            find_user = get_repositories()->user_repository->get_by_telegram_id(stoi(context->message->text));
+            find_user = get_repositories()->user_repository->get_by_id(stoi(context->message->text));
         }
         if (find_user == nullptr) {
             return get_bot()->send_message( {
-                .chat_id = context->chat->telegram_id,
+                .chat_id = context->chat->id,
                 .text = format(USER_NOT_FOUND_PHRASE, context->message->text),
-                .reply_message_id = context->message->telegram_id,
+                .reply_message_id = context->message->id,
             });
         }
         auto find_user_access = get_repositories()->access_repository->get_by_user_id(find_user->id);
@@ -106,15 +105,14 @@ namespace Bot::BotHandler::AccessHandler {
             buttons.push_back(InlineLane(1, button));
         }
         return get_bot()->send_message( {
-            .chat_id = context->chat->telegram_id,
+            .chat_id = context->chat->id,
             .text = format(USER_TEMPLATE,
                     user.name,
                     user.id,
-                    user.telegram_id,
                     "@" + user.username
                 ),
-            .reply_message_id = context->message->telegram_id,
-            .inline_keyboard = make_unique<InlineKeyboard>(move(buttons))
+            .reply_message_id = context->message->id,
+            .inline_keyboard = make_unique<InlineKeyboard>(std::move(buttons))
         });
     }
 
@@ -134,15 +132,13 @@ namespace Bot::BotHandler::AccessHandler {
             }
         }
 
-        User user;
-        user.id = context->user->id;
-        user.screen = ACCESS;
-        get_repositories()->user_repository->update(user, {SCREEN});
+        context->user->screen = ACCESS;
+        get_repositories()->user_repository->update(*context->user);
 
         return get_bot()->send_message({
-            .chat_id = context->chat->telegram_id,
+            .chat_id = context->chat->id,
             .text = format(ACCESS_PHRASE, access_answer),
-            .reply_message_id = context->message->telegram_id,
+            .reply_message_id = context->message->id,
             .reply_keyboard = make_unique<ReplyKeyboard>(ReplyButtons{
                 {make_shared<ReplyButton>(BACK_WORD)}
             })

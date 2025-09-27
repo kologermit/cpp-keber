@@ -25,14 +25,12 @@ namespace Bot::BotHandler::YouTubeHandler {
     using std::set;
 
     ptrMessage YouTubeHandler::to_youtube(shared_ptr<BotHandlerContext> context) {
-        User user;
-        user.id = context->user->id;
-        user.screen = YOUTUBE;
-        get_repositories()->user_repository->update(user, {SCREEN});
+        context->user->screen = YOUTUBE;
+        get_repositories()->user_repository->update(*context->user);
         return get_bot()->send_message( {
-            .chat_id = context->chat->telegram_id,
+            .chat_id = context->chat->id,
             .text = YOUTUBE_WORD,
-            .reply_message_id = context->message->telegram_id,
+            .reply_message_id = context->message->id,
             .reply_keyboard = make_unique<ReplyKeyboard>(ReplyButtons{
                 {make_shared<ReplyButton>(AUDIO_WORD), make_shared<ReplyButton>(VIDEO_WORD)},
                 {make_shared<ReplyButton>(AUDIO_PLAYLIST_WORD), make_shared<ReplyButton>(VIDEO_PLAYLIST_WORD)},
@@ -73,9 +71,9 @@ namespace Bot::BotHandler::YouTubeHandler {
         }
 
         return get_bot()->send_message( {
-            .chat_id = context->chat->telegram_id,
+            .chat_id = context->chat->id,
             .text = IN_DEVELOP_PHRASE,
-            .reply_message_id = context->message->telegram_id,
+            .reply_message_id = context->message->id,
         });
     }
 

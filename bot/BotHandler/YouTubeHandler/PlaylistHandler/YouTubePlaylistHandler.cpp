@@ -10,9 +10,7 @@ namespace Bot::BotHandler::YouTubeHandler::PlaylistHandler {
 
     using Bot::Entity::Repositories::get_repositories;
     using Bot::Entity::User::User;
-    using Bot::Entity::User::EnumUserScreen::YOUTUBE_PLAYLIST_VIDEO;
-    using Bot::Entity::User::EnumUserScreen::YOUTUBE_PLAYLIST_AUDIO;
-    using Bot::Entity::User::UserColumns::SCREEN;
+    using Bot::Entity::User::EnumUserScreen;
     using Bot::Entity::Repositories::get_repositories;
     using Utils::TGBotApi::Bot::get_bot;
     using Utils::TGBotApi::Types::ReplyKeyboard;
@@ -22,28 +20,21 @@ namespace Bot::BotHandler::YouTubeHandler::PlaylistHandler {
     using Utils::TGBotApi::Types::InlineButtons;
     using Utils::TGBotApi::Types::InlineButton;
     using Utils::YouTubeApi::get_youtube_api;
-    using Utils::YouTubeApi::Video;
-    using Utils::YouTubeApi::Channel;
     using fmt::format;
     using nlohmann::json;
-    using std::unique_ptr;
     using std::make_unique;
     using std::make_shared;
     using std::istringstream;
     using std::getline;
-    using std::pair;
-    using std::move;
 
     ptrMessage YouTubePlaylistHandler::to_youtube_playlist(shared_ptr<BotHandlerContext> context, bool is_video) {
-        User user;
-        user.id = context->user->id;
-        user.screen = (is_video ? YOUTUBE_PLAYLIST_VIDEO : YOUTUBE_PLAYLIST_AUDIO);
-        get_repositories()->user_repository->update(user, {SCREEN});
+        context->user->screen = (is_video ? EnumUserScreen::YOUTUBE_PLAYLIST_VIDEO : EnumUserScreen::YOUTUBE_PLAYLIST_AUDIO);
+        get_repositories()->user_repository->update(*context->user);
 
         return get_bot()->send_message( {
-            .chat_id = context->chat->telegram_id,
+            .chat_id = context->chat->id,
             .text = format(SEND_MEDIA_URL_PHRASE, (is_video ? VIDEO_PLAYLIST_WORD : AUDIO_PLAYLIST_WORD)),
-            .reply_message_id = context->message->telegram_id,
+            .reply_message_id = context->message->id,
             .reply_keyboard = make_unique<ReplyKeyboard>(ReplyButtons{{make_shared<ReplyButton>(BACK_WORD)}})
         });
     }
@@ -55,7 +46,7 @@ namespace Bot::BotHandler::YouTubeHandler::PlaylistHandler {
 
     bool YouTubePlaylistHandler::check(shared_ptr<BotHandlerContext> context) {
         return (context->access.full || context->access.youtube)
-        && (context->user->screen == YOUTUBE_PLAYLIST_VIDEO || context->user->screen == YOUTUBE_PLAYLIST_AUDIO)
+        && (context->user->screen == EnumUserScreen::YOUTUBE_PLAYLIST_VIDEO || context->user->screen == EnumUserScreen::YOUTUBE_PLAYLIST_AUDIO)
         && (context->message->text.starts_with("https://") || context->message->text == BACK_WORD);
     }
 
@@ -65,7 +56,7 @@ namespace Bot::BotHandler::YouTubeHandler::PlaylistHandler {
         }
 
         const char* PLAYLIST_TYPE_WORD = (
-            context->user->screen == YOUTUBE_PLAYLIST_VIDEO
+            context->user->screen == EnumUserScreen::YOUTUBE_PLAYLIST_VIDEO
             ? VIDEO_PLAYLIST_WORD
             : AUDIO_PLAYLIST_WORD
         );
@@ -80,9 +71,9 @@ namespace Bot::BotHandler::YouTubeHandler::PlaylistHandler {
             auto playlist = get_youtube_api()->get_playlist(buffer);
             if (playlist == nullptr) {
                 return get_bot()->send_message( {
-                    .chat_id = context->chat->telegram_id,
+                    .chat_id = context->chat->id,
                     .text = format(MEDIA_NOT_FOUND_PHRASE, PLAYLIST_TYPE_WORD, buffer),
-                    .reply_message_id = context->message->telegram_id,
+                    .reply_message_id = context->message->id,
                 });
             }
 
@@ -96,14 +87,14 @@ namespace Bot::BotHandler::YouTubeHandler::PlaylistHandler {
         }
 
         return get_bot()->send_message( {
-            .chat_id = context->chat->telegram_id,
+            .chat_id = context->chat->id,
             .text = format(DOWNLOAD_MEDIA_PHRASE,
                 PLAYLIST_TYPE_WORD,
                 count,
                 answer
             ),
-            .reply_message_id = context->message->telegram_id,
-            .inline_keyboard = make_unique<InlineKeyboard>(context->user->screen == YOUTUBE_PLAYLIST_VIDEO
+            .reply_message_id = context->message->id,
+            .inline_keyboard = make_unique<InlineKeyboard>(context->user->screen == EnumUserScreen::YOUTUBE_PLAYLIST_VIDEO
                 ? InlineButtons{
                     {make_shared<InlineButton>(DELETE_WORD, "", "delete")},
                     {

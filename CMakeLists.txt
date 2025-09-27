@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.15)
 
+include(./cmake/clang-toolchain.cmake)
+
 project(CPP-KEBER CXX)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -28,8 +30,6 @@ else()
     add_compile_options(-O3 -DNDEBUG -flto=auto)
     message(STATUS "Release mode enabled")
 endif()
-
-# include_directories(.)
 
 find_package(fmt REQUIRED)
 find_package(nlohmann_json REQUIRED)

@@ -6,87 +6,75 @@
 namespace Bot::Entity::Callback {
 
     using Utils::Datetime::datetime;
+    using Utils::Entity::ID;
+    using Utils::Entity::Column;
     using Utils::Entity::Entity;
     using pqxx::row;
+    using std::map;
+    using std::make_shared;
     using std::string;
     using std::string_view;
     using std::to_string;
     using std::optional;
     using std::nullopt;
 
-    enum CallbackColumn {
-        TELEGRAM_ID,
-        MESSAGE_ID,
-        DATA,
-        USER_ID,
-        CHAT_ID,
-    };
-
-    constexpr const char* CALLBACKS_TABLE = "\"callbacks\"";
-    constexpr const char* TELEGRAM_ID_COLUMN = "\"telegram_id\"";
-    constexpr const char* MESSAGE_ID_COLUMN = "\"message_id\"";
-    constexpr const char* DATA_COLUMN = "\"data\"";
-    constexpr const char* USER_ID_COLUMN = "\"user_id\"";
-    constexpr const char* CHAT_ID_COLUMN = "\"chat_id\"";
+    const auto DATA = make_shared<Column>("data");
+    const auto MESSAGE_ID = make_shared<Column>("message_id");
+    const auto USER_ID = make_shared<Column>("user_id");
+    const auto CHAT_ID = make_shared<Column>("chat_id");
 
     struct Callback : Entity {
-        string telegram_id;
+        string id;
         string data;
-        int message_id;
-        int user_id;
-        int chat_id;
+        long long message_id;
+        long long user_id;
+        long long chat_id;
 
         Callback(
-            int id,
-            optional<datetime> created_at = nullopt,
-            optional<datetime> updated_at = nullopt,
-            optional<datetime> deleted_at = nullopt,
-            string_view telegram_id = "",
             string_view data = "",
-            int message_id = 0,
-            int user_id = 0,
-            int chat_id = 0
+            long long message_id = 0,
+            long long user_id = 0,
+            long long chat_id = 0,
+            string_view id = "",
+            datetime created_at = {},
+            datetime updated_at = {},
+            optional<datetime> deleted_at = nullopt
         ):
-        Entity(id, created_at, updated_at, deleted_at),
-        telegram_id(telegram_id),
+        Entity(0, created_at, updated_at, deleted_at),
+        id(id),
         data(data),
         message_id(message_id),
         user_id(user_id),
         chat_id(chat_id)
         {}
 
-        Callback(
-            string_view telegram_id,
-            string_view data,
-            int message_id,
-            int user_id,
-            int chat_id
-        ):
-        telegram_id(telegram_id),
-        data(data),
-        message_id(message_id),
-        user_id(user_id),
-        chat_id(chat_id)
-        {}
 
         Callback(const row& callback_row):
-        telegram_id(callback_row[TELEGRAM_ID_COLUMN].get<string>().value()),
-        data(callback_row[DATA_COLUMN].get<string>().value()),
-        message_id(callback_row[MESSAGE_ID_COLUMN].get<int>().value()),
-        user_id(callback_row[USER_ID_COLUMN].get<int>().value()),
-        chat_id(callback_row[CHAT_ID_COLUMN].get<int>().value())
+            Entity(callback_row),
+            id(callback_row[ID->name].get<string>().value()),
+            data(callback_row[DATA->name].get<string>().value()),
+            message_id(callback_row[MESSAGE_ID->name].get<long long>().value()),
+            user_id(callback_row[USER_ID->name].get<long long>().value()),
+            chat_id(callback_row[CHAT_ID->name].get<long long>().value())
         {}
 
-        string get_data_by_column(int column) const {
-            switch (column)
-            {
-                case TELEGRAM_ID: return telegram_id;
-                case MESSAGE_ID: return to_string(message_id);
-                case DATA: return data;
-                case USER_ID: return to_string(user_id);
-                case CHAT_ID: return to_string(chat_id);
-                default: return "";
+        static const char* get_table_name() noexcept {
+            static const char* table = "callbacks";
+            return table;
+        }
+
+        map<const char*, optional<string> > to_map(bool is_full = false, bool add_id = false) const noexcept {
+            auto result = Entity::to_map(is_full, add_id);
+
+            if (is_full || add_id) {
+                result[ID->name] = id;
             }
+            result[DATA->name] = data;
+            result[MESSAGE_ID->name] = to_string(message_id);
+            result[USER_ID->name] = to_string(user_id);
+            result[CHAT_ID->name] = to_string(chat_id);
+
+            return result;
         }
     };
 

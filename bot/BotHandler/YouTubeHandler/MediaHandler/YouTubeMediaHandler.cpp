@@ -11,9 +11,7 @@ namespace Bot::BotHandler::YouTubeHandler::MediaHandler {
 
     using Bot::Entity::Repositories::get_repositories;
     using Bot::Entity::User::User;
-    using Bot::Entity::User::EnumUserScreen::YOUTUBE_VIDEO;
-    using Bot::Entity::User::EnumUserScreen::YOUTUBE_AUDIO;
-    using Bot::Entity::User::UserColumns::SCREEN;
+    using Bot::Entity::User::EnumUserScreen;
     using Utils::TGBotApi::Bot::get_bot;
     using Utils::TGBotApi::Types::ReplyKeyboard;
     using Utils::TGBotApi::Types::ReplyButtons;
@@ -22,25 +20,18 @@ namespace Bot::BotHandler::YouTubeHandler::MediaHandler {
     using Utils::TGBotApi::Types::InlineButtons;
     using Utils::TGBotApi::Types::InlineButton;
     using Utils::YouTubeApi::get_youtube_api;
-    using Utils::YouTubeApi::Video;
-    using Utils::YouTubeApi::Channel;
     using fmt::format;
     using nlohmann::json;
-    using std::unique_ptr;
     using std::make_unique;
     using std::make_shared;
     using std::istringstream;
     using std::getline;
-    using std::pair;
-    using std::move;
 
     ptrMessage YouTubeMediaHandler::to_youtube_media(shared_ptr<BotHandlerContext> context, bool is_video) {
-        User user;
-        user.id = context->user->id;
-        user.screen = (is_video ? YOUTUBE_VIDEO : YOUTUBE_AUDIO);
-        get_repositories()->user_repository->update(user, {SCREEN});
+        context->user->screen = (is_video ? EnumUserScreen::YOUTUBE_VIDEO : EnumUserScreen::YOUTUBE_AUDIO);
+        get_repositories()->user_repository->update(*context->user);
         return get_bot()->send_message( {
-            .chat_id = context->chat->telegram_id,
+            .chat_id = context->chat->id,
             .text = format(SEND_MEDIA_URL_PHRASE, (is_video ? VIDEO_WORD : AUDIO_WORD)),
             .reply_message_id = context->message->id,
             .reply_keyboard = make_unique<ReplyKeyboard>(ReplyButtons{{make_shared<ReplyButton>(BACK_WORD)}})
@@ -54,7 +45,7 @@ namespace Bot::BotHandler::YouTubeHandler::MediaHandler {
 
     bool YouTubeMediaHandler::check(shared_ptr<BotHandlerContext> context) {
         return (context->access.full || context->access.youtube)
-        && (context->user->screen == YOUTUBE_VIDEO || context->user->screen == YOUTUBE_AUDIO)
+        && (context->user->screen == EnumUserScreen::YOUTUBE_VIDEO || context->user->screen == EnumUserScreen::YOUTUBE_AUDIO)
         && (context->message->text.starts_with("https") || context->message->text == BACK_WORD);
     }
 
@@ -64,7 +55,7 @@ namespace Bot::BotHandler::YouTubeHandler::MediaHandler {
         }
 
         const char* MEDIA_TYPE_WORD = (
-            context->user->screen == YOUTUBE_VIDEO
+            context->user->screen == EnumUserScreen::YOUTUBE_VIDEO
             ? VIDEO_WORD
             : AUDIO_WORD
         );
@@ -78,9 +69,9 @@ namespace Bot::BotHandler::YouTubeHandler::MediaHandler {
             auto result = get_youtube_api()->get_video(buffer);
             if (result == nullptr) {
                 return get_bot()->send_message( {
-                    .chat_id = context->chat->telegram_id,
+                    .chat_id = context->chat->id,
                     .text = format(MEDIA_NOT_FOUND_PHRASE, MEDIA_TYPE_WORD, buffer),
-                    .reply_message_id = context->message->telegram_id,
+                    .reply_message_id = context->message->id,
                 });
             }
             const auto& [video, channel] = *result;
@@ -89,14 +80,14 @@ namespace Bot::BotHandler::YouTubeHandler::MediaHandler {
         }
 
         return get_bot()->send_message( {
-            .chat_id = context->chat->telegram_id,
+            .chat_id = context->chat->id,
             .text = format(DOWNLOAD_MEDIA_PHRASE,
                 MEDIA_TYPE_WORD,
                 count,
                 answer
             ),
-            .reply_message_id = context->message->telegram_id,
-            .inline_keyboard = make_unique<InlineKeyboard>(context->user->screen == YOUTUBE_VIDEO
+            .reply_message_id = context->message->id,
+            .inline_keyboard = make_unique<InlineKeyboard>(context->user->screen == EnumUserScreen::YOUTUBE_VIDEO
                 ? InlineButtons{
                     {make_shared<InlineButton>(DELETE_WORD, "", "delete")},
                     {

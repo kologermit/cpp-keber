@@ -5,7 +5,6 @@ namespace Utils::Logger {
 
     using std::shared_ptr;
     using std::make_shared;
-    using std::move;
     using std::forward;
 
     const char* NotInitializedLoggerException::what() const noexcept {

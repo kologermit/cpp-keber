@@ -17,11 +17,7 @@ namespace Bot::Entity::User {
             return user;
         }
     
-        return this->create(User(
-            tg_user.name,
-            tg_user.username,
-            START
-        ));
+        return this->create(User(tg_user.name, tg_user.username, EnumUserScreen::START, tg_user.id), true);
     }
 
     unique_ptr<User> UserRepository::get_by_username(string_view username) {

@@ -16,10 +16,10 @@ namespace Utils::Entity {
     struct Repository {
         virtual ~Repository() = default;
 
-        virtual unique_ptr<EntityT> get_by_id(int id, bool check_deleted = true);
-        virtual unique_ptr<EntityT> create(const EntityT& entity);
+        virtual unique_ptr<EntityT> get_by_id(long long id, bool check_deleted = true);
+        virtual unique_ptr<EntityT> create(const EntityT& entity, bool add_id = false);
         virtual unique_ptr<EntityT> update(const EntityT& entity);
-        virtual unique_ptr<EntityT> del(int id, bool is_soft = true);
+        virtual unique_ptr<EntityT> del(long long id, bool is_soft = true);
 
         explicit Repository(connection& _db);
 
@@ -32,15 +32,16 @@ namespace Utils::Entity {
     Repository<EntityT>::Repository(connection& _db): _db(_db) {}
 
     template<typename EntityT>
-    unique_ptr<EntityT> Repository<EntityT>::create(const EntityT& entity) {
+    unique_ptr<EntityT> Repository<EntityT>::create(const EntityT& entity, bool add_id) {
         return exec_insert<EntityT>(
             _db,
-            entity
+            entity,
+            add_id
         );
     }
 
     template<typename EntityT>
-    unique_ptr<EntityT> Repository<EntityT>::get_by_id(int id, bool check_deleted) {
+    unique_ptr<EntityT> Repository<EntityT>::get_by_id(long long id, bool check_deleted) {
         return exec_select_one<EntityT>(
             _db,
             EntityT::get_table_name(),
@@ -58,7 +59,7 @@ namespace Utils::Entity {
     }
 
     template<typename EntityT>
-    unique_ptr<EntityT> Repository<EntityT>::del(int id, bool is_soft) {
+    unique_ptr<EntityT> Repository<EntityT>::del(long long id, bool is_soft) {
         return Utils::Entity::exec_delete<EntityT>(_db, id, is_soft);
     }
 

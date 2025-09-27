@@ -24,59 +24,61 @@ namespace Utils::Entity {
         explicit Column(const char* name) : name(name) {}
     };
 
-    struct Entity {
-
-        static const char* get_table_name() noexcept;
-        map<const char*, optional<string> > to_map(bool is_full = false, bool add_id = false) const noexcept;
-
-        int id = 0;
-        datetime created_at{};
-        datetime updated_at{};
-        optional<datetime> deleted_at = nullopt;
-
-        explicit Entity(const row& entity_row);
-        Entity(int id, datetime created_at, datetime updated_at, optional<datetime> deleted_at = nullopt);
-        Entity() = default;
-
-    };
-
-    inline const char* Entity::get_table_name() noexcept {
-        static const char* table_name = "entities";
-        return table_name;
-    }
-
     const auto ID = make_shared<Column>("id");
     const auto CREATED_AT = make_shared<Column>("created_at");
     const auto UPDATED_AT = make_shared<Column>("updated_at");
     const auto DELETED_AT = make_shared<Column>("deleted_at");
     const auto NAME = make_shared<Column>("name");
 
-    inline Entity::Entity(int id, datetime created_at, datetime updated_at, optional<datetime> deleted_at):
-        id(id), created_at(std::move(created_at)), updated_at(std::move(updated_at)), deleted_at(std::move(deleted_at)) {}
-    inline Entity::Entity(const row& entity_row):
-    id(entity_row[ID->name].get<int>().value()),
-    created_at(datetime::parse(DATETIME_FORMAT, entity_row[CREATED_AT->name].get<string>().value())),
-    updated_at(datetime::parse(DATETIME_FORMAT, entity_row[UPDATED_AT->name].get<string>().value())) 
-    {
-        if (const auto deleted_at_value = entity_row[DELETED_AT->name].get<string>();
-            deleted_at_value.has_value()) {
-            deleted_at = datetime::parse(DATETIME_FORMAT, deleted_at_value.value());
-        }
-    }
+    struct Entity {
+        
+        long long id = 0;
+        datetime created_at{};
+        datetime updated_at{};
+        optional<datetime> deleted_at = nullopt;
 
-    map<const char*, optional<string> > Entity::to_map(bool is_full, bool add_id) const noexcept {
-        map<const char*, optional<string> > result;
-        if (add_id) {
-            result[ID->name] = to_string(id);
+        explicit Entity(
+            long long id, 
+            datetime created_at = {}, 
+            datetime updated_at = {}, 
+            optional<datetime> deleted_at = nullopt
+        ):
+            id(id), 
+            created_at(std::move(created_at)), 
+            updated_at(std::move(updated_at)), 
+            deleted_at(std::move(deleted_at)) 
+        {}
+
+        Entity(const row& entity_row):
+            id(entity_row[ID->name].get<int>().value_or(0)),
+            created_at(datetime::parse(DATETIME_FORMAT, entity_row[CREATED_AT->name].get<string>().value())),
+            updated_at(datetime::parse(DATETIME_FORMAT, entity_row[UPDATED_AT->name].get<string>().value())) 
+        {
+            if (const auto deleted_at_value = entity_row[DELETED_AT->name].get<string>();
+                deleted_at_value.has_value()) {
+                deleted_at = datetime::parse(DATETIME_FORMAT, deleted_at_value.value());
+            }
         }
-        if (is_full) {
-            result[ID->name] = to_string(id);
-            result[CREATED_AT->name] = created_at.to_string(DATETIME_FORMAT);
-            result[UPDATED_AT->name] = updated_at.to_string(DATETIME_FORMAT);
-            result[DELETED_AT->name] = (deleted_at.has_value() ? optional<string>(deleted_at.value().to_string(DATETIME_FORMAT)) : nullopt);
+
+        static const char* get_table_name() noexcept {
+            static const char* table_name = "entities";
+            return table_name;
         }
-        return result;
-    }
+
+        map<const char*, optional<string> > to_map(bool is_full = false, bool add_id = false) const noexcept {
+            map<const char*, optional<string> > result;
+            if (add_id) {
+                result[ID->name] = to_string(id);
+            }
+            if (is_full) {
+                result[ID->name] = to_string(id);
+                result[CREATED_AT->name] = created_at.to_string(DATETIME_FORMAT);
+                result[UPDATED_AT->name] = updated_at.to_string(DATETIME_FORMAT);
+                result[DELETED_AT->name] = (deleted_at.has_value() ? optional<string>(deleted_at.value().to_string(DATETIME_FORMAT)) : nullopt);
+            }
+            return result;
+        }
+    };
 
     void create_rows_in_enum_table_if_empty(connection& conn, const char* table, const map<int, string>& map_int_to_string);
 }

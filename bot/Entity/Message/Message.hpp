@@ -47,19 +47,19 @@ namespace Bot::Entity::Message {
         string          file_download_id;
         string          file_name;
         EnumContentType file_content_type;
-        int             chat_id;
-        int             user_id;
-        int             reply_message_id;
+        long long       chat_id;
+        long long       user_id;
+        long long       reply_message_id;
 
         Message(
             string_view text = "",
             string_view file_download_id = "",
             string_view file_name = "",
             EnumContentType file_content_type = EnumContentType::UNKNOWN,
-            int chat_id = 0,
-            int user_id = 0,
-            int reply_message_id = 0,
-            int id = 0,
+            long long chat_id = 0,
+            long long user_id = 0,
+            long long reply_message_id = 0,
+            long long id = 0,
             datetime created_at = {},
             datetime updated_at = {},
             optional<datetime> deleted_at = nullopt
@@ -89,25 +89,21 @@ namespace Bot::Entity::Message {
             )
         {}
 
-        static const char* get_table_name() noexcept;
-        map<const char*, optional<string> > to_map(bool is_full = false, bool add_id = false) const noexcept;
+        static const char* get_table_name() noexcept {
+            static const char* table = "messages";
+            return table;
+        }
+        map<const char*, optional<string> > to_map(bool is_full = false, bool add_id = false) const noexcept {
+            auto result = Entity::to_map(is_full, add_id);
+
+            result[TEXT->name] = text;
+            result[FILE_DOWNLOAD_ID->name] = file_download_id;
+            result[FILE_NAME->name] = file_name;
+            result[CHAT_ID->name] = to_string(chat_id);
+            result[USER_ID->name] = to_string(user_id);
+            result[REPLY_MESSAGE_ID->name] = to_string(reply_message_id);
+
+            return result;
+        }
     };
-
-    const char* Message::get_table_name() noexcept {
-        static const char* table = "messages";
-        return table;
-    }
-
-    map<const char*, optional<string> > Message::to_map(bool is_full, bool add_id) const noexcept {
-        auto result = Entity::to_map(is_full, add_id);
-
-        result[TEXT->name] = text;
-        result[FILE_DOWNLOAD_ID->name] = file_download_id;
-        result[FILE_NAME->name] = file_name;
-        result[CHAT_ID->name] = to_string(chat_id);
-        result[USER_ID->name] = to_string(user_id);
-        result[REPLY_MESSAGE_ID->name] = to_string(reply_message_id);
-
-        return result;
-    }
 }

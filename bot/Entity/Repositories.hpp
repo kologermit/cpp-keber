@@ -7,41 +7,37 @@
 #include <bot/Entity/Access/InterfaceAccessRepository.hpp>
 #include <bot/Entity/Callback/InterfaceCallbackRepository.hpp>
 #include <pqxx/pqxx>
-#include <stdexcept>
 
 namespace Bot::Entity::Repositories {
 
-using Utils::Entity::ApiRequest::InterfaceApiRequestRepository;
-using Message::InterfaceMessageRepository;
-using User::InterfaceUserRepository;
-using Chat::InterfaceChatRepository;
-using Access::InterfaceAccessRepository;
-using Callback::InterfaceCallbackRepository;
-using pqxx::connection;
-using std::shared_ptr;
-using std::unique_ptr;
-using std::runtime_error;
-using std::string;
-using std::string_view;
-using std::move;
+    using Utils::Entity::ApiRequest::InterfaceApiRequestRepository;
+    using Message::InterfaceMessageRepository;
+    using User::InterfaceUserRepository;
+    using Chat::InterfaceChatRepository;
+    using Access::InterfaceAccessRepository;
+    using Callback::InterfaceCallbackRepository;
+    using pqxx::connection;
+    using std::shared_ptr;
+    using std::unique_ptr;
+    using std::string_view;
 
-class Repositories {
+    class Repositories {
 
-    connection _db;
+        connection _db;
 
-    public:
+        public:
 
-    explicit Repositories(string_view conn_str);
+        explicit Repositories(string_view conn_str);
 
-    shared_ptr<InterfaceApiRequestRepository> api_request_repository;
-    shared_ptr<InterfaceMessageRepository> message_repository;
-    shared_ptr<InterfaceCallbackRepository> callback_repository;
-    shared_ptr<InterfaceUserRepository> user_repository;
-    shared_ptr<InterfaceChatRepository> chat_repository;
-    shared_ptr<InterfaceAccessRepository> access_repository;
+        shared_ptr<InterfaceApiRequestRepository> api_request_repository;
+        shared_ptr<InterfaceMessageRepository> message_repository;
+        shared_ptr<InterfaceCallbackRepository> callback_repository;
+        shared_ptr<InterfaceUserRepository> user_repository;
+        shared_ptr<InterfaceChatRepository> chat_repository;
+        shared_ptr<InterfaceAccessRepository> access_repository;
 
-};
+    };
 
-shared_ptr<Repositories> get_repositories(unique_ptr<Repositories> repositories = nullptr);
+    shared_ptr<Repositories> get_repositories(unique_ptr<Repositories> repositories = nullptr);
 
 }

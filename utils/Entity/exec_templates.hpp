@@ -28,7 +28,7 @@ namespace Utils::Entity {
 
         if (add_id) {
             sql_columns = format(" {},", tx.quote_name(ID->name));
-            sql_values = format(" {},", tx.quote_name(entity.id));
+            sql_values = format(" {},", tx.quote(entity.id));
         }
 
         for (const auto& data : entity.to_map(false)) {
@@ -178,7 +178,7 @@ namespace Utils::Entity {
     }
 
     template<typename EntityT>
-    unique_ptr<EntityT> exec_delete(connection& conn, int id, bool is_soft = true) {
+    unique_ptr<EntityT> exec_delete(connection& conn, long long id, bool is_soft = true) {
         nontransaction tx{conn};
         string sql_query;
         if (is_soft) {

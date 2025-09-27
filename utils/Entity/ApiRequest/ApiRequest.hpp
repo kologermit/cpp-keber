@@ -12,12 +12,11 @@ namespace Utils::Entity::ApiRequest {
 
     using std::string;
     using std::string_view;
-    using std::move;
     using std::to_string;
     using std::map;
     using nlohmann::json;
 
-    enum EnumRequestService : short {
+    enum EnumRequestService : int {
         UNKNOWN,
         NGINX,
         BOT,
@@ -27,6 +26,7 @@ namespace Utils::Entity::ApiRequest {
         CRON,
         PROMETHEUS,
     };
+
     constexpr const char* API_REQUEST_SERVICES_TABLE = "\"api_request_services\"";
     const map<int, string> map_enum_to_service_name{
         {UNKNOWN, "UNKNOWN"},
@@ -78,25 +78,20 @@ namespace Utils::Entity::ApiRequest {
             response(json::parse(api_request_row[RESPONSE->name].get<string>().value()))
         {}
 
-        static const char* get_table_name() noexcept;
-        [[nodiscard]] map<const char*, optional<string> > to_map(bool is_full = false) const noexcept;
+        static const char* get_table_name() noexcept {
+            static const char* table_name = "api_requests";
+            return table_name;
+        }
+
+        map<const char *, optional<string> > to_map(bool is_full = false, bool add_id = false) const noexcept {
+            auto result_map = Entity::to_map(is_full, add_id);
+
+            result_map[FROM->name] = to_string(from);
+            result_map[TO->name] = to_string(to);
+            result_map[REQUEST->name] = request.dump();
+            result_map[RESPONSE->name] = response.dump();
+
+            return result_map;
+        }
     };
-
-    inline map<const char *, optional<string> > ApiRequest::to_map(bool is_full) const noexcept {
-        auto result_map = Entity::to_map(is_full);
-
-        result_map[FROM->name] = to_string(from);
-        result_map[TO->name] = to_string(to);
-        result_map[REQUEST->name] = request.dump();
-        result_map[RESPONSE->name] = response.dump();
-
-        return result_map;
-    }
-
-    inline const char* ApiRequest::get_table_name() noexcept {
-        static const char* table_name = "api_requests";
-
-        return table_name;
-    }
-
 }

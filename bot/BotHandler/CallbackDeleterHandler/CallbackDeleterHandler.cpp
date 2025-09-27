@@ -16,8 +16,8 @@ namespace Bot::BotHandler::CallbackDeleterHandler {
 
     ptrMessage CallbackDeleterHandler::handle(shared_ptr<BotHandlerContext> context) {
         get_bot()->delete_message(
-            context->chat->telegram_id,
-            context->message->telegram_id
+            context->chat->id,
+            context->message->id
         );
         return nullptr;
     }
