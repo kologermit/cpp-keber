@@ -10,7 +10,7 @@ $$ LANGUAGE plpgsql;
 
 
 CREATE TABLE IF NOT EXISTS user_screens (
-    id         INT UNIQUE NOT NULL,
+    id         BIGINT UNIQUE NOT NULL,
     name       VARCHAR(255) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS users (
     id          BIGINT UNIQUE NOT NULL,
     name        VARCHAR(255) NOT NULL,
     username    VARCHAR(255) NULL,
-    screen      INT NOT NULL DEFAULT 1 REFERENCES user_screens(id),
+    screen      BIGINT NOT NULL DEFAULT 1 REFERENCES user_screens(id),
     created_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at  TIMESTAMP NULL,
@@ -45,7 +45,7 @@ CREATE TABLE IF NOT EXISTS chats (
     id          BIGINT UNIQUE NOT NULL,
     name        VARCHAR(255) NOT NULL,
     username    VARCHAR(255) NULL,
-    type        INT NOT NULL REFERENCES chat_types(id),
+    type        BIGINT NOT NULL REFERENCES chat_types(id),
     created_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at  TIMESTAMP NULL,
@@ -60,7 +60,7 @@ EXECUTE FUNCTION update_updated_at();
 
 
 CREATE TABLE IF NOT EXISTS message_content_types (
-    id         INT UNIQUE NOT NULL,
+    id         BIGINT UNIQUE NOT NULL,
     name       VARCHAR(255) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
@@ -70,17 +70,18 @@ CREATE TABLE IF NOT EXISTS messages (
     text                VARCHAR(6000) NULL,
     file_download_id    VARCHAR(255) NULL,
     file_name           VARCHAR(255) NULL,
-    file_content_type   INT NOT NULL,
-    chat_id             INT NOT NULL,
-    user_id             INT NOT NULL,
-    reply_id            INT NULL,
+    file_content_type   BIGINT NOT NULL,
+    chat_id             BIGINT NOT NULL,
+    user_id             BIGINT NOT NULL,
+    reply_id            BIGINT NULL,
+    reply_chat_id       BIGINT NULL,
     created_at          TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at          TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at          TIMESTAMP NULL,
     
     CONSTRAINT fk_messages_user FOREIGN KEY (user_id) REFERENCES users(id),
     CONSTRAINT fk_messages_chat FOREIGN KEY (chat_id) REFERENCES chats(id),
-    CONSTRAINT fk_messages_reply FOREIGN KEY (reply_id) REFERENCES messages(id),
+    CONSTRAINT fk_messages_reply FOREIGN KEY (reply_id, reply_chat_id) REFERENCES messages(id, chat_id),
     CONSTRAINT fk_message_content_types FOREIGN KEY (file_content_type) REFERENCES message_content_types(id)
 );
 CREATE INDEX IF NOT EXISTS idx_messages_id_and_chat_id ON messages(id, chat_id);
@@ -94,9 +95,9 @@ EXECUTE FUNCTION update_updated_at();
 CREATE TABLE IF NOT EXISTS callbacks (
     id                  VARCHAR(255) NOT NULL,
     data                VARCHAR(1000) NOT NULL,
-    message_id          INT NOT NULL,
-    user_id             INT NOT NULL,
-    chat_id             INT NOT NULL,
+    message_id          BIGINT NOT NULL,
+    user_id             BIGINT NOT NULL,
+    chat_id             BIGINT NOT NULL,
     created_at          TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at          TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at          TIMESTAMP NULL,
@@ -113,15 +114,15 @@ EXECUTE FUNCTION update_updated_at();
 
 
 CREATE TABLE IF NOT EXISTS api_request_services (
-    id         INT NOT NULL,
+    id         BIGINT NOT NULL,
     name       VARCHAR(255) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 CREATE INDEX IF NOT EXISTS idx_api_request_services ON api_request_services(id);
 CREATE TABLE IF NOT EXISTS api_requests (
     id         SERIAL PRIMARY KEY,
-    "from"     INT NOT NULL REFERENCES api_request_services(id),
-    "to"       INT NOT NULL REFERENCES api_request_services(id),
+    "from"     BIGINT NOT NULL REFERENCES api_request_services(id),
+    "to"       BIGINT NOT NULL REFERENCES api_request_services(id),
     request    JSONB NOT NULL,
     response   JSONB NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -139,15 +140,15 @@ EXECUTE FUNCTION update_updated_at();
 
 
 CREATE TABLE IF NOT EXISTS access_types (
-    id          INT NOT NULL,
+    id          BIGINT NOT NULL,
     name        VARCHAR(255) NOT NULL,
     created_at  TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 CREATE INDEX IF NOT EXISTS idx_access_types ON access_types(id);
 CREATE TABLE IF NOT EXISTS accesses (
     id          SERIAL PRIMARY KEY,
-    user_id     INT NOT NULL REFERENCES users(id),
-    type        INT NOT NULL REFERENCES access_types(id),
+    user_id     BIGINT NOT NULL REFERENCES users(id),
+    type        BIGINT NOT NULL REFERENCES access_types(id),
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP NULL,
