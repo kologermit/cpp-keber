@@ -79,7 +79,7 @@ CREATE TABLE IF NOT EXISTS messages (
     file_content_type   BIGINT NOT NULL,
     chat_id             BIGINT NOT NULL,
     user_id             BIGINT NOT NULL,
-    reply_id            BIGINT NULL,
+    reply_message_id            BIGINT NULL,
     reply_chat_id       BIGINT NULL,
     created_at          TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at          TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -88,7 +88,7 @@ CREATE TABLE IF NOT EXISTS messages (
     UNIQUE(id, chat_id),
     CONSTRAINT fk_messages_user FOREIGN KEY (user_id) REFERENCES users(id),
     CONSTRAINT fk_messages_chat FOREIGN KEY (chat_id) REFERENCES chats(id),
-    CONSTRAINT fk_messages_reply FOREIGN KEY (reply_id, reply_chat_id) REFERENCES messages(id, chat_id),
+    CONSTRAINT fk_messages_reply FOREIGN KEY (reply_message_id, reply_chat_id) REFERENCES messages(id, chat_id),
     CONSTRAINT fk_message_content_types FOREIGN KEY (file_content_type) REFERENCES message_content_types(id)
 );
 CREATE INDEX IF NOT EXISTS idx_messages_id_and_chat_id ON messages(id, chat_id);

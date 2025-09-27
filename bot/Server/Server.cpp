@@ -283,7 +283,6 @@ namespace Bot::Server {
         ));
         shared_ptr<Callback> callback;
         if (tg_callback.has_value()) {
-
             callback = get_repositories()->callback_repository->get_by_telegram_callback(tg_callback.value());
         }
 

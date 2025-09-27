@@ -38,6 +38,7 @@ namespace Bot::Entity::Message {
     const auto CHAT_ID = make_shared<Column>("chat_id");
     const auto USER_ID = make_shared<Column>("user_id");
     const auto REPLY_MESSAGE_ID = make_shared<Column>("reply_message_id");
+    const auto REPLY_CHAT_ID = make_shared<Column>("reply_chat_id");
 
     constexpr const char* MESSAGE_CONTENT_TYPES_TABLE = "message_content_types";
 
@@ -50,6 +51,7 @@ namespace Bot::Entity::Message {
         long long       chat_id;
         long long       user_id;
         long long       reply_message_id;
+        long long       reply_chat_id;
 
         Message(
             string_view text = "",
@@ -59,6 +61,7 @@ namespace Bot::Entity::Message {
             long long chat_id = 0,
             long long user_id = 0,
             long long reply_message_id = 0,
+            long long reply_chat_id = 0,
             long long id = 0,
             datetime created_at = {},
             datetime updated_at = {},
@@ -71,7 +74,8 @@ namespace Bot::Entity::Message {
             file_content_type(file_content_type),
             chat_id(chat_id),
             user_id(user_id),
-            reply_message_id(reply_message_id)
+            reply_message_id(reply_message_id),
+            reply_chat_id(reply_chat_id)
         {}
 
         Message(const row& message_row):
@@ -80,12 +84,17 @@ namespace Bot::Entity::Message {
             file_download_id(message_row[FILE_DOWNLOAD_ID->name].get<string>().value()),
             file_name(message_row[FILE_NAME->name].get<string>().value()),
             file_content_type(static_cast<EnumContentType>(message_row[FILE_CONTENT_TYPE->name].get<int>().value())),
-            chat_id(message_row[CHAT_ID->name].get<int>().value()),
-            user_id(message_row[USER_ID->name].get<int>().value()),
+            chat_id(message_row[CHAT_ID->name].get<long long>().value()),
+            user_id(message_row[USER_ID->name].get<long long>().value()),
             reply_message_id(
                 message_row[REPLY_MESSAGE_ID->name].is_null()
                 ? 0
-                : message_row[REPLY_MESSAGE_ID->name].get<int>().value()
+                : message_row[REPLY_MESSAGE_ID->name].get<long long>().value()
+            ),
+            reply_chat_id(
+                message_row[REPLY_CHAT_ID->name].is_null()
+                ? 0
+                : message_row[REPLY_CHAT_ID->name].get<long long>().value()
             )
         {}
 
@@ -102,6 +111,7 @@ namespace Bot::Entity::Message {
             result[CHAT_ID->name] = to_string(chat_id);
             result[USER_ID->name] = to_string(user_id);
             result[REPLY_MESSAGE_ID->name] = to_string(reply_message_id);
+            result[REPLY_CHAT_ID->name] = to_string(reply_chat_id);
 
             return result;
         }

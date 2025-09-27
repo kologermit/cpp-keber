@@ -81,6 +81,7 @@ namespace Bot::Entity::Message {
             tg_message.chat->id,
             tg_message.from->id,
             (reply_message == nullptr ? 0 : reply_message->id),
+            (reply_message == nullptr ? 0 : reply_message->chat_id),
             tg_message.id
         ), true);
     }
