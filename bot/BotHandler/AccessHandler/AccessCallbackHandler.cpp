@@ -30,7 +30,7 @@ namespace Bot::BotHandler::AccessHandler {
 
     ptrMessage AccessCallbackHandler::handle(shared_ptr<BotHandlerContext> context) {
         auto data = json::parse(context->callback->data);
-        int user_id = data[1];
+        long long user_id = data[1];
         auto access_type = static_cast<EnumAccessType>(data[2]);
         const bool access_value = data[3];
         const string word = data[4];

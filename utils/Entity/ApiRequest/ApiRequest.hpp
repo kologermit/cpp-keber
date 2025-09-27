@@ -58,7 +58,7 @@ namespace Utils::Entity::ApiRequest {
             EnumRequestService to = UNKNOWN,
             json request = {},
             json response = {},
-            int id = 0,
+            long long id = 0,
             datetime created_at = {},
             datetime updated_at = {},
             optional<datetime> deleted_at = nullopt

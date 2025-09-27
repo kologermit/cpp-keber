@@ -50,7 +50,7 @@ namespace Utils::Entity {
         {}
 
         Entity(const row& entity_row):
-            id(entity_row[ID->name].get<int>().value_or(0)),
+            id(entity_row[ID->name].get<long long>().value_or(0)),
             created_at(datetime::parse(DATETIME_FORMAT, entity_row[CREATED_AT->name].get<string>().value())),
             updated_at(datetime::parse(DATETIME_FORMAT, entity_row[UPDATED_AT->name].get<string>().value())) 
         {
