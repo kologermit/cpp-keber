@@ -27,7 +27,7 @@ namespace Utils::Entity::ApiRequest {
         PROMETHEUS,
     };
 
-    constexpr const char* API_REQUEST_SERVICES_TABLE = "\"api_request_services\"";
+    constexpr const char* API_REQUEST_SERVICES_TABLE = "api_request_services";
     const map<int, string> map_enum_to_service_name{
         {UNKNOWN, "UNKNOWN"},
         {NGINX, "NGINX"},
