@@ -111,8 +111,10 @@ namespace Bot::Entity::Message {
             result[FILE_CONTENT_TYPE->name] = to_string(static_cast<int>(file_content_type));
             result[CHAT_ID->name] = to_string(chat_id);
             result[USER_ID->name] = to_string(user_id);
-            result[REPLY_MESSAGE_ID->name] = to_string(reply_message_id);
-            result[REPLY_CHAT_ID->name] = to_string(reply_chat_id);
+            if (reply_message_id != 0) {
+                result[REPLY_MESSAGE_ID->name] = to_string(reply_message_id);
+                result[REPLY_CHAT_ID->name] = to_string(reply_chat_id);
+            }
 
             return result;
         }
