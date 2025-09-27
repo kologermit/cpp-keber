@@ -4,7 +4,7 @@
         "working_dir": "./build/Debug",
         "scripts": [
             "cmake ../.. -B . -DBUILD_BOT=ON -DCMAKE_BUILD_TYPE=Debug",
-            "cmake --build . --target BOT --parallel",
+            "cmake --build . --target BOT --parallel $(($(nproc)-1))",
             "chmod 777 bot/BOT || true"
         ]
     },
@@ -13,7 +13,7 @@
         "working_dir": "./build/Release",
         "scripts": [
             "cmake ../.. -B . -DBUILD_BOT=ON -DNDEBUG=1 -DCMAKE_BUILD_TYPE=Release",
-            "cmake --build . --target BOT --parallel",
+            "cmake --build . --target BOT --parallel $(($(nproc)-1))",
             "chmod 777 bot/BOT || true"
         ]
     },

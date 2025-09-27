@@ -4,7 +4,7 @@
         "working_dir": "./build/Debug",
         "scripts": [
             "cmake ../.. -B . -DBUILD_TEST_CODE=ON -DCMAKE_BUILD_TYPE=Debug",
-            "cmake --build . --target TEST_CODE",
+            "cmake --build . --target TEST_CODE --parallel $(($(nproc)-1))",
             "chmod 777 TEST_CODE || true"
         ]
     },
@@ -13,7 +13,7 @@
         "working_dir": "./build/Release",
         "scripts": [
             "cmake ../.. -B . -DBUILD_TEST_CODE=ON -DCMAKE_BUILD_TYPE=Release",
-            "cmake --build . --target TEST_CODE",
+            "cmake --build . --target TEST_CODE --parallel $(($(nproc)-1))",
             "chmod 777 TEST_CODE || true"
         ]
     },
