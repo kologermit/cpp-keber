@@ -10,6 +10,13 @@ file(GLOB_RECURSE BOT_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
 )
 
+if(UNITY_BUILD AND BOT_SOURCES)
+    message(STATUS "Creating unity build for BOT")
+    create_unity_build_target(BOT BOT_SOURCES "bot_unity.cpp")
+else()
+    message(STATUS "Using normal build for BOT")
+endif()
+
 add_executable(BOT ${BOT_SOURCES})
 
 target_include_directories(BOT PRIVATE
@@ -20,6 +27,7 @@ target_include_directories(BOT PRIVATE
 target_compile_definitions(BOT PRIVATE $<$<CONFIG:Release>:NDEBUG=1>)
 
 target_link_libraries(BOT
+    UTILS_LIB
     openssl::openssl
     libpqxx::pqxx
     libuuid::libuuid

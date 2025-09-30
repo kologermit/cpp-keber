@@ -1,10 +1,14 @@
 import sys; sys.path.extend(['../'*i for i in range(10)]+['.'])
-from config import LOGS_DIR, LISTEN_IP, LISTEN_PORT, PROJECT_NAME
+
+
+from config import LOGS_DIR, LISTEN_IP, LISTEN_PORT, PROJECT_NAME, GOOGLE_PASSWORD, GOOGLE_EMAIL, SELENIUM_PAGE_LOAD_TIME, SELENIUM_HOST, TEST_YOUTUBE_VIDEO
 from utils.Python.logger import init as init_logger, logger, log_err_with_code
+from utils.Python.google_acc import ActiveGoogleAccResult, active_google_acc_by_selenium
 from bottle import route, run, response, request
 from pytubefix import YouTube, Channel, Playlist
 from pytubefix.exceptions import RegexMatchError, VideoUnavailable
 from json import dumps
+import builtins
 
 USE_OAUTH = True
 
@@ -48,6 +52,23 @@ def get_playlist_dict(p: Playlist) -> dict:
         'thumbnail_url': p.thumbnail_url,
     }
 
+original_print = builtins.print
+original_input = builtins.input
+code = ''
+active_google_acc_result: tuple[ActiveGoogleAccResult, Exception] = None
+
+def mock_print(*args, **kwargs):
+    global code
+    original_print(*args, **kwargs)
+    code = args[0].split(' ')[-1]
+    builtins.print = original_print
+
+def mock_input(_):
+    global code, active_google_acc_result
+    active_google_acc_result = active_google_acc_by_selenium(code, GOOGLE_EMAIL, GOOGLE_PASSWORD, SELENIUM_HOST, SELENIUM_PAGE_LOAD_TIME)
+    builtins.input = original_input
+
+
 @route('/video')
 @middleware
 def video():
@@ -81,6 +102,12 @@ def playlist():
 
 def main():
     init_logger(LOGS_DIR)
+    builtins.print = mock_print
+    builtins.input = mock_input
+    v = YouTube(TEST_YOUTUBE_VIDEO, use_oauth=USE_OAUTH)
+    builtins.print = original_print
+    builtins.input = original_input
+    logger.info(f'Test video title: {v.title}')
     logger.info(f'Start service {PROJECT_NAME} on {LISTEN_IP}:{LISTEN_PORT}')
     run(host=LISTEN_IP, port=LISTEN_PORT)
 

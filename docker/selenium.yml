@@ -1,0 +1,22 @@
+services:
+  selenium:
+    extends:
+      file: parents.yml
+      service: parent
+    image: ${SELENIUM_IMAGE}    
+    ports:
+      - ${SELENIUM_EXTERNAL_API_PORT}:4444
+      - ${SELENIUM_EXTERNAL_NO_VNC_PORT}:7900
+    shm_size: 2gb
+    deploy:  
+      resources:
+        limits:
+          cpus: ${SELENIUM_CPUS_LIMIT}
+          memory: ${SELENIUM_MEMORY_LIMIT}
+    environment:
+      - SE_NODE_MAX_SESSIONS=${SE_NODE_MAX_SESSIONS}
+      - SE_NODE_OVERRIDE_MAX_SESSIONS=${SE_NODE_OVERRIDE_MAX_SESSIONS}
+      - SE_NODE_SESSION_TIMEOUT=${SE_NODE_SESSION_TIMEOUT}
+      - VNC_NO_PASSWORD=1
+    volumes:
+      - /dev/shm:/dev/shm

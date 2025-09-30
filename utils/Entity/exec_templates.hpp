@@ -209,6 +209,7 @@ namespace Utils::Entity {
             throw runtime_error(format("exec_update::update_error -- row doesnt deleted in table {}", EntityT::get_table_name()));
         }
 
+        
         return make_unique<EntityT>(res.one_row());
     }
 }

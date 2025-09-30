@@ -2,3 +2,4 @@
 !.gitignore
 !clang-toolchain.cmake
 !gcc-toolchain.cmake
+!unity-build-toolchain.cmake

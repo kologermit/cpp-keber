@@ -2,3 +2,4 @@ pytubefix
 dotenv==0.9.9
 loguru==0.7.3
 bottle==0.13.4
+selenium==4.35.0

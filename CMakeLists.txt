@@ -1,8 +1,15 @@
 cmake_minimum_required(VERSION 3.15)
 
-include(./cmake/clang-toolchain.cmake)
+if(NOT COMPILER)
+    set(COMPILER clang)
+endif()
+
+include(./cmake/${COMPILER}-toolchain.cmake)
+include(./cmake/unity-build-toolchain.cmake)
 
 project(CPP-KEBER CXX)
+
+option(UNITY_BUILD "Enable unity build for faster compilation" ON)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS ON)
