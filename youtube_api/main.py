@@ -64,8 +64,11 @@ def mock_print(*args, **kwargs):
     builtins.print = original_print
 
 def mock_input(_):
-    global code, active_google_acc_result
-    active_google_acc_result = active_google_acc_by_selenium(code, GOOGLE_EMAIL, GOOGLE_PASSWORD, SELENIUM_HOST, SELENIUM_PAGE_LOAD_TIME)
+    # TODO: сделать нормальную проверку на результат входа в аккаунт
+
+    if result := active_google_acc_by_selenium(code, GOOGLE_EMAIL, GOOGLE_PASSWORD, SELENIUM_HOST, SELENIUM_PAGE_LOAD_TIME) != ActiveGoogleAccResult.OK:
+        raise result[1]
+
     builtins.input = original_input
 
 
