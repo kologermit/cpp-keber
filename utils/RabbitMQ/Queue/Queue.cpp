@@ -124,7 +124,7 @@ namespace Utils::RabbitMQ {
     bool Queue::publish_message(const json& data) const {
         const string path = fmt::format("/api/exchanges/{}/amq.default/publish", _vhost);
         json body = {
-            {"properties", {}},
+            {"properties", json::object()},
             {"routing_key", _name},
             {"payload", data.dump()},
             {"payload_encoding", "string"}
