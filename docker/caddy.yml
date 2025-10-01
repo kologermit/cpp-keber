@@ -19,5 +19,3 @@ services:
       - ../Caddyfile:/etc/caddy/Caddyfile:ro
       - shared:/shared:ro
       - caddy-data:/data
-    networks:
-      - default

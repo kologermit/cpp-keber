@@ -87,7 +87,8 @@ namespace Bot::BotHandler::YouTubeHandler::MediaHandler {
                 answer
             ),
             .reply_message_id = context->message->id,
-            .inline_keyboard = make_unique<InlineKeyboard>(context->user->screen == EnumUserScreen::YOUTUBE_VIDEO
+            .inline_keyboard = make_unique<InlineKeyboard>(
+                context->user->screen == EnumUserScreen::YOUTUBE_VIDEO
                 ? InlineButtons{
                     {make_shared<InlineButton>(DELETE_WORD, "", "delete")},
                     {

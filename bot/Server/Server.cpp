@@ -7,6 +7,7 @@
 #include <bot/BotHandler/AccessHandler/AccessCallbackHandler.hpp>
 #include <bot/BotHandler/YouTubeHandler/YouTubeHandler.hpp>
 #include <bot/BotHandler/YouTubeHandler/MediaHandler/YouTubeMediaHandler.hpp>
+#include <bot/BotHandler/YouTubeHandler/MediaHandler/YouTubeMediaCallbackHandler.hpp>
 #include <bot/BotHandler/YouTubeHandler/PlaylistHandler/YouTubePlaylistHandler.hpp>
 #include <bot/BotHandler/CallbackDeleterHandler/CallbackDeleterHandler.hpp>
 #include <bot/HTTPHandler/CheckHealthHandler/CheckHealthHandler.hpp>
@@ -89,6 +90,7 @@ namespace Bot::Server {
         bot_handlers.emplace_back(make_unique<Bot::BotHandler::AccessHandler::AccessHandler>());
         bot_handlers.emplace_back(make_unique<Bot::BotHandler::YouTubeHandler::YouTubeHandler>());
         bot_handlers.emplace_back(make_unique<Bot::BotHandler::YouTubeHandler::MediaHandler::YouTubeMediaHandler>());
+        bot_handlers.emplace_back(make_unique<Bot::BotHandler::YouTubeHandler::MediaHandler::YouTubeMediaCallbackHandler>());
         bot_handlers.emplace_back(make_unique<Bot::BotHandler::YouTubeHandler::PlaylistHandler::YouTubePlaylistHandler>());
         bot_handlers.emplace_back(make_unique<Bot::BotHandler::CallbackDeleterHandler::CallbackDeleterHandler>());
         bot_handlers.emplace_back(make_unique<Bot::BotHandler::NotFoundHandler::NotFoundHandler>());

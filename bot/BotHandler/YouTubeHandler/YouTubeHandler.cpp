@@ -15,7 +15,6 @@ namespace Bot::BotHandler::YouTubeHandler {
     using Entity::Repositories::get_repositories;
     using MediaHandler::YouTubeMediaHandler;
     using PlaylistHandler::YouTubePlaylistHandler;
-    using MenuHandler::MenuHandler;
     using Utils::TGBotApi::Bot::get_bot;
     using Utils::TGBotApi::Types::ReplyKeyboard;
     using Utils::TGBotApi::Types::ReplyButton;
@@ -59,7 +58,7 @@ namespace Bot::BotHandler::YouTubeHandler {
 
     ptrMessage YouTubeHandler::handle(shared_ptr<BotHandlerContext> context) {
         if (context->message->text == BACK_WORD) {
-            return MenuHandler::to_menu(context);
+            return MenuHandler::MenuHandler::to_menu(context);
         }
 
         if (context->message->text == VIDEO_WORD || context->message->text == AUDIO_WORD) {

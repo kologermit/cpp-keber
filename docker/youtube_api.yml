@@ -25,5 +25,3 @@ services:
       - youtube_api_logs:/logs
       - ../utils/Python:/utils/Python:ro
       - ../youtube_api:/app:ro
-    networks:
-      - default

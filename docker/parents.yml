@@ -24,6 +24,8 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+    networks:
+      - default
   custom_service:
     extends:
       file: ./parents.yml

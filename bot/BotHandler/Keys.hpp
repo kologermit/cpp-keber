@@ -39,6 +39,8 @@ namespace Bot::BotHandler {
     constexpr const char* SEND_MEDIA_URL_PHRASE = "<b>Отправь одну или несколько ссылок {}, чтобы поставить на скачивание\n\nОдна строка - одна ссылка</b>";
     constexpr const char* MEDIA_NOT_FOUND_PHRASE = "<b>{} не найдено (<code>{}</code>)!</b>";
     constexpr const char* DOWNLOAD_MEDIA_PHRASE = "<b>Добавить {} ({}) в очередь скачивания?</b>\n{}";
+    constexpr const char* ADD_TO_QUEUE_PHRASE = "<b>Добавлено в очередь</b>";
+    constexpr const char* FAILED_TO_ADD_TO_QUEUE_PHRASE = "<b>Не получилось добавить в очередь</b>";
 
     constexpr const char* USER_TEMPLATE = "<b>Имя:</b> <code>{}</code>\n<b>ID:</b> <code>{}</code>\n<b>Тег:</b> <code>{}</code>";
     constexpr const char* MEDIA_TEMPLATE = "<b>{} | {}</b>\n<code>{}</code>";

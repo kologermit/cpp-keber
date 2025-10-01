@@ -10,8 +10,6 @@ services:
     build: ..
     ports:
       - ${BOT_EXTERNAL_PORT:-127.0.0.1:8080}:8080
-    networks:
-      - default
     volumes:
       - bot_logs:/logs/bot:rw
       - ../build/${BOT_BUILD}/bot/BOT:/app:ro
@@ -25,6 +23,12 @@ services:
       - DB_PORT=5432
       - DB_USER=${BOT_USER}
       - DB_PASSWORD=${BOT_PASSWORD}
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=15672
+      - RABBITMQ_USER=${RABBITMQ_DEFAULT_USER}
+      - RABBITMQ_PASS=${RABBITMQ_DEFAULT_PASS}
+      - RABBITMQ_VHOST=${RABBIT_MQ_VHOST}
+      - DOWNLOADER_QUEUE_NAME=downloader
       - LISTEN_IP=0.0.0.0
       - LISTEN_PORT=8080
       - YOUTUBE_API_URL=http://youtube_api:8080

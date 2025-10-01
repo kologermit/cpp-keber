@@ -87,6 +87,30 @@ namespace Utils::Config {
         return _db_conn_url;
     }
 
+    const string& Config::get_rabbit_mq_host() const noexcept {
+        return _rabbit_mq_host;
+    }
+
+    int Config::get_rabbit_mq_port() const noexcept {
+        return _rabbit_mq_port;
+    }
+
+    const string& Config::get_rabbit_mq_vhost() const noexcept {
+        return _rabbit_mq_vhost;
+    }
+
+    const string& Config::get_rabbit_mq_user() const noexcept {
+        return _rabbit_mq_user;
+    }
+
+    const string& Config::get_rabbit_mq_password() const noexcept {
+        return _rabbit_mq_password;
+    }
+
+    const string& Config::get_downloader_queue_name() const noexcept {
+        return _downloader_queue_name;
+    }
+
     const string& Config::get_youtube_api_url() const noexcept {
         return _youtube_api_url;
     }
@@ -158,7 +182,7 @@ namespace Utils::Config {
             return;
         }
 
-        string admins_str, db_port_str, listen_port_str;
+        string admins_str, db_port_str, listen_port_str, rabbit_mq_port_str;
 
         for (auto& config : vector<ConfigParseParam>{
             {"BOT_TOKEN", _bot_token},
@@ -172,6 +196,12 @@ namespace Utils::Config {
             {"DB_PORT", db_port_str, false, false},
             {"DB_USER", _db_user, false, false},
             {"DB_PASSWORD", _db_password},
+            {"RABBIT_MQ_HOST", _rabbit_mq_host},
+            {"RABBIT_MQ_PORT", rabbit_mq_port_str, false, false},
+            {"RABBIT_MQ_VHOST", _rabbit_mq_vhost},
+            {"RABBIT_MQ_USER", _rabbit_mq_user},
+            {"RABBIT_MQ_PASSWORD", _rabbit_mq_password},
+            {"DOWNLOADER_QUEUE_NAME", _downloader_queue_name},
             {"YOUTUBE_API_URL", _youtube_api_url},
             {"TASK_SERVICE_URL", _task_service_url},
             {"TMP_PATH", _tmp_path},
@@ -202,18 +232,10 @@ namespace Utils::Config {
             }
         }
 
-        _db_conn_url = format(
-            "host={} port={} dbname={} user={} password={}",
-            _db_host,
-            _db_port,
-            _db_name,
-            _db_user,
-            _db_password
-        );
-
         for (auto& config : map<string, pair<int&, string> >{
             {"LISTEN_PORT", {_listen_port, listen_port_str} },
-            {"DB_PORT", {_db_port, db_port_str}}
+            {"DB_PORT", {_db_port, db_port_str}},
+            {"RABBIT_MQ_PORT", {_rabbit_mq_port, rabbit_mq_port_str}},
         }) {
             string param = config.first;
             int& config_value = config.second.first;
@@ -232,6 +254,15 @@ namespace Utils::Config {
         } catch (const json::type_error&) {
             throw invalid_argument("Failed to parse BOT_ADMINS: invalid type (" + admins_str + ")");
         }
+
+        _db_conn_url = format(
+            "host={} port={} dbname={} user={} password={}",
+            _db_host,
+            _db_port,
+            _db_name,
+            _db_user,
+            _db_password
+        );
 
         if (_admins.empty()) {
             throw invalid_argument("Failed to parse BOT_ADMINS: empty array (" + admins_str + ")");

@@ -23,5 +23,3 @@ services:
       - READER_PASSWORD=${READER_PASSWORD}
     ports:
       - ${POSTGRES_EXTERNAL_PORT}:5432
-    networks:
-      - default
