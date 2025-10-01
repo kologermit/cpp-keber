@@ -196,11 +196,11 @@ namespace Utils::Config {
             {"DB_PORT", db_port_str, false, false},
             {"DB_USER", _db_user, false, false},
             {"DB_PASSWORD", _db_password},
-            {"RABBIT_MQ_HOST", _rabbit_mq_host},
-            {"RABBIT_MQ_PORT", rabbit_mq_port_str, false, false},
-            {"RABBIT_MQ_VHOST", _rabbit_mq_vhost},
-            {"RABBIT_MQ_USER", _rabbit_mq_user},
-            {"RABBIT_MQ_PASSWORD", _rabbit_mq_password},
+            {"RABBITMQ_HOST", _rabbit_mq_host},
+            {"RABBITMQ_PORT", rabbit_mq_port_str, false, false},
+            {"RABBITMQ_VHOST", _rabbit_mq_vhost},
+            {"RABBITMQ_USER", _rabbit_mq_user},
+            {"RABBITMQ_PASSWORD", _rabbit_mq_password},
             {"DOWNLOADER_QUEUE_NAME", _downloader_queue_name},
             {"YOUTUBE_API_URL", _youtube_api_url},
             {"TASK_SERVICE_URL", _task_service_url},
@@ -235,7 +235,7 @@ namespace Utils::Config {
         for (auto& config : map<string, pair<int&, string> >{
             {"LISTEN_PORT", {_listen_port, listen_port_str} },
             {"DB_PORT", {_db_port, db_port_str}},
-            {"RABBIT_MQ_PORT", {_rabbit_mq_port, rabbit_mq_port_str}},
+            {"RABBITMQ_PORT", {_rabbit_mq_port, rabbit_mq_port_str}},
         }) {
             string param = config.first;
             int& config_value = config.second.first;
