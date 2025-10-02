@@ -56,7 +56,7 @@ services:
   python_service:
     extends:
       file: ./parents.yml
-      services: with_postgres_rmq_connect_service
+      service: with_postgres_rmq_connect_service
     image: ${PYTHON_IMAGE}
     working_dir: /
     entrypoint: sh /app/entrypoint.sh
