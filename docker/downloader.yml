@@ -1,0 +1,18 @@
+volumes:
+  downloader_venv:
+  downloader_logs:
+  downloader_tmp:
+
+services:
+  downloader:
+    extends:
+      file: ./parents.yml
+      service: python_service
+    environment:
+      - TMP_DIR=/temp
+      - BOT_URL=http://bot:8080
+    volumes:
+      - downloader_venv:/venv
+      - downloader_logs:/logs
+      - downloader_tmp:/temp
+      - ../downloader:/app:ro

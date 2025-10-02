@@ -1,5 +1,3 @@
-import sys; sys.path.extend(['../'*i for i in range(10)]+['.'])
-
 from config import LOGS_DIR, LISTEN_IP, LISTEN_PORT, PROJECT_NAME, GOOGLE_PASSWORD, GOOGLE_EMAIL, SELENIUM_PAGE_LOAD_TIME, SELENIUM_HOST, TEST_YOUTUBE_VIDEO
 from utils.Python.logger import init as init_logger, logger, log_err_with_code
 from utils.Python.google_email_activator import GoogleEmailActivator

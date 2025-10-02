@@ -6,6 +6,7 @@
 !Dockerfile
 !.env.example
 !.gitignore
+!downloader
 !Makefile
 !manager.py
 !postgres

@@ -26,12 +26,41 @@ services:
         max-file: "3"
     networks:
       - default
-  custom_service:
+
+  with_postgres_rmq_connect_service:
     extends:
       file: ./parents.yml
       service: parent
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=${POSTGRES_DB}
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=15672
+      - RABBITMQ_USER=${RABBITMQ_DEFAULT_USER}
+      - RABBITMQ_PASS=${RABBITMQ_DEFAULT_PASS}
+      - RABBITMQ_VHOST=${RABBITMQ_VHOST}
+      - DOWNLOADER_QUEUE_NAME=downloader
+      - MERGER_QUEUE_NAME=merger
+      
+  custom_service:
+    extends:
+      file: ./parents.yml
+      service: with_postgres_rmq_connect_service
     build:
       context: ..
       args:
         - RUNNER_IMAGE=${RUNNER_IMAGE}
     user: runner
+
+  python_service:
+    extends:
+      file: ./parents.yml
+      services: with_postgres_rmq_connect_service
+    image: ${PYTHON_IMAGE}
+    working_dir: /
+    entrypoint: sh /app/entrypoint.sh
+    volumes:
+      - ../utils/Python:/utils/Python:ro
+    environment:
+      - LOGS_DIR=/logs

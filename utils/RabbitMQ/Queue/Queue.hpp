@@ -28,7 +28,7 @@ namespace Utils::RabbitMQ {
             time_t timeout = 30,
             bool declare = true,
             bool auto_delete = false, 
-            bool durable = false, 
+            bool durable = true, 
             const json& arguments = json::object()
         );
 

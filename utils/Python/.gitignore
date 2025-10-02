@@ -1,5 +1,6 @@
 *
 !.gitignore
 !parse_config.py
+!config.py
 !logger.py
 !google_email_activator.py
