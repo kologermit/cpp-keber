@@ -1,4 +1,15 @@
-from config import LOGS_DIR, LISTEN_IP, LISTEN_PORT, PROJECT_NAME, GOOGLE_PASSWORD, GOOGLE_EMAIL, SELENIUM_PAGE_LOAD_TIME, SELENIUM_HOST, TEST_YOUTUBE_VIDEO
+from config import (
+    LOGS_DIR, 
+    LISTEN_IP, 
+    LISTEN_PORT, 
+    PROJECT_NAME, 
+    GOOGLE_PASSWORD, 
+    GOOGLE_EMAIL, 
+    SELENIUM_PAGE_LOAD_TIME, 
+    SELENIUM_HOST, 
+    TEST_YOUTUBE_VIDEO,
+    USE_OAUTH,
+)
 from utils.Python.logger import init as init_logger, logger, log_err_with_code
 from utils.Python.pythubefix_settings import init as init_pytubefix
 from bottle import route, run, response, request
@@ -88,6 +99,7 @@ def main():
         SELENIUM_HOST, 
         SELENIUM_PAGE_LOAD_TIME,
         TEST_YOUTUBE_VIDEO,
+        USE_OAUTH
     )
     logger.info({'event': 'START_SERVICE', 'service': {PROJECT_NAME}, 'listen': f'{LISTEN_IP}:{LISTEN_PORT}'})
     run(host=LISTEN_IP, port=LISTEN_PORT)

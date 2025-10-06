@@ -125,7 +125,7 @@ def init(
     test_youtube_video,
     use_oauth: bool = True
 ) -> str:
-    if use_oauth:
+    if use_oauth == True:
         pytubefix.innertube._default_oauth_verifier = GoogleEmailActivator(
             google_email, 
             google_password, 
@@ -133,5 +133,5 @@ def init(
             selenium_page_load_time
         )
     v = YouTube(test_youtube_video, use_oauth=use_oauth)
-    {'event': 'TEST_GET_VIDEO_TITLE', 'url': test_youtube_video,'title': f'Test video title: {v.title}'}
+    logger.info({'event': 'TEST_GET_VIDEO_TITLE', 'url': test_youtube_video, 'title': v.title, 'use_oauth': use_oauth})
     return v.title

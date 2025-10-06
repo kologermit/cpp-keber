@@ -1,5 +1,8 @@
+# Встроенные модули
 from asyncio import Future, run
 from asyncio.exceptions import CancelledError
+
+# Внутренние модули
 from config import (
     PROJECT_NAME,
     LISTEN_IP,
@@ -20,16 +23,16 @@ from config import (
     DB_PORT,
     DB_NAME,
     DB_USER,
-    DB_PASSWORD
+    DB_PASSWORD,
+    USE_OAUTH,
 )
 from utils.Python.logger import init as init_logger, log_async_exception
 from utils.Python.db import init as init_db
 from utils.Python.pythubefix_settings import init as init_pytubefix
+
+# Внешние модули
 from loguru import logger
 from aio_pika import connect, IncomingMessage, Connection
-import pytubefix
-
-USE_OAUTH = True
 
 @log_async_exception
 async def handle_message(message: IncomingMessage):
@@ -86,7 +89,8 @@ async def main():
         GOOGLE_PASSWORD,
         SELENIUM_HOST,
         SELENIUM_PAGE_LOAD_TIME,
-        TEST_YOUTUBE_VIDEO
+        TEST_YOUTUBE_VIDEO,
+        USE_OAUTH
     )
     logger.info({'event': 'START_SERVICE', 'service': {PROJECT_NAME}, 'listen': f'{LISTEN_IP}:{LISTEN_PORT}'})
     await waiting_work()

@@ -14,6 +14,7 @@ from utils.Python.config import (
     DB_NAME, 
     DB_USER, 
     DB_PASSWORD, 
+    USE_OAUTH,
     default_config
 )
 from utils.Python.parse_config import (
@@ -38,7 +39,8 @@ for key in [
     DB_PORT, 
     DB_NAME, 
     DB_USER, 
-    DB_PASSWORD
+    DB_PASSWORD,
+    USE_OAUTH,
 ]:
     default_config[key][required] = True
 

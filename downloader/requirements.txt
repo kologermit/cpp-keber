@@ -1,2 +1,7 @@
 aio-pika==9.5.7
 pytubefix==9.5.1
+loguru==0.7.3
+dotenv==0.9.9
+asyncpg==0.30.0
+selenium==4.35.0
+tortoise-orm==0.25.1

@@ -16,6 +16,7 @@ services:
       - TEST_YOUTUBE_VIDEO=${YOUTUBE_API_TEST_YOUTUBE_VIDEO}
       - GOOGLE_EMAIL=${GOOGLE_EMAIL}
       - GOOGLE_PASSWORD=${GOOGLE_PASSWORD}
+      - USE_OAUTH=${USE_OAUTH}
     volumes:
       - youtube_api_venv:/venv
       - youtube_api_logs:/logs

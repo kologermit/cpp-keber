@@ -29,6 +29,7 @@ GOOGLE_PASSWORD = 'GOOGLE_PASSWORD'
 SELENIUM_HOST = 'SELENIUM_HOST'
 SELENIUM_PAGE_LOAD_TIME: int = 'SELENIUM_PAGE_LOAD_TIME'
 TEST_YOUTUBE_VIDEO = 'TEST_YOUTUBE_VIDEO'
+USE_OAUTH: bool = 'USE_OAUTH'
 
 default_config = {
     LOGS_DIR: {
@@ -121,6 +122,11 @@ default_config = {
     TEST_YOUTUBE_VIDEO: {
         summary: 'Видео для проверки доступа к Ютубу. По умолчанию https://www.youtube.com/watch?v=jiT2Mak9AzI',
         default: 'https://www.youtube.com/watch?v=jiT2Mak9AzI'
+    },
+    USE_OAUTH: {
+        summary: 'Используется ли авторизация по гугл-почте. По умолчанию false',
+        json: True,
+        default: 'false'
     }
 }
 

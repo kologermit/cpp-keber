@@ -21,6 +21,7 @@ from utils.Python.config import (
     SELENIUM_PAGE_LOAD_TIME,
     SELENIUM_HOST,
     LOGS_DIR,
+    USE_OAUTH,
 )
 from utils.Python.parse_config import (
     parse_config_to_exec,
@@ -50,7 +51,8 @@ for key in [
     GOOGLE_PASSWORD,
     SELENIUM_PAGE_LOAD_TIME,
     SELENIUM_HOST,
-    LOGS_DIR
+    LOGS_DIR,
+    USE_OAUTH,
 ]:
     default_config[key][required] = True
 
