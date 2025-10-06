@@ -13,7 +13,7 @@ struct InlineKeyboard {
 
     string get_json() const noexcept;
 
-    InlineKeyboard(vector<vector<shared_ptr<InlineButton> > >&& buttons);
+    InlineKeyboard(vector<vector<shared_ptr<InlineButton> > > buttons);
 
     vector<vector<shared_ptr<InlineButton> > > buttons;
 

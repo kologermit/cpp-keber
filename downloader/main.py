@@ -56,21 +56,19 @@ async def setup_consumer(connection: Connection):
     tag = await queue.consume(handle_message)
     logger.info({'event': 'NEW_CONSUMER', 'tag': tag})
     return tag
-
-@log_async_exception
 async def waiting_work():
-    while True:
-        connection = None
-        try:
-            connection = await create_rabbitmq_connection()
-            await setup_consumer(connection)
-            await Future()
-        except (KeyboardInterrupt, CancelledError):
-            logger.info({'event': 'GRACEFUL_ENGING'})
-            if connection:
-                logger.info({'event': 'CLOSING_CONNECTION'})
-                await connection.close()
-                return
+    connection = None
+    try:
+        connection = await create_rabbitmq_connection()
+        await setup_consumer(connection)
+        logger.info({'event': 'START_SERVICE', 'service': {PROJECT_NAME}, 'listen': f'{LISTEN_IP}:{LISTEN_PORT}'})
+        await Future()
+    except (KeyboardInterrupt, CancelledError):
+        logger.info({'event': 'GRACEFUL_STOP'})
+        if connection:
+            logger.info({'event': 'CLOSING_CONNECTION'})
+            await connection.close()
+            return
 
 async def main():
     init_logger(
@@ -92,7 +90,6 @@ async def main():
         TEST_YOUTUBE_VIDEO,
         USE_OAUTH
     )
-    logger.info({'event': 'START_SERVICE', 'service': {PROJECT_NAME}, 'listen': f'{LISTEN_IP}:{LISTEN_PORT}'})
     await waiting_work()
     
 if __name__ == "__main__":

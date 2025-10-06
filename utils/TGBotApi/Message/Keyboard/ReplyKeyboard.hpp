@@ -13,7 +13,7 @@ struct ReplyKeyboard {
 
     string get_json() const noexcept;
 
-    ReplyKeyboard(vector<vector<shared_ptr<ReplyButton> > >&& buttons = {});
+    ReplyKeyboard(vector<vector<shared_ptr<ReplyButton> > > buttons = {});
 
     vector<vector<shared_ptr<ReplyButton> > > buttons;
 

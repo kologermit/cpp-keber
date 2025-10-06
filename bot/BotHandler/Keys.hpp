@@ -24,6 +24,7 @@ namespace Bot::BotHandler {
     constexpr const char* AUDIO_WORD = "🔊Аудио";
     constexpr const char* VIDEO_WORD = "🎬Видео";
     constexpr const char* AUDIO_PLAYLIST_WORD = "▶️🔊Аудио-Плейлист";
+    constexpr const char* SETTINGS_TABLE_WORD = "⚙️Таблица настроек";
     constexpr const char* VIDEO_PLAYLIST_WORD = "▶️🎬Видео-Плейлист";
 
     constexpr const char* NOT_ANDERSTAND_PHRASE = "Не понял!";

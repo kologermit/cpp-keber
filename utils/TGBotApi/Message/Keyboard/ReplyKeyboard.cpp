@@ -12,7 +12,7 @@ using JSONKeys::RESIZE_KEYBOARD_KEY;
 using JSONKeys::REMOVE_KEYBOARD_KEY;
 using JSONKeys::ONE_TIME_KEYBOARD_KEY;
 
-ReplyKeyboard::ReplyKeyboard(vector<vector<shared_ptr<ReplyButton> > >&& buttons): 
+ReplyKeyboard::ReplyKeyboard(vector<vector<shared_ptr<ReplyButton> > > buttons): 
 buttons(buttons)
 {}
 

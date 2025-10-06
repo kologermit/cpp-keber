@@ -6,7 +6,7 @@ namespace Utils::TGBotApi::Message::Keyboard {
 using Utils::TGBotApi::JSONKeys::INLINE_KEYBOARD_KEY;
 using Utils::TGBotApi::JSONKeys::RESIZE_KEYBOARD_KEY;
 
-InlineKeyboard::InlineKeyboard(vector<vector<shared_ptr<InlineButton> > >&& buttons):
+InlineKeyboard::InlineKeyboard(vector<vector<shared_ptr<InlineButton> > > buttons):
 buttons(buttons)
 {}
 

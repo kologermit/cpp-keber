@@ -11,6 +11,10 @@ namespace Bot::BotHandler::YouTubeHandler::MediaHandler {
         bool check(shared_ptr<BotHandlerContext> context) override;
         ptrMessage handle(shared_ptr<BotHandlerContext> context) override;
 
+        ptrMessage handle_urls(shared_ptr<BotHandlerContext> context);
+        ptrMessage send_audio_settings(shared_ptr<BotHandlerContext> context);
+        ptrMessage handle_audio_settings(shared_ptr<BotHandlerContext> context);
+
         static ptrMessage to_youtube_media(shared_ptr<BotHandlerContext> context, bool is_video);
     };
 }

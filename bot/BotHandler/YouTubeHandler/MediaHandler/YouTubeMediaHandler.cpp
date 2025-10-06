@@ -12,6 +12,7 @@ namespace Bot::BotHandler::YouTubeHandler::MediaHandler {
     using Bot::Entity::Repositories::get_repositories;
     using Bot::Entity::User::User;
     using Bot::Entity::User::EnumUserScreen;
+    using Bot::Entity::YouTubeAudioSetting::YouTubeAudioSetting;
     using Utils::TGBotApi::Bot::get_bot;
     using Utils::TGBotApi::Types::ReplyKeyboard;
     using Utils::TGBotApi::Types::ReplyButtons;
@@ -22,19 +23,26 @@ namespace Bot::BotHandler::YouTubeHandler::MediaHandler {
     using Utils::YouTubeApi::get_youtube_api;
     using fmt::format;
     using nlohmann::json;
+    using std::vector;
+    using std::unique_ptr;
     using std::make_unique;
     using std::make_shared;
     using std::istringstream;
     using std::getline;
 
     ptrMessage YouTubeMediaHandler::to_youtube_media(shared_ptr<BotHandlerContext> context, bool is_video) {
+        static const string VIDEO_TEXT = format(SEND_MEDIA_URL_PHRASE, VIDEO_WORD);
+        static const string AUDIO_TEXT = format(SEND_MEDIA_URL_PHRASE, AUDIO_WORD);
+        static const ReplyButtons VIDEO_KEYBOARD{{make_shared<ReplyButton>(BACK_WORD)}};
+        static const ReplyButtons AUDIO_KEYBOARD{{make_shared<ReplyButton>(SETTINGS_TABLE_WORD), make_shared<ReplyButton>(BACK_WORD)}};
+
         context->user->screen = (is_video ? EnumUserScreen::YOUTUBE_VIDEO : EnumUserScreen::YOUTUBE_AUDIO);
         get_repositories()->user->update(*context->user);
         return get_bot()->send_message( {
             .chat_id = context->chat->id,
-            .text = format(SEND_MEDIA_URL_PHRASE, (is_video ? VIDEO_WORD : AUDIO_WORD)),
+            .text = (is_video ? VIDEO_TEXT : AUDIO_TEXT),
             .reply_message_id = context->message->id,
-            .reply_keyboard = make_unique<ReplyKeyboard>(ReplyButtons{{make_shared<ReplyButton>(BACK_WORD)}})
+            .reply_keyboard = make_unique<ReplyKeyboard>(is_video ? VIDEO_KEYBOARD : AUDIO_KEYBOARD)
         });
     }
 
@@ -53,7 +61,32 @@ namespace Bot::BotHandler::YouTubeHandler::MediaHandler {
         if (context->message->text == BACK_WORD) {
             return YouTubeHandler::to_youtube(context);
         }
+        if (context->user->screen == EnumUserScreen::YOUTUBE_AUDIO && context->message->text == SETTINGS_TABLE_WORD) {
+            return send_audio_settings(context);
+        }
+        if (context->user->screen == EnumUserScreen::YOUTUBE_AUDIO && context->message->file_name.ends_with(".xlsx")) {
+            return handle_audio_settings(context);
+        }
+        return handle_urls(context);
+    }
 
+    ptrMessage YouTubeMediaHandler::send_audio_settings(shared_ptr<BotHandlerContext> context) {
+        auto settings = get_repositories()->youtube_audio_setting->get_by_user_id(context->user->id);
+
+        // TODO: почитать докумантацию по libxlsxwriter и написать отправку таблицы с настройками
+
+        return nullptr;
+    }
+
+    ptrMessage YouTubeMediaHandler::handle_audio_settings(shared_ptr<BotHandlerContext> context) {
+        // TODO: почитать докумантацию по libxlsxwriter и написать обработку таблицы с настройками
+        vector<unique_ptr<YouTubeAudioSetting> > settings;
+        settings.emplace_back(make_unique<YouTubeAudioSetting>(context->user->id, "123", "123", "123"));
+        get_repositories()->youtube_audio_setting->update_by_user_id(context->user->id, std::move(settings));
+        return nullptr;
+    }
+
+    ptrMessage YouTubeMediaHandler::handle_urls(shared_ptr<BotHandlerContext> context) {
         const char* MEDIA_TYPE_WORD = (
             context->user->screen == EnumUserScreen::YOUTUBE_VIDEO
             ? VIDEO_WORD
