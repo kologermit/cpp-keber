@@ -26,7 +26,7 @@ namespace Bot::BotHandler::AccessHandler {
     using Entity::User::SCREEN;
     using Entity::User::User;
     using Entity::Repositories::get_repositories;
-    using MenuHandler::MenuHandler;
+    using Bot::BotHandler::MenuHandler::MenuHandler;
     using Utils::TGBotApi::Bot::get_bot;
     using Utils::TGBotApi::Types::ReplyKeyboard;
     using Utils::TGBotApi::Types::ReplyButtons;
@@ -60,9 +60,9 @@ namespace Bot::BotHandler::AccessHandler {
         }
         unique_ptr<User> find_user = nullptr;
         if (context->message->text.starts_with("@")) {
-            find_user = get_repositories()->user_repository->get_by_username(context->message->text.substr(1));
+            find_user = get_repositories()->user->get_by_username(context->message->text.substr(1));
         } else {
-            find_user = get_repositories()->user_repository->get_by_id(stoi(context->message->text));
+            find_user = get_repositories()->user->get_by_id(stoi(context->message->text));
         }
         if (find_user == nullptr) {
             return get_bot()->send_message( {
@@ -71,7 +71,7 @@ namespace Bot::BotHandler::AccessHandler {
                 .reply_message_id = context->message->id,
             });
         }
-        auto find_user_access = get_repositories()->access_repository->get_by_user_id(find_user->id);
+        auto find_user_access = get_repositories()->access->get_by_user_id(find_user->id);
         return send_message_with_access_keyboard(context, *find_user, find_user_access);
     }
 
@@ -133,7 +133,7 @@ namespace Bot::BotHandler::AccessHandler {
         }
 
         context->user->screen = ACCESS;
-        get_repositories()->user_repository->update(*context->user);
+        get_repositories()->user->update(*context->user);
 
         return get_bot()->send_message({
             .chat_id = context->chat->id,

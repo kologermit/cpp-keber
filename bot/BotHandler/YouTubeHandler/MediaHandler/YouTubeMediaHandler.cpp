@@ -29,7 +29,7 @@ namespace Bot::BotHandler::YouTubeHandler::MediaHandler {
 
     ptrMessage YouTubeMediaHandler::to_youtube_media(shared_ptr<BotHandlerContext> context, bool is_video) {
         context->user->screen = (is_video ? EnumUserScreen::YOUTUBE_VIDEO : EnumUserScreen::YOUTUBE_AUDIO);
-        get_repositories()->user_repository->update(*context->user);
+        get_repositories()->user->update(*context->user);
         return get_bot()->send_message( {
             .chat_id = context->chat->id,
             .text = format(SEND_MEDIA_URL_PHRASE, (is_video ? VIDEO_WORD : AUDIO_WORD)),

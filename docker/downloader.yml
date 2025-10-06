@@ -11,6 +11,24 @@ services:
     environment:
       - TMP_DIR=/temp
       - BOT_URL=http://bot:8080
+      - GOOGLE_EMAIL=${GOOGLE_EMAIL}
+      - GOOGLE_PASSWORD=${GOOGLE_PASSWORD}
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=${POSTGRES_DB}
+      - DB_USER=${DOWNLOADER_USER}
+      - DB_PASSWORD=${DOWNLOADER_PASSWORD}
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=15672
+      - RABBITMQ_USER=${RABBITMQ_DEFAULT_USER}
+      - RABBITMQ_PASS=${RABBITMQ_DEFAULT_PASS}
+      - RABBITMQ_VHOST=${RABBITMQ_VHOST}
+      - DOWNLOADER_QUEUE_NAME=${DOWNLOADER_QUEUE_NAME}
+      - SELENIUM_HOST=http://selenium:4444/wd/hub
+      - SELENIUM_PAGE_LOAD_TIME=${YOUTUBE_API_SELENIUM_PAGE_LOAD_TIME}
+      - TEST_YOUTUBE_VIDEO=${YOUTUBE_API_TEST_YOUTUBE_VIDEO}
+      - GOOGLE_EMAIL=${GOOGLE_EMAIL}
+      - GOOGLE_PASSWORD=${GOOGLE_PASSWORD}
     volumes:
       - downloader_venv:/venv
       - downloader_logs:/logs

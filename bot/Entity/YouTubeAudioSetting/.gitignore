@@ -1,0 +1,6 @@
+*
+!.gitignore
+!YouTubeAudioSetting.hpp
+!InterfaceYouTubeAudioSettingRepository.hpp
+!YouTubeAudioSettingRepository.hpp
+!YouTubeAudioSettingRepository.cpp

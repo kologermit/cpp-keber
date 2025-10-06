@@ -4,6 +4,7 @@
 #include <bot/Entity/Chat/ChatRepository.hpp>
 #include <bot/Entity/Access/AccessRepository.hpp>
 #include <bot/Entity/Callback/CallbackRepository.hpp>
+#include <bot/Entity/YouTubeAudioSetting/YouTubeAudioSettingRepository.hpp>
 #include <utils/Entity/ApiRequest/ApiRequestRepository.hpp>
 
 namespace Bot::Entity::Repositories {
@@ -15,15 +16,17 @@ namespace Bot::Entity::Repositories {
     using Bot::Entity::Chat::ChatRepository;
     using Bot::Entity::Access::AccessRepository;
     using Bot::Entity::Callback::CallbackRepository;
+    using Bot::Entity::YouTubeAudioSetting::YouTubeAudioSettingRepository;
 
     Repositories::Repositories(string_view conn_str):
         _db(conn_str.data()),
-        api_request_repository(make_shared<ApiRequestRepository>(_db)),
-        message_repository(make_shared<MessageRepository>(_db)),
-        callback_repository(make_shared<CallbackRepository>(_db)),
-        user_repository(make_shared<UserRepository>(_db)),
-        chat_repository(make_shared<ChatRepository>(_db)),
-        access_repository(make_shared<AccessRepository>(_db))
+        api_request(make_shared<ApiRequestRepository>(_db)),
+        message(make_shared<MessageRepository>(_db)),
+        callback(make_shared<CallbackRepository>(_db)),
+        user(make_shared<UserRepository>(_db)),
+        chat(make_shared<ChatRepository>(_db)),
+        access(make_shared<AccessRepository>(_db)),
+        youtube_audio_setting(make_shared<YouTubeAudioSettingRepository>(_db))
     {}
 
     shared_ptr<Repositories> get_repositories(unique_ptr<Repositories> repositories) {

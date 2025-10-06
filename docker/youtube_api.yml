@@ -14,8 +14,8 @@ services:
       - SELENIUM_HOST=http://selenium:4444/wd/hub
       - SELENIUM_PAGE_LOAD_TIME=${YOUTUBE_API_SELENIUM_PAGE_LOAD_TIME}
       - TEST_YOUTUBE_VIDEO=${YOUTUBE_API_TEST_YOUTUBE_VIDEO}
-      - GOOGLE_EMAIL=${YOUTUBE_API_GOOGLE_EMAIL}
-      - GOOGLE_PASSWORD=${YOUTUBE_API_GOOGLE_PASSWORD}
+      - GOOGLE_EMAIL=${GOOGLE_EMAIL}
+      - GOOGLE_PASSWORD=${GOOGLE_PASSWORD}
     volumes:
       - youtube_api_venv:/venv
       - youtube_api_logs:/logs

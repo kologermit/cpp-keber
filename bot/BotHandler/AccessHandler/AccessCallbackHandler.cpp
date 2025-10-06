@@ -35,7 +35,7 @@ namespace Bot::BotHandler::AccessHandler {
         const bool access_value = data[3];
         const string word = data[4];
 
-        auto user = get_repositories()->user_repository->get_by_id(user_id);
+        auto user = get_repositories()->user->get_by_id(user_id);
         if (user == nullptr) {
             get_bot()->answer_callback_query(
                 context->callback->id,
@@ -46,14 +46,14 @@ namespace Bot::BotHandler::AccessHandler {
         }
 
         get_bot()->answer_callback_query(context->callback->id);
-        for (auto& access : get_repositories()->access_repository->get_raw_by_user_id(user->id)) {
+        for (auto& access : get_repositories()->access->get_raw_by_user_id(user->id)) {
             if (access->type == access_type) {
-                get_repositories()->access_repository->del(access->id);
+                get_repositories()->access->del(access->id);
             }
         }
 
         if (access_value) {
-            get_repositories()->access_repository->create(Access(
+            get_repositories()->access->create(Access(
                 user->id,
                 access_type
             ));
@@ -72,7 +72,7 @@ namespace Bot::BotHandler::AccessHandler {
         auto result_message = AccessHandler::send_message_with_access_keyboard(
             context,
             *user,
-            get_repositories()->access_repository->get_by_user_id(user->id)
+            get_repositories()->access->get_by_user_id(user->id)
         );
 
         return result_message;

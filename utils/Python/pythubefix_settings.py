@@ -1,10 +1,12 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
+from pytubefix import YouTube
 from time import sleep
 from enum import Enum, auto
 from loguru import logger
 from copy import deepcopy
+import pytubefix
 
 class GoogleEmailActivatorResult(Enum):
     OK = auto()
@@ -115,3 +117,21 @@ class GoogleEmailActivator:
 
         return GoogleEmailActivatorResult.OK, None
 
+def init(
+    google_email,
+    google_password,
+    selenium_host,
+    selenium_page_load_time,
+    test_youtube_video,
+    use_oauth: bool = True
+) -> str:
+    if use_oauth:
+        pytubefix.innertube._default_oauth_verifier = GoogleEmailActivator(
+            google_email, 
+            google_password, 
+            selenium_host, 
+            selenium_page_load_time
+        )
+    v = YouTube(test_youtube_video, use_oauth=use_oauth)
+    {'event': 'TEST_GET_VIDEO_TITLE', 'url': test_youtube_video,'title': f'Test video title: {v.title}'}
+    return v.title

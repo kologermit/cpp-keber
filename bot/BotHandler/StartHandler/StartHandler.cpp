@@ -11,7 +11,7 @@ namespace Bot::BotHandler::StartHandler {
     using Entity::User::EnumUserScreen;
     using Entity::User::EnumUserScreen;
     using Entity::Repositories::get_repositories;
-    using MenuHandler::MenuHandler;
+    using Bot::BotHandler::MenuHandler::MenuHandler;
     using std::set;
 
     const string& StartHandler::get_name() const noexcept {

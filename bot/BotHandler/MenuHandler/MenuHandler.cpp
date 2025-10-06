@@ -12,8 +12,8 @@ namespace Bot::BotHandler::MenuHandler {
     using Utils::TGBotApi::Types::ReplyKeyboard;
     using Utils::TGBotApi::Types::ReplyButton;
     using Utils::TGBotApi::Types::ReplyButtons;
-    using AccessHandler::AccessHandler;
-    using YouTubeHandler::YouTubeHandler;
+    using Bot::BotHandler::AccessHandler::AccessHandler;
+    using Bot::BotHandler::YouTubeHandler::YouTubeHandler;
     using Entity::Repositories::get_repositories;
     using Entity::User::MENU;
     using std::make_unique;
@@ -59,7 +59,7 @@ namespace Bot::BotHandler::MenuHandler {
 
     ptrMessage MenuHandler::to_menu(shared_ptr<BotHandlerContext> context, string_view text) {
         context->user->screen = MENU;
-        get_repositories()->user_repository->update(*context->user);
+        get_repositories()->user->update(*context->user);
 
         ReplyButtons buttons(3, vector<shared_ptr<ReplyButton> >(3, nullptr));
 

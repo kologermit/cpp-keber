@@ -6,16 +6,18 @@
 #include <bot/Entity/Chat/InterfaceChatRepository.hpp>
 #include <bot/Entity/Access/InterfaceAccessRepository.hpp>
 #include <bot/Entity/Callback/InterfaceCallbackRepository.hpp>
+#include <bot/Entity/YouTubeAudioSetting/InterfaceYouTubeAudioSettingRepository.hpp>
 #include <pqxx/pqxx>
 
 namespace Bot::Entity::Repositories {
 
     using Utils::Entity::ApiRequest::InterfaceApiRequestRepository;
-    using Message::InterfaceMessageRepository;
-    using User::InterfaceUserRepository;
-    using Chat::InterfaceChatRepository;
-    using Access::InterfaceAccessRepository;
-    using Callback::InterfaceCallbackRepository;
+    using Bot::Entity::Message::InterfaceMessageRepository;
+    using Bot::Entity::User::InterfaceUserRepository;
+    using Bot::Entity::Chat::InterfaceChatRepository;
+    using Bot::Entity::Access::InterfaceAccessRepository;
+    using Bot::Entity::Callback::InterfaceCallbackRepository;
+    using Bot::Entity::YouTubeAudioSetting::InterfaceYouTubeAudioSettingRepository;
     using pqxx::connection;
     using std::shared_ptr;
     using std::unique_ptr;
@@ -29,12 +31,13 @@ namespace Bot::Entity::Repositories {
 
         explicit Repositories(string_view conn_str);
 
-        shared_ptr<InterfaceApiRequestRepository> api_request_repository;
-        shared_ptr<InterfaceMessageRepository> message_repository;
-        shared_ptr<InterfaceCallbackRepository> callback_repository;
-        shared_ptr<InterfaceUserRepository> user_repository;
-        shared_ptr<InterfaceChatRepository> chat_repository;
-        shared_ptr<InterfaceAccessRepository> access_repository;
+        shared_ptr<InterfaceApiRequestRepository> api_request;
+        shared_ptr<InterfaceMessageRepository> message;
+        shared_ptr<InterfaceCallbackRepository> callback;
+        shared_ptr<InterfaceUserRepository> user;
+        shared_ptr<InterfaceChatRepository> chat;
+        shared_ptr<InterfaceAccessRepository> access;
+        shared_ptr<InterfaceYouTubeAudioSettingRepository> youtube_audio_setting;
 
     };
 

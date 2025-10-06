@@ -13,8 +13,8 @@ namespace Bot::BotHandler::YouTubeHandler {
     using Entity::User::SCREEN;
     using Entity::User::User;
     using Entity::Repositories::get_repositories;
-    using MediaHandler::YouTubeMediaHandler;
-    using PlaylistHandler::YouTubePlaylistHandler;
+    using Bot::BotHandler::YouTubeHandler::MediaHandler::YouTubeMediaHandler;
+    using Bot::BotHandler::YouTubeHandler::PlaylistHandler::YouTubePlaylistHandler;
     using Utils::TGBotApi::Bot::get_bot;
     using Utils::TGBotApi::Types::ReplyKeyboard;
     using Utils::TGBotApi::Types::ReplyButton;
@@ -25,7 +25,7 @@ namespace Bot::BotHandler::YouTubeHandler {
 
     ptrMessage YouTubeHandler::to_youtube(shared_ptr<BotHandlerContext> context) {
         context->user->screen = YOUTUBE;
-        get_repositories()->user_repository->update(*context->user);
+        get_repositories()->user->update(*context->user);
         return get_bot()->send_message( {
             .chat_id = context->chat->id,
             .text = YOUTUBE_WORD,

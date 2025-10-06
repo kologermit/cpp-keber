@@ -208,8 +208,49 @@ namespace Utils::Entity {
         if (res.empty()) {
             throw runtime_error(format("exec_update::update_error -- row doesnt deleted in table {}", EntityT::get_table_name()));
         }
-
         
         return make_unique<EntityT>(res.one_row());
+    }
+
+    template<typename EntityT>
+    bool exec_delete_by_ids(connection& conn, vector<long long> ids, bool is_soft = true) {
+        if (ids.empty()) {
+            return true;
+        }
+        nontransaction tx{conn};
+        string condition_ids = "(";
+        for (const auto& id : ids) {
+            condition_ids += tx.quote(id) + ",";
+        }
+        if (condition_ids.ends_with(',')) {
+            condition_ids.erase(condition_ids.end()-1);
+        }
+        condition_ids += ")";
+        string sql_query;
+        if (is_soft) {
+            sql_query = fmt::format(
+                "UPDATE {} SET {} = {} WHERE {} IN {} RETURNING *",
+                tx.quote_name(EntityT::get_table_name()),
+                tx.quote_name(DELETED_AT->name),
+                tx.quote(datetime().to_string(DATETIME_FORMAT)),
+                tx.quote_name(ID->name),
+                condition_ids
+            );
+        } else {
+            sql_query = fmt::format(
+                "DELETE FROM {} WHERE {} = {} RETURNING *",
+                tx.quote_name(EntityT::get_table_name()),
+                tx.quote_name(ID->name),
+                condition_ids
+            );
+        }
+
+        #ifndef NDEBUG
+        get_logger()->debug("exec_delete_by_ids::sql", sql_query, __FILE__, __LINE__);
+        #endif
+
+        const auto res = tx.exec(sql_query);
+
+        return res.size() != 0;
     }
 }

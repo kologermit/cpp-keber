@@ -217,7 +217,7 @@ namespace Bot::Server {
                     if (json::accept(res.body)) {
                         api_request.response[BODY_KEY] = json::parse(res.body);
                     }
-                    get_repositories()->api_request_repository->create(api_request);
+                    get_repositories()->api_request->create(api_request);
                 } catch (const exception& er) {
                     res.status = 500;
                     get_logger()->error("SERVER::HANDLE", er.what(), __FILE__, __LINE__);
@@ -244,8 +244,8 @@ namespace Bot::Server {
             .chat_id = get_config()->get_admins()[0],
             .text = "START BOT",
         });
-        get_repositories()->user_repository->get_by_telegram_user(*start_message->from);
-        get_repositories()->chat_repository->get_by_telegram_chat(*start_message->chat);
+        get_repositories()->user->get_by_telegram_user(*start_message->from);
+        get_repositories()->chat->get_by_telegram_chat(*start_message->chat);
 
         _server.listen(get_config()->get_listen_ip(), get_config()->get_listen_port());
     }
@@ -281,29 +281,29 @@ namespace Bot::Server {
             ? json_body[CALLBACK_QUERY_KEY][MESSAGE_KEY]
             : json_body[MESSAGE_KEY]
         );
-        shared_ptr<User> user(get_repositories()->user_repository->get_by_telegram_user(
+        shared_ptr<User> user(get_repositories()->user->get_by_telegram_user(
             tg_callback.has_value()
             ? *tg_callback.value().from
             : *tg_message.from
         ));
-        shared_ptr<Chat> chat(get_repositories()->chat_repository->get_by_telegram_chat(*tg_message.chat));
-        shared_ptr<Message> message(get_repositories()->message_repository->get_by_telegram_message(
+        shared_ptr<Chat> chat(get_repositories()->chat->get_by_telegram_chat(*tg_message.chat));
+        shared_ptr<Message> message(get_repositories()->message->get_by_telegram_message(
             tg_message,
             true
         ));
         shared_ptr<Callback> callback;
         if (tg_callback.has_value()) {
-            callback = get_repositories()->callback_repository->get_by_telegram_callback(tg_callback.value());
+            callback = get_repositories()->callback->get_by_telegram_callback(tg_callback.value());
         }
 
-        auto access = get_repositories()->access_repository->get_by_user_id(user->id);
+        auto access = get_repositories()->access->get_by_user_id(user->id);
 
         if (!access.full && std::ranges::find(get_config()->get_admins(), user->id) != get_config()->get_admins().end()) {
             Access admin_access;
             admin_access.type = FULL;
             admin_access.user_id = user->id;
-            get_repositories()->access_repository->create(admin_access);
-            access = get_repositories()->access_repository->get_by_user_id(user->id);
+            get_repositories()->access->create(admin_access);
+            access = get_repositories()->access->get_by_user_id(user->id);
         }
 
         int handle_id = rand_int(1, 1000000);
@@ -362,7 +362,7 @@ namespace Bot::Server {
                 result_tg_message->file_name,
                 result_tg_message->text
             ), __FILE__, __LINE__);
-            auto result_message = get_repositories()->message_repository->get_by_telegram_message(*result_tg_message);
+            auto result_message = get_repositories()->message->get_by_telegram_message(*result_tg_message);
             return {{ID_KEY, result_message->id}};
         }
 

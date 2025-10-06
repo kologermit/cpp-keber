@@ -28,7 +28,7 @@ def parse_config_to_exec(args: dict[str, dict[str, str]]) -> str:
         print()
         print(f'--{env_file}=env.json Файл с переменными')
         for arg, data in args.items():
-            if arg == project_summary: continue
+            if arg == project_summary or data.get(required, None) == False: continue
             print(f'\n--{arg}=text {data[summary]}')
         exit()
 
@@ -66,7 +66,7 @@ def parse_config_to_exec(args: dict[str, dict[str, str]]) -> str:
         if data.get(json, False):
             args[arg] = loads(args[arg])
 
-        if data.get(required, False) and (args[arg] is None or args[arg] == ''):
+        if data.get(required, None) and (args[arg] is None or args[arg] == ''):
             print(f'Обязательный аргумент {arg} не найден!', file=stderr)
             exit(1)
         # Перенос каждой переменной в вид константы

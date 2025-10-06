@@ -29,7 +29,7 @@ namespace Bot::BotHandler::YouTubeHandler::PlaylistHandler {
 
     ptrMessage YouTubePlaylistHandler::to_youtube_playlist(shared_ptr<BotHandlerContext> context, bool is_video) {
         context->user->screen = (is_video ? EnumUserScreen::YOUTUBE_PLAYLIST_VIDEO : EnumUserScreen::YOUTUBE_PLAYLIST_AUDIO);
-        get_repositories()->user_repository->update(*context->user);
+        get_repositories()->user->update(*context->user);
 
         return get_bot()->send_message( {
             .chat_id = context->chat->id,

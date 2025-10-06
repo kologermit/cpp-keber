@@ -3,4 +3,5 @@
 !parse_config.py
 !config.py
 !logger.py
-!google_email_activator.py
+!pythubefix_settings.py
+!db.py
