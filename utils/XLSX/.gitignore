@@ -1,0 +1,4 @@
+*
+!.gitignore
+!XLSX.hpp
+!XLSX.cpp

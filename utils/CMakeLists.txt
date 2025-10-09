@@ -27,6 +27,8 @@ target_link_libraries(UTILS_LIB
     httplib::httplib
     nlohmann_json::nlohmann_json
     openssl::openssl
+    xlsxio::xlsxio
+    libxlsxwriter::libxlsxwriter
     pthread
     dl
     resolv

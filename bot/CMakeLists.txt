@@ -35,6 +35,7 @@ target_link_libraries(BOT
     fmt::fmt
     httplib::httplib
     nlohmann_json::nlohmann_json
+    xlsxio::xlsxio
     libxlsxwriter::libxlsxwriter
     pthread
     dl

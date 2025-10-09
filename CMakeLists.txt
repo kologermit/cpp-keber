@@ -45,7 +45,9 @@ find_package(httplib REQUIRED)
 find_package(OpenSSL REQUIRED)
 find_package(libpqxx REQUIRED)
 find_package(datetime REQUIRED)
+find_package(xlsxio REQUIRED)
 find_package(libxlsxwriter REQUIRED)
+find_package(GTest REQUIRED)
 
 set(OPENSSL_USE_STATIC_LIBS TRUE)
 
@@ -84,7 +86,9 @@ if (BUILD_TEST_CODE)
         fmt::fmt
         httplib::httplib
         nlohmann_json::nlohmann_json
+        xlsxio::xlsxio
         libxlsxwriter::libxlsxwriter
+        gtest::gtest
         pthread
         dl
         resolv

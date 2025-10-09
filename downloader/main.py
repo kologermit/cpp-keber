@@ -1,6 +1,9 @@
 # Встроенные модули
 from asyncio import Future, run
 from asyncio.exceptions import CancelledError
+from enum import IntEnum
+from json import loads
+from json.decoder import JSONDecodeError
 
 # Внутренние модули
 from config import (
@@ -34,9 +37,28 @@ from utils.Python.pythubefix_settings import init as init_pytubefix
 from loguru import logger
 from aio_pika import connect, IncomingMessage, Connection
 
+class DownloadType(IntEnum):
+    AUDIO = 0
+    VIDEO_720P = 1
+    VIDEO_BEST = 2
+    PLAYLIST_AUDIO = 3
+    PLAYLIST_VIDEO_720P = 4
+    PLAYLIST_VIDEO_BEST = 5
+
+class Message:
+    def __init__(self, payload: str):
+        json_payload = loads(payload)
+        self.text: str = json_payload['text']
+        self.data: tuple[str, DownloadType] = json_payload['data']
+        self.chat_id: int = json_payload['chat_id']
+
 @log_async_exception
 async def handle_message(message: IncomingMessage):
     logger.info({'event': 'NEW_MESSAGE', 'payload': message.body.decode()})
+    try:
+        message = Message(message.body.decode())
+    except (JSONDecodeError, KeyError):
+        pass
 
 async def create_rabbitmq_connection():
     logger.info({'event': 'CREATE_AMQP_CONNECTION', 'host': f'{RABBITMQ_HOST}:{RABBITMQ_PORT}', 'vhost': RABBITMQ_VHOST, 'user': RABBITMQ_USER})
@@ -49,10 +71,7 @@ async def setup_consumer(connection: Connection):
     logger.info({'event': 'SETUP_CONSUMER', 'queue': DOWNLOADER_QUEUE_NAME, 'prefetch_count': prefetch_count, 'durable': durable})
     channel = await connection.channel()
     await channel.set_qos(prefetch_count=prefetch_count)
-    queue = await channel.declare_queue(
-        DOWNLOADER_QUEUE_NAME, 
-        durable=True
-    )
+    queue = await channel.declare_queue(DOWNLOADER_QUEUE_NAME, durable=durable)
     tag = await queue.consume(handle_message)
     logger.info({'event': 'NEW_CONSUMER', 'tag': tag})
     return tag

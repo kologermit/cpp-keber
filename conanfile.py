@@ -14,7 +14,9 @@ class CPPKeberRecipe(ConanFile):
         self.requires("fmt/11.2.0")
         self.requires("cpp-datetime-library/1.0.2")
         self.requires("openssl/3.5.2")
+        self.requires("xlsxio/0.2.34")
         self.requires("libxlsxwriter/1.2.2")
+        self.requires("gtest/1.17.0")
 
     def layout(self):
         cmake_layout(self)
