@@ -111,7 +111,7 @@ namespace Bot::BotHandler::YouTubeHandler::MediaHandler {
 
         return get_bot()->send_message({
             .chat_id = context->chat->id,
-            .text = "📩Отправь редактированную таблицу обратно",
+            .text = "✏️Заполни и отправь обратно",
             .reply_message_id = context->message->id,
             .filepath = xlsx_path,
             .content_type = DOCUMENT,
@@ -136,28 +136,25 @@ namespace Bot::BotHandler::YouTubeHandler::MediaHandler {
         vector<unique_ptr<YouTubeAudioSetting> > result;
 
         for (unsigned short i = 1; sheet.contains({i, 2}) && sheet.contains({i, 3}); i++) {
-            const string url = sheet.at({i, 2});
+            string url = sheet.at({i, 2});
             const string download_url = sheet.at({i, 3});
             const string file_name = sheet.contains({i, 1}) ? sheet.at({i, 1}) : "";
+
+            auto video_data = get_youtube_api()->get_video(url);
             
-            if (!url.starts_with("http")) {
+            if (video_data == nullptr) {
                 return get_bot()->send_message({
                     .chat_id = context->chat->id,
-                    .text = fmt::format("Неверная ютуб-ссылка {} (должна начинаться с http или https)", url)
+                    .text = fmt::format("Неверная ютуб-ссылка {}", url)
                 });
             }
+
+            url = video_data->first.video_url;
 
             if (!download_url.starts_with("http")) {
                 return get_bot()->send_message({
                     .chat_id = context->chat->id,
                     .text = fmt::format("Неверная ссылка для скачивания {} (должна начинаться с http или https)", download_url)
-                });
-            }
-
-            if (!file_name.empty() && file_name.find('.') == std::string::npos) {
-                return get_bot()->send_message({
-                    .chat_id = context->chat->id,
-                    .text = fmt::format("Не найдено расширение имени файла {}", file_name)
                 });
             }
 
