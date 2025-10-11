@@ -2,6 +2,7 @@
 #include <bot/BotHandler/YouTubeHandler/YouTubeHandler.hpp>
 #include <bot/BotHandler/Keys.hpp>
 #include <bot/Entity/Repositories.hpp>
+#include <utils/Config/InterfaceConfig.hpp>
 #include <utils/TGBotApi/Types.hpp>
 #include <utils/YouTubeApi/InterfaceYouTubeApi.hpp>
 #include <utils/XLSX/XLSX.hpp>
@@ -14,6 +15,7 @@ namespace Bot::BotHandler::YouTubeHandler::MediaHandler {
     using Bot::Entity::User::User;
     using Bot::Entity::User::EnumUserScreen;
     using Bot::Entity::YouTubeAudioSetting::YouTubeAudioSetting;
+    using Utils::Config::get_config;
     using Utils::TGBotApi::Bot::get_bot;
     using Utils::TGBotApi::Types::ReplyKeyboard;
     using Utils::TGBotApi::Types::ReplyButtons;
@@ -21,9 +23,15 @@ namespace Bot::BotHandler::YouTubeHandler::MediaHandler {
     using Utils::TGBotApi::Types::InlineKeyboard;
     using Utils::TGBotApi::Types::InlineButtons;
     using Utils::TGBotApi::Types::InlineButton;
+    using Utils::TGBotApi::File::DOCUMENT;
     using Utils::YouTubeApi::get_youtube_api;
+    using Utils::XLSX::read_xlsx;
+    using Utils::XLSX::write_xlsx;
+    using Utils::XLSX::CellCoords;
     using fmt::format;
     using nlohmann::json;
+    using std::to_string;
+    using std::map;
     using std::vector;
     using std::unique_ptr;
     using std::make_unique;
@@ -55,7 +63,11 @@ namespace Bot::BotHandler::YouTubeHandler::MediaHandler {
     bool YouTubeMediaHandler::check(shared_ptr<BotHandlerContext> context) {
         return (context->access.full || context->access.youtube)
         && (context->user->screen == EnumUserScreen::YOUTUBE_VIDEO || context->user->screen == EnumUserScreen::YOUTUBE_AUDIO)
-        && (context->message->text.starts_with("https") || context->message->text == BACK_WORD);
+        && (
+            context->message->text.starts_with("https")
+            || context->message->text == BACK_WORD
+            || context->message->text == SETTINGS_TABLE_WORD
+        );
     }
 
     ptrMessage YouTubeMediaHandler::handle(shared_ptr<BotHandlerContext> context) {
@@ -74,9 +86,29 @@ namespace Bot::BotHandler::YouTubeHandler::MediaHandler {
     ptrMessage YouTubeMediaHandler::send_audio_settings(shared_ptr<BotHandlerContext> context) {
         auto settings = get_repositories()->youtube_audio_setting->get_by_user_id(context->user->id);
 
-        // TODO: почитать докумантацию по libxlsxwriter и написать отправку таблицы с настройками
+        map<CellCoords, string> table;
 
-        return nullptr;
+        table[{0, 0}] = "# (необязательно)";
+        table[{0, 1}] = "Название файл (необязательно)";
+        table[{0, 2}] = "Ссылка Ютуб";
+        table[{0, 3}] = "Ссылка для скачивания";
+
+        for (size_t i = 0; i < settings.size(); i++) {
+            table[{static_cast<unsigned short>(i+1), 0}] = to_string(i+1);
+            table[{static_cast<unsigned short>(i+1), 1}] = settings[i]->file_name;
+            table[{static_cast<unsigned short>(i+1), 2}] = settings[i]->url;
+            table[{static_cast<unsigned short>(i+1), 3}] = settings[i]->download_url;
+        }
+
+        const string xlsx_path = fmt::format("{}/{}.xlsx", get_config()->get_tmp_path(), context->user->id);
+
+        write_xlsx(xlsx_path, {{"1", table}});
+
+        return get_bot()->send_message({
+            .chat_id = context->chat->id,
+            .filepath = xlsx_path,
+            .content_type = DOCUMENT,
+        });
     }
 
     ptrMessage YouTubeMediaHandler::handle_audio_settings(shared_ptr<BotHandlerContext> context) {

@@ -75,7 +75,8 @@ def get_playlist_dict(url: str, use_oauth: bool) -> dict:
 @middleware
 def video():
     try:
-        v = get_video_dict(dict(request.query)["url"], USE_OAUTH)
+        url = YouTube(dict(request.query)["url"]).watch_url
+        v = get_video_dict(url, USE_OAUTH)
     except (RegexMatchError, KeyError):
         return generate_json_response({'message': 'Video not found'}, 400)
     except VideoUnavailable:
@@ -89,7 +90,8 @@ def video():
 @middleware
 def playlist():
     try:
-        p = get_playlist_dict(dict(request.query)["url"], USE_OAUTH)
+        url = Playlist(dict(request.query)["url"]).playlist_url
+        p = get_playlist_dict(url, USE_OAUTH)
     except (RegexMatchError, KeyError):
         return generate_json_response({'message': 'Playlist not found'}, 400)
     return generate_json_response({
