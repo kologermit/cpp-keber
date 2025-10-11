@@ -111,7 +111,7 @@ namespace Bot::BotHandler::YouTubeHandler::MediaHandler {
 
         return get_bot()->send_message({
             .chat_id = context->chat->id,
-            .text = "Отправь редактированную таблицу обратно",
+            .text = "📩Отправь редактированную таблицу обратно",
             .reply_message_id = context->message->id,
             .filepath = xlsx_path,
             .content_type = DOCUMENT,
@@ -146,7 +146,10 @@ namespace Bot::BotHandler::YouTubeHandler::MediaHandler {
 
         get_repositories()->youtube_audio_setting->update_by_user_id(context->user->id, std::move(result));
 
-        return nullptr;
+        return get_bot()->send_message({
+            .chat_id = context->chat->id,
+            .text = fmt::format("🆕Данные обновлены")
+        });
     }
 
     ptrMessage YouTubeMediaHandler::handle_urls(shared_ptr<BotHandlerContext> context) {
