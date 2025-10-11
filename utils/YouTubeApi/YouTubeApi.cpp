@@ -90,7 +90,7 @@ namespace Utils::YouTubeApi {
             .playlist_url = json_playlist["playlist_url"],
             .views = json_playlist["views"],
             .thumbnail_url = json_playlist["thumbnail_url"],
-            .video_urls = json_playlist->at("video_urls"),
+            .video_urls = json_playlist["video_urls"],
         });
     }
 
