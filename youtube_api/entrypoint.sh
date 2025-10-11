@@ -7,4 +7,4 @@ fi
 
 echo 'freeze'
 /venv/venv/bin/pip freeze
-# /bin/python3 /app/main.py
+/bin/python3 /app/main.py
