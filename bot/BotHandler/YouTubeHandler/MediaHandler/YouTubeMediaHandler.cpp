@@ -61,12 +61,17 @@ namespace Bot::BotHandler::YouTubeHandler::MediaHandler {
     }
 
     bool YouTubeMediaHandler::check(shared_ptr<BotHandlerContext> context) {
-        return (context->access.full || context->access.youtube)
-        && (context->user->screen == EnumUserScreen::YOUTUBE_VIDEO || context->user->screen == EnumUserScreen::YOUTUBE_AUDIO)
-        && (
+        return (
+            context->access.full 
+            || context->access.youtube
+        ) && (
+            context->user->screen == EnumUserScreen::YOUTUBE_VIDEO 
+            || context->user->screen == EnumUserScreen::YOUTUBE_AUDIO
+        ) && (
             context->message->text.starts_with("https")
             || context->message->text == BACK_WORD
             || context->message->text == SETTINGS_TABLE_WORD
+            || context->message->file_name.ends_with(".xlsx")
         );
     }
 
@@ -102,20 +107,45 @@ namespace Bot::BotHandler::YouTubeHandler::MediaHandler {
 
         const string xlsx_path = fmt::format("{}/{}.xlsx", get_config()->get_tmp_path(), context->user->id);
 
-        write_xlsx(xlsx_path, {{"1", table}});
+        write_xlsx(xlsx_path, {{"Настройки", table}});
 
         return get_bot()->send_message({
             .chat_id = context->chat->id,
+            .text = "Отправь редактированную таблицу обратно",
+            .reply_message_id = context->message->id,
             .filepath = xlsx_path,
             .content_type = DOCUMENT,
         });
     }
 
     ptrMessage YouTubeMediaHandler::handle_audio_settings(shared_ptr<BotHandlerContext> context) {
-        // TODO: почитать докумантацию по libxlsxwriter и написать обработку таблицы с настройками
-        vector<unique_ptr<YouTubeAudioSetting> > settings;
-        settings.emplace_back(make_unique<YouTubeAudioSetting>(context->user->id, "123", "123", "123"));
-        get_repositories()->youtube_audio_setting->update_by_user_id(context->user->id, std::move(settings));
+        const string xlsx_path = fmt::format("{}/{}.xlsx", get_config()->get_tmp_path(), context->user->id);
+        get_bot()->download_file(context->message->file_download_id, xlsx_path);
+
+        auto raw_data = read_xlsx(xlsx_path);
+
+        if (raw_data.empty()) {
+            return get_bot()->send_message({
+                .chat_id = context->chat->id,
+                .text = "Информация не найдена в таблице!",
+                .reply_message_id = context->message->id,
+            });
+        }
+
+        const auto& sheet = raw_data.begin()->second;
+        vector<unique_ptr<YouTubeAudioSetting> > result;
+
+        for (unsigned short i = 1; sheet.contains({i, 2}) && sheet.contains({i, 3}); i++) {
+            result.emplace_back(make_unique<YouTubeAudioSetting>(
+                context->user->id,
+                sheet.at({i, 2}),
+                (sheet.contains({i, 1}) ? sheet.at({i, 1}) : ""),
+                sheet.at({i, 3})
+            ));
+        }
+
+        get_repositories()->youtube_audio_setting->update_by_user_id(context->user->id, std::move(result));
+
         return nullptr;
     }
 
