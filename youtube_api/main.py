@@ -52,7 +52,7 @@ def get_video_dict(url: str, use_oauth: bool) -> dict:
 
 @lru_cache(maxsize=2000)
 def get_channel_dict(url: str, use_oauth: bool) -> dict:
-    c = Channel(url, use=use_oauth)
+    c = Channel(url, use_oauth=use_oauth)
     return {
         'channel_id': c.channel_id,
         'title': c.channel_name,
