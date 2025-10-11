@@ -12,6 +12,7 @@ services:
       - ${BOT_EXTERNAL_PORT:-127.0.0.1:8080}:8080
     volumes:
       - bot_logs:/logs/bot:rw
+      - bot_tmp:/tmp_bot
       - ../build/${BOT_BUILD}/bot/BOT:/app:ro
     environment:
       - BOT_TOKEN=${BOT_TOKEN}
@@ -31,7 +32,7 @@ services:
       - LISTEN_IP=0.0.0.0
       - LISTEN_PORT=8080
       - YOUTUBE_API_URL=http://youtube_api:8080
-      - TMP_PATH=/tmp/bot
+      - TMP_PATH=/tmp_bot
       - LOGS_PATH=/logs/bot
       - SHARED_PATH=/shared/
       - DOWNLOADER_QUEUE_NAME=downloader
