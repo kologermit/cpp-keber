@@ -1,5 +1,8 @@
 #define CPPHTTPLIB_OPENSSL_SUPPORT
 
+#include <fstream>
+#include <iomanip>
+#include <stdexcept>
 #include <httplib.h>
 #include <utils/UUID4/UUID4.hpp>
 #include <utils/TGBotApi/Query/Query.hpp>
@@ -10,7 +13,7 @@
 
 namespace Utils::TGBotApi::Bot {
 
-    using Query::Query;
+    using Utils::TGBotApi::Query::Query;
     using TGBotApi::Query::EnumQueryMethod;
     using TGBotApi::Message::Message;
     using JSONKeys::RESULT_KEY;
@@ -40,9 +43,15 @@ namespace Utils::TGBotApi::Bot {
     using JSONKeys::CALLBACK_QUERY_KEY;
     using JSONKeys::CALLBACK_QUERY_ID_KEY;
     using JSONKeys::REPLY_MARKUP_KEY;
+    using JSONKeys::FILE_ID_KEY;
+    using JSONKeys::FILE_PATH_KEY;
     using File::throw_if_not_correct_file;
     using httplib::Params;
-    using std::to_string, std::map, std::move;
+    using std::to_string;
+    using std::map;
+    using std::move;
+    using std::ofstream;
+    using std::runtime_error;
 
     Bot::Bot(string_view token, const json& json_bot):
         _user(json_bot),
@@ -185,7 +194,7 @@ namespace Utils::TGBotApi::Bot {
     }
 
     unique_ptr<Message> Bot::edit_caption(long long chat_id, long long message_id, string_view caption) const {
-        return std::move(Query(_token).query_parse_json<Message>(
+        return Query(_token).query_parse_json<Message>(
             EnumQueryMethod::POST,
             "editMessageCaption",
             Params{
@@ -193,7 +202,7 @@ namespace Utils::TGBotApi::Bot {
                 {MESSAGE_ID_KEY, to_string(message_id)},
                 {CAPTION_KEY, string(caption)},
             }
-        ).result);
+        ).result;
     }
 
     bool Bot::delete_message(long long chat_id, long long message_id) const {
@@ -233,5 +242,40 @@ namespace Utils::TGBotApi::Bot {
 
     bool Bot::check_secret_token(string_view secret_token) const noexcept {
         return _secret_token == secret_token;
+    }
+
+    bool Bot::download_file(string_view file_id, string_view output_path) const {
+        auto res = Query(_token).query_parse_json<json>(
+            EnumQueryMethod::GET,
+            "getFile",
+            Params{{FILE_ID_KEY, file_id.data()}}
+        );
+
+        if (!res.ok) {
+            throw runtime_error(fmt::format("download_file: file not found {}", file_id));
+        }
+
+        auto file_res = Query(_token).query(
+            EnumQueryMethod::GET,
+            "",
+            {},
+            {},
+            {},
+            fmt::format("/file/bot{}/{}", "{}", res.result->at(FILE_PATH_KEY).get<string>())
+        );
+
+        if (file_res->status != 200) {
+            throw runtime_error(fmt::format("download_file: status != 200 ({})", file_res->status));
+        }
+
+        ofstream file(output_path.data(), std::ios::binary);
+        if (!file.is_open()) {
+            throw runtime_error(fmt::format("download_file: failed to open {}", output_path));
+        }
+
+        file.write(file_res->body.c_str(), static_cast<long>(file_res->body.size()));
+        file.close();
+
+        return true;
     }
 }

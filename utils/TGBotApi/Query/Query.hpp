@@ -7,143 +7,119 @@
 #include <fmt/core.h>
 #include <nlohmann/json.hpp>
 #include <memory>
+#include <stdexcept>
 #include <vector>
 
 namespace Utils::TGBotApi::Query {
 
-using httplib::Params;
-using httplib::Headers;
-using nlohmann::json;
-using std::vector;
-using std::exception;
-using std::unique_ptr;
-using std::string, std::string_view;
-using std::optional, std::nullopt;
-using fmt::format;
-using std::make_unique;
-using Utils::TGBotApi::JSONKeys::RESULT_KEY;
-using Utils::TGBotApi::JSONKeys::OK_KEY;
-using Utils::TGBotApi::JSONKeys::DESCRIPTION_KEY;
-using Utils::TGBotApi::JSONKeys::ERROR_CODE_KEY;
+    using httplib::Params;
+    using httplib::Headers;
+    using httplib::Result;
+    using nlohmann::json;
+    using std::vector;
+    using std::exception;
+    using std::unique_ptr;
+    using std::string, std::string_view;
+    using std::optional, std::nullopt;
+    using std::runtime_error;
+    using fmt::format;
+    using std::make_unique;
+    using Utils::TGBotApi::JSONKeys::RESULT_KEY;
+    using Utils::TGBotApi::JSONKeys::OK_KEY;
+    using Utils::TGBotApi::JSONKeys::DESCRIPTION_KEY;
+    using Utils::TGBotApi::JSONKeys::ERROR_CODE_KEY;
 
-enum EnumQueryMethod {
-    GET,
-    POST
-};
-
-struct Query {
-    explicit Query(string_view token);
-
-    struct File {
-        string name;
-        string filepath;
-        string filename;
-        string content_type;
+    enum EnumQueryMethod {
+        GET,
+        POST
     };
 
-    using Files = vector<File>;
+    struct Query {
+        explicit Query(string_view token);
 
-    template<typename ResultType>
-    struct QueryResult {
-        bool ok;
-        std::unique_ptr<ResultType> result;
+        struct File {
+            string name;
+            string filepath;
+            string filename;
+            string content_type;
+        };
+
+        using Files = vector<File>;
+
+        template<typename ResultType>
+        struct QueryResult {
+            bool ok;
+            std::unique_ptr<ResultType> result;
+        };
+
+        Result query(
+            EnumQueryMethod method,
+            string_view path, 
+            const Params& params = {},
+            const Headers& headers = {},
+            const Files& files = {},
+            string_view full_path = ""
+        );
+
+        inline json query_raw_json(
+            EnumQueryMethod method,
+            string_view path,
+            const Params& params = {},
+            const Headers& headers = {},
+            const Files& files = {},
+            string_view full_path = ""
+        );
+
+        template<typename ResultType>
+        QueryResult<ResultType> query_parse_json(
+            EnumQueryMethod method,
+            string_view path,
+            const Params& params = {},
+            const Headers& headers = {},
+            const Files& files = {},
+            string_view full_path = ""
+        );
+
+        private: 
+        const string _token;
+
+        static string _read_file(string_view filename);
     };
 
-    string query(
+    inline json Query::query_raw_json(
         EnumQueryMethod method,
         string_view path, 
-        const Params& params = {},
-        const Headers& headers = {},
-        const Files& files = {}
-    );
+        const Params& params,
+        const Headers& headers,
+        const Files& files,
+        string_view full_path
+    ) {
+        return json::parse(query(method, path, params, headers, files, full_path)->body);
+    }
 
-    inline json query_raw_json(
-        EnumQueryMethod method,
-        string_view path,
-        const Params& params = {},
-        const Headers& headers = {},
-        const Files& files = {}
-    );
 
     template<typename ResultType>
-    QueryResult<ResultType> query_parse_json(
+    Query::QueryResult<ResultType> Query::query_parse_json(
         EnumQueryMethod method,
-        string_view path,
-        const Params& params = {},
-        const Headers& headers = {},
-        const Files& files = {}
-    );
+        string_view path, 
+        const Params& params,
+        const Headers& headers,
+        const Files& files,
+        string_view full_path
+    ) {
+        auto json_result = query_raw_json(method, path, params, headers, files, full_path);
 
-    private: 
-    string_view _token;
-    string _get_path(string_view path);
+        if (!static_cast<bool>(json_result[OK_KEY])) {
+            throw runtime_error(format(
+                "Utils::TGBotApi::Query::query_parse_json: {} -- {}",
+                string(json_result[ERROR_CODE_KEY]),
+                string(json_result[DESCRIPTION_KEY])
+            ));
+        }
 
-    static string _read_file(string_view filename);
-};
-
-inline json Query::query_raw_json(
-    EnumQueryMethod method,
-    string_view path, 
-    const Params& params,
-    const Headers& headers,
-    const Files& files
-) {
-    return json::parse(query(method, path, params, headers, files));
-}
-
-struct QueryJsonResultException : exception {
-
-    explicit QueryJsonResultException(string_view message):
-    _message(message) {}
-
-    [[nodiscard]] const char* what() const noexcept override {
-        return _message.data();
+        return {
+            json_result[OK_KEY],
+            make_unique<ResultType>(json_result[RESULT_KEY])
+        };
     }
-
-    private:
-
-    string _message;
-
-};
-
-struct QueryResultException : exception {
-
-    explicit QueryResultException(string_view message):
-    _message(message) {}
-
-    [[nodiscard]] const char* what() const noexcept override {
-        return _message.data();
-    }
-
-    private:
-
-    string _message;
-
-};
-
-
-template<typename ResultType>
-Query::QueryResult<ResultType> Query::query_parse_json(
-    EnumQueryMethod method,
-    string_view path, 
-    const Params& params,
-    const Headers& headers,
-    const Files& files
-) {
-    auto json_result = query_raw_json(method, path, params, headers, files);
-
-    if (!static_cast<bool>(json_result[OK_KEY])) {
-        throw QueryJsonResultException(format(
-            "Utils::TGBotApi::Query::query_parse_json: {} -- {}",
-            string(json_result[ERROR_CODE_KEY]),
-            string(json_result[DESCRIPTION_KEY])
-        ));
-    }
-
-    return {
-        json_result[OK_KEY],
-        make_unique<ResultType>(json_result[RESULT_KEY])
-    };
-}
-
 }

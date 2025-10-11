@@ -18,6 +18,7 @@ constexpr const char* DOCUMENT_KEY                  = "document";
 constexpr const char* DESCRIPTION_KEY               = "description";
 constexpr const char* ERROR_CODE_KEY                = "error_code";
 constexpr const char* FILE_ID_KEY                   = "file_id";
+constexpr const char* FILE_PATH_KEY                 = "file_path";
 constexpr const char* FILE_NAME_KEY                 = "file_name";
 constexpr const char* FILE_SIZE_KEY                 = "file_size";
 constexpr const char* FIRST_NAME_KEY                = "first_name";

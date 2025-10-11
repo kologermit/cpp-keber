@@ -4,6 +4,7 @@
 #include <bot/Entity/Repositories.hpp>
 #include <utils/TGBotApi/Types.hpp>
 #include <utils/YouTubeApi/InterfaceYouTubeApi.hpp>
+#include <utils/XLSX/XLSX.hpp>
 #include <fmt/core.h>
 #include <sstream>
 

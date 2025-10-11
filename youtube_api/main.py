@@ -1,3 +1,8 @@
+# Встроенные модули
+from json import dumps
+from functools import lru_cache
+
+# Внутренниие модули
 from config import (
     LOGS_DIR, 
     LISTEN_IP, 
@@ -12,13 +17,11 @@ from config import (
 )
 from utils.Python.logger import init as init_logger, logger, log_err_with_code
 from utils.Python.pythubefix_settings import init as init_pytubefix
+
+# Внешние модули
 from bottle import route, run, response, request
-import pytubefix.innertube
 from pytubefix import YouTube, Channel, Playlist
 from pytubefix.exceptions import RegexMatchError, VideoUnavailable
-from json import dumps
-
-USE_OAUTH = True
 
 def middleware(f):
     def _(*args, **kwargs) -> str:
@@ -35,60 +38,62 @@ def generate_json_response(data, status: int=200) -> str:
     response.set_header('Cache-Control', 'no-cache')
     return dumps(data)
 
-def get_video_dict(v: YouTube) -> dict:
+@lru_cache(maxsize=2000)
+def get_video_dict(url: str, use_oauth: bool) -> dict:
+    v = YouTube(url, use_oauth=use_oauth)
     return {
         'title': v.title,
         'video_id': v.video_id,
         'video_url': v.watch_url,
         'thumbnail_url': v.thumbnail_url,
-        'year': v.publish_date.year
+        'year': v.publish_date.year,
+        'channel_url': v.channel_url,
     }
 
-def get_channel_dict(c: Channel) -> dict:
+@lru_cache(maxsize=2000)
+def get_channel_dict(url: str, use_oauth: bool) -> dict:
+    c = Channel(url, use=use_oauth)
     return {
         'channel_id': c.channel_id,
         'title': c.channel_name,
         'channel_url': c.channel_url,
     }
 
-def get_playlist_dict(p: Playlist) -> dict:
+@lru_cache(maxsize=2000)
+def get_playlist_dict(url: str, use_oauth: bool) -> dict:
+    p = Playlist(url, use_oauth=use_oauth)
     return {
         'playlist_id': p.playlist_id,
         'title': p.title,
         'playlist_url': p.playlist_url,
         'views': p.views,
         'thumbnail_url': p.thumbnail_url,
+        'video_urls': p.video_urls
     }
 
 @route('/video')
 @middleware
 def video():
     try:
-        v = YouTube(dict(request.query)["url"], use_oauth=USE_OAUTH)
-        _ = v.title
+        v = get_video_dict(dict(request.query)["url"], USE_OAUTH)
     except (RegexMatchError, KeyError):
         return generate_json_response({'message': 'Video not found'}, 400)
     except VideoUnavailable:
         return generate_json_response({'message': 'Video Unavailable'}, 400)
-    c = Channel(v.channel_url, use_oauth=USE_OAUTH)
     return generate_json_response({
-        'video': get_video_dict(v),
-        'channel': get_channel_dict(c),
+        'video': v,
+        'channel': get_channel_dict(v['channel_url'], USE_OAUTH),
     })
 
 @route('/playlist')
 @middleware
 def playlist():
     try:
-        p = Playlist(dict(request.query)["url"], use_oauth=USE_OAUTH)
+        p = get_playlist_dict(dict(request.query)["url"], USE_OAUTH)
     except (RegexMatchError, KeyError):
         return generate_json_response({'message': 'Playlist not found'}, 400)
     return generate_json_response({
-        'playlist': get_playlist_dict(p),
-        'video_urls': [
-            v.watch_url
-            for v in p.videos
-        ]
+        'playlist': p
     })
 
 def main():

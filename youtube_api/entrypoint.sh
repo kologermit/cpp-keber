@@ -1,11 +1,10 @@
-export VENV="/venv/venv"
-export REQ_FILE="/app/requirements.txt"
-
-if [[ ! -d "$VENV" ]]; then
+if [[ ! -d /venv/venv ]]; then
     echo "Creating venv"
-    python3 -m venv "$VENV"
+    python3 -m venv /venv/venv
     echo "Install requirements"
-    "$VENV/bin/pip" install -r "$REQ_FILE"
+    /venv/venv/bin/pip install -r /app/requirements.txt
 fi
 
-$VENV/bin/python3 /app/main.py
+echo 'freeze'
+/venv/venv/bin/pip freeze
+# /bin/python3 /app/main.py
