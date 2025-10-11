@@ -13,6 +13,7 @@ echo "
         accesses, access_types,
         youtube_audio_settings
     TO $BOT_USER;
+    GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO $BOT_USER;
 
 
     -- DOWNLOADER_USER
