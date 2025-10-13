@@ -21,4 +21,4 @@ services:
     volumes:
       - youtube_api_venv:/volumes/venv
       - youtube_api_logs:/volumes/logs
-      - ../youtube_api:/volumes/app:ro
+      - ../youtube_api:/app:ro

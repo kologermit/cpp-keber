@@ -21,7 +21,7 @@ services:
       - DB_USER=${DOWNLOADER_USER}
       - DB_PASSWORD=${DOWNLOADER_PASSWORD}
       - RABBITMQ_HOST=rabbitmq
-      - RABBITMQ_PORT=15672
+      - RABBITMQ_PORT=5672
       - RABBITMQ_USER=${RABBITMQ_DEFAULT_USER}
       - RABBITMQ_PASS=${RABBITMQ_DEFAULT_PASS}
       - RABBITMQ_VHOST=${RABBITMQ_VHOST}
@@ -37,4 +37,4 @@ services:
       - downloader_logs:/volumes/logs
       - downloader_tmp:/volumes/tmp
       - file_buffer:/volumes/file_buffer
-      - ../downloader:/volumes/app:ro
+      - ../downloader:/app:ro
