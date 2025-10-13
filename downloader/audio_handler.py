@@ -20,7 +20,11 @@ def audio_handler(message: Message) -> bool:
 
     settings: dict[str, YouTubeAudioSetting] = {
         setting.url: setting
-        for setting in YouTubeAudioSetting.select(YouTubeAudioSetting.id==message.user_id)
+        for setting in YouTubeAudioSetting.select().where(
+            (YouTubeAudioSetting.user_id == message.user_id)
+            &
+            (YouTubeAudioSetting.deleted_at == None)
+        )
     }
 
     logger.info(f'settings: {settings}')
