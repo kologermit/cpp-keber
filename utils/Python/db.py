@@ -11,7 +11,6 @@ def init(
     ):
     connection = PostgresqlDatabase(db, user=user, password=password, host=host, port=port)
     connection.bind(models)
-    connection.create_tables(models)
     logger.info({
         'event': 'INIT_DB_CONNECTION', 
         'user': user, 
