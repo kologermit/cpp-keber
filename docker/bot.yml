@@ -1,6 +1,7 @@
 volumes:
   bot_logs:
   bot_tmp:
+  file_buffer:
 
 services:
   bot:
@@ -13,6 +14,7 @@ services:
     volumes:
       - bot_logs:/app_logs
       - bot_tmp:/app_tmp
+      - file_buffer:/file_buffer:ro
       - ../build/${BOT_BUILD}/bot/BOT:/app:ro
     environment:
       - BOT_TOKEN=${BOT_TOKEN}

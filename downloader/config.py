@@ -20,8 +20,11 @@ from utils.Python.config import (
     GOOGLE_PASSWORD,
     SELENIUM_PAGE_LOAD_TIME,
     SELENIUM_HOST,
+    BOT_URL,
+    TMP_DIR,
     LOGS_DIR,
     USE_OAUTH,
+    FILE_BUFFER_DIR,
 )
 from utils.Python.parse_config import (
     parse_config_to_exec,
@@ -51,8 +54,11 @@ for key in [
     GOOGLE_PASSWORD,
     SELENIUM_PAGE_LOAD_TIME,
     SELENIUM_HOST,
+    TMP_DIR,
+    BOT_URL,
     LOGS_DIR,
     USE_OAUTH,
+    FILE_BUFFER_DIR,
 ]:
     default_config[key][required] = True
 

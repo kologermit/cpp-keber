@@ -1,15 +1,16 @@
-from tortoise import Tortoise
 from loguru import logger
+from peewee import PostgresqlDatabase, Model
 
-async def init(
+def init(
         host='localhost', 
-        port='5432', 
+        port=5432, 
         db='bot', 
         user='postgres', 
         password='qwerty', 
-        models='models'
+        models: list[Model] = []
     ):
-    url = f'postgres://{user}:{password}@{host}:{port}/{db}'
+    connection = PostgresqlDatabase(db, user=user, password=password, host=host, port=port)
+    connection.bind(models)
     logger.info({
         'event': 'INIT_DB_CONNECTION', 
         'user': user, 
@@ -17,8 +18,3 @@ async def init(
         'host': host,
         'port': port
     })
-    await Tortoise.init(
-        db_url=url,
-        modules={'models': [models]}
-    )
-    await Tortoise.generate_schemas()

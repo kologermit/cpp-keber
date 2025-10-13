@@ -9,7 +9,9 @@ services:
       file: ./parents.yml
       service: python_service
     environment:
-      - TMP_DIR=/temp
+      - TMP_DIR=/volumes/tmp
+      - LOGS_DIR=/volumes/logs
+      - FILE_BUFFER_DIR=/volumes/file_buffer
       - BOT_URL=http://bot:8080
       - GOOGLE_EMAIL=${GOOGLE_EMAIL}
       - GOOGLE_PASSWORD=${GOOGLE_PASSWORD}
@@ -31,7 +33,8 @@ services:
       - GOOGLE_PASSWORD=${GOOGLE_PASSWORD}
       - USE_OAUTH=${USE_OAUTH}
     volumes:
-      - downloader_venv:/venv
-      - downloader_logs:/logs
-      - downloader_tmp:/temp
-      - ../downloader:/app:ro
+      - downloader_venv:/volumes/venv
+      - downloader_logs:/volumes/logs
+      - downloader_tmp:/volumes/tmp
+      - file_buffer:/volumes/file_buffer
+      - ../downloader:/volumes/app:ro

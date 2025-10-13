@@ -99,10 +99,11 @@ namespace Bot::BotHandler::YouTubeHandler::MediaHandler {
         table[{0, 3}] = "Ссылка для скачивания";
 
         for (size_t i = 0; i < settings.size(); i++) {
-            table[{static_cast<unsigned short>(i+1), 0}] = to_string(i+1);
-            table[{static_cast<unsigned short>(i+1), 1}] = settings[i]->file_name;
-            table[{static_cast<unsigned short>(i+1), 2}] = settings[i]->url;
-            table[{static_cast<unsigned short>(i+1), 3}] = settings[i]->download_url;
+            auto row = static_cast<unsigned short>(i+1);
+            table[{row, 0}] = to_string(i+1);
+            table[{row, 1}] = settings[i]->file_name;
+            table[{row, 2}] = settings[i]->url;
+            table[{row, 3}] = settings[i]->download_url;
         }
 
         const string xlsx_path = fmt::format("{}/{}.xlsx", get_config()->get_tmp_path(), context->user->id);

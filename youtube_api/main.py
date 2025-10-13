@@ -23,6 +23,8 @@ from bottle import route, run, response, request
 from pytubefix import YouTube, Channel, Playlist
 from pytubefix.exceptions import RegexMatchError, VideoUnavailable
 
+MAX_CACHE_SIZE = 2000
+
 def middleware(f):
     def _(*args, **kwargs) -> str:
         try:
@@ -38,7 +40,7 @@ def generate_json_response(data, status: int=200) -> str:
     response.set_header('Cache-Control', 'no-cache')
     return dumps(data)
 
-@lru_cache(maxsize=2000)
+@lru_cache(maxsize=MAX_CACHE_SIZE)
 def get_video_dict(url: str, use_oauth: bool) -> dict:
     v = YouTube(url, use_oauth=use_oauth)
     return {
@@ -50,7 +52,7 @@ def get_video_dict(url: str, use_oauth: bool) -> dict:
         'channel_url': v.channel_url,
     }
 
-@lru_cache(maxsize=2000)
+@lru_cache(maxsize=MAX_CACHE_SIZE)
 def get_channel_dict(url: str, use_oauth: bool) -> dict:
     c = Channel(url, use_oauth=use_oauth)
     return {
@@ -59,7 +61,7 @@ def get_channel_dict(url: str, use_oauth: bool) -> dict:
         'channel_url': c.channel_url,
     }
 
-@lru_cache(maxsize=2000)
+@lru_cache(maxsize=MAX_CACHE_SIZE)
 def get_playlist_dict(url: str, use_oauth: bool) -> dict:
     p = Playlist(url, use_oauth=use_oauth)
     return {

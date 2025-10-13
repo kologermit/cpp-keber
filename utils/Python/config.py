@@ -9,6 +9,7 @@ from .parse_config import (
 
 LOGS_DIR = 'LOGS_DIR'
 TMP_DIR = 'TMP_DIR'
+FILE_BUFFER_DIR = 'FILE_BUFFER_DIR'
 BOT_URL = 'BOT_URL'
 LISTEN_IP = 'LISTEN_IP'
 LISTEN_PORT = 'LISTEN_PORT'
@@ -41,6 +42,10 @@ default_config = {
     TMP_DIR: {
         summary: 'Путь ко временным файлам. По умолчанию ./temp',
         default: './temp'
+    },
+    FILE_BUFFER_DIR: {
+        summary: 'Путь к папке обмена (буффер) между сервисами. По умолчанию ./file_buffer',
+        default: './file_buffer'
     },
     BOT_URL: {
         summary: 'Ссылка на АПИ бота. По умолчанию http://localhost:8080',

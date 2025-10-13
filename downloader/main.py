@@ -1,15 +1,9 @@
 # Встроенные модули
-from asyncio import Future, run
-from asyncio.exceptions import CancelledError
-from enum import IntEnum
-from json import loads
 from json.decoder import JSONDecodeError
 
 # Внутренние модули
 from config import (
     PROJECT_NAME,
-    LISTEN_IP,
-    LISTEN_PORT,
     TEST_YOUTUBE_VIDEO,
     RABBITMQ_HOST, 
     RABBITMQ_PORT, 
@@ -29,77 +23,77 @@ from config import (
     DB_PASSWORD,
     USE_OAUTH,
 )
-from utils.Python.logger import init as init_logger, log_async_exception
+from models import list_models
+from audio_handler import audio_handler
+from utils.Python.types import Message, DownloadType
+from utils.Python.logger import init as init_logger, log_sync_exception
 from utils.Python.db import init as init_db
 from utils.Python.pythubefix_settings import init as init_pytubefix
 
 # Внешние модули
 from loguru import logger
-from aio_pika import connect, IncomingMessage, Connection
+from pika import PlainCredentials, ConnectionParameters, BlockingConnection
+from pika.adapters.blocking_connection import BlockingChannel
+from pika.spec import Basic, BasicProperties
 
-class DownloadType(IntEnum):
-    AUDIO = 0
-    VIDEO_720P = 1
-    VIDEO_BEST = 2
-    PLAYLIST_AUDIO = 3
-    PLAYLIST_VIDEO_720P = 4
-    PLAYLIST_VIDEO_BEST = 5
-
-class Message:
-    def __init__(self, payload: str):
-        json_payload = loads(payload)
-        self.text: str = json_payload['text']
-        self.data: tuple[str, DownloadType] = json_payload['data']
-        self.chat_id: int = json_payload['chat_id']
-
-@log_async_exception
-async def handle_message(message: IncomingMessage):
-    logger.info({'event': 'NEW_MESSAGE', 'payload': message.body.decode()})
+@log_sync_exception
+def handle_message(
+        channel: BlockingChannel, 
+        method: Basic.Deliver, 
+        properties: BasicProperties, 
+        body: bytes
+    ):
+    logger.info({'event': 'NEW_MESSAGE', 'payload': body.decode()})
     try:
-        message = Message(message.body.decode())
+        message = Message(body.decode())
+        if message.data[0] == DownloadType.AUDIO:
+            audio_handler(message)
     except (JSONDecodeError, KeyError):
         pass
 
-async def create_rabbitmq_connection():
-    logger.info({'event': 'CREATE_AMQP_CONNECTION', 'host': f'{RABBITMQ_HOST}:{RABBITMQ_PORT}', 'vhost': RABBITMQ_VHOST, 'user': RABBITMQ_USER})
-    amqp_url = f"amqp://{RABBITMQ_USER}:{RABBITMQ_PASS}@{RABBITMQ_HOST}:{RABBITMQ_PORT}{RABBITMQ_VHOST}"
-    return await connect(amqp_url)
-
-async def setup_consumer(connection: Connection):
-    prefetch_count = 1
-    durable = True
-    logger.info({'event': 'SETUP_CONSUMER', 'queue': DOWNLOADER_QUEUE_NAME, 'prefetch_count': prefetch_count, 'durable': durable})
-    channel = await connection.channel()
-    await channel.set_qos(prefetch_count=prefetch_count)
-    queue = await channel.declare_queue(DOWNLOADER_QUEUE_NAME, durable=durable)
-    tag = await queue.consume(handle_message)
-    logger.info({'event': 'NEW_CONSUMER', 'tag': tag})
-    return tag
-async def waiting_work():
-    connection = None
+def waiting_work():
     try:
-        connection = await create_rabbitmq_connection()
-        await setup_consumer(connection)
-        logger.info({'event': 'START_SERVICE', 'service': {PROJECT_NAME}, 'listen': f'{LISTEN_IP}:{LISTEN_PORT}'})
-        await Future()
-    except (KeyboardInterrupt, CancelledError):
+        credentials = PlainCredentials(RABBITMQ_USER, RABBITMQ_PASS)
+        parameters = ConnectionParameters(
+            host=RABBITMQ_HOST,
+            port=RABBITMQ_PORT,
+            virtual_host=RABBITMQ_VHOST,
+            credentials=credentials
+        )
+        connection = BlockingConnection(parameters)
+        channel = connection.channel()
+        channel.queue_declare(
+        queue=DOWNLOADER_QUEUE_NAME,
+            durable=True,
+            auto_delete=False,
+            arguments={'x-queue-mode': 'lazy'}
+        )
+        channel.basic_consume(
+            queue=DOWNLOADER_QUEUE_NAME,
+            on_message_callback=handle_message,
+            auto_ack=True
+        )
+        logger.info({'event': 'START_SERVICE', 'service': {PROJECT_NAME}})
+        channel.start_consuming()
+    except (KeyboardInterrupt):
         logger.info({'event': 'GRACEFUL_STOP'})
         if connection:
             logger.info({'event': 'CLOSING_CONNECTION'})
-            await connection.close()
+            connection.close()
             return
 
-async def main():
+def main():
     init_logger(
         LOGS_DIR, 
         PROJECT_NAME
     )
-    await init_db(
+    init_db(
         DB_HOST,
         DB_PORT,
         DB_NAME,
         DB_USER,
-        DB_PASSWORD
+        DB_PASSWORD,
+        list_models
     )
     init_pytubefix(
         GOOGLE_EMAIL,
@@ -109,7 +103,7 @@ async def main():
         TEST_YOUTUBE_VIDEO,
         USE_OAUTH
     )
-    await waiting_work()
+    waiting_work()
     
 if __name__ == "__main__":
-    run(main())
+    main()

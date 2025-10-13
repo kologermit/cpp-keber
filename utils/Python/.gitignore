@@ -5,3 +5,5 @@
 !logger.py
 !pythubefix_settings.py
 !db.py
+!types.py
+!bot_api.py

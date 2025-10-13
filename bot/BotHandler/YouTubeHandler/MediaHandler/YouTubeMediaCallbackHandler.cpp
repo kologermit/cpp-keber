@@ -4,6 +4,7 @@
 #include <bot/BotHandler/YouTubeHandler/MediaHandler/YouTubeMediaHandler.hpp>
 #include <bot/BotHandler/YouTubeHandler/YouTubeHandler.hpp>
 #include <bot/BotHandler/Keys.hpp>
+#include <utils/JSONKeys.hpp>
 #include <utils/TGBotApi/JSONKeys.hpp>
 #include <utils/TGBotApi/Types.hpp>
 #include <fmt/core.h>
@@ -17,6 +18,7 @@ namespace Bot::BotHandler::YouTubeHandler::MediaHandler {
     using Utils::TGBotApi::JSONKeys::CALLBACK_QUERY_ID_KEY;
     using Utils::TGBotApi::JSONKeys::CHAT_ID_KEY;
     using Utils::TGBotApi::JSONKeys::TEXT_KEY;
+    using Utils::JSONKeys::USER_ID_KEY;
 
     const string& YouTubeMediaCallbackHandler::get_name() const noexcept {
         static const string name = "YouTubeMediaCallbackHandler";
@@ -41,6 +43,7 @@ namespace Bot::BotHandler::YouTubeHandler::MediaHandler {
                     {DATA_KEY, json::parse(context->callback->data)},
                     {TEXT_KEY, context->message->text},
                     {CHAT_ID_KEY, context->chat->id},
+                    {USER_ID_KEY, context->user->id},
                 })
                 ? ADD_TO_QUEUE_PHRASE
                 : FAILED_TO_ADD_TO_QUEUE_PHRASE

@@ -9,6 +9,7 @@ services:
       service: python_service
     ports:
       - ${YOUTUBE_API_EXTERNAL_PORT}:8080
+    working_dir: /volumes/
     environment:
       - BOT_URL=http://bot:8080
       - SELENIUM_HOST=http://selenium:4444/wd/hub
@@ -18,6 +19,6 @@ services:
       - GOOGLE_PASSWORD=${GOOGLE_PASSWORD}
       - USE_OAUTH=${USE_OAUTH}
     volumes:
-      - youtube_api_venv:/venv
-      - youtube_api_logs:/logs
-      - ../youtube_api:/app:ro
+      - youtube_api_venv:/volumes/venv
+      - youtube_api_logs:/volumes/logs
+      - ../youtube_api:/volumes/app:ro

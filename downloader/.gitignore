@@ -1,6 +1,8 @@
 *
 !.gitignore
 !requirements.txt
+!audio_handler.py
 !main.py
 !config.py
 !models.py
+!types.py

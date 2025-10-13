@@ -8,9 +8,9 @@ ARG GROUP_ID=1001
 RUN groupadd -g $GROUP_ID runner && \
     useradd -u $USER_ID -g runner -m -s /bin/bash runner
 
-RUN mkdir -p /app_tmp /app_logs \
-    && chown runner:runner /app_tmp /app_logs \
-    && chmod 755 /app_tmp /app_logs
+RUN mkdir -p /volumes/logs /volumes/tmp \
+    && chown runner:runner / /volumes/logs /volumes/tmp \
+    && chmod 755 /volumes/logs /volumes/tmp
 
 WORKDIR /
 

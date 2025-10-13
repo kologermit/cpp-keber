@@ -1,10 +1,10 @@
-if [[ ! -d /venv/venv ]]; then
+if [[ ! -d ./venv ]]; then
     echo "Creating venv"
-    python3 -m venv /venv/venv
+    python3 -m venv ./venv
     echo "Install requirements"
-    /venv/venv/bin/pip install -r /app/requirements.txt
+    ./venv/bin/pip install -r ./app/requirements.txt
 fi
 
 echo 'freeze'
-/venv/venv/bin/pip freeze
-/venv/venv/bin/python3 /app/main.py
+./venv/bin/pip freeze
+./venv/bin/python3 ./app/main.py
