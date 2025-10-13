@@ -43,7 +43,7 @@ services:
       service: parent
     image: ${PYTHON_IMAGE}
     working_dir: /
-    entrypoint: sh /app/entrypoint.sh
+    entrypoint: sh /utils/Python/entrypoint.sh
     volumes:
       - ../utils/Python:/utils/Python:ro
     environment:
