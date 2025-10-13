@@ -46,7 +46,7 @@ def handle_message(
     logger.info({'event': 'NEW_MESSAGE', 'payload': body.decode()})
     try:
         message = Message(body.decode())
-        if message.data[0] == DownloadType.AUDIO:
+        if message.data[1] == DownloadType.AUDIO:
             audio_handler(message)
     except (JSONDecodeError, KeyError):
         pass

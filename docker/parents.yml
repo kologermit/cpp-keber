@@ -46,5 +46,3 @@ services:
     entrypoint: sh /utils/Python/entrypoint.sh
     volumes:
       - ../utils/Python:/utils/Python:ro
-    environment:
-      - LOGS_DIR=/logs
