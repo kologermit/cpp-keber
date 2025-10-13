@@ -14,7 +14,7 @@ def audio_handler(message: Message) -> bool:
 
     for line in message.text.split('\n'):
         try:
-            videos.append(YouTube(line, use_oauth=USE_OAUTH))
+            videos.append(YouTube(line.strip(), use_oauth=USE_OAUTH))
         except (RegexMatchError, VideoUnavailable, KeyError):
             continue
 
