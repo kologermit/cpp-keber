@@ -23,7 +23,7 @@ namespace Utils::TGBotApi::Bot {
     constexpr const char* SECRET_HEADER = "X-Telegram-Bot-Api-Secret-Token";
 
     struct SendMessageParameters {
-        long long chat_id;
+        long long chat_id = 0;
         string text = "";
         long long reply_message_id = 0;
         string placeholder = "";

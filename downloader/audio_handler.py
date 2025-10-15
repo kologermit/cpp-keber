@@ -1,8 +1,10 @@
 from os import path
+from requests import get
 
-from config import USE_OAUTH, TMP_DIR
+from config import USE_OAUTH, TMP_DIR, BOT_URL
 from models import YouTubeAudioSetting
 from utils.Python.types import Message
+from utils.Python.bot_api import BotAPI
 
 from pytubefix import YouTube
 from pytubefix.exceptions import RegexMatchError, VideoUnavailable
@@ -11,6 +13,7 @@ from loguru import logger
 
 def audio_handler(message: Message) -> bool:
     videos: list[YouTube] = []
+    bot_api = BotAPI(BOT_URL)
 
     for line in message.text.split('\n'):
         try:
@@ -27,22 +30,23 @@ def audio_handler(message: Message) -> bool:
         )
     }
 
-    logger.info(f'settings: {settings}')
-    logger.info(f'videos: {videos}')
+    failed_downloads: list[YouTube] = []
+    success_downloads: list[str] = []
 
-    # failed_downloads: list[YouTube] = []
-    # success_downloads: list[str] = []
+    bot_api.send_message(
+        message.chat_id,
+        f"Количество видео: {len(videos)}. Количество настроек: {len(settings)}",
+    )
 
     # for video in videos:
     #     try:
     #         if video.watch_url in settings:
     #             setting = settings[video.watch_url]
-    #             session = ClientSession(setting.download_url)
-    #             response: ClientResponse = await session.get()
-    #             if response.status < 200 or response.status >= 300:
-    #                 failed_downloads.append(video)
-    #                 continue
-    #             if setting.file_name != "" and setting.file_name is not None:
+                # response = get(setting.download_url)
+                # if response.status_code < 200 or response.status_code >= 300:
+                #     failed_downloads.append(video)
+                #     continue
+                # if setting.file_name != "" and setting.file_name is not None:
     #                 file_name = setting.file_name
     #             else:
     #                 file_name = sanitize_filename(path.basename(setting.download_url))

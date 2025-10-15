@@ -39,6 +39,7 @@ namespace Utils::Config {
         virtual const string& get_tmp_path() const noexcept = 0;
         virtual const string& get_logs_path() const noexcept = 0;
         virtual const string& get_shared_path() const noexcept = 0;
+        virtual const string& get_file_buffer_path() const noexcept = 0;
 
     };
 

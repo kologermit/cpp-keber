@@ -30,6 +30,7 @@ namespace Utils::Config {
         const string& get_tmp_path() const noexcept override;
         const string& get_logs_path() const noexcept override;
         const string& get_shared_path() const noexcept override;
+        const string& get_file_buffer_path() const noexcept override;
 
         Config(int argc, const char* argv[]);
 
@@ -59,6 +60,7 @@ namespace Utils::Config {
         string _tmp_path = "/tmp";
         string _logs_path = "./logs/bot";
         string _shared_path = "./shared";
+        string _file_buffer_path = "./file_buffer";
 
     };
 

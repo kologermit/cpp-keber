@@ -11,6 +11,7 @@
 #include <bot/BotHandler/YouTubeHandler/PlaylistHandler/YouTubePlaylistHandler.hpp>
 #include <bot/BotHandler/CallbackDeleterHandler/CallbackDeleterHandler.hpp>
 #include <bot/HTTPHandler/CheckHealthHandler/CheckHealthHandler.hpp>
+#include <bot/HTTPHandler/SendMessageHandler/SendMessageHandler.hpp>
 #include <utils/Logger/InterfaceLogger.hpp>
 #include <utils/Random/Random.hpp>
 #include <utils/JSONKeys.hpp>
@@ -61,7 +62,6 @@ namespace Bot::Server {
     using Utils::JSONKeys::RESULT_KEY;
     using TGMessage = Utils::TGBotApi::Message::Message;
     using TGCallback = Utils::TGBotApi::CallbackQuery::CallbackQuery;
-    using Bot::HTTPHandler::CheckHealthHandler::CheckHealthHandler;
     using Bot::HTTPHandler::RequestHandlerMethod;
     using Bot::BotHandler::BotHandlerContext;
     using Bot::Entity::User::User;
@@ -94,7 +94,8 @@ namespace Bot::Server {
         bot_handlers.emplace_back(make_unique<Bot::BotHandler::YouTubeHandler::PlaylistHandler::YouTubePlaylistHandler>());
         bot_handlers.emplace_back(make_unique<Bot::BotHandler::CallbackDeleterHandler::CallbackDeleterHandler>());
         bot_handlers.emplace_back(make_unique<Bot::BotHandler::NotFoundHandler::NotFoundHandler>());
-        request_handlers.emplace_back(make_unique<CheckHealthHandler>());
+        request_handlers.emplace_back(make_unique<Bot::HTTPHandler::CheckHealthHandler::CheckHealthHandler>());
+        request_handlers.emplace_back(make_unique<Bot::HTTPHandler::SendMessageHandler::SendMessageHandler>());
     }
 
     struct BotHandler final : InterfaceHTTPHandler {

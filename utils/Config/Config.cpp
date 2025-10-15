@@ -131,6 +131,10 @@ namespace Utils::Config {
         return _shared_path;
     }
 
+    const string& Config::get_file_buffer_path() const noexcept {
+        return _file_buffer_path;
+    }
+
     Config::Config(int argc, const char* argv[]) {
         string ENV_FILE_KEY = "--env-file";
         string json_file_name;
@@ -207,6 +211,7 @@ namespace Utils::Config {
             {"TMP_PATH", _tmp_path},
             {"LOGS_PATH", _logs_path},
             {"SHARED_PATH", _shared_path},
+            {"FILE_BUFFER_PATH", _file_buffer_path},
         })  {
             config.config_value = Utils::Env::Get(config.param, config.config_value);
             if (!json_env.empty() && json_env.contains(config.param)) {

@@ -1,0 +1,4 @@
+*
+!.gitignore
+!SendMessageHandler.hpp
+!SendMessageHandler.cpp
