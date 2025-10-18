@@ -13,7 +13,7 @@ class BotAPI:
             file_path_in_buffer: str|None=None,
         ) -> int:
         response = post(
-            f'{self.url}/send_text', 
+            f'{self.url}/send_message', 
             data={
                 'chat_id': chat_id, 
                 'text': text,
