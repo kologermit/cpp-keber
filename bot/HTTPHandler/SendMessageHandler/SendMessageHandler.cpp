@@ -37,9 +37,9 @@ namespace Bot::HTTPHandler::SendMessageHandler {
         return pattern;
     }
 
-    json SendMessageHandler::handle(const Request& req, Response& res) {
-        res.status = 400;
-        validate_params(req, {
+    json SendMessageHandler::handle(const Request& request, Response& response) {
+        response.status = 400;
+        validate_params(request, {
             {"chat_id", LONG_LONG, true},
             {"text", STRING, true},
             {"reply_message_id", LONG_LONG, false},
@@ -47,13 +47,13 @@ namespace Bot::HTTPHandler::SendMessageHandler {
         });
         SendMessageParameters send_message_parameters{
             .chat_id = stoll(request.get_param_value("chat_id")),
-            .text = stoll(request.get_param_value("text"))
+            .text = request.get_param_value("text")
         };
         const auto chat = get_repositories()->chat->get_by_id(send_message_parameters.chat_id);
         if (chat == nullptr) {
             return "chat not found";
         }
-        const auto reply_message_id_str = req.get_param_value("reply_message_id");
+        const auto reply_message_id_str = request.get_param_value("reply_message_id");
         if (!reply_message_id_str.empty()) {
             send_message_parameters.reply_message_id = stoll(reply_message_id_str);
             const auto reply_message = get_repositories()->message->get_by_chat_and_id(chat->id, send_message_parameters.reply_message_id);
@@ -61,7 +61,7 @@ namespace Bot::HTTPHandler::SendMessageHandler {
                 return "reply message not found";
             } 
         }
-        const auto file_path = req.get_param_value("file");
+        const auto file_path = request.get_param_value("file");
         if (!file_path.empty()) {
             send_message_parameters.filepath = fmt::format("{}/{}", get_config()->get_file_buffer_path(), file_path);
             send_message_parameters.content_type = DOCUMENT;
@@ -72,7 +72,7 @@ namespace Bot::HTTPHandler::SendMessageHandler {
         } catch (const exception& exc) {
             return fmt::format("error while send message: {}", exc.what());
         }
-        res.status = 200;
+        response.status = 200;
         return get_repositories()->message->get_by_telegram_message(*message, false)->id;
     }
 }
