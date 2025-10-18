@@ -13,7 +13,7 @@ namespace Utils::HTTP {
     using std::stold;
 
     void validate_params(const Request& request, const vector<CheckParam>& params) {
-        for (const auto param : params) {
+        for (const auto& param : params) {
             const string param_str = request.get_param_value(param.name);
             if (param.required && param_str.empty()) {
                 throw invalid_argument(fmt::format("required param {} not found", param.name));
