@@ -1,11 +1,15 @@
+# Встроенные модули
 from os import path
 from requests import get
+from time import sleep
 
+# Внутренние модули
 from config import USE_OAUTH, TMP_DIR, BOT_URL
 from models import YouTubeAudioSetting
 from utils.Python.types import Message
 from utils.Python.bot_api import BotAPI
 
+# Внешние модули
 from pytubefix import YouTube
 from pytubefix.exceptions import RegexMatchError, VideoUnavailable
 from pathvalidate import sanitize_filename
@@ -33,12 +37,39 @@ def audio_handler(message: Message) -> bool:
     failed_downloads: list[YouTube] = []
     success_downloads: list[str] = []
 
-    bot_api.send_message(
+    message_template = '\n'.join([
+        '<b>Скачивание аудио</b>',
+        f'<b>Количество:</b> <i>{len(videos)}</i>',
+        f'<b>Количество настроек:</b> <i>{len(settings)}</i>',
+        '',
+        '<b>Скачано:</b> <i>{downloaded_count}</i>',
+        '<b>Скачивается:</b> <i>{download_title}</i>'
+        '<b>Источник:</b> <code>{download_url}</code>'
+    ])
+
+    downloader_message_id = bot_api.send_message(
         message.chat_id,
-        f"Количество видео: {len(videos)}. Количество настроек: {len(settings)}",
+        message_template.format(
+            downloaded_count=0,
+            download_title='-',
+            download_url='-',
+        ),
     )
 
-    # for video in videos:
+    for i, video in enumerate(videos):
+        bot_api.edit_message_text(
+            message.chat_id,
+            message_template.format(
+                downloaded_count=i,
+                download_title=video.title.replace('<', '[').replace('>', ']'),
+                download_url=(
+                    settings[video.watch_url].download_url
+                    if video.watch_url in settings else
+                    video.watch_url
+                )
+            )
+        )
+        sleep(2)
     #     try:
     #         if video.watch_url in settings:
     #             setting = settings[video.watch_url]

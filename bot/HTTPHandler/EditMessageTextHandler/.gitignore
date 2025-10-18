@@ -1,0 +1,4 @@
+*
+!.gitignore
+!EditMessageTextHandler.hpp
+!EditMessageTextHandler.cpp

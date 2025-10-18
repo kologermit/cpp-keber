@@ -12,11 +12,13 @@
 #include <bot/BotHandler/CallbackDeleterHandler/CallbackDeleterHandler.hpp>
 #include <bot/HTTPHandler/CheckHealthHandler/CheckHealthHandler.hpp>
 #include <bot/HTTPHandler/SendMessageHandler/SendMessageHandler.hpp>
+#include <bot/HTTPHandler/EditMessageTextHandler/EditMessageTextHandler.hpp>
 #include <utils/Logger/InterfaceLogger.hpp>
 #include <utils/Random/Random.hpp>
 #include <utils/JSONKeys.hpp>
 #include <utils/Config/InterfaceConfig.hpp>
 #include <ranges>
+#include <stdexcept>
 
 namespace Bot::Server {
 
@@ -24,6 +26,7 @@ namespace Bot::Server {
     using std::make_unique;
     using std::to_string;
     using std::exception;
+    using std::invalid_argument;
     using std::string;
     using std::string_view;
     using std::stoi;
@@ -96,6 +99,7 @@ namespace Bot::Server {
         bot_handlers.emplace_back(make_unique<Bot::BotHandler::NotFoundHandler::NotFoundHandler>());
         request_handlers.emplace_back(make_unique<Bot::HTTPHandler::CheckHealthHandler::CheckHealthHandler>());
         request_handlers.emplace_back(make_unique<Bot::HTTPHandler::SendMessageHandler::SendMessageHandler>());
+        request_handlers.emplace_back(make_unique<Bot::HTTPHandler::EditMessageTextHandler::EditMessageTextHandler>());
     }
 
     struct BotHandler final : InterfaceHTTPHandler {
@@ -219,8 +223,16 @@ namespace Bot::Server {
                         api_request.response[BODY_KEY] = json::parse(res.body);
                     }
                     get_repositories()->api_request->create(api_request);
+                } catch (const invalid_argument & er) {
+                    res.status = 400;
+                    res.set_content(json{{STATUS_KEY, res.status}, 
+                        {RESULT_KEY, fmt::format("invalid_argument: {}", er.what())}
+                    }.dump(), "application/json");
                 } catch (const exception& er) {
                     res.status = 500;
+                    res.set_content(json{{STATUS_KEY, res.status}, 
+                        {RESULT_KEY, fmt::format("enexcpected_exception: {}", er.what())}
+                    }.dump(), "application/json");
                     get_logger()->error("SERVER::HANDLE", er.what(), __FILE__, __LINE__);
                 }
             };

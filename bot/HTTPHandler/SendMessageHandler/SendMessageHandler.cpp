@@ -2,6 +2,7 @@
 #include <bot/Entity/Repositories.hpp>
 #include <utils/TGBotApi/Bot/InterfaceBot.hpp>
 #include <utils/Config/InterfaceConfig.hpp>
+#include <utils/HTTP/HTTP.hpp>
 #include <fstream>
 #include <string>
 
@@ -13,7 +14,11 @@ namespace Bot::HTTPHandler::SendMessageHandler {
     using Utils::TGBotApi::Message::Message;
     using Utils::TGBotApi::File::DOCUMENT;
     using Utils::Config::get_config;
-    using std::stoi;
+    using Utils::HTTP::validate_params;
+    using Utils::HTTP::LONG_LONG;
+    using Utils::HTTP::STRING;
+    using Utils::HTTP::FILE;
+    using std::stoll;
     using std::exception;
     using std::unique_ptr;
     using std::ifstream;
@@ -34,43 +39,31 @@ namespace Bot::HTTPHandler::SendMessageHandler {
 
     json SendMessageHandler::handle(const Request& req, Response& res) {
         res.status = 400;
-        SendMessageParameters send_message_parameters;
-        const auto chat_id_str = req.get_param_value("chat_id");
-        if (chat_id_str.empty()) {
-            return "param chat_id not found";
-        }
-        try {
-            send_message_parameters.chat_id = stoi(chat_id_str);
-        } catch ([[maybe_unused]]const exception& exc) {
-            return "invalid param chat_id";
-        }
+        validate_params(req, {
+            {"chat_id", LONG_LONG, true},
+            {"text", STRING, true},
+            {"reply_message_id", LONG_LONG, false},
+            {"file", FILE, false},
+        });
+        SendMessageParameters send_message_parameters{
+            .chat_id = stoll(request.get_param_value("chat_id")),
+            .text = stoll(request.get_param_value("text"))
+        };
         const auto chat = get_repositories()->chat->get_by_id(send_message_parameters.chat_id);
         if (chat == nullptr) {
             return "chat not found";
         }
-        send_message_parameters.text = req.get_param_value("text");
-        if (send_message_parameters.text.empty()) {
-            return "param text not found";
-        }
         const auto reply_message_id_str = req.get_param_value("reply_message_id");
         if (!reply_message_id_str.empty()) {
-            try {
-                send_message_parameters.reply_message_id = stoi(reply_message_id_str);
-                const auto reply_message = get_repositories()->message->get_by_chat_and_id(chat->id, send_message_parameters.reply_message_id);
-                if (reply_message == nullptr) {
-                    return "reply message not found";
-                } 
-            } catch ([[maybe_unused]]const exception& ex) {
-                return "invalid param reply_message_id";
-            }
+            send_message_parameters.reply_message_id = stoll(reply_message_id_str);
+            const auto reply_message = get_repositories()->message->get_by_chat_and_id(chat->id, send_message_parameters.reply_message_id);
+            if (reply_message == nullptr) {
+                return "reply message not found";
+            } 
         }
         const auto file_path = req.get_param_value("file");
         if (!file_path.empty()) {
             send_message_parameters.filepath = fmt::format("{}/{}", get_config()->get_file_buffer_path(), file_path);
-            ifstream file(send_message_parameters.filepath);
-            if (!file.good()) {
-                return fmt::format("cant read file {}", file_path);
-            }
             send_message_parameters.content_type = DOCUMENT;
         }
         unique_ptr<Message> message;

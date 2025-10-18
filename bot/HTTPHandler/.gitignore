@@ -3,3 +3,4 @@
 !InterfaceHTTPHandler.hpp
 !CheckHealthHandler
 !SendMessageHandler
+!EditMessageTextHandler
