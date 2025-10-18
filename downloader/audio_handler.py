@@ -59,6 +59,7 @@ def audio_handler(message: Message) -> bool:
     for i, video in enumerate(videos):
         bot_api.edit_message_text(
             message.chat_id,
+            downloader_message_id,
             message_template.format(
                 downloaded_count=i,
                 download_title=video.title.replace('<', '[').replace('>', ']'),
