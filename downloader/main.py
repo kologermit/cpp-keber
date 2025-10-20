@@ -1,5 +1,6 @@
 # Встроенные модули
 from json.decoder import JSONDecodeError
+from random import randint
 
 # Внутренние модули
 from config import (
@@ -43,11 +44,14 @@ def handle_message(
         properties: BasicProperties, 
         body: bytes
     ):
-    logger.info({'event': 'NEW_MESSAGE', 'payload': body.decode()})
+    handle_id = randint(1, 10000000)
+    logger.info({'event': 'NEW_MESSAGE', 'payload': body.decode(), 'handle_id': handle_id})
     try:
-        message = Message(body.decode())
+        message = Message(body.decode(), handle_id)
+        logger.info({'event': 'HANDLER'})
         if message.data[1] == DownloadType.AUDIO:
             audio_handler(message)
+        
     except (JSONDecodeError, KeyError):
         pass
 

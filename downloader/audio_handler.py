@@ -19,6 +19,8 @@ def audio_handler(message: Message) -> bool:
     videos: list[YouTube] = []
     bot_api = BotAPI(BOT_URL)
 
+    logger.info({'event': 'AUDIO_HANDLER', 'handle_id': message.handle_id})
+
     for line in message.text.split('\n'):
         try:
             videos.append(YouTube(line.strip(), use_oauth=USE_OAUTH))
@@ -34,6 +36,13 @@ def audio_handler(message: Message) -> bool:
         )
     }
 
+    logger.info({
+        'event': 'HANDLE_INFO', 
+        'hanle_id': message.handle_id, 
+        'count_videos': len(videos), 
+        'count_settings': len(settings)
+    })
+
     failed_downloads: list[YouTube] = []
     success_downloads: list[str] = []
 
@@ -43,7 +52,7 @@ def audio_handler(message: Message) -> bool:
         f'<b>Количество настроек:</b> <i>{len(settings)}</i>',
         '',
         '<b>Скачано:</b> <i>{downloaded_count}</i>',
-        '<b>Скачивается:</b> <i>{download_title}</i>'
+        '<b>Скачивается:</b> <i>{download_title}</i>',
         '<b>Источник:</b> <code>{download_url}</code>'
     ])
 
@@ -57,6 +66,11 @@ def audio_handler(message: Message) -> bool:
     )
 
     for i, video in enumerate(videos):
+        logger.info({
+            'event': 'VIDEO_INFO',
+            'handle_id': message.handle_id,
+            'video': video.watch_url
+        })
         bot_api.edit_message_text(
             message.chat_id,
             downloader_message_id,
