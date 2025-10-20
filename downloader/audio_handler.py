@@ -71,19 +71,25 @@ def audio_handler(message: Message) -> bool:
             'handle_id': message.handle_id,
             'video': video.watch_url
         })
+        message_text = message_template.format(
+            downloaded_count=i,
+            download_title=video.title.replace('<', '[').replace('>', ']'),
+            download_url=(
+                settings[video.watch_url].download_url
+                if video.watch_url in settings else
+                video.watch_url
+            )
+        )
+        logger.info({
+            'event': 'MESSAGE_TEXT',
+            'handle_id': message.handle_id,
+            'message_text': message_text,
+            'message_id': downloader_message_id
+        })
         bot_api.edit_message_text(
             message.chat_id,
             downloader_message_id,
-            # message_template.format(
-            #     downloaded_count=i,
-            #     download_title=video.title.replace('<', '[').replace('>', ']'),
-            #     download_url=(
-            #         settings[video.watch_url].download_url
-            #         if video.watch_url in settings else
-            #         video.watch_url
-            #     )
-            # )
-            str(i+1)
+            message_text
         )
         sleep(2)
     #     try:
