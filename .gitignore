@@ -1,5 +1,6 @@
 *
 !bot
+!task_tracker
 !Caddyfile
 !CMakeLists.txt
 !conanfile.py

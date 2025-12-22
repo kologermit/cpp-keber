@@ -213,3 +213,29 @@ CREATE TABLE youtube_downloads(
     CONSTRAINT fk_youtube_download_youtube_audio_setting FOREIGN KEY (youtube_audio_setting) REFERENCES youtube_audio_settings(id),
     CONSTRAINT fk_youtube_download_user_id FOREIGN KEY (user_id) REFERENCES users(id)
 );
+
+CREATE TABLE task_states(
+    id         BIGINT NOT NULL,
+    name       VARCHAR(1000) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    UNIQUE(id)
+);
+
+CREATE TABLE tasks(
+    id         SERIAL PRIMARY KEY,
+    title      VARCHAR(1000) NOT NULL,
+    "description" VARCHAR(2000) NOT NULL,
+    user_id    BIGINT NOT NULL,
+    "state"    BIGINT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT fk_task_user_id FOREIGN KEY (user_id) REFERENCES users(id),
+    CONSTRAINT fk_task_state FOREIGN KEY ("state") REFERENCES task_states(id)
+);  
+
+CREATE TRIGGER trigger_update_tasks_updated_at
+BEFORE UPDATE ON tasks
+FOR EACH ROW
+EXECUTE FUNCTION update_updated_at();
