@@ -11,54 +11,12 @@ namespace Utils::HTTPServer::Handler {
             context->response.status = 404;
             return "not found";
         }
-    };
-    
-    template <typename HandlerContext>
-    struct NotFoundHandlerGET : NotFoundHandler<HandlerContext> {
+        
         const HandlerSignature& get_signature() const noexcept override {
             static const HandlerSignature signature{
-                .name = "NotFoundHandlerGET",
-                .pattern = ".*",
-                .method = RequestHandlerMethod::GET,
-                .is_auth = false,
-            };
-            return signature;
-        }
-    };
-
-    template <typename HandlerContext>
-    struct NotFoundHandlerPOST : NotFoundHandler<HandlerContext> {
-        const HandlerSignature& get_signature() const noexcept override {
-            static const HandlerSignature signature{
-                .name = "NotFoundHandlerPOST",
-                .pattern = ".*",
-                .method = RequestHandlerMethod::POST,
-                .is_auth = false,
-            };
-            return signature;
-        }
-    };
-
-    template <typename HandlerContext>
-    struct NotFoundHandlerPATCH : NotFoundHandler<HandlerContext> {
-        const HandlerSignature& get_signature() const noexcept override {
-            static const HandlerSignature signature{
-                .name = "NotFoundHandlerPATCH",
-                .pattern = ".*",
-                .method = RequestHandlerMethod::PATCH,
-                .is_auth = false,
-            };
-            return signature;
-        }
-    };
-
-    template <typename HandlerContext>
-    struct NotFoundHandlerDELETE : NotFoundHandler<HandlerContext> {
-        const HandlerSignature& get_signature() const noexcept override {
-            static const HandlerSignature signature{
-                .name = "NotFoundHandlerDELETE",
-                .pattern = ".*",
-                .method = RequestHandlerMethod::DELETE,
+                .name = "NotFoundHandler",
+                .pattern = "*",
+                .method = RequestHandlerMethod::NONE,
                 .is_auth = false,
             };
             return signature;

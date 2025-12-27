@@ -8,3 +8,4 @@
 !HTTPHandler
 !main.cpp
 !Signal
+!GlobalContext.hpp

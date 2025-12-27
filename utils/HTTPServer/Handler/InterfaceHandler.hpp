@@ -3,6 +3,8 @@
 #define CPPHTTPLIB_OPENSSL_SUPPORT
 #include <httplib.h>
 #include <nlohmann/json.hpp>
+#include <map>
+#include <string>
 #include <memory>
 #include <vector>
 
@@ -19,7 +21,8 @@ namespace Utils::HTTPServer::Handler {
         GET,
         POST,
         PATCH,
-        DELETE
+        DELETE,
+        NONE
     };
 
     enum ParamType {INT, FLOAT, STRING, BOOL};
@@ -33,7 +36,8 @@ namespace Utils::HTTPServer::Handler {
         string name;
         string pattern;
         RequestHandlerMethod method = RequestHandlerMethod::GET;
-        bool is_auth = true;
+        bool is_auth = false;
+        bool is_json_body = false;
         vector<Param> query_params = vector<Param>();
         vector<Param> headers = vector<Param>();
         vector<Param> body_params = vector<Param>();
@@ -41,10 +45,24 @@ namespace Utils::HTTPServer::Handler {
 
     template <typename HandlerContext>
     struct InterfaceHandler {
+        using ptrContext = shared_ptr<HandlerContext>;
         virtual ~InterfaceHandler() = default;
 
         [[nodiscard]] virtual const HandlerSignature& get_signature() const noexcept = 0;
-        [[nodiscard]] virtual json handle(shared_ptr<HandlerContext> context) = 0;
+        [[nodiscard]] virtual json handle(ptrContext context) = 0;
     };
+}
 
+namespace std {
+    using Utils::HTTPServer::Handler::RequestHandlerMethod;
+    const string& to_string(RequestHandlerMethod method) {
+        static const map<RequestHandlerMethod, string> m{
+            {RequestHandlerMethod::GET, "GET"},
+            {RequestHandlerMethod::POST, "POST"},
+            {RequestHandlerMethod::PATCH, "PATCH"},
+            {RequestHandlerMethod::DELETE, "DELETE"},
+            {RequestHandlerMethod::NONE, "NONE"},
+        };
+        return m.at(method);
+    }
 }

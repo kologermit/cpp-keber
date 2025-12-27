@@ -1,6 +1,7 @@
 *
 !.gitignore
-!InterfaceHTTPHandler.hpp
-!CheckHealthHandler
-!SendMessageHandler
-!EditMessageTextHandler
+!HandlerContext.hpp
+!Webhook
+!CheckHealth
+!init.hpp
+!init.cpp

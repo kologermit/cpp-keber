@@ -42,7 +42,4 @@ namespace Utils::Config {
         virtual const string& get_file_buffer_path() const noexcept = 0;
 
     };
-
-    const InterfaceConfig* get_config(unique_ptr<InterfaceConfig> config = nullptr);
-
 }

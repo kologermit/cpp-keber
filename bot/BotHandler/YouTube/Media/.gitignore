@@ -1,0 +1,6 @@
+*
+!.gitignore
+!MediaHandler.hpp
+!MediaHandler.cpp
+!MediaCallbackHandler.hpp
+!MediaCallbackHandler.cpp

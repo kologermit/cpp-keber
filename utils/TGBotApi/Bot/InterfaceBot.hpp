@@ -61,6 +61,4 @@ namespace Utils::TGBotApi::Bot {
 
         virtual ~InterfaceBot() = default;
     };
-
-    shared_ptr<InterfaceBot> get_bot(unique_ptr<InterfaceBot> bot = nullptr);
 }

@@ -1,0 +1,4 @@
+*
+!.gitignore
+!PlaylistHandler.hpp
+!PlaylistHandler.cpp

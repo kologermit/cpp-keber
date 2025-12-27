@@ -1,6 +1,0 @@
-*
-!.gitignore
-!InterfaceServer.hpp
-!InterfaceServer.cpp
-!Server.hpp
-!Server.cpp

@@ -1,0 +1,4 @@
+*
+!.gitignore
+!WebhookHandler.hpp
+!WebhookHandler.cpp

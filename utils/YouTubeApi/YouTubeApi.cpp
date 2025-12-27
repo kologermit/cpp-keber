@@ -1,5 +1,4 @@
 #include <utils/YouTubeApi/YouTubeApi.hpp>
-#include <utils/Config/InterfaceConfig.hpp>
 #include <httplib/httplib.h>
 #include <nlohmann/json.hpp>
 
@@ -9,7 +8,6 @@
 
 namespace Utils::YouTubeApi {
 
-    using Config::get_config;
     using httplib::Result;
     using httplib::Client;
     using httplib::Params;
@@ -23,15 +21,19 @@ namespace Utils::YouTubeApi {
     using Logger::get_logger;
     #endif
 
-    unique_ptr<json> send_request(string_view request_url, string_view url) {
-        Client clt(get_config()->get_youtube_api_url());
+    YouTubeApi::YouTubeApi(string_view youtube_api_url):
+        _youtube_api_url(youtube_api_url)
+    {}
+
+    unique_ptr<json> send_request(string_view youtube_api_url, string_view request_url, string_view url) {
+        Client clt(youtube_api_url.data());
         Params params{{"url", url.data()}};
 
         auto result = clt.Get(request_url.data(), params, {});
 
         #ifndef NDEBUG
-        get_logger()->debug("Url", url, __FILE__, __LINE__);
-        get_logger()->debug("Config", get_config()->get_youtube_api_url(), __FILE__, __LINE__);
+        get_logger()->debug("YouTubeApi::send_request::url", url, __FILE__, __LINE__);
+        get_logger()->debug("YouTubeApi::send_request::youtube_api_url", youtube_api_url, __FILE__, __LINE__);
         #endif
 
         if (result.error() != Error::Success) {
@@ -39,9 +41,9 @@ namespace Utils::YouTubeApi {
         }
 
         #ifndef NDEBUG
-        get_logger()->debug("Error", to_string(result.error()), __FILE__, __LINE__);
-        get_logger()->debug("Status", to_string(result->status), __FILE__, __LINE__);
-        get_logger()->debug("Body", result->body, __FILE__, __LINE__);
+        get_logger()->debug("YouTubeApi::send_request::error", to_string(result.error()), __FILE__, __LINE__);
+        get_logger()->debug("YouTubeApi::send_request::status", to_string(result->status), __FILE__, __LINE__);
+        get_logger()->debug("YouTubeApi::send_request::body", result->body, __FILE__, __LINE__);
         #endif
 
         if (result->status != 200 || result->body.empty() || !json::accept(result->body)) {
@@ -52,7 +54,7 @@ namespace Utils::YouTubeApi {
     }
 
     unique_ptr<pair<Video, Channel> > YouTubeApi::get_video(string_view url) {
-        auto json_body = send_request("/video", url);
+        auto json_body = send_request(_youtube_api_url, "/video", url);
         if (json_body == nullptr) {
             return nullptr;
         }
@@ -77,7 +79,7 @@ namespace Utils::YouTubeApi {
     }
 
     unique_ptr<Playlist> YouTubeApi::get_playlist(string_view url) {
-        auto json_body = send_request("/playlist", url);
+        auto json_body = send_request(_youtube_api_url, "/playlist", url);
         if (json_body == nullptr) {
             return nullptr;
         }

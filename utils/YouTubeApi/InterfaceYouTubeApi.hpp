@@ -43,6 +43,4 @@ namespace Utils::YouTubeApi {
         virtual unique_ptr<pair<Video, Channel> > get_video(string_view url) = 0;
         virtual unique_ptr<Playlist> get_playlist(string_view url) = 0;
     };
-
-    shared_ptr<InterfaceYouTubeApi> get_youtube_api(unique_ptr<InterfaceYouTubeApi> youtube_api = nullptr);
 }

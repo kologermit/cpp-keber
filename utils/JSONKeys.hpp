@@ -11,5 +11,6 @@ namespace Utils::JSONKeys {
     constexpr const char* PATTERN_KEY = "pattern";
     constexpr const char* RESULT_KEY = "result";
     constexpr const char* USER_ID_KEY = "user_id";
+    constexpr const char* HANDLE_ID_KEY = "handle_id";
 
 }
