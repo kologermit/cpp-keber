@@ -4,5 +4,6 @@
 !Webhook
 !Health
 !Message
+!User.hpp
 !init.hpp
 !init.cpp

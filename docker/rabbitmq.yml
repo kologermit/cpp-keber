@@ -6,7 +6,6 @@ services:
     extends:
       file: parents.yml
       service: parent
-    user: 1000:1000
     image: ${RABBITMQ_IMAGE}
     ports:
       - ${RABBITMQ_EXTERNAL_PORT}:5672

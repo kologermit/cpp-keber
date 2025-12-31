@@ -27,7 +27,7 @@ namespace Bot::HTTPHandler::Message {
 
     const HandlerSignature& POSTMessageHandler::get_signature() const noexcept {
         static const HandlerSignature signature{
-            .name = "SendMessage",
+            .name = "POSTMessage",
             .pattern = "/message",
             .method = RequestHandlerMethod::POST,
             .is_auth = true,

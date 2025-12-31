@@ -34,7 +34,9 @@ class GoogleEmailActivator:
         verification_url: str,
         code: str
     ) -> tuple[GoogleEmailActivatorResult, Exception|None]:
-
+        # debug
+        logger.info()
+        # debug
         try:
             logger.info(f'Try connect to selenium {self.__selenium_host__}')
             options = Options()
@@ -125,13 +127,22 @@ def init(
     test_youtube_video,
     use_oauth: bool = True
 ) -> str:
+    # debug
+    logger.info(f'{use_oauth=}')
+    # debug
     if use_oauth == True:
+        # debug
+        logger.info(1)
+        # debug
         pytubefix.innertube._default_oauth_verifier = GoogleEmailActivator(
             google_email, 
             google_password, 
             selenium_host, 
             selenium_page_load_time
         )
+        # debug
+        logger.info(2)
+        # debug
     v = YouTube(test_youtube_video, use_oauth=use_oauth)
     logger.info({'event': 'TEST_GET_VIDEO_TITLE', 'url': test_youtube_video, 'title': v.title, 'use_oauth': use_oauth})
     return v.title
