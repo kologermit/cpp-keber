@@ -1,19 +1,25 @@
 #include <utils/HTTPServer/Handler/NotFoundHandler.hpp>
 #include <bot/HTTPHandler/init.hpp>
-#include <bot/HTTPHandler/CheckHealth/CheckHealthHandler.hpp>
+#include <bot/HTTPHandler/Health/GETHealthHandler.hpp>
 #include <bot/HTTPHandler/Webhook/WebhookHandler.hpp>
+#include <bot/HTTPHandler/Message/POSTMessageHandler.hpp>
+#include <bot/HTTPHandler/Message/PATCHMessageHandler.hpp>
 
 namespace Bot::HTTPHandler {
     using std::vector;
     using std::make_shared;
     using Utils::HTTPServer::Handler::NotFoundHandler;
-    using Bot::HTTPHandler::CheckHealth::CheckHealthHandler;
+    using Bot::HTTPHandler::Health::GETHealthHandler;
     using Bot::HTTPHandler::Webhook::WebhookHandler;
+    using Bot::HTTPHandler::Message::POSTMessageHandler;
+    using Bot::HTTPHandler::Message::PATCHMessageHandler;
 
     void init_server(IServer& server) {
         server.add_handlers(vector<IServer::ptrIHandler>{
-            make_shared<CheckHealthHandler>(),
+            make_shared<GETHealthHandler>(),
             make_shared<WebhookHandler>(),
+            make_shared<POSTMessageHandler>(),
+            make_shared<PATCHMessageHandler>(),
             make_shared<NotFoundHandler<HandlerContext> >(),
         });
     }

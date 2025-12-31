@@ -2,6 +2,7 @@
 !.gitignore
 !HandlerContext.hpp
 !Webhook
-!CheckHealth
+!Health
+!Message
 !init.hpp
 !init.cpp

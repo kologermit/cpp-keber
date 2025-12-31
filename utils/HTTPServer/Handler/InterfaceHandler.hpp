@@ -25,11 +25,12 @@ namespace Utils::HTTPServer::Handler {
         NONE
     };
 
-    enum ParamType {INT, FLOAT, STRING, BOOL};
+    enum ParamType {INT, FLOAT, STRING, BOOL, OBJECT, ARRAY};
 
     struct Param {
         string name;
         ParamType type;
+        bool is_required = true;
     };
 
     struct HandlerSignature {

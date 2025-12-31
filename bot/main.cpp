@@ -8,6 +8,7 @@
 #include <utils/TGBotApi/Bot/Bot.hpp>
 #include <utils/YouTubeApi/YouTubeApi.hpp>
 #include <utils/HTTPServer/Server/Server.hpp>
+#include <utils/Postgres/postgres.hpp>
 #include <bot/Signal/Signal.hpp>
 #include <bot/GlobalContext.hpp>
 #include <bot/HTTPHandler/init.hpp>
@@ -33,6 +34,7 @@ using TGBot = Utils::TGBotApi::Bot::Bot;
 using Utils::YouTubeApi::YouTubeApi;
 using Utils::HTTPServer::Server::InterfaceServer;
 using Utils::HTTPServer::Server::Server;
+using Utils::Postgres::create_connection;
 using Bot::Signal::signal_handler;
 using Bot::GlobalContext;
 using Bot::HTTPHandler::HandlerContext;
@@ -55,7 +57,7 @@ int main(int argc, const char* argv[]) {
         return 0;
     }
 
-    connection db(config->get_db_conn_url());
+    auto db = create_connection(config->get_db_conn_url());
 
     shared_ptr<GlobalContext> global_context = make_shared<GlobalContext>(
         GlobalContext{

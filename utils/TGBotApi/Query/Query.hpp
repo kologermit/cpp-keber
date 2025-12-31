@@ -58,7 +58,8 @@ namespace Utils::TGBotApi::Query {
             const Params& params = {},
             const Headers& headers = {},
             const Files& files = {},
-            string_view full_path = ""
+            string_view full_path = "",
+            bool throw_by_status = false
         );
 
         inline json query_raw_json(
@@ -67,7 +68,8 @@ namespace Utils::TGBotApi::Query {
             const Params& params = {},
             const Headers& headers = {},
             const Files& files = {},
-            string_view full_path = ""
+            string_view full_path = "",
+            bool throw_by_status = false
         );
 
         template<typename ResultType>
@@ -77,7 +79,8 @@ namespace Utils::TGBotApi::Query {
             const Params& params = {},
             const Headers& headers = {},
             const Files& files = {},
-            string_view full_path = ""
+            string_view full_path = "",
+            bool throw_by_status = false
         );
 
         private: 
@@ -92,9 +95,10 @@ namespace Utils::TGBotApi::Query {
         const Params& params,
         const Headers& headers,
         const Files& files,
-        string_view full_path
+        string_view full_path,
+        bool throw_by_status
     ) {
-        return json::parse(query(method, path, params, headers, files, full_path)->body);
+        return json::parse(query(method, path, params, headers, files, full_path, throw_by_status)->body);
     }
 
 
@@ -105,15 +109,16 @@ namespace Utils::TGBotApi::Query {
         const Params& params,
         const Headers& headers,
         const Files& files,
-        string_view full_path
+        string_view full_path,
+        bool throw_by_status
     ) {
-        auto json_result = query_raw_json(method, path, params, headers, files, full_path);
+        json json_result = query_raw_json(method, path, params, headers, files, full_path, throw_by_status);
 
         if (!static_cast<bool>(json_result[OK_KEY])) {
             throw runtime_error(format(
                 "Utils::TGBotApi::Query::query_parse_json: {} -- {}",
-                string(json_result[ERROR_CODE_KEY]),
-                string(json_result[DESCRIPTION_KEY])
+                json_result[ERROR_CODE_KEY].get<int>(),
+                json_result[DESCRIPTION_KEY].get<string>()
             ));
         }
 

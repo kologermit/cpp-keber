@@ -43,7 +43,8 @@ namespace Utils::TGBotApi::Query {
         const Params& params,
         const Headers& headers,
         const Files& files,
-        string_view full_path
+        string_view full_path,
+        bool throw_by_status
     ) {
         Result result;
         string result_path = (
@@ -119,6 +120,10 @@ namespace Utils::TGBotApi::Query {
             get_logger()->debug("Body", result->body, __FILE__, __LINE__);
         }
         #endif
+
+        if (throw_by_status && result->status < 200 && result->status >= 300) {
+            throw runtime_error(fmt::format("Response status = {}", result->status));
+        }
 
         return result;
     }

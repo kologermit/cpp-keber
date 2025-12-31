@@ -1,0 +1,6 @@
+*
+!.gitignore
+!Task.hpp
+!Task.cpp
+!TaskRepository.hpp
+!TaskRepository.cpp

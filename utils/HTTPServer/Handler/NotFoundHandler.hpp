@@ -7,7 +7,7 @@ namespace Utils::HTTPServer::Handler {
     
     template <typename HandlerContext>
     struct NotFoundHandler : InterfaceHandler<HandlerContext> {
-        json handle([[maybe_unused]] shared_ptr<HandlerContext> context) override {
+        json handle(shared_ptr<HandlerContext> context) override {
             context->response.status = 404;
             return "not found";
         }
