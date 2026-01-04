@@ -25,8 +25,9 @@ namespace Utils::TGBotApi::Query {
     using Utils::Logger::get_logger;
     #endif
 
-    Query::Query(string_view token): 
-    _token(token.data()) {}
+    Query::Query(string_view token, string_view telegram_api_url):
+    _token(token.data()),
+    _telegram_api_url(telegram_api_url){}
 
     string Query::_read_file(string_view filename) {
         ifstream file(string(filename), ios::binary | ios::ate);
@@ -59,6 +60,7 @@ namespace Utils::TGBotApi::Query {
             : method == EnumQueryMethod::POST ? "POST"
             : "UNKNOWN"
         ), __FILE__, __LINE__);
+        get_logger()->debug("ApiUrl", _telegram_api_url, __FILE__, __LINE__);
         get_logger()->debug("Path", path, __FILE__, __LINE__);
         get_logger()->debug("Result_path", result_path, __FILE__, __LINE__);
         get_logger()->debug("Params_is_empty", to_string(params.empty()), __FILE__, __LINE__);
@@ -81,7 +83,7 @@ namespace Utils::TGBotApi::Query {
         }
         #endif
 
-        httplib::Client cli("https://api.telegram.org");
+        httplib::Client cli(_telegram_api_url);
         cli.enable_server_certificate_verification(false);
         
         if (method == EnumQueryMethod::GET) {
@@ -89,22 +91,22 @@ namespace Utils::TGBotApi::Query {
         } else if (method == EnumQueryMethod::POST) {
             MultipartFormDataItems form_data;
             if (!params.empty()) {
-                for (const auto& param : params) {
+                for (const auto&[name, content] : params) {
                     form_data.push_back({
-                        param.first,
-                        param.second,
+                        name,
+                        content,
                         "",
                         "",
                     });
                 }  
             }
             if (!files.empty()) {
-                for (const auto& file : files) {
+                for (const auto&[name, filepath, filename, content_type] : files) {
                     form_data.push_back(MultipartFormData{
-                        file.name,
-                        _read_file(file.filepath),
-                        file.filename,
-                        file.content_type
+                        name,
+                        _read_file(filepath),
+                        filename,
+                        content_type
                     });
                 }
             }

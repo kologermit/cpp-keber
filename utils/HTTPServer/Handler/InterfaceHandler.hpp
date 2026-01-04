@@ -39,9 +39,10 @@ namespace Utils::HTTPServer::Handler {
         RequestHandlerMethod method = RequestHandlerMethod::GET;
         bool is_auth = false;
         bool is_json_body = false;
-        vector<Param> query_params = vector<Param>();
-        vector<Param> headers = vector<Param>();
-        vector<Param> body_params = vector<Param>();
+        vector<Param> path_params = {};
+        vector<Param> query_params ={};
+        vector<Param> headers = {};
+        vector<Param> body_params = {};
     };
 
     template <typename HandlerContext>

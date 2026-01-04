@@ -1,5 +1,4 @@
 #include <memory>
-#include <utility>
 #include <csignal>
 #include <pqxx/pqxx>
 #include <utils/Random/Random.hpp>
@@ -49,9 +48,9 @@ using Bot::Entity::YouTubeAudioSetting::YouTubeAudioSettingRepository;
 int main(int argc, const char* argv[]) {
     init_random();
 
-    shared_ptr<InterfaceConfig> config = make_shared<Config>(argc, argv);
+    const shared_ptr<InterfaceConfig> config = make_shared<Config>(argc, argv);
 
-    shared_ptr<InterfaceLogger> logger = get_logger(make_unique<Logger>(config->get_logs_path()));
+    const shared_ptr<InterfaceLogger> logger = get_logger(make_unique<Logger>(config->get_logs_path()));
     if (config->is_help()) {
         logger->info("HELP", "THIS IS BOT SERVICE", __FILE__, __LINE__);
         return 0;
@@ -59,11 +58,11 @@ int main(int argc, const char* argv[]) {
 
     auto db = create_connection(config->get_db_conn_url());
 
-    shared_ptr<GlobalContext> global_context = make_shared<GlobalContext>(
+    const shared_ptr<GlobalContext> global_context = make_shared<GlobalContext>(
         GlobalContext{
             .logger = logger,
             .config = config,
-            .bot = make_shared<TGBot>(config->get_bot_token()),
+            .bot = make_shared<TGBot>(config->get_bot_token(), config->get_telegram_api_url()),
             .access_repository = make_shared<AccessRepository>(db),
             .callback_repository = make_shared<CallbackRepository>(db),
             .chat_repository = make_shared<ChatRepository>(db),
@@ -85,7 +84,10 @@ int main(int argc, const char* argv[]) {
     signal(SIGTERM, signal_handler);
     
     init_server(server);
-    global_context->bot->set_webhook(config->get_webhook_url());
+    if (!global_context->bot->set_webhook(config->get_webhook_url())) {
+        logger->error("WEBHOOK", "Failed to set webhook", __FILE__, __LINE__ );
+        return 1;
+    };
     global_context->bot->send_message({
         .chat_id = config->get_admins()[0],
         .text = "START BOT"

@@ -18,7 +18,7 @@ namespace Utils::TGBotApi::Bot {
 
     struct Bot final : InterfaceBot {
 
-    explicit Bot(string_view token);
+        explicit Bot(string_view token, string_view telegram_api_url = "https://api.telegram.org");
 
         long long get_id() const noexcept override;
         const string& get_name() const noexcept override;
@@ -40,11 +40,12 @@ namespace Utils::TGBotApi::Bot {
 
         private:
 
-        explicit Bot(string_view, const json&);
-        static json _get_me_raw_json(string_view token);
+        explicit Bot(string_view token, string_view telegram_api_url, const json& json_bot);
+        static json _get_me_raw_json(string_view token, string_view telegram_api_url);
 
         User _user;
         string _token;
+        string _telegram_api_url;
         string _secret_token;
         bool _can_join_groups;
         bool _can_read_all_group_messages;

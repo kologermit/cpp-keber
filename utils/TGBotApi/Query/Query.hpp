@@ -35,7 +35,7 @@ namespace Utils::TGBotApi::Query {
     };
 
     struct Query {
-        explicit Query(string_view token);
+        explicit Query(string_view token, string_view telegram_api_url = "https://api.telegram.org");
 
         struct File {
             string name;
@@ -85,6 +85,7 @@ namespace Utils::TGBotApi::Query {
 
         private: 
         const string _token;
+        const string _telegram_api_url;
 
         static string _read_file(string_view filename);
     };

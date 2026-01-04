@@ -1,4 +1,3 @@
-#include <utils/HTTPServer/Handler/NotFoundHandler.hpp>
 #include <bot/HTTPHandler/init.hpp>
 #include <bot/HTTPHandler/Health/GETHealthHandler.hpp>
 #include <bot/HTTPHandler/Webhook/WebhookHandler.hpp>
@@ -9,7 +8,6 @@
 namespace Bot::HTTPHandler {
     using std::vector;
     using std::make_shared;
-    using Utils::HTTPServer::Handler::NotFoundHandler;
     using Bot::HTTPHandler::Health::GETHealthHandler;
     using Bot::HTTPHandler::Webhook::WebhookHandler;
     using Bot::HTTPHandler::Message::POSTMessageHandler;
@@ -23,7 +21,6 @@ namespace Bot::HTTPHandler {
             make_shared<POSTMessageHandler>(),
             make_shared<PATCHMessageHandler>(),
             make_shared<GETUserHandler>(),
-            make_shared<NotFoundHandler<HandlerContext> >(),
         });
     }
 }

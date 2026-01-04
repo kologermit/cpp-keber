@@ -7,6 +7,7 @@ namespace Utils::Config {
     struct Config final : InterfaceConfig {
 
         bool is_help() const noexcept override;
+        const string& get_telegram_api_url() const noexcept override;
         const string& get_bot_token() const noexcept override;
         const vector<long long>& get_admins() const noexcept override;
         const string& get_webhook_url() const noexcept override;
@@ -37,6 +38,7 @@ namespace Utils::Config {
         private:
 
         bool _is_help = false;
+        string _telegram_api_url = "https://api.telegram.org";
         string _bot_token;
         vector<long long> _admins;
         string _webhook_url;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <utils/HTTPServer/Server/InterfaceServer.hpp>
+#include <utils/String/String.hpp>
 #include <utils/JSONKeys.hpp>
 #include <utils/Random/Random.hpp>
 #include <nlohmann/json.hpp>
@@ -11,6 +12,8 @@
 
 namespace Utils::HTTPServer::Server {
 
+    using std::stoll;
+    using std::stod;
     using std::string;
     using std::string_view;
     using std::to_string;
@@ -18,6 +21,7 @@ namespace Utils::HTTPServer::Server {
     using std::shared_ptr;
     using std::make_shared;
     using std::invalid_argument;
+    using std::out_of_range;
     using std::runtime_error;
     using HTTPServer = httplib::Server;
     using HTTPHandler = httplib::Server::Handler;
@@ -28,13 +32,14 @@ namespace Utils::HTTPServer::Server {
     using Utils::JSONKeys::STATUS_KEY;
     using Utils::JSONKeys::RESULT_KEY;
     using Utils::JSONKeys::HANDLE_ID_KEY;
+    using Utils::String::split;
     using Utils::HTTPServer::Handler::Param;
     using Utils::HTTPServer::Handler::ParamType;
     using Utils::HTTPServer::Handler::HandlerSignature;
     using Utils::HTTPServer::Handler::RequestHandlerMethod;
 
     template <typename GlobalContext, typename HandlerContext>
-    struct Server : public InterfaceServer<GlobalContext, HandlerContext> {
+    struct Server final : InterfaceServer<GlobalContext, HandlerContext> {
         using ptrIHandler = shared_ptr<InterfaceHandler<HandlerContext> >;
 
         private:
@@ -72,21 +77,55 @@ namespace Utils::HTTPServer::Server {
         void run() override {
             shared_ptr<GlobalContext> global_context = _global_context;
             for (ptrIHandler handler : _handlers) {
-                HTTPHandler http_handler = 
+                const HTTPHandler http_handler =
                 [handler, global_context](const Request& request, Response& response) {
                     int handle_id = rand_int(1, 1000000);
                     #ifndef NDEBUG
                     global_context->logger->debug("SERVER::REQUEST", request.body, __FILE__, __LINE__);
                     #endif
                     json handle_result;
+                    shared_ptr<HandlerContext> handler_context = make_shared<HandlerContext>(
+                        global_context,
+                        request,
+                        response
+                    );
                     try {
                         response.status = 200;
 
                         const HandlerSignature& signature = handler->get_signature();
                         if (signature.is_auth) {
-                            const auto authorize_header = request.headers.find("Authorization");
-                            if (authorize_header == request.headers.end() || authorize_header->second != global_context->auth_key) {
+                            if (const auto authorize_header = request.headers.find("Authorization");
+                                authorize_header == request.headers.end() || authorize_header->second != global_context->auth_key) {
                                 throw string("UNAUTHORIZED");
+                            }
+                        }
+
+                        if (!signature.path_params.empty()) {
+                            for (const auto&[name, type, is_required] : signature.path_params) {
+                                if (!is_required && !request.path_params.contains(name)) {
+                                    continue;
+                                }
+                                const string& value = request.path_params.at(name);
+                                if (type == ParamType::STRING) {
+                                        handler_context->string_params[name] = value;
+                                } else if (type == ParamType::INT) {
+                                    try {
+                                        handler_context->ll_params[name] = stoll(value);
+                                    } catch (const exception& exc) {
+                                        throw invalid_argument(fmt::format("invalid path. param {} must be integer", name));
+                                    }
+                                } else if (type == ParamType::FLOAT) {
+                                    try {
+                                        handler_context->double_params[name] = stod(value);
+                                    } catch (const exception& exc) {
+                                        throw invalid_argument(fmt::format("invalid path. param {} must be float", name));
+                                    }
+                                } else if (type == ParamType::BOOL) {
+                                    if (value != "true" && value != "false") {
+                                        throw invalid_argument(fmt::format("invalid path. param {} must be boolean", name));
+                                    }
+                                    handler_context->bool_params[name] = value == "true";
+                                }
                             }
                         }
 
@@ -99,32 +138,27 @@ namespace Utils::HTTPServer::Server {
                             if (!body_json.is_object()) {
                                 throw invalid_argument("body must be object");                            
                             }
-                            for (const Param& body_param : signature.body_params) {
-                                if (!body_json.contains(body_param.name) && body_param.is_required) {
-                                    throw invalid_argument(fmt::format("body must have key {}", body_param.name));
+                            for (const auto&[name, type, is_required] : signature.body_params) {
+                                if (!body_json.contains(name) && is_required) {
+                                    throw invalid_argument(fmt::format("body must have key {}", name));
                                 }
-                                if (!body_json.contains(body_param.name)) {
+                                if (!body_json.contains(name)) {
                                     continue;
                                 }
-                                json body_json_param = body_json[body_param.name];
-                                if (
-                                    (body_param.type == ParamType::INT && !body_json_param.is_number_integer())
-                                    || (body_param.type == ParamType::FLOAT && !body_json_param.is_number_float())
-                                    || (body_param.type == ParamType::BOOL && !body_json_param.is_boolean())
-                                    || (body_param.type == ParamType::STRING && !body_json_param.is_string())
-                                    || (body_param.type == ParamType::OBJECT && !body_json_param.is_object())
-                                    || (body_param.type == ParamType::ARRAY && !body_json_param.is_array())
+                                if (json body_json_param = body_json[name];
+                                    (type == ParamType::INT && !body_json_param.is_number_integer())
+                                    || (type == ParamType::FLOAT && !body_json_param.is_number_float())
+                                    || (type == ParamType::BOOL && !body_json_param.is_boolean())
+                                    || (type == ParamType::STRING && !body_json_param.is_string())
+                                    || (type == ParamType::OBJECT && !body_json_param.is_object())
+                                    || (type == ParamType::ARRAY && !body_json_param.is_array())
                                 ) {
-                                    throw invalid_argument(fmt::format("param {} has invalid type", body_param.name));
+                                    throw invalid_argument(fmt::format("param {} has invalid type", name));
                                 }
                             }
                         }
 
-                        handle_result = handler->handle(make_shared<HandlerContext>(
-                            global_context, 
-                            request,
-                            response
-                        ));
+                        handle_result = handler->handle(handler_context);
 
                         global_context->logger->info("SERVER::REQUEST", fmt::format(
                             "({}/{}) ({}) {} {}",
@@ -142,14 +176,14 @@ namespace Utils::HTTPServer::Server {
                         handle_result = fmt::format("invalid_argument: {}", exc.what());
                     } catch (const runtime_error& exc) {
                         response.status = 409;
-                        handle_result = fmt::format("runime_error: {}", exc.what());
+                        handle_result = fmt::format("runtime_error: {}", exc.what());
                     } catch (const exception& exc) {
                         response.status = 500;
-                        handle_result = fmt::format("unexcpected_exception: {}", exc.what());
+                        handle_result = fmt::format("unexpected_exception: {}", exc.what());
                         global_context->logger->error("SERVER::HANDLE", exc.what(), __FILE__, __LINE__);
                     } catch (...) {
                         response.status = 500;
-                        handle_result = "unexcpected_exception";
+                        handle_result = "unexpected_exception";
                         global_context->logger->error("SERVER::HANDLE", "", __FILE__, __LINE__);
                     }
                     response.set_content(
@@ -178,7 +212,7 @@ namespace Utils::HTTPServer::Server {
                 }
                 global_context->logger->info(
                     "SERVER::SET_HANDLER", fmt::format(
-                        "handler={} method={} parrent={}",
+                        "handler={} method={} pattern={}",
                         signature.name,
                         to_string(signature.method),
                         signature.pattern,

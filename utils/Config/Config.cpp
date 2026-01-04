@@ -6,7 +6,6 @@
 #include <filesystem>
 #include <charconv>
 #include <map>
-#include <ranges>
 #include <stdexcept>
 
 namespace Utils::Config {
@@ -37,6 +36,10 @@ namespace Utils::Config {
 
     bool Config::is_help() const noexcept {
         return _is_help;
+    }
+
+    const string &Config::get_telegram_api_url() const noexcept {
+        return _telegram_api_url;
     }
 
     const string& Config::get_bot_token() const noexcept {
@@ -136,11 +139,10 @@ namespace Utils::Config {
     }
 
     Config::Config(int argc, const char* argv[]) {
-        string ENV_FILE_KEY = "--env-file";
+        static const string ENV_FILE_KEY = "--env-file";
         string json_file_name;
         for (int i = 0; i < argc && json_file_name.empty(); i++) {
-            string argument = argv[i];
-            if (argument != ENV_FILE_KEY) {
+            if (argv[i] != ENV_FILE_KEY) {
                 continue;
             }
             if (i+1 >= argc) {
@@ -177,8 +179,6 @@ namespace Utils::Config {
             bool is_throw = true;
         };
 
-        ;
-
         if ((_is_help = find_if(argv, argv + argc, [](const char* argument) {
             static const vector<string> HELP_KEYS{"--help", "help"};
             return find(HELP_KEYS, argument) != HELP_KEYS.end();
@@ -188,7 +188,8 @@ namespace Utils::Config {
 
         string admins_str, db_port_str, listen_port_str, rabbit_mq_port_str;
 
-        for (auto& config : vector<ConfigParseParam>{
+        for (const auto& [param, config_value, is_string, is_throw] : vector<ConfigParseParam>{
+            {"TELEGRAM_API_URL", _telegram_api_url},
             {"BOT_TOKEN", _bot_token},
             {"BOT_ADMINS", admins_str, false, true},
             {"WEBHOOK_PATH", _webhook_path},
@@ -198,7 +199,7 @@ namespace Utils::Config {
             {"DB_HOST", _db_host},
             {"DB_NAME", _db_name},
             {"DB_PORT", db_port_str, false, false},
-            {"DB_USER", _db_user, false, false},
+            {"DB_USER", _db_user},
             {"DB_PASSWORD", _db_password},
             {"RABBITMQ_HOST", _rabbit_mq_host},
             {"RABBITMQ_PORT", rabbit_mq_port_str, false, false},
@@ -213,15 +214,15 @@ namespace Utils::Config {
             {"SHARED_PATH", _shared_path},
             {"FILE_BUFFER_PATH", _file_buffer_path},
         })  {
-            config.config_value = Utils::Env::Get(config.param, config.config_value);
-            if (!json_env.empty() && json_env.contains(config.param)) {
-                if (config.is_string) {
-                    config.config_value = string(json_env[config.param]);
+            config_value = Utils::Env::Get(param, config_value);
+            if (!json_env.empty() && json_env.contains(param)) {
+                if (is_string) {
+                    config_value = string(json_env[param]);
                 } else {
-                    config.config_value = to_string(json_env[config.param]);
+                    config_value = to_string(json_env[param]);
                 }
             }
-            string key = "--" + config.param;
+            string key = "--" + param;
             for (int i = 0; i < argc; i++) {
                 if (key != argv[i]) {
                     continue;
@@ -229,24 +230,24 @@ namespace Utils::Config {
                 if (i+1 >= argc) {
                     throw invalid_argument("Failed to parse " + key + ": value not found");
                 }
-                config.config_value = argv[i+1];
+                config_value = argv[i+1];
                 break;
             }
-            if (config.config_value.empty() && config.is_throw) {
-                throw invalid_argument("Failed to parse " + config.param);
+            if (config_value.empty() && is_throw) {
+                throw invalid_argument("Failed to parse " + param);
             }
         }
 
-        for (auto& config : map<string, pair<int&, string> >{
+        for (const auto&[key, value] : map<string, pair<int&, string> >{
             {"LISTEN_PORT", {_listen_port, listen_port_str} },
             {"DB_PORT", {_db_port, db_port_str}},
             {"RABBITMQ_PORT", {_rabbit_mq_port, rabbit_mq_port_str}},
         }) {
-            string param = config.first;
-            int& config_value = config.second.first;
-            string config_str = config.second.second;
+            string param = key;
+            int& config_value = value.first;
+            string config_str = value.second;
             if (!config_str.empty()) {
-                auto [_, ec] = from_chars(config_str.data(), config_str.data() + config_str.size(), config_value);
+                const auto& [_, ec] = from_chars(config_str.data(), config_str.data() + config_str.size(), config_value);
                 if (ec != errc()) {
                     throw invalid_argument(format("Failed to parse {}: invalid_value ({})", param, config_str));
                 }

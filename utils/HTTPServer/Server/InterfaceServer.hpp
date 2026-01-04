@@ -11,6 +11,8 @@ namespace Utils::HTTPServer::Server {
 
     template <typename GlobalContext, typename HandlerContext>
     struct InterfaceServer {
+        virtual ~InterfaceServer() = default;
+
         using ptrIHandler = shared_ptr<InterfaceHandler<HandlerContext> >;
         virtual void add_handler(ptrIHandler handler) noexcept = 0;
         virtual void add_handlers(const vector<ptrIHandler>& handlers) noexcept = 0;

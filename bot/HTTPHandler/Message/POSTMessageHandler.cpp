@@ -7,6 +7,7 @@ namespace Bot::HTTPHandler::Message {
     using std::invalid_argument;
     using std::exception;
     using std::make_unique;
+    using std::unique_ptr;
     using std::filesystem::exists;
     using std::filesystem::is_regular_file;
     using std::filesystem::path;
@@ -14,6 +15,7 @@ namespace Bot::HTTPHandler::Message {
     using Utils::TGBotApi::Bot::SendMessageParameters;
     using Utils::TGBotApi::Message::Keyboard::InlineKeyboard;
     using Utils::TGBotApi::Message::Keyboard::ReplyKeyboard;
+    using TGMessage = Utils::TGBotApi::Message::Message;
     using Utils::TGBotApi::JSONKeys::TEXT_KEY;
     using Utils::TGBotApi::JSONKeys::CHAT_TELEGRAM_ID_KEY;
     using Utils::TGBotApi::JSONKeys::CONTENT_TYPE_KEY;
@@ -89,6 +91,8 @@ namespace Bot::HTTPHandler::Message {
             ));
         }
 
-        return context->global_context->bot->send_message(message_params)->id;
+        unique_ptr<TGMessage> message = context->global_context->bot->send_message(message_params);
+
+        return context->global_context->message_repository->get_by_telegram_message(*message)->id;
     }
 }

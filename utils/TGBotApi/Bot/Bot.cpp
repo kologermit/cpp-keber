@@ -53,9 +53,10 @@ namespace Utils::TGBotApi::Bot {
     using std::ofstream;
     using std::runtime_error;
 
-    Bot::Bot(string_view token, const json& json_bot):
+    Bot::Bot(string_view token, string_view telegram_api_url, const json& json_bot):
         _user(json_bot),
         _token(token),
+        _telegram_api_url(telegram_api_url),
         _secret_token(UUID4::generate_str()),
         _can_join_groups(json_bot[CAN_JOIN_GROUPS_KEY]),
         _can_read_all_group_messages(json_bot[CAN_READ_ALL_GROUP_MESSAGES_KEY]),
@@ -63,11 +64,11 @@ namespace Utils::TGBotApi::Bot {
         _can_connect_to_business(json_bot[CAN_CONNECT_TO_BUSINESS_KEY]),
         _has_main_web_app(json_bot[HAS_MAIN_WEB_APP_KEY]) {}
 
-    Bot::Bot(string_view token):
-    Bot(token, _get_me_raw_json(token)) {}
+    Bot::Bot(string_view token, string_view telegram_api_url):
+    Bot(token, telegram_api_url, _get_me_raw_json(token, telegram_api_url)) {}
 
-     json Bot::_get_me_raw_json(string_view token) {
-        Query client(token);
+     json Bot::_get_me_raw_json(string_view token, string_view telegram_api_url) {
+        Query client(token, telegram_api_url);
         const json result = client.query_raw_json(EnumQueryMethod::GET, "getMe")[RESULT_KEY];
         return result;
     }
@@ -99,14 +100,14 @@ namespace Utils::TGBotApi::Bot {
     }
 
     bool Bot::delete_webhook() const {
-        return *Query(_token).query_parse_json<bool>(
+        return *Query(_token, _telegram_api_url).query_parse_json<bool>(
             EnumQueryMethod::GET,
             "deleteWebhook"
         ).result;
     }
 
     bool Bot::set_webhook(string_view webhook_url) const {
-        return *Query(_token).query_parse_json<bool>(
+        return *Query(_token, _telegram_api_url).query_parse_json<bool>(
             EnumQueryMethod::POST,
             "setWebhook",
             Params{
@@ -171,7 +172,7 @@ namespace Utils::TGBotApi::Bot {
             params.insert({REPLY_MARKUP_KEY, message_parameters.reply_keyboard->get_json()});
         }
 
-        return std::move(Query(_token).query_parse_json<Message>(
+        return std::move(Query(_token, _telegram_api_url).query_parse_json<Message>(
             EnumQueryMethod::POST,
             path,
             params,
@@ -181,7 +182,7 @@ namespace Utils::TGBotApi::Bot {
     }
 
     unique_ptr<Message> Bot::edit_text(long long chat_id, long long message_id, string_view text) const {
-        return std::move(Query(_token).query_parse_json<Message>(
+        return std::move(Query(_token, _telegram_api_url).query_parse_json<Message>(
             EnumQueryMethod::POST,
             "editMessageText",
             Params{
@@ -194,7 +195,7 @@ namespace Utils::TGBotApi::Bot {
     }
 
     unique_ptr<Message> Bot::edit_caption(long long chat_id, long long message_id, string_view caption) const {
-        return Query(_token).query_parse_json<Message>(
+        return Query(_token, _telegram_api_url).query_parse_json<Message>(
             EnumQueryMethod::POST,
             "editMessageCaption",
             Params{
@@ -206,7 +207,7 @@ namespace Utils::TGBotApi::Bot {
     }
 
     bool Bot::delete_message(long long chat_id, long long message_id) const {
-        return *Query(_token).query_parse_json<bool>(
+        return *Query(_token, _telegram_api_url).query_parse_json<bool>(
             EnumQueryMethod::POST,
             "deleteMessage",
             Params{
@@ -233,7 +234,7 @@ namespace Utils::TGBotApi::Bot {
             params.insert({SHOW_ALERT_KEY, TRUE_KEY});
         }
 
-        return *Query(_token).query_parse_json<bool>(
+        return *Query(_token, _telegram_api_url).query_parse_json<bool>(
             EnumQueryMethod::POST,
             "answerCallbackQuery",
             params
@@ -245,7 +246,7 @@ namespace Utils::TGBotApi::Bot {
     }
 
     bool Bot::download_file(string_view file_id, string_view output_path) const {
-        auto res = Query(_token).query_parse_json<json>(
+        auto res = Query(_token, _telegram_api_url).query_parse_json<json>(
             EnumQueryMethod::GET,
             "getFile",
             Params{{FILE_ID_KEY, file_id.data()}}
@@ -255,7 +256,7 @@ namespace Utils::TGBotApi::Bot {
             throw runtime_error(fmt::format("download_file: file not found {}", file_id));
         }
 
-        auto file_res = Query(_token).query(
+        auto file_res = Query(_token, _telegram_api_url).query(
             EnumQueryMethod::GET,
             "",
             {},

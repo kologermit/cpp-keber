@@ -21,6 +21,7 @@ services:
       - BOT_ADMINS=${BOT_ADMINS}
       - WEBHOOK_URL=${BOT_WEBHOOK_URL}
       - WEBHOOK_PATH=/webhook
+      - TELEGRAM_API_URL=${TELEGRAM_API_URL}
       - DB_HOST=postgres
       - DB_PORT=5432
       - DB_NAME=${POSTGRES_DB}

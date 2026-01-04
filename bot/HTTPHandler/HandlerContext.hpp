@@ -4,9 +4,11 @@
 #include <httplib/httplib.h>
 #include <nlohmann/json.hpp>
 #include <optional>
+#include <map>
 
 namespace Bot::HTTPHandler {
 
+    using std::map;
     using std::optional;
     using std::nullopt;
     using nlohmann::json;
@@ -20,6 +22,10 @@ namespace Bot::HTTPHandler {
         shared_ptr<InterfaceLogger> logger;
         shared_ptr<InterfaceConfig> config;
         optional<json> json_body;
+        map<string, long long> ll_params;
+        map<string, double> double_params;
+        map<string, string> string_params;
+        map<string, bool> bool_params;
 
         HandlerContext(
             shared_ptr<GlobalContext> global_context,
@@ -37,5 +43,5 @@ namespace Bot::HTTPHandler {
                 : nullopt
             )
         {}
-    }; 
+    };
 }

@@ -1,3 +1,4 @@
+#include <utility>
 #include <utils/TGBotApi/Message/Keyboard/InlineKeyboard.hpp>
 #include <utils/TGBotApi/JSONKeys.hpp>
 #include <fmt/core.h>
@@ -28,7 +29,7 @@ InlineKeyboard::InlineKeyboard(const json& json_keyboard)
 }
 
 InlineKeyboard::InlineKeyboard(vector<vector<shared_ptr<InlineButton> > > buttons):
-buttons(buttons)
+buttons(std::move(buttons))
 {}
 
 string InlineKeyboard::get_json() const noexcept {
