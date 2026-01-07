@@ -29,16 +29,16 @@ namespace Bot::HTTPHandler::Message {
         return signature;
     }
 
-    json PATCHMessageHandler::handle(ptrContext context) {
-        json json_body = context->json_body.value();
+    json PATCHMessageHandler::handle(ptrContext ctx) {
+        json json_body = ctx->json_body.value();
         if (json_body.contains(TEXT_KEY)) {
-            return context->global_context->bot->edit_text(
+            return ctx->global_ctx->bot->edit_text(
                 json_body[CHAT_TELEGRAM_ID_KEY].get<long long>(),
                 json_body[MESSAGE_ID_KEY].get<long long>(),
                 json_body[TEXT_KEY].get<string>()
             )->id;
         } else if (json_body.contains(CAPTION_KEY)) {
-            return context->global_context->bot->edit_caption(
+            return ctx->global_ctx->bot->edit_caption(
                 json_body[CHAT_TELEGRAM_ID_KEY].get<long long>(),
                 json_body[MESSAGE_ID_KEY].get<long long>(),
                 json_body[CAPTION_KEY].get<string>()

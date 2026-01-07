@@ -38,6 +38,7 @@ namespace Utils::TGBotApi::Bot {
     struct InterfaceBot {
 
         virtual long long get_id() const noexcept = 0;
+        virtual const User& get_user() const noexcept = 0;
         virtual const string& get_name() const noexcept = 0;
         virtual const string& get_username() const noexcept = 0;
         virtual bool can_join_groups() const noexcept = 0;

@@ -76,6 +76,9 @@ namespace Utils::TGBotApi::Bot {
     long long Bot::get_id() const noexcept {
         return _user.id;
     }
+    const User& Bot::get_user() const noexcept {
+        return _user;
+    }
     const string& Bot::get_name() const noexcept {
         return _user.name;
     }

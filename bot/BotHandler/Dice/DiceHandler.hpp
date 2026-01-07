@@ -9,8 +9,8 @@ namespace Bot::BotHandler::Dice {
     // Команда /d, /dice, /d1-999, /dice1-999
     struct DiceHandler final : InterfaceBotHandler {
         const string& get_name() const noexcept override;
-        bool check(shared_ptr<BotHandlerContext> context) override;
-        ptrMessage handle(shared_ptr<BotHandlerContext> context) override;
+        bool check(shared_ptr<BotHandlerContext> ctx) override;
+        ptrMessage handle(shared_ptr<BotHandlerContext> ctx) override;
 
         private:
 

@@ -8,9 +8,9 @@ namespace Bot::BotHandler::YouTube::Playlist {
 
     struct PlaylistHandler final : InterfaceBotHandler {
         const string& get_name() const noexcept override;
-        bool check(shared_ptr<BotHandlerContext> context) override;
-        ptrMessage handle(shared_ptr<BotHandlerContext> context) override;
+        bool check(shared_ptr<BotHandlerContext> ctx) override;
+        ptrMessage handle(shared_ptr<BotHandlerContext> ctx) override;
 
-        static ptrMessage to_youtube_playlist(shared_ptr<BotHandlerContext> context, bool is_video);
+        static ptrMessage to_youtube_playlist(shared_ptr<BotHandlerContext> ctx, bool is_video);
     };
 }

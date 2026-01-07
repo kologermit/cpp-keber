@@ -23,7 +23,7 @@ namespace Bot::BotHandler::Menu {
         return name;
     }
 
-    bool MenuHandler::check(shared_ptr<BotHandlerContext> context) {
+    bool MenuHandler::check(shared_ptr<BotHandlerContext> ctx) {
         static const set<string> words{
             ACCESS_WORD,
             TASK_WORD,
@@ -32,54 +32,54 @@ namespace Bot::BotHandler::Menu {
             SERVER_WORD,
         };
         return
-            (context->access.full || context->access.base)
-            && context->user->screen == MENU
-            && words.contains(context->message->text);
+            (ctx->access.full || ctx->access.base)
+            && ctx->user->screen == MENU
+            && words.contains(ctx->message->text);
     }
 
-    ptrMessage MenuHandler::handle(shared_ptr<BotHandlerContext> context) {
-        if (context->message->text == ACCESS_WORD) {
-            return AccessHandler::to_access(context);
+    ptrMessage MenuHandler::handle(shared_ptr<BotHandlerContext> ctx) {
+        if (ctx->message->text == ACCESS_WORD) {
+            return AccessHandler::to_access(ctx);
         }
 
-        if (context->message->text == YOUTUBE_WORD) {
-            return YouTubeHandler::to_youtube(context);
+        if (ctx->message->text == YOUTUBE_WORD) {
+            return YouTubeHandler::to_youtube(ctx);
         }
 
-        return context->bot->send_message({
-            .chat_id = context->chat->id,
+        return ctx->bot->send_message({
+            .chat_id = ctx->chat->id,
             .text = IN_DEVELOP_PHRASE,
-            .reply_message_id = context->message->id,
+            .reply_message_id = ctx->message->id,
         });
     }
 
-    ptrMessage MenuHandler::to_menu(shared_ptr<BotHandlerContext> context, string_view text) {
-        context->user->screen = MENU;
-        context->global_context->user_repository->update(*context->user);
+    ptrMessage MenuHandler::to_menu(shared_ptr<BotHandlerContext> ctx, string_view text) {
+        ctx->user->screen = MENU;
+        ctx->db->user->update(*ctx->user);
 
         ReplyButtons buttons(3, vector<shared_ptr<ReplyButton> >(3, nullptr));
 
         const map<pair<size_t, size_t>, pair<bool, string_view> > buttons_with_access{
-            {{0, 0}, {context->access.access, ACCESS_WORD}},
-            {{1, 0}, {context->access.task, TASK_WORD}},
-            {{1, 1}, {context->access.youtube, YOUTUBE_WORD}},
-            {{2, 0}, {context->access.docker, DOCKER_WORD}},
-            {{2, 1}, {context->access.server, SERVER_WORD}},
+            {{0, 0}, {ctx->access.access, ACCESS_WORD}},
+            {{1, 0}, {ctx->access.task, TASK_WORD}},
+            {{1, 1}, {ctx->access.youtube, YOUTUBE_WORD}},
+            {{2, 0}, {ctx->access.docker, DOCKER_WORD}},
+            {{2, 1}, {ctx->access.server, SERVER_WORD}},
         };
 
         for (const auto&[fst, snd] : buttons_with_access) {
             const auto [button_x, button_y] = fst;
             const auto [button_access, button_text] = snd;
 
-            if (context->access.full || button_access) {
+            if (ctx->access.full || button_access) {
                 buttons[button_x][button_y] = make_shared<ReplyButton>(button_text);
             }
         }
 
-        return context->bot->send_message({
-            .chat_id = context->chat->id,
+        return ctx->bot->send_message({
+            .chat_id = ctx->chat->id,
             .text = (text.empty() ? MENU_WORD : text.data()),
-            .reply_message_id = context->message->id,
+            .reply_message_id = ctx->message->id,
             .reply_keyboard = make_unique<ReplyKeyboard>(std::move(buttons))
         });
     }

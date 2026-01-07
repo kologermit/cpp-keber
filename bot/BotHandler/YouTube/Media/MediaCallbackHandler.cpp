@@ -7,7 +7,6 @@
 #include <utils/JSONKeys.hpp>
 #include <utils/TGBotApi/JSONKeys.hpp>
 #include <utils/TGBotApi/Types.hpp>
-#include <fmt/core.h>
 
 namespace Bot::BotHandler::YouTube::Media {
 
@@ -24,30 +23,30 @@ namespace Bot::BotHandler::YouTube::Media {
         return name;
     }
 
-    bool MediaCallbackHandler::check(shared_ptr<BotHandlerContext> context) {
-        return (context->access.full || context->access.youtube)
-            && context->callback != nullptr
-            && json::accept(context->callback->data)
-            && json::parse(context->callback->data)[0].get<string>() == YOUTUBE_MEDIA_CALLBACK_HANDLER_NAME;
+    bool MediaCallbackHandler::check(shared_ptr<BotHandlerContext> ctx) {
+        return (ctx->access.full || ctx->access.youtube)
+            && ctx->callback != nullptr
+            && json::accept(ctx->callback->data)
+            && json::parse(ctx->callback->data)[0].get<string>() == YOUTUBE_MEDIA_CALLBACK_HANDLER_NAME;
     }
 
-    ptrMessage MediaCallbackHandler::handle(shared_ptr<BotHandlerContext> context) {
-        auto queue = get_downloader_queue(context->config);
-        context->bot->answer_callback_query(context->callback->id);
-        context->bot->delete_message(context->chat->id, context->message->id);
-        return context->bot->send_message({
-            .chat_id = context->chat->id,
+    ptrMessage MediaCallbackHandler::handle(shared_ptr<BotHandlerContext> ctx) {
+        auto queue = get_downloader_queue(ctx->config);
+        ctx->bot->answer_callback_query(ctx->callback->id);
+        ctx->bot->delete_message(ctx->chat->id, ctx->message->id);
+        return ctx->bot->send_message({
+            .chat_id = ctx->chat->id,
             .text = (
                 queue->publish_message({
-                    {DATA_KEY, json::parse(context->callback->data)},
-                    {TEXT_KEY, context->message->text},
-                    {CHAT_ID_KEY, context->chat->id},
-                    {USER_ID_KEY, context->user->id},
+                    {DATA_KEY, json::parse(ctx->callback->data)},
+                    {TEXT_KEY, ctx->message->text},
+                    {CHAT_ID_KEY, ctx->chat->id},
+                    {USER_ID_KEY, ctx->user->id},
                 })
                 ? ADD_TO_QUEUE_PHRASE
                 : FAILED_TO_ADD_TO_QUEUE_PHRASE
             ),
-            .reply_message_id = context->message->reply_message_id
+            .reply_message_id = ctx->message->reply_message_id
         });
     }
 }

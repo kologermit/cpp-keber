@@ -6,8 +6,8 @@
 #include <bot/Entity/Message/InterfaceMessageRepository.hpp>
 #include <bot/Entity/User/InterfaceUserRepository.hpp>
 #include <bot/Entity/YouTubeAudioSetting/InterfaceYouTubeAudioSettingRepository.hpp>
+#include <bot/Config/InterfaceConfig.hpp>
 #include <utils/Logger/InterfaceLogger.hpp>
-#include <utils/Config/InterfaceConfig.hpp>
 #include <utils/YouTubeApi/InterfaceYouTubeApi.hpp>
 #include <utils/TGBotApi/Bot/InterfaceBot.hpp>
 
@@ -15,9 +15,9 @@ namespace Bot {
     using std::shared_ptr;
     using std::string;
     using Utils::Logger::InterfaceLogger;
-    using Utils::Config::InterfaceConfig;
     using Utils::YouTubeApi::InterfaceYouTubeApi;
     using Utils::TGBotApi::Bot::InterfaceBot;
+    using Bot::Config::InterfaceConfig;
     using Bot::Entity::Access::InterfaceAccessRepository;
     using Bot::Entity::Callback::InterfaceCallbackRepository;
     using Bot::Entity::Chat::InterfaceChatRepository;
@@ -25,16 +25,20 @@ namespace Bot {
     using Bot::Entity::User::InterfaceUserRepository;
     using Bot::Entity::YouTubeAudioSetting::InterfaceYouTubeAudioSettingRepository;
 
+    struct DBContext {
+        shared_ptr<InterfaceAccessRepository> access;
+        shared_ptr<InterfaceCallbackRepository> callback;
+        shared_ptr<InterfaceChatRepository> chat;
+        shared_ptr<InterfaceMessageRepository> message;
+        shared_ptr<InterfaceUserRepository> user;
+        shared_ptr<InterfaceYouTubeAudioSettingRepository> youtube_audio_setting;
+    };
+
     struct GlobalContext {
         shared_ptr<InterfaceLogger> logger;
         shared_ptr<InterfaceConfig> config;
         shared_ptr<InterfaceBot> bot;
-        shared_ptr<InterfaceAccessRepository> access_repository;
-        shared_ptr<InterfaceCallbackRepository> callback_repository;
-        shared_ptr<InterfaceChatRepository> chat_repository;
-        shared_ptr<InterfaceMessageRepository> message_repository;
-        shared_ptr<InterfaceUserRepository> user_repository;
-        shared_ptr<InterfaceYouTubeAudioSettingRepository> youtube_audio_setting_repository;
+        shared_ptr<DBContext> db;
         shared_ptr<InterfaceYouTubeApi> youtube_api;
         const string auth_key;
     };

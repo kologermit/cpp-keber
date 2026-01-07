@@ -27,7 +27,7 @@ namespace Bot::BotHandler {
     constexpr const char* SETTINGS_TABLE_WORD = "⚙️Таблица настроек";
     constexpr const char* VIDEO_PLAYLIST_WORD = "▶️🎬Видео-Плейлист";
 
-    constexpr const char* NOT_ANDERSTAND_PHRASE = "Не понял!";
+    constexpr const char* NOT_UNDERSTAND_PHRASE = "Не понял!";
     constexpr const char* USER_NOT_FOUND_PHRASE = "Пользователь {} не найден!";
 	constexpr const char* ADD_BEST_QUALITY_PHRASE = "➕Добавить (лучшее качество)";
     constexpr const char* ADD_720P_QUALITY_PHRASE = "➕Добавить (720p)";

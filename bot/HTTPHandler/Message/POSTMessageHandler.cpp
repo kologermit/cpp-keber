@@ -47,8 +47,8 @@ namespace Bot::HTTPHandler::Message {
         return signature;
     }
 
-    json POSTMessageHandler::handle(ptrContext context) {
-        const json& json_body = context->json_body.value();
+    json POSTMessageHandler::handle(ptrContext ctx) {
+        const json& json_body = ctx->json_body.value();
         SendMessageParameters message_params{
             .chat_id = json_body[CHAT_TELEGRAM_ID_KEY].get<long long>(),
             .text = json_body[TEXT_KEY].get<string>(),
@@ -57,14 +57,14 @@ namespace Bot::HTTPHandler::Message {
             message_params.reply_message_id = json_body[REPLY_TO_MESSAGE_ID_KEY].get<long long>();
         }
         if (json_body.contains(FILE_NAME_KEY) && json_body.contains(CONTENT_TYPE_KEY)) {
-            EnumContentType content_type = static_cast<EnumContentType>(json_body[CONTENT_TYPE_KEY].get<int>());
+            const EnumContentType content_type = static_cast<EnumContentType>(json_body[CONTENT_TYPE_KEY].get<int>());
             if (content_type <= EnumContentType::UNKNOWN || content_type > EnumContentType::TEXT) {
                 throw invalid_argument(fmt::format("param {} is invalid", CONTENT_TYPE_KEY));
             }
-            string file_name = json_body[FILE_NAME_KEY].get<string>();
-            string file_path = path(context->config->get_file_buffer_path()) / file_name;
+            const string file_name = json_body[FILE_NAME_KEY].get<string>();
+            const string file_path = path(ctx->config->get_file_buffer_path()) / file_name;
             #ifndef NDEBUG
-            context->global_context->logger->debug("SendMessage::FILE_PATH", file_path, __FILE__, __LINE__);
+            ctx->global_ctx->logger->debug("SendMessage::FILE_PATH", file_path, __FILE__, __LINE__);
             #endif
             if (!exists(file_path)) {
                 throw invalid_argument(fmt::format("file {} not found", file_name));
@@ -91,8 +91,8 @@ namespace Bot::HTTPHandler::Message {
             ));
         }
 
-        unique_ptr<TGMessage> message = context->global_context->bot->send_message(message_params);
+        unique_ptr<TGMessage> message = ctx->global_ctx->bot->send_message(message_params);
 
-        return context->global_context->message_repository->get_by_telegram_message(*message)->id;
+        return ctx->db->message->get_by_telegram_message(*message)->id;
     }
 }

@@ -8,8 +8,9 @@ ARG GROUP_ID=1001
 RUN groupadd -g $GROUP_ID runner && \
     useradd -u $USER_ID -g runner -m -s /bin/bash runner
 
-RUN mkdir -p /volumes/logs /volumes/tmp /volmes/file_buffer \
-    && chown runner:runner / /volumes/logs /volumes/tmp /volumes/file_buffer \
+RUN touch /env.json && \
+    mkdir -p /volumes/logs /volumes/tmp /volmes/file_buffer \
+    && chown runner:runner / /volumes/logs /volumes/tmp /volumes/file_buffer /env.json /etc/hosts \
     && chmod 755 /volumes/logs /volumes/tmp
 
 WORKDIR /

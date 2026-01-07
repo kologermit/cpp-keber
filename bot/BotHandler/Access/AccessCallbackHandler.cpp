@@ -17,59 +17,59 @@ namespace Bot::BotHandler::Access {
         return name;
     }
 
-    bool AccessCallbackHandler::check(shared_ptr<BotHandlerContext> context) {
-        return (context->access.full || context->access.access)
-            && context->callback != nullptr
-            && json::accept(context->callback->data)
-            && json::parse(context->callback->data)[0].get<string>() == ACCESS_CALLBACK_NAME
+    bool AccessCallbackHandler::check(shared_ptr<BotHandlerContext> ctx) {
+        return (ctx->access.full || ctx->access.access)
+            && ctx->callback != nullptr
+            && json::accept(ctx->callback->data)
+            && json::parse(ctx->callback->data)[0].get<string>() == ACCESS_CALLBACK_NAME
         ;
     }
 
-    ptrMessage AccessCallbackHandler::handle(shared_ptr<BotHandlerContext> context) {
-        auto data = json::parse(context->callback->data);
+    ptrMessage AccessCallbackHandler::handle(shared_ptr<BotHandlerContext> ctx) {
+        auto data = json::parse(ctx->callback->data);
         long long user_id = data[1];
         auto access_type = static_cast<EnumAccessType>(data[2]);
         const bool access_value = data[3];
         const string word = data[4];
 
-        auto user = context->global_context->user_repository->get_by_id(user_id);
+        auto user = ctx->db->user->get_by_id(user_id);
         if (user == nullptr) {
-            context->bot->answer_callback_query(
-                context->callback->id,
+            ctx->bot->answer_callback_query(
+                ctx->callback->id,
                 format(USER_NOT_FOUND_PHRASE, user_id),
                 true
             );
             return nullptr;
         }
 
-        context->bot->answer_callback_query(context->callback->id);
-        for (auto& access : context->global_context->access_repository->get_raw_by_user_id(user->id)) {
+        ctx->bot->answer_callback_query(ctx->callback->id);
+        for (auto& access : ctx->db->access->get_raw_by_user_id(user->id)) {
             if (access->type == access_type) {
-                context->global_context->access_repository->del(access->id);
+                ctx->db->access->del(access->id);
             }
         }
 
         if (access_value) {
-            context->global_context->access_repository->create(Access(
+            ctx->db->access->create(Access(
                 user->id,
                 access_type
             ));
         }
 
         try {
-            context->bot->send_message(SendMessageParameters{
+            ctx->bot->send_message(SendMessageParameters{
                 .chat_id = user->id,
                 .text = (access_value
-                    ? format(ADD_ACCESS_PHRASE, word, context->user->name)
-                    : format(REMOVE_ACCESS_PHRASE, word, context->user->name)
+                    ? format(ADD_ACCESS_PHRASE, word, ctx->user->name)
+                    : format(REMOVE_ACCESS_PHRASE, word, ctx->user->name)
                 ),
             });
         } catch (...) {}
 
         auto result_message = AccessHandler::send_message_with_access_keyboard(
-            context,
+            ctx,
             *user,
-            context->global_context->access_repository->get_by_user_id(user->id)
+            ctx->db->access->get_by_user_id(user->id)
         );
 
         return result_message;

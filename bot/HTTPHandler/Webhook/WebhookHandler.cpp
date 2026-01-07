@@ -39,83 +39,94 @@ namespace Bot::HTTPHandler::Webhook {
         return signature;
     }
 
-    json WebhookHandler::handle(ptrContext context) {
-        auto find_secret = context->request.headers.find(SECRET_HEADER);
+    json WebhookHandler::handle(ptrContext ctx) {
+        auto find_secret = ctx->request.headers.find(SECRET_HEADER);
 
-        if (find_secret == context->request.headers.end() 
-            || !context->global_context->bot->check_secret_token(find_secret->second)
+        if (find_secret == ctx->request.headers.end() 
+            || !ctx->global_ctx->bot->check_secret_token(find_secret->second)
             || (
-                !json::parse(context->request.body).contains(MESSAGE_KEY)
-                && !json::parse(context->request.body).contains(CALLBACK_QUERY_KEY)
+                !json::parse(ctx->request.body).contains(MESSAGE_KEY)
+                && !json::parse(ctx->request.body).contains(CALLBACK_QUERY_KEY)
             )
         ) {
-            context->response.status = 401;
+            ctx->response.status = 401;
             return "not unauthorized";
         }
 
         int handle_id = rand_int(1, 1000000);
 
         auto tg_callback = make_shared<optional<TGCallbackQuery>>(
-            context->json_body.value().contains(CALLBACK_QUERY_KEY)
-            ? optional(TGCallbackQuery(context->json_body.value()[CALLBACK_QUERY_KEY]))
+            ctx->json_body.value().contains(CALLBACK_QUERY_KEY)
+            ? optional(TGCallbackQuery(ctx->json_body.value()[CALLBACK_QUERY_KEY]))
             : nullopt
         );
 
         auto tg_message = make_shared<TGMessage>(
             tg_callback->has_value()
-            ? context->json_body.value()[CALLBACK_QUERY_KEY][MESSAGE_KEY]
-            : context->json_body.value()[MESSAGE_KEY]
+            ? ctx->json_body.value()[CALLBACK_QUERY_KEY][MESSAGE_KEY]
+            : ctx->json_body.value()[MESSAGE_KEY]
         );
 
-        shared_ptr<User> user = context->global_context->user_repository->get_by_telegram_user(*tg_message->from);
-        shared_ptr<Chat> chat = context->global_context->chat_repository->get_by_telegram_chat(*tg_message->chat);
-        shared_ptr<Message>message = context->global_context->message_repository->get_by_telegram_message(*tg_message, true);
+        shared_ptr<User> user = ctx->db->user->get_by_telegram_user(*tg_message->from);
+        shared_ptr<User> bot_user = ctx->db->user->get_by_telegram_user(ctx->global_ctx->bot->get_user());
+        shared_ptr<Chat> chat = ctx->db->chat->get_by_telegram_chat(*tg_message->chat);
+        shared_ptr<Message>message = ctx->db->message->get_by_telegram_message(*tg_message, true);
         shared_ptr<Callback> callback = (
             tg_callback != nullptr && *tg_callback != nullopt
-            ? context->global_context->callback_repository->get_by_telegram_callback(tg_callback->value())
+            ? ctx->db->callback->get_by_telegram_callback(tg_callback->value())
             : nullptr
         );
 
-        auto access = context->global_context->access_repository->get_by_user_id(user->id);
+        auto access = ctx->db->access->get_by_user_id(user->id);
 
-        if (!access.full && find(context->config->get_admins(), user->id) != context->config->get_admins().end()) {
+        if (!access.full && find(ctx->config->get_bot_admins(), user->id) != ctx->config->get_bot_admins().end()) {
             Access admin_access;
             admin_access.type = EnumAccessType::FULL;
             admin_access.user_id = user->id;
-            context->global_context->access_repository->create(admin_access);
-            access = context->global_context->access_repository->get_by_user_id(user->id);
+            ctx->db->access->create(admin_access);
+            access = ctx->db->access->get_by_user_id(user->id);
         }
 
-        auto bot_handler_context = make_shared<BotHandlerContext>(BotHandlerContext{
+        auto bot_handler_ctx = make_shared<BotHandlerContext>(BotHandlerContext{
             .message = message,
             .callback = callback,
             .chat = chat,
             .user = user,
-            .global_context = context->global_context,
-            .handler_context = context,
+            .bot_user = bot_user,
+            .global_ctx = ctx->global_ctx,
+            .handler_ctx = ctx,
+            .db = ctx->db,
             .access = access,
-            .config = context->global_context->config,
-            .bot = context->global_context->bot,
+            .config = ctx->global_ctx->config,
+            .bot = ctx->global_ctx->bot,
         });
-
-        ptrMessage result_tg_message;
-        string_view handler_name;
 
         try {
             for (const auto& handler : get_list_bot_handlers()) {
-                if (handler->check(bot_handler_context)) {
-                    handler_name = handler->get_name();
-                    result_tg_message = handler->handle(bot_handler_context);
-                    return result_tg_message->id;
+                if (!handler->check(bot_handler_ctx)) {
+                    continue;
                 }
+                ptrMessage result_tg_message = handler->handle(bot_handler_ctx);
+                json json_result = nullptr;
+                if (result_tg_message != nullptr) {
+                    auto new_message = ctx->db->message->get_by_telegram_message(*result_tg_message);
+                    json_result = new_message->id;
+                }
+                ctx->logger->info("BOT_HANDLER::HANDLE", fmt::format(
+                    "({}) -- {} -- {}",
+                    handle_id,
+                    user->name,
+                    (result_tg_message != nullptr ? result_tg_message->text : "No message")
+                ), __FILE__, __LINE__);
+                return json_result;
             }
         } catch (const exception& err) {
-            context->logger->error("BOT_HANDLER::EXCEPTION", fmt::format(
+            ctx->logger->error("BOT_HANDLER::EXCEPTION", fmt::format(
                 "({}): {}", 
                 handle_id,
                 err.what()
             ), __FILE__, __LINE__);
-            return context->global_context->bot->send_message({
+            return ctx->global_ctx->bot->send_message({
                 .chat_id = chat->id,
                 .text = fmt::format(
                     "<b>Произошла ошибка: </b><i>{}</i>",

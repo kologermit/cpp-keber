@@ -2,12 +2,12 @@
 #include <csignal>
 #include <pqxx/pqxx>
 #include <utils/Random/Random.hpp>
-#include <utils/Config/Config.hpp>
 #include <utils/Logger/Logger.hpp>
 #include <utils/TGBotApi/Bot/Bot.hpp>
 #include <utils/YouTubeApi/YouTubeApi.hpp>
 #include <utils/HTTPServer/Server/Server.hpp>
 #include <utils/Postgres/postgres.hpp>
+#include <bot/Config/Config.hpp>
 #include <bot/Signal/Signal.hpp>
 #include <bot/GlobalContext.hpp>
 #include <bot/HTTPHandler/init.hpp>
@@ -27,15 +27,16 @@ using Utils::Random::init_random;
 using Utils::Logger::get_logger;
 using Utils::Logger::Logger;
 using Utils::Logger::InterfaceLogger;
-using Utils::Config::InterfaceConfig;
-using Utils::Config::Config;
 using TGBot = Utils::TGBotApi::Bot::Bot;
 using Utils::YouTubeApi::YouTubeApi;
 using Utils::HTTPServer::Server::InterfaceServer;
 using Utils::HTTPServer::Server::Server;
 using Utils::Postgres::create_connection;
+using Bot::Config::InterfaceConfig;
+using Bot::Config::Config;
 using Bot::Signal::signal_handler;
 using Bot::GlobalContext;
+using Bot::DBContext;
 using Bot::HTTPHandler::HandlerContext;
 using Bot::HTTPHandler::init_server;
 using Bot::Entity::Access::AccessRepository;
@@ -63,21 +64,23 @@ int main(int argc, const char* argv[]) {
             .logger = logger,
             .config = config,
             .bot = make_shared<TGBot>(config->get_bot_token(), config->get_telegram_api_url()),
-            .access_repository = make_shared<AccessRepository>(db),
-            .callback_repository = make_shared<CallbackRepository>(db),
-            .chat_repository = make_shared<ChatRepository>(db),
-            .message_repository = make_shared<MessageRepository>(db),
-            .user_repository = make_shared<UserRepository>(db),
-            .youtube_audio_setting_repository = make_shared<YouTubeAudioSettingRepository>(db),
+            .db = make_shared<DBContext>(DBContext{
+                .access = make_shared<AccessRepository>(db),
+                .callback = make_shared<CallbackRepository>(db),
+                .chat = make_shared<ChatRepository>(db),
+                .message = make_shared<MessageRepository>(db),
+                .user = make_shared<UserRepository>(db),
+                .youtube_audio_setting = make_shared<YouTubeAudioSettingRepository>(db),
+            }),
             .youtube_api = make_shared<YouTubeApi>(config->get_youtube_api_url()),
-            .auth_key = "hihihaha"
+            .auth_key = config->get_auth_key(),
         }
     );
 
     Server<GlobalContext, HandlerContext> server(
         global_context,
         config->get_listen_ip(),
-        config->get_listen_port()
+        static_cast<int>(config->get_listen_port())
     );
 
     signal(SIGINT, signal_handler);
@@ -89,7 +92,7 @@ int main(int argc, const char* argv[]) {
         return 1;
     };
     global_context->bot->send_message({
-        .chat_id = config->get_admins()[0],
+        .chat_id = config->get_bot_admins()[0],
         .text = "START BOT"
     });
     server.run();

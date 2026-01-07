@@ -7,14 +7,14 @@ namespace Bot::BotHandler::CallbackDeleter {
         return name;
     }
 
-    bool CallbackDeleterHandler::check(shared_ptr<BotHandlerContext> context) {
-        return context->callback != nullptr;
+    bool CallbackDeleterHandler::check(shared_ptr<BotHandlerContext> ctx) {
+        return ctx->callback != nullptr;
     }
 
-    ptrMessage CallbackDeleterHandler::handle(shared_ptr<BotHandlerContext> context) {
-        context->bot->delete_message(
-            context->chat->id,
-            context->message->id
+    ptrMessage CallbackDeleterHandler::handle(shared_ptr<BotHandlerContext> ctx) {
+        ctx->bot->delete_message(
+            ctx->chat->id,
+            ctx->message->id
         );
         return nullptr;
     }

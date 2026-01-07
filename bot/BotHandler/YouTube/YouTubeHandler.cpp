@@ -19,15 +19,16 @@ namespace Bot::BotHandler::YouTube {
     using Utils::TGBotApi::Types::ReplyButtons;
     using std::make_shared;
     using std::make_unique;
+    using std::runtime_error;
     using std::set;
 
-    ptrMessage YouTubeHandler::to_youtube(shared_ptr<BotHandlerContext> context) {
-        context->user->screen = YOUTUBE;
-        context->global_context->user_repository->update(*context->user);
-        return context->bot->send_message( {
-            .chat_id = context->chat->id,
+    ptrMessage YouTubeHandler::to_youtube(shared_ptr<BotHandlerContext> ctx) {
+        ctx->user->screen = YOUTUBE;
+        ctx->db->user->update(*ctx->user);
+        return ctx->bot->send_message( {
+            .chat_id = ctx->chat->id,
             .text = YOUTUBE_WORD,
-            .reply_message_id = context->message->id,
+            .reply_message_id = ctx->message->id,
             .reply_keyboard = make_unique<ReplyKeyboard>(ReplyButtons{
                 {make_shared<ReplyButton>(AUDIO_WORD), make_shared<ReplyButton>(VIDEO_WORD)},
                 {make_shared<ReplyButton>(AUDIO_PLAYLIST_WORD), make_shared<ReplyButton>(VIDEO_PLAYLIST_WORD)},
@@ -36,41 +37,69 @@ namespace Bot::BotHandler::YouTube {
         });
     }
 
+    shared_ptr<Queue> get_downloader_queue(shared_ptr<InterfaceConfig> config) {
+        static shared_ptr<Queue> downloader = nullptr;
+
+        if (downloader == nullptr) {
+            downloader = make_shared<Queue>(
+                config->get_downloader_queue_name(),
+                config->get_rabbit_mq_vhost(),
+                config->get_rabbit_mq_user(),
+                config->get_rabbit_mq_password(),
+                config->get_rabbit_mq_host(),
+                config->get_rabbit_mq_port()
+            );
+        }
+
+        if (!downloader->exists()) {
+            if (!downloader->declare()) {
+                throw runtime_error(
+                    fmt::format(
+                        fmt::runtime("Failed to declare queue {}"),
+                        config->get_downloader_queue_name()
+                    )
+                );
+            }
+        }
+
+        return downloader;
+    }
+
 
     const string& YouTubeHandler::get_name() const noexcept {
         static const string name = "YouTubeHandler";
         return name;
     }
 
-    bool YouTubeHandler::check(shared_ptr<BotHandlerContext> context) {
+    bool YouTubeHandler::check(shared_ptr<BotHandlerContext> ctx) {
         static const set<string> buttons{
             AUDIO_WORD, VIDEO_WORD,
             AUDIO_PLAYLIST_WORD, VIDEO_PLAYLIST_WORD,
             BACK_WORD,
         };
-        return (context->access.full || context->access.youtube)
-        && context->user->screen == YOUTUBE
-        && buttons.contains(context->message->text)
+        return (ctx->access.full || ctx->access.youtube)
+        && ctx->user->screen == YOUTUBE
+        && buttons.contains(ctx->message->text)
         ;
     }
 
-    ptrMessage YouTubeHandler::handle(shared_ptr<BotHandlerContext> context) {
-        if (context->message->text == BACK_WORD) {
-            return MenuHandler::to_menu(context);
+    ptrMessage YouTubeHandler::handle(shared_ptr<BotHandlerContext> ctx) {
+        if (ctx->message->text == BACK_WORD) {
+            return MenuHandler::to_menu(ctx);
         }
 
-        if (context->message->text == VIDEO_WORD || context->message->text == AUDIO_WORD) {
-            return MediaHandler::to_youtube_media(context, context->message->text == VIDEO_WORD);
+        if (ctx->message->text == VIDEO_WORD || ctx->message->text == AUDIO_WORD) {
+            return MediaHandler::to_youtube_media(ctx, ctx->message->text == VIDEO_WORD);
         }
 
-        if (context->message->text == AUDIO_PLAYLIST_WORD || context->message->text == VIDEO_PLAYLIST_WORD) {
-            return PlaylistHandler::to_youtube_playlist(context, context->message->text == VIDEO_PLAYLIST_WORD);
+        if (ctx->message->text == AUDIO_PLAYLIST_WORD || ctx->message->text == VIDEO_PLAYLIST_WORD) {
+            return PlaylistHandler::to_youtube_playlist(ctx, ctx->message->text == VIDEO_PLAYLIST_WORD);
         }
 
-        return context->bot->send_message( {
-            .chat_id = context->chat->id,
+        return ctx->bot->send_message( {
+            .chat_id = ctx->chat->id,
             .text = IN_DEVELOP_PHRASE,
-            .reply_message_id = context->message->id,
+            .reply_message_id = ctx->message->id,
         });
     }
 

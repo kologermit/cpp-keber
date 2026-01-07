@@ -51,13 +51,14 @@ namespace Utils::HTTPServer::Handler {
         virtual ~InterfaceHandler() = default;
 
         [[nodiscard]] virtual const HandlerSignature& get_signature() const noexcept = 0;
-        [[nodiscard]] virtual json handle(ptrContext context) = 0;
+        [[nodiscard]] virtual json handle(ptrContext ctx) = 0;
     };
 }
 
 namespace std {
     using Utils::HTTPServer::Handler::RequestHandlerMethod;
-    const string& to_string(RequestHandlerMethod method) {
+
+    inline const string& to_string(RequestHandlerMethod method) {
         static const map<RequestHandlerMethod, string> m{
             {RequestHandlerMethod::GET, "GET"},
             {RequestHandlerMethod::POST, "POST"},

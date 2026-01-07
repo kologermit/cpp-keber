@@ -21,6 +21,7 @@ namespace Utils::TGBotApi::Bot {
         explicit Bot(string_view token, string_view telegram_api_url = "https://api.telegram.org");
 
         long long get_id() const noexcept override;
+        const User& get_user() const noexcept override;
         const string& get_name() const noexcept override;
         const string& get_username() const noexcept override;
         bool can_join_groups() const noexcept override;

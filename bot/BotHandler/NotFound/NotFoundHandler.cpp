@@ -7,15 +7,15 @@ namespace Bot::BotHandler::NotFound {
         return name;
     }
 
-    bool NotFoundHandler::check(shared_ptr<BotHandlerContext> context) {
-        return context->access.full || context->access.base;
+    bool NotFoundHandler::check(shared_ptr<BotHandlerContext> ctx) {
+        return ctx->access.full || ctx->access.base;
     }
 
-    ptrMessage NotFoundHandler::handle(shared_ptr<BotHandlerContext> context) {
-        return context->bot->send_message({
-            .chat_id = context->chat->id,
-            .text = NOT_ANDERSTAND_PHRASE,
-            .reply_message_id = context->message->id,
+    ptrMessage NotFoundHandler::handle(shared_ptr<BotHandlerContext> ctx) {
+        return ctx->bot->send_message({
+            .chat_id = ctx->chat->id,
+            .text = NOT_UNDERSTAND_PHRASE,
+            .reply_message_id = ctx->message->id,
         });
     }
 

@@ -6,8 +6,8 @@ namespace Bot::BotHandler::NotFound {
 
     struct NotFoundHandler : InterfaceBotHandler {
         const string& get_name() const noexcept override;
-        bool check(shared_ptr<BotHandlerContext> context) override;
-        ptrMessage handle(shared_ptr<BotHandlerContext> context) override;
+        bool check(shared_ptr<BotHandlerContext> ctx) override;
+        ptrMessage handle(shared_ptr<BotHandlerContext> ctx) override;
     };
 
 }

@@ -31,31 +31,31 @@ namespace Bot::BotHandler::Dice {
         return name;
     }
 
-    bool DiceHandler::check(shared_ptr<BotHandlerContext> context) {
+    bool DiceHandler::check(shared_ptr<BotHandlerContext> ctx) {
         return 
-        (context->access.full || context->access.base)
-        && (is_dice_command(context->message->text) || is_d_command(context->message->text));
+        (ctx->access.full || ctx->access.base)
+        && (is_dice_command(ctx->message->text) || is_d_command(ctx->message->text));
     }
 
-    ptrMessage DiceHandler::handle(shared_ptr<BotHandlerContext> context) {
+    ptrMessage DiceHandler::handle(shared_ptr<BotHandlerContext> ctx) {
         int dice = 20;
 
-        if (is_dice_command(context->message->text) && context->message->text != DICE_COMMAND) {
-            dice = stoi(context->message->text.substr(DICE_COMMAND.size()));
+        if (is_dice_command(ctx->message->text) && ctx->message->text != DICE_COMMAND) {
+            dice = stoi(ctx->message->text.substr(DICE_COMMAND.size()));
         }
 
-        if (is_d_command(context->message->text) && context->message->text != D_COMMAND) {
-            dice = stoi(context->message->text.substr(D_COMMAND.size()));
+        if (is_d_command(ctx->message->text) && ctx->message->text != D_COMMAND) {
+            dice = stoi(ctx->message->text.substr(D_COMMAND.size()));
         }
 
-        return context->bot->send_message({
-            .chat_id = context->chat->id,
+        return ctx->bot->send_message({
+            .chat_id = ctx->chat->id,
             .text = format(
                 DICE_PHRASE,
                 dice,
                 rand_int(1, dice)
             ),
-            .reply_message_id = context->message->id,
+            .reply_message_id = ctx->message->id,
         });
     }
 }

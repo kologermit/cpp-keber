@@ -18,7 +18,8 @@ namespace Bot::HTTPHandler {
     struct HandlerContext {
         const Request& request;
         Response& response;
-        shared_ptr<GlobalContext> global_context;
+        shared_ptr<GlobalContext> global_ctx;
+        shared_ptr<DBContext> db;
         shared_ptr<InterfaceLogger> logger;
         shared_ptr<InterfaceConfig> config;
         optional<json> json_body;
@@ -28,15 +29,16 @@ namespace Bot::HTTPHandler {
         map<string, bool> bool_params;
 
         HandlerContext(
-            shared_ptr<GlobalContext> global_context,
+            shared_ptr<GlobalContext> global_ctx,
             const Request& request,
             Response& response
         ):
             request(request),
             response(response),
-            global_context(global_context),
-            logger(global_context->logger),
-            config(global_context->config),
+            global_ctx(global_ctx),
+            db(global_ctx->db),
+            logger(global_ctx->logger),
+            config(global_ctx->config),
             json_body(
                 json::accept(request.body)
                 ? optional<json>(json::parse(request.body))

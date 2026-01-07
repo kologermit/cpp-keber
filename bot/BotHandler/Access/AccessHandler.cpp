@@ -39,41 +39,41 @@ namespace Bot::BotHandler::Access {
         return name;
     }
 
-    bool AccessHandler::check(shared_ptr<BotHandlerContext> context) {
-        return (context->access.full || context->access.access)
-        && context->callback == nullptr
-        && context->user->screen == ACCESS
-        && context->message->text.size() <= 20
+    bool AccessHandler::check(shared_ptr<BotHandlerContext> ctx) {
+        return (ctx->access.full || ctx->access.access)
+        && ctx->callback == nullptr
+        && ctx->user->screen == ACCESS
+        && ctx->message->text.size() <= 20
         && (
-            context->message->text.starts_with("@")
-            || all_of(context->message->text, [](char c) {return isdigit(c);})
-            || context->message->text == BACK_WORD
+            ctx->message->text.starts_with("@")
+            || all_of(ctx->message->text, [](char c) {return isdigit(c);})
+            || ctx->message->text == BACK_WORD
         );
     }
 
-    ptrMessage AccessHandler::handle(shared_ptr<BotHandlerContext> context) {
-        if (context->message->text == BACK_WORD) {
-            return MenuHandler::to_menu(context);
+    ptrMessage AccessHandler::handle(shared_ptr<BotHandlerContext> ctx) {
+        if (ctx->message->text == BACK_WORD) {
+            return MenuHandler::to_menu(ctx);
         }
         unique_ptr<User> find_user = nullptr;
-        if (context->message->text.starts_with("@")) {
-            find_user = context->global_context->user_repository->get_by_username(context->message->text.substr(1));
+        if (ctx->message->text.starts_with("@")) {
+            find_user = ctx->db->user->get_by_username(ctx->message->text.substr(1));
         } else {
-            find_user = context->global_context->user_repository->get_by_id(stoi(context->message->text));
+            find_user = ctx->db->user->get_by_id(stoi(ctx->message->text));
         }
         if (find_user == nullptr) {
-            return context->bot->send_message( {
-                .chat_id = context->chat->id,
-                .text = format(USER_NOT_FOUND_PHRASE, context->message->text),
-                .reply_message_id = context->message->id,
+            return ctx->bot->send_message( {
+                .chat_id = ctx->chat->id,
+                .text = format(USER_NOT_FOUND_PHRASE, ctx->message->text),
+                .reply_message_id = ctx->message->id,
             });
         }
-        auto find_user_access = context->global_context->access_repository->get_by_user_id(find_user->id);
-        return send_message_with_access_keyboard(context, *find_user, find_user_access);
+        const auto find_user_access = ctx->db->access->get_by_user_id(find_user->id);
+        return send_message_with_access_keyboard(ctx, *find_user, find_user_access);
     }
 
     ptrMessage AccessHandler::send_message_with_access_keyboard(
-        shared_ptr<BotHandlerContext> context,
+        shared_ptr<BotHandlerContext> ctx,
         const User& user,
         UserAccess user_access
     ) {
@@ -101,41 +101,41 @@ namespace Bot::BotHandler::Access {
             );
             buttons.push_back(InlineLane(1, button));
         }
-        return context->bot->send_message( {
-            .chat_id = context->chat->id,
+        return ctx->bot->send_message( {
+            .chat_id = ctx->chat->id,
             .text = format(USER_TEMPLATE,
                     user.name,
                     user.id,
                     "@" + user.username
                 ),
-            .reply_message_id = context->message->id,
+            .reply_message_id = ctx->message->id,
             .inline_keyboard = make_unique<InlineKeyboard>(std::move(buttons))
         });
     }
 
-    ptrMessage AccessHandler::to_access(shared_ptr<BotHandlerContext> context) {
+    ptrMessage AccessHandler::to_access(shared_ptr<BotHandlerContext> ctx) {
         string access_answer = "";
         for (auto&[fst, snd] : map<const char*, bool>{
-            {BASE_WORD, context->access.base},
-            {FULL_WORD, context->access.full},
-            {ACCESS_WORD, context->access.access},
-            {YOUTUBE_WORD, context->access.youtube},
-            {TASK_WORD, context->access.task},
-            {DOCKER_WORD, context->access.docker},
-            {SERVER_WORD, context->access.server},
+            {BASE_WORD, ctx->access.base},
+            {FULL_WORD, ctx->access.full},
+            {ACCESS_WORD, ctx->access.access},
+            {YOUTUBE_WORD, ctx->access.youtube},
+            {TASK_WORD, ctx->access.task},
+            {DOCKER_WORD, ctx->access.docker},
+            {SERVER_WORD, ctx->access.server},
         }) {
             if (snd) {
                 access_answer += string(fst) + " ";
             }
         }
 
-        context->user->screen = ACCESS;
-        context->global_context->user_repository->update(*context->user);
+        ctx->user->screen = ACCESS;
+        ctx->db->user->update(*ctx->user);
 
-        return context->bot->send_message({
-            .chat_id = context->chat->id,
+        return ctx->bot->send_message({
+            .chat_id = ctx->chat->id,
             .text = format(ACCESS_PHRASE, access_answer),
-            .reply_message_id = context->message->id,
+            .reply_message_id = ctx->message->id,
             .reply_keyboard = make_unique<ReplyKeyboard>(ReplyButtons{
                 {make_shared<ReplyButton>(BACK_WORD)}
             })

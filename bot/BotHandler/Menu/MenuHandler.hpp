@@ -7,8 +7,8 @@ namespace Bot::BotHandler::Menu {
     using std::string_view;
     struct MenuHandler : InterfaceBotHandler {
         const string& get_name() const noexcept override;
-        bool check(shared_ptr<BotHandlerContext> context) override;
-        ptrMessage handle(shared_ptr<BotHandlerContext> context) override;
-        static ptrMessage to_menu(shared_ptr<BotHandlerContext> context, string_view text = "");
+        bool check(shared_ptr<BotHandlerContext> ctx) override;
+        ptrMessage handle(shared_ptr<BotHandlerContext> ctx) override;
+        static ptrMessage to_menu(shared_ptr<BotHandlerContext> ctx, string_view text = "");
     };
 }
