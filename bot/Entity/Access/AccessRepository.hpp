@@ -5,7 +5,7 @@
 
 namespace Bot::Entity::Access {
     struct AccessRepository final : InterfaceAccessRepository {
-        vector<unique_ptr<Access> > get_raw_by_user_id(long long user_id) override;
+        unique_ptr<vector<Access> > get_raw_by_user_id(long long user_id) override;
         UserAccess get_by_user_id(long long user_id) override;
         AccessRepository(connection& db);
     };

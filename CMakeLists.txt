@@ -62,6 +62,15 @@ if (BUILD_BOT)
     )
 endif()
 
+option(BUILD_TASK_TRACKER "Build task_tracker" OFF)
+if (BUILD_TASK_TRACKER)
+    add_subdirectory(task_tracker)
+    target_link_libraries(
+            TASK_TRACKER
+            UTILS_LIB
+    )
+endif()
+
 option(BUILD_TEST_CODE "Build test" OFF)
 if (BUILD_TEST_CODE)
     file(GLOB_RECURSE TEST_SOURCES

@@ -1,0 +1,9 @@
+*
+!.gitignore
+!User.hpp
+!ContentType.hpp
+!InlineButton.hpp
+!ReplyButton.hpp
+!InterfaceBotApi.hpp
+!BotApi.hpp
+!BotApi.cpp

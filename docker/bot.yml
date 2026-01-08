@@ -5,9 +5,9 @@ volumes:
 
 services:
   bot:
-    # extends:
-    #   file: ./parents.yml
-    #   service: custom_service
+#    extends:
+#       file: ./parents.yml
+#       service: parent
     build: ..
     ports:
       - ${BOT_EXTERNAL_PORT:-127.0.0.1:8080}:8080
@@ -15,8 +15,9 @@ services:
       - bot_logs:/volumes/logs
       - bot_tmp:/volumes/tmp
       - file_buffer:/volumes/file_buffer:ro
-      - ../build/${BOT_BUILD}/bot/BOT:/app:ro
+      - ../build/${PROJECT_BUILD}/bot/BOT:/app:ro
     environment:
+      - AUTH_KEY=${AUTH_KEY}
       - BOT_TOKEN=${BOT_TOKEN}
       - BOT_ADMINS=${BOT_ADMINS}
       - WEBHOOK_URL=${BOT_WEBHOOK_URL}

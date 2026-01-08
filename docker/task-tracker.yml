@@ -1,0 +1,25 @@
+volumes:
+  task-tracker-logs:
+
+services:
+  task-tracker:
+#    extends:
+#      file: ./parents.yml
+#      service: parent
+    build: ..
+    ports:
+      - ${TASK_TRACKER_EXTERNAL_PORT}:8080
+    volumes:
+      - ../build/${PROJECT_BUILD}/task_tracker/TASK_TRACKER:/app
+      - task-tracker-logs:/volumes/logs
+    environment:
+      - AUTH_KEY=${AUTH_KEY}
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=bot
+      - DB_USER=${TASK_TRACKER_USER}
+      - DB_PASSWORD=${TASK_TRACKER_PASSWORD}
+      - LISTEN_IP=0.0.0.0
+      - LISTEN_PORT=8080
+      - LOGS_PATH=/volumes/logs
+      - BOT_URL=http://bot:8080

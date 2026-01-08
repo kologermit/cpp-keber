@@ -9,3 +9,4 @@
 !rabbitmq.yml
 !selenium.yml
 !downloader.yml
+!task-tracker.yml

@@ -84,19 +84,19 @@ namespace Utils::Config {
                 arg_string = Get(argument.name);
             }
             if (env_json.contains(argument.name)) {
-                if (argument.type == ArgumentType::LONG_LONG) {
+                if (argument.long_long_value != nullptr) {
                     if (!env_json.at(argument.name).is_number_integer()) {
                         throw invalid_argument(fmt::format("Argument {} is not a number!", argument.name));
                     }
                     *argument.long_long_value = env_json[argument.name].get<long long>();
                 }
-                if (argument.type == ArgumentType::STRING) {
+                if (argument.string_value != nullptr) {
                     if (!env_json.at(argument.name).is_string()) {
                         throw invalid_argument(fmt::format("Argument {} is not a string!", argument.name));
                     }
                     *argument.string_value = env_json[argument.name].get<string>();
                 }
-                if (argument.type == ArgumentType::VECTOR_LONG_LONG) {
+                if (argument.vector_long_long_value != nullptr) {
                     if (!env_json.at(argument.name).is_array()) {
                         throw invalid_argument(fmt::format("Argument {} is not array!", argument.name));
                     }
@@ -111,7 +111,7 @@ namespace Utils::Config {
             if (cli_args.contains(argument.name)) {
                 arg_string = cli_args[argument.name];
             }
-            if (argument.type == ArgumentType::LONG_LONG) {
+            if (argument.long_long_value != nullptr) {
 
                 try {
                     *argument.long_long_value = stoll(arg_string);
@@ -120,11 +120,11 @@ namespace Utils::Config {
                 }
                 continue;
             }
-            if (argument.type == ArgumentType::STRING) {
+            if (argument.string_value != nullptr) {
                 *argument.string_value = arg_string;
                 continue;
             }
-            if (argument.type == ArgumentType::VECTOR_LONG_LONG) {
+            if (argument.vector_long_long_value != nullptr) {
                 if (!json::accept(arg_string)) {
                     throw invalid_argument(fmt::format("Failed to parse array of integer argument {}", argument.name));
                 }

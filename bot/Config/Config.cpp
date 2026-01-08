@@ -6,7 +6,6 @@ namespace Bot::Config {
     using std::invalid_argument;
     using Utils::Config::parse_config;
     using Utils::Config::Argument;
-    using Utils::Config::ArgumentType;
 
     Config::Config(const int argc, const char *argv[]) {
         vector<Argument> arguments{
@@ -23,7 +22,6 @@ namespace Bot::Config {
             Argument{
                 .name = "BOT_ADMINS",
                 .is_required = true,
-                .type = ArgumentType::VECTOR_LONG_LONG,
                 .vector_long_long_value = & _bot_admins,
             },
             Argument{
@@ -44,13 +42,11 @@ namespace Bot::Config {
             Argument{
                 .name = "LISTEN_PORT",
                 .default_value = "8080",
-                .type = ArgumentType::LONG_LONG,
                 .long_long_value = &_listen_port,
             },
             Argument{
                 .name = "AUTH_KEY",
                 .default_value = "qwerty",
-                .type = ArgumentType::STRING,
                 .string_value = &_auth_key,
             },
             Argument{
@@ -61,7 +57,6 @@ namespace Bot::Config {
             Argument{
                 .name = "DB_PORT",
                 .default_value = "5432",
-                .type = ArgumentType::LONG_LONG,
                 .long_long_value = &_db_port,
             },
             Argument{
@@ -87,7 +82,6 @@ namespace Bot::Config {
             Argument{
                 .name = "RABBITMQ_PORT",
                 .default_value = "15672",
-                .type = ArgumentType::LONG_LONG,
                 .long_long_value = &_rabbit_mq_port,
             },
             Argument{

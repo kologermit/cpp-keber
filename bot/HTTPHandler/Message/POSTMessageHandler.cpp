@@ -35,8 +35,9 @@ namespace Bot::HTTPHandler::Message {
             .is_auth = true,
             .is_json_body = true,
             .body_params = {
-                Param{CHAT_TELEGRAM_ID_KEY, ParamType::INT},
                 Param{TEXT_KEY, ParamType::STRING},
+                Param{CHAT_TELEGRAM_ID_KEY, ParamType::INT, false},
+                Param{IS_ADMIN_KEY, ParamType::BOOL, false},
                 Param{FILE_NAME_KEY, ParamType::STRING, false},
                 Param{CONTENT_TYPE_KEY, ParamType::INT, false},
                 Param{REPLY_TO_MESSAGE_ID_KEY, ParamType::INT, false},
@@ -49,8 +50,19 @@ namespace Bot::HTTPHandler::Message {
 
     json POSTMessageHandler::handle(ptrContext ctx) {
         const json& json_body = ctx->json_body.value();
+        long long chat_telegram_id = 0;
+        if (json_body.contains(CHAT_TELEGRAM_ID_KEY)) {
+            chat_telegram_id = json_body[CHAT_TELEGRAM_ID_KEY].get<long long>();
+        }
+        if (json_body.contains(IS_ADMIN_KEY) && json_body[IS_ADMIN_KEY].get<bool>()) {
+            chat_telegram_id = ctx->config->get_bot_admins()[0];
+        }
+        if (chat_telegram_id == 0) {
+            throw invalid_argument(fmt::format("param chat_telegram_id is not found"));
+        }
+
         SendMessageParameters message_params{
-            .chat_id = json_body[CHAT_TELEGRAM_ID_KEY].get<long long>(),
+            .chat_id = chat_telegram_id,
             .text = json_body[TEXT_KEY].get<string>(),
         };
         if (json_body.contains(REPLY_TO_MESSAGE_ID_KEY)) {

@@ -43,9 +43,10 @@ namespace Bot::BotHandler::Access {
         }
 
         ctx->bot->answer_callback_query(ctx->callback->id);
-        for (auto& access : ctx->db->access->get_raw_by_user_id(user->id)) {
-            if (access->type == access_type) {
-                ctx->db->access->del(access->id);
+        auto raw_user_access = ctx->db->access->get_raw_by_user_id(user->id);
+        for (auto& access : *raw_user_access) {
+            if (access.type == access_type) {
+                ctx->db->access->del(access.id);
             }
         }
 

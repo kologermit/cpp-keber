@@ -40,6 +40,5 @@ namespace Bot {
         shared_ptr<InterfaceBot> bot;
         shared_ptr<DBContext> db;
         shared_ptr<InterfaceYouTubeApi> youtube_api;
-        const string auth_key;
     };
 }

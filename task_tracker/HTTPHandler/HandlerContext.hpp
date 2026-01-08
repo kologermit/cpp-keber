@@ -1,13 +1,14 @@
 #pragma once
 
-#include <bot/GlobalContext.hpp>
+#include <task_tracker/GlobalContext.hpp>
 #include <httplib/httplib.h>
 #include <nlohmann/json.hpp>
 #include <optional>
 #include <map>
 
-namespace Bot::HTTPHandler {
+namespace TaskTracker::HTTPHandler {
 
+    using std::string;
     using std::map;
     using std::optional;
     using std::nullopt;

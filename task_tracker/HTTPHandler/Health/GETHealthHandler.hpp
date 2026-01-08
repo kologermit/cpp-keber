@@ -1,18 +1,17 @@
 #pragma once
 
 #include <utils/HTTPServer/Handler/InterfaceHandler.hpp>
-#include <bot/HTTPHandler/HandlerContext.hpp>
+#include <task_tracker/HTTPHandler/HandlerContext.hpp>
 
-namespace Bot::HTTPHandler::Message {
-    
+namespace TaskTracker::HTTPHandler::Health {
+
     using nlohmann::json;
     using Utils::HTTPServer::Handler::InterfaceHandler;
     using Utils::HTTPServer::Handler::HandlerSignature;
 
-    constexpr const char* IS_ADMIN_KEY = "is_admin";
-
-    struct POSTMessageHandler : InterfaceHandler<HandlerContext> {
+    struct GETHealthHandler : InterfaceHandler<HandlerContext> {
         const HandlerSignature& get_signature() const noexcept override;
         json handle(ptrContext context) override;
     };
+
 }

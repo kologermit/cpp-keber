@@ -1,6 +1,6 @@
 *
 !.gitignore
 !Task.hpp
-!Task.cpp
+!InterfaceTaskRepository.hpp
 !TaskRepository.hpp
 !TaskRepository.cpp

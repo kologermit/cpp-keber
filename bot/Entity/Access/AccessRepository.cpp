@@ -1,3 +1,4 @@
+#include <httplib.h>
 #include <bot/Entity/Access/AccessRepository.hpp>
 #include <utils/Entity/exec_templates.hpp>
 
@@ -12,7 +13,7 @@ namespace Bot::Entity::Access {
         create_rows_in_enum_table_if_empty(_db, ACCESS_TYPES_TABLE, map_access_type_to_string);
     }
     
-    vector<unique_ptr<Access> > AccessRepository::get_raw_by_user_id(long long user_id) {
+    unique_ptr<vector<Access> > AccessRepository::get_raw_by_user_id(long long user_id) {
         return exec_select_many<Access>(_db, Access::get_table_name(), {{USER_ID->name, to_string(user_id)}});
     }
 
@@ -30,8 +31,10 @@ namespace Bot::Entity::Access {
             {SERVER, user_access.server}
         };
 
-        for (auto& access : get_raw_by_user_id(user_id)) {
-            type_to_member.at(access->type) = true;
+        auto raw_user_access = get_raw_by_user_id(user_id);
+
+        for (const auto& access : *raw_user_access) {
+            type_to_member.at(access.type) = true;
         }
         
         return user_access;

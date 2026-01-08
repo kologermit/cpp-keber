@@ -1,0 +1,50 @@
+{
+  "build_debug": {
+    "description": "Build debug task_tracker",
+    "working_dir": "./build/Debug",
+    "scripts": [
+      "cmake ../.. -B . -DBUILD_TASK_TRACKER=ON -DCMAKE_BUILD_TYPE=Debug",
+      "cmake --build . --target TASK_TRACKER --parallel $(($(nproc)-1))",
+      "chmod 777 task_tracker/TASK_TRACKER || true"
+    ]
+  },
+  "build_release": {
+    "description": "Build release task_tracker",
+    "working_dir": "./build/Release",
+    "scripts": [
+      "cmake ../.. -B . -DBUILD_TASK_TRACKER=ON -DNDEBUG=1 -DCMAKE_BUILD_TYPE=Release",
+      "cmake --build . --target TASK_TRACKER --parallel $(($(nproc)-1))",
+      "chmod 777 task_tracker/TASK_TRACKER || true"
+    ]
+  },
+  "up": {
+    "description": "Up task_tracker container",
+    "scripts": [
+      "docker compose up -d task_tracker"
+    ]
+  },
+  "stop": {
+    "description": "Stop task_tracker container",
+    "scripts": [
+      "docker compose stop -t 1 task_tracker"
+    ]
+  },
+  "remove": {
+    "description": "Remove task_tracker container",
+    "scripts": [
+      "docker compose rm -sfv task_tracker"
+    ]
+  },
+  "logs": {
+    "description": "All logs task_tracker container",
+    "scripts": [
+      "docker compose logs -f task_tracker"
+    ]
+  },
+  "logs20": {
+    "description": "Logs task_tracker container (20 lines)",
+    "scripts": [
+      "docker compose logs --tail 20 -f task_tracker"
+    ]
+  }
+}

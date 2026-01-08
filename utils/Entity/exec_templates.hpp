@@ -1,5 +1,6 @@
 #pragma once
 
+#include <utils/Entity/Entity.hpp>
 #include <utils/Logger/InterfaceLogger.hpp>
 #include <fmt/core.h>
 #include <pqxx/pqxx>
@@ -14,10 +15,12 @@ namespace Utils::Entity {
     using std::unique_ptr;
     using std::vector;
     using std::runtime_error;
+    using std::string;
     using fmt::format;
     using pqxx::result;
     using pqxx::row;
     using pqxx::nontransaction;
+    using pqxx::connection;
 
     template<typename EntityT>
     unique_ptr<EntityT> exec_insert(connection& conn, const EntityT& entity, bool add_id = false) {
@@ -165,13 +168,13 @@ namespace Utils::Entity {
     }
 
     template<typename EntityT>
-    vector<unique_ptr<EntityT> > exec_select_many(connection& conn, const char* table, const map<string, string>& where, bool check_deleted = true) {
+    unique_ptr<vector<EntityT>> exec_select_many(connection& conn, const char* table, const map<string, string>& where, bool check_deleted = true) {
         auto res = exec_select(conn, table, where, check_deleted);
 
-        vector<unique_ptr<EntityT> > vector_result;
+        unique_ptr<vector<EntityT>> vector_result = make_unique<vector<EntityT>>();
 
         for (const auto& r : res) {
-            vector_result.emplace_back(make_unique<EntityT>(r));
+            vector_result->emplace_back(r);
         }
 
         return vector_result;

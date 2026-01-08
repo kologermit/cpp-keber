@@ -23,6 +23,8 @@ namespace Utils::HTTPServer::Server {
     using std::invalid_argument;
     using std::out_of_range;
     using std::runtime_error;
+    using std::optional;
+    using std::nullopt;
     using HTTPServer = httplib::Server;
     using HTTPHandler = httplib::Server::Handler;
     using httplib::Request;
@@ -81,13 +83,20 @@ namespace Utils::HTTPServer::Server {
                 [handler, global_context](const Request& request, Response& response) {
                     int handle_id = rand_int(1, 1000000);
                     #ifndef NDEBUG
-                    global_context->logger->debug("SERVER::REQUEST", request.body, __FILE__, __LINE__);
+                    global_context->logger->debug("SERVER::REQUEST", fmt::format(
+                        "({}) {}",
+                        handle_id,
+                        request.body
+                    ), __FILE__, __LINE__);
                     #endif
                     json handle_result;
                     shared_ptr<HandlerContext> handler_context = make_shared<HandlerContext>(
                         global_context,
                         request,
-                        response
+                        response,
+                        json::accept(request.body)
+                            ? optional<json>(json::parse(request.body))
+                            : nullopt
                     );
                     try {
                         response.status = 200;
@@ -95,7 +104,7 @@ namespace Utils::HTTPServer::Server {
                         const HandlerSignature& signature = handler->get_signature();
                         if (signature.is_auth) {
                             if (const auto authorize_header = request.headers.find("Authorization");
-                                authorize_header == request.headers.end() || authorize_header->second != global_context->auth_key) {
+                                authorize_header == request.headers.end() || authorize_header->second != global_context->config->get_auth_key()) {
                                 throw string("UNAUTHORIZED");
                             }
                         }
@@ -111,13 +120,13 @@ namespace Utils::HTTPServer::Server {
                                 } else if (type == ParamType::INT) {
                                     try {
                                         handler_context->ll_params[name] = stoll(value);
-                                    } catch (const exception& exc) {
+                                    } catch (const exception&) {
                                         throw invalid_argument(fmt::format("invalid path. param {} must be integer", name));
                                     }
                                 } else if (type == ParamType::FLOAT) {
                                     try {
                                         handler_context->double_params[name] = stod(value);
-                                    } catch (const exception& exc) {
+                                    } catch (const exception&) {
                                         throw invalid_argument(fmt::format("invalid path. param {} must be float", name));
                                     }
                                 } else if (type == ParamType::BOOL) {
@@ -168,7 +177,7 @@ namespace Utils::HTTPServer::Server {
                             handle_id,
                             request.path
                         ), __FILE__, __LINE__);
-                    } catch (const string& exc) {
+                    } catch (const string&) {
                         response.status = 401;
                         handle_result = "unauthorized";
                     } catch (const invalid_argument& exc) {
@@ -180,11 +189,18 @@ namespace Utils::HTTPServer::Server {
                     } catch (const exception& exc) {
                         response.status = 500;
                         handle_result = fmt::format("unexpected_exception: {}", exc.what());
-                        global_context->logger->error("SERVER::HANDLE", exc.what(), __FILE__, __LINE__);
+                        global_context->logger->error("SERVER::HANDLE", fmt::format(
+                            "({}) {}",
+                            handle_id,
+                            exc.what()
+                        ), __FILE__, __LINE__);
                     } catch (...) {
                         response.status = 500;
                         handle_result = "unexpected_exception";
-                        global_context->logger->error("SERVER::HANDLE", "", __FILE__, __LINE__);
+                        global_context->logger->error("SERVER::HANDLE", fmt::format(
+                            "({})",
+                            handle_id
+                        ), __FILE__, __LINE__);
                     }
                     response.set_content(
                         json{
@@ -196,7 +212,11 @@ namespace Utils::HTTPServer::Server {
                     );
 
                     #ifndef NDEBUG
-                    global_context->logger->debug("SERVER::RESPONSE", response.body, __FILE__, __LINE__);
+                    global_context->logger->debug("SERVER::RESPONSE", fmt::format(
+                            "({}) {}",
+                            handle_id,
+                            response.body
+                        ), __FILE__, __LINE__);
                     #endif
                 };
 

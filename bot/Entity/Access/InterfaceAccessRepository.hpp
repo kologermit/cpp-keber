@@ -12,7 +12,7 @@ namespace Bot::Entity::Access {
 
     struct InterfaceAccessRepository : Repository<Access> {
         InterfaceAccessRepository(connection& db): Repository(db) {}
-        virtual vector<unique_ptr<Access> > get_raw_by_user_id(long long user_id) = 0;
+        virtual unique_ptr<vector<Access> > get_raw_by_user_id(long long user_id) = 0;
         virtual UserAccess get_by_user_id(long long user_id) = 0;
     };
 }

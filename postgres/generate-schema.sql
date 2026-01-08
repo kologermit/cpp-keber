@@ -163,7 +163,7 @@ CREATE TABLE accesses (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at TIMESTAMP NULL,
-    CONSTRAINT fk_ccess_type FOREIGN KEY (type) REFERENCES access_types(id)
+    CONSTRAINT fk_access_type FOREIGN KEY (type) REFERENCES access_types(id)
 );
 CREATE TRIGGER trigger_update_accesses_updated_at
 BEFORE UPDATE ON accesses

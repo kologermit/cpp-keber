@@ -8,7 +8,6 @@
 #include <utils/HTTPServer/Server/Server.hpp>
 #include <utils/Postgres/postgres.hpp>
 #include <bot/Config/Config.hpp>
-#include <bot/Signal/Signal.hpp>
 #include <bot/GlobalContext.hpp>
 #include <bot/HTTPHandler/init.hpp>
 #include <bot/Entity/Access/AccessRepository.hpp>
@@ -18,10 +17,10 @@
 #include <bot/Entity/User/UserRepository.hpp>
 #include <bot/Entity/YouTubeAudioSetting/YouTubeAudioSettingRepository.hpp>
 
-
 using std::shared_ptr;
 using std::make_shared;
 using std::make_unique;
+using std::to_string;
 using pqxx::connection;
 using Utils::Random::init_random;
 using Utils::Logger::get_logger;
@@ -34,7 +33,6 @@ using Utils::HTTPServer::Server::Server;
 using Utils::Postgres::create_connection;
 using Bot::Config::InterfaceConfig;
 using Bot::Config::Config;
-using Bot::Signal::signal_handler;
 using Bot::GlobalContext;
 using Bot::DBContext;
 using Bot::HTTPHandler::HandlerContext;
@@ -45,6 +43,13 @@ using Bot::Entity::Chat::ChatRepository;
 using Bot::Entity::Message::MessageRepository;
 using Bot::Entity::User::UserRepository;
 using Bot::Entity::YouTubeAudioSetting::YouTubeAudioSettingRepository;
+
+shared_ptr<Server<GlobalContext, HandlerContext>> server;
+
+void signal_handler(const int signal) {
+    get_logger()->info("SIGNAL", to_string(signal), __FILE__, __LINE__);
+    server->stop();
+}
 
 int main(int argc, const char* argv[]) {
     init_random();
@@ -73,11 +78,10 @@ int main(int argc, const char* argv[]) {
                 .youtube_audio_setting = make_shared<YouTubeAudioSettingRepository>(db),
             }),
             .youtube_api = make_shared<YouTubeApi>(config->get_youtube_api_url()),
-            .auth_key = config->get_auth_key(),
         }
     );
 
-    Server<GlobalContext, HandlerContext> server(
+    server = make_shared<Server<GlobalContext, HandlerContext>>(
         global_context,
         config->get_listen_ip(),
         static_cast<int>(config->get_listen_port())
@@ -86,7 +90,7 @@ int main(int argc, const char* argv[]) {
     signal(SIGINT, signal_handler);
     signal(SIGTERM, signal_handler);
     
-    init_server(server);
+    init_server(*server);
     if (!global_context->bot->set_webhook(config->get_webhook_url())) {
         logger->error("WEBHOOK", "Failed to set webhook", __FILE__, __LINE__ );
         return 1;
@@ -95,7 +99,7 @@ int main(int argc, const char* argv[]) {
         .chat_id = config->get_bot_admins()[0],
         .text = "START BOT"
     });
-    server.run();
+    server->run();
 
     return 0;
 }

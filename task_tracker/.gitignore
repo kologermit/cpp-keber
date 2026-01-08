@@ -1,4 +1,8 @@
 *
 !.gitignore
 !Entity
+!Config
+!GlobalContext.hpp
+!HTTPHandler
 !main.cpp
+!CMakeLists.txt

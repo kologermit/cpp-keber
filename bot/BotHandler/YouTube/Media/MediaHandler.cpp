@@ -91,12 +91,12 @@ namespace Bot::BotHandler::YouTube::Media {
         table[{0, 2}] = "Ссылка Ютуб";
         table[{0, 3}] = "Ссылка для скачивания";
 
-        for (size_t i = 0; i < settings.size(); i++) {
+        for (size_t i = 0; i < settings->size(); i++) {
             auto row = static_cast<unsigned short>(i+1);
             table[{row, 0}] = to_string(i+1);
-            table[{row, 1}] = settings[i]->file_name;
-            table[{row, 2}] = settings[i]->url;
-            table[{row, 3}] = settings[i]->download_url;
+            table[{row, 1}] = settings->at(i).file_name;
+            table[{row, 2}] = settings->at(i).url;
+            table[{row, 3}] = settings->at(i).download_url;
         }
 
         const string xlsx_path = fmt::format("{}/{}.xlsx", ctx->config->get_tmp_path(), ctx->user->id);
@@ -127,7 +127,7 @@ namespace Bot::BotHandler::YouTube::Media {
         }
 
         const auto& sheet = raw_data.begin()->second;
-        vector<unique_ptr<YouTubeAudioSetting> > result;
+        vector<YouTubeAudioSetting> result;
 
         for (unsigned short i = 1; sheet.contains({i, 2}) && sheet.contains({i, 3}); i++) {
             string url = sheet.at({i, 2});
@@ -152,15 +152,15 @@ namespace Bot::BotHandler::YouTube::Media {
                 });
             }
 
-            result.emplace_back(make_unique<YouTubeAudioSetting>(
+            result.emplace_back(
                 ctx->user->id,
                 url,
                 file_name,
                 download_url
-            ));
+            );
         }
 
-        ctx->db->youtube_audio_setting->update_by_user_id(ctx->user->id, std::move(result));
+        ctx->db->youtube_audio_setting->update_by_user_id(ctx->user->id, result);
 
         return ctx->bot->send_message({
             .chat_id = ctx->chat->id,
