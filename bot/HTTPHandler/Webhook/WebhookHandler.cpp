@@ -13,7 +13,7 @@ namespace Bot::HTTPHandler::Webhook {
     using std::ranges::find;
     using std::make_shared;
     using Bot::Entity::Access::Access;
-    using Bot::Entity::Access::EnumAccessType;
+    using Bot::Entity::Access::AccessType;
     using Bot::Entity::Callback::Callback;
     using Bot::Entity::User::User;
     using Bot::Entity::Chat::Chat;
@@ -81,7 +81,7 @@ namespace Bot::HTTPHandler::Webhook {
 
         if (!access.full && find(ctx->config->get_bot_admins(), user->id) != ctx->config->get_bot_admins().end()) {
             Access admin_access;
-            admin_access.type = EnumAccessType::FULL;
+            admin_access.type = AccessType::FULL;
             admin_access.user_id = user->id;
             ctx->db->access->create(admin_access);
             access = ctx->db->access->get_by_user_id(user->id);

@@ -10,8 +10,7 @@
 namespace Bot::Entity::Message {
 
     using Utils::Entity::Entity;
-    using Utils::Entity::Column;
-    using Utils::TGBotApi::File::EnumContentType;
+    using Utils::TGBotApi::File::ContentType;
     using std::optional;
     using std::nullopt;
     using jed_utils::datetime;
@@ -23,22 +22,22 @@ namespace Bot::Entity::Message {
     using std::make_shared;
 
     const map<int, string> map_content_type_to_string{
-        {EnumContentType::UNKNOWN, "UNKNOWN"},
-        {EnumContentType::PHOTO, "PHOTO"},
-        {EnumContentType::VIDEO, "VIDEO"},
-        {EnumContentType::AUDIO, "AUDIO"},
-        {EnumContentType::DOCUMENT, "DOCUMENT"},
-        {EnumContentType::TEXT, "TEXT"},
+        {ContentType::UNKNOWN, "UNKNOWN"},
+        {ContentType::PHOTO, "PHOTO"},
+        {ContentType::VIDEO, "VIDEO"},
+        {ContentType::AUDIO, "AUDIO"},
+        {ContentType::DOCUMENT, "DOCUMENT"},
+        {ContentType::TEXT, "TEXT"},
     };
 
-    const auto TEXT = make_shared<Column>("text");
-    const auto FILE_DOWNLOAD_ID = make_shared<Column>("file_download_id");
-    const auto FILE_NAME = make_shared<Column>("file_name");
-    const auto FILE_CONTENT_TYPE = make_shared<Column>("file_content_type");
-    const auto CHAT_ID = make_shared<Column>("chat_id");
-    const auto USER_ID = make_shared<Column>("user_id");
-    const auto REPLY_MESSAGE_ID = make_shared<Column>("reply_message_id");
-    const auto REPLY_CHAT_ID = make_shared<Column>("reply_chat_id");
+    constexpr const char* TEXT_COLUMN = "text";
+    constexpr const char* FILE_DOWNLOAD_ID_COLUMN = "file_download_id";
+    constexpr const char* FILE_NAME_COLUMN = "file_name";
+    constexpr const char* FILE_CONTENT_TYPE_COLUMN = "file_content_type";
+    constexpr const char* CHAT_ID_COLUMN = "chat_id";
+    constexpr const char* USER_ID_COLUMN = "user_id";
+    constexpr const char* REPLY_MESSAGE_ID_COLUMN = "reply_message_id";
+    constexpr const char* REPLY_CHAT_ID_COLUMN = "reply_chat_id";
 
     constexpr const char* MESSAGE_CONTENT_TYPES_TABLE = "message_content_types";
 
@@ -47,17 +46,17 @@ namespace Bot::Entity::Message {
         string          text;
         string          file_download_id;
         string          file_name;
-        EnumContentType file_content_type;
+        ContentType file_content_type;
         long long       chat_id;
         long long       user_id;
         long long       reply_message_id;
         long long       reply_chat_id;
 
-        Message(
+        explicit Message(
             string_view text = "",
             string_view file_download_id = "",
             string_view file_name = "",
-            EnumContentType file_content_type = EnumContentType::UNKNOWN,
+            ContentType file_content_type = ContentType::UNKNOWN,
             long long chat_id = 0,
             long long user_id = 0,
             long long reply_message_id = 0,
@@ -78,23 +77,23 @@ namespace Bot::Entity::Message {
             reply_chat_id(reply_chat_id)
         {}
 
-        Message(const row& message_row):
+        explicit Message(const row& message_row):
         Entity(message_row),
-            text(message_row[TEXT->name].get<string>().value()),
-            file_download_id(message_row[FILE_DOWNLOAD_ID->name].get<string>().value()),
-            file_name(message_row[FILE_NAME->name].get<string>().value()),
-            file_content_type(static_cast<EnumContentType>(message_row[FILE_CONTENT_TYPE->name].get<int>().value())),
-            chat_id(message_row[CHAT_ID->name].get<long long>().value()),
-            user_id(message_row[USER_ID->name].get<long long>().value()),
+            text(message_row[TEXT_COLUMN].get<string>().value()),
+            file_download_id(message_row[FILE_DOWNLOAD_ID_COLUMN].get<string>().value()),
+            file_name(message_row[FILE_NAME_COLUMN].get<string>().value()),
+            file_content_type(static_cast<ContentType>(message_row[FILE_CONTENT_TYPE_COLUMN].get<int>().value())),
+            chat_id(message_row[CHAT_ID_COLUMN].get<long long>().value()),
+            user_id(message_row[USER_ID_COLUMN].get<long long>().value()),
             reply_message_id(
-                message_row[REPLY_MESSAGE_ID->name].is_null()
+                message_row[REPLY_MESSAGE_ID_COLUMN].is_null()
                 ? 0
-                : message_row[REPLY_MESSAGE_ID->name].get<long long>().value()
+                : message_row[REPLY_MESSAGE_ID_COLUMN].get<long long>().value()
             ),
             reply_chat_id(
-                message_row[REPLY_CHAT_ID->name].is_null()
+                message_row[REPLY_CHAT_ID_COLUMN].is_null()
                 ? 0
-                : message_row[REPLY_CHAT_ID->name].get<long long>().value()
+                : message_row[REPLY_CHAT_ID_COLUMN].get<long long>().value()
             )
         {}
 
@@ -105,15 +104,15 @@ namespace Bot::Entity::Message {
         map<const char*, optional<string> > to_map(bool is_full = false, bool add_id = false) const noexcept {
             auto result = Entity::to_map(is_full, add_id);
 
-            result[TEXT->name] = text;
-            result[FILE_DOWNLOAD_ID->name] = file_download_id;
-            result[FILE_NAME->name] = file_name;
-            result[FILE_CONTENT_TYPE->name] = to_string(static_cast<int>(file_content_type));
-            result[CHAT_ID->name] = to_string(chat_id);
-            result[USER_ID->name] = to_string(user_id);
+            result[TEXT_COLUMN] = text;
+            result[FILE_DOWNLOAD_ID_COLUMN] = file_download_id;
+            result[FILE_NAME_COLUMN] = file_name;
+            result[FILE_CONTENT_TYPE_COLUMN] = to_string(static_cast<int>(file_content_type));
+            result[CHAT_ID_COLUMN] = to_string(chat_id);
+            result[USER_ID_COLUMN] = to_string(user_id);
             if (reply_message_id != 0) {
-                result[REPLY_MESSAGE_ID->name] = to_string(reply_message_id);
-                result[REPLY_CHAT_ID->name] = to_string(reply_chat_id);
+                result[REPLY_MESSAGE_ID_COLUMN] = to_string(reply_message_id);
+                result[REPLY_CHAT_ID_COLUMN] = to_string(reply_chat_id);
             }
 
             return result;

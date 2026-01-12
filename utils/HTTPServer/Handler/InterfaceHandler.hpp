@@ -13,6 +13,8 @@ namespace Utils::HTTPServer::Handler {
     using std::string;
     using std::shared_ptr;
     using std::vector;
+    using std::optional;
+    using std::nullopt;
     using httplib::Request;
     using httplib::Response;
     using nlohmann::json;
@@ -25,12 +27,14 @@ namespace Utils::HTTPServer::Handler {
         NONE
     };
 
-    enum ParamType {INT, FLOAT, STRING, BOOL, OBJECT, ARRAY};
+    enum ParamType {INT, FLOAT, STRING, BOOL, OBJECT, ARRAY, DATETIME};
 
     struct Param {
         string name;
         ParamType type;
         bool is_required = true;
+        optional<long long> min = nullopt;
+        optional<long long> max = nullopt;
     };
 
     struct HandlerSignature {

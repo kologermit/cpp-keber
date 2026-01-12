@@ -11,7 +11,7 @@ namespace Bot::HTTPHandler::Message {
     using std::filesystem::exists;
     using std::filesystem::is_regular_file;
     using std::filesystem::path;
-    using Utils::TGBotApi::Bot::EnumContentType;
+    using Utils::TGBotApi::Bot::ContentType;
     using Utils::TGBotApi::Bot::SendMessageParameters;
     using Utils::TGBotApi::Message::Keyboard::InlineKeyboard;
     using Utils::TGBotApi::Message::Keyboard::ReplyKeyboard;
@@ -69,8 +69,8 @@ namespace Bot::HTTPHandler::Message {
             message_params.reply_message_id = json_body[REPLY_TO_MESSAGE_ID_KEY].get<long long>();
         }
         if (json_body.contains(FILE_NAME_KEY) && json_body.contains(CONTENT_TYPE_KEY)) {
-            const EnumContentType content_type = static_cast<EnumContentType>(json_body[CONTENT_TYPE_KEY].get<int>());
-            if (content_type <= EnumContentType::UNKNOWN || content_type > EnumContentType::TEXT) {
+            const ContentType content_type = static_cast<ContentType>(json_body[CONTENT_TYPE_KEY].get<int>());
+            if (content_type <= ContentType::UNKNOWN || content_type > ContentType::TEXT) {
                 throw invalid_argument(fmt::format("param {} is invalid", CONTENT_TYPE_KEY));
             }
             const string file_name = json_body[FILE_NAME_KEY].get<string>();

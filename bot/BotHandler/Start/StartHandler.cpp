@@ -4,8 +4,8 @@
 #include <set>
 
 namespace Bot::BotHandler::Start {
-    using Entity::User::EnumUserScreen;
-    using Entity::User::EnumUserScreen;
+    using Entity::User::UserScreen;
+    using Entity::User::UserScreen;
     using Bot::BotHandler::Menu::MenuHandler;
     using std::set;
 
@@ -16,15 +16,15 @@ namespace Bot::BotHandler::Start {
 
     bool StartHandler::check(shared_ptr<BotHandlerContext> ctx) {
         static const set back_screens{
-            EnumUserScreen::START,
-            EnumUserScreen::MENU,
+            UserScreen::START,
+            UserScreen::MENU,
         };
         return
             (ctx->access.full || ctx->access.base)
             && (
                 ctx->message->text.starts_with(START_COMMAND)
                 || ctx->message->text.starts_with(MENU_COMMAND)
-                || ctx->user->screen == EnumUserScreen::START
+                || ctx->user->screen == UserScreen::START
                 || (ctx->message->text == BACK_WORD && back_screens.contains(ctx->user->screen))
             );
     }

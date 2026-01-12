@@ -1,56 +1,56 @@
 #include <filesystem>
 #include <utils/TGBotApi/File/File.hpp>
 #include <fmt/core.h>
-#include <algorithm>
+#include <stdexcept>
 
 namespace Utils::TGBotApi::File {
 
-using fmt::format;
-using std::to_string;
-using std::filesystem::exists;
-using std::filesystem::is_regular_file;
-using std::filesystem::file_size;
+    using fmt::format;
+    using std::to_string;
+    using std::invalid_argument;
+    using std::filesystem::exists;
+    using std::filesystem::is_regular_file;
+    using std::filesystem::file_size;
 
-const int MAX_FILE_SIZE = 40 * 1024 * 1024; // 40MB
+    const int MAX_FILE_SIZE = 40 * 1024 * 1024; // 40MB
 
-EnumResultCheckFile is_correct_file(string_view filepath) {
-    if (!exists(filepath)) {
-        return EnumResultCheckFile::NOT_FOUND;
+    ResultCheckFile is_correct_file(string_view filepath) {
+        if (!exists(filepath)) {
+            return ResultCheckFile::NOT_FOUND;
+        }
+
+        if (!is_regular_file(filepath)) {
+            return ResultCheckFile::READ_DENIED;
+        }
+
+        if (file_size(filepath) > MAX_FILE_SIZE) {
+            return ResultCheckFile::TOO_LARGE;
+        }
+
+        return ResultCheckFile::OK;
     }
 
-    if (!is_regular_file(filepath)) {
-        return EnumResultCheckFile::READ_DENIED;
+    void throw_if_not_correct_file(string_view filepath) {
+        ResultCheckFile check_result = is_correct_file(filepath);
+        if (is_correct_file(filepath) != ResultCheckFile::OK) {
+            throw invalid_argument(format(
+                "{}: {} is {}",
+                "Utils::TGBotApi::File::throw_if_not_correct_file",
+                filepath,
+                to_string(check_result)
+            ));
+        }
     }
-
-    if (file_size(filepath) > MAX_FILE_SIZE) {
-        return EnumResultCheckFile::TOO_LARGE;
-    }
-
-    return EnumResultCheckFile::OK;
-}
-
-void throw_if_not_correct_file(string_view filepath) {
-    EnumResultCheckFile check_result = is_correct_file(filepath);
-    if (is_correct_file(filepath) != EnumResultCheckFile::OK) {
-        throw NotCorrentFileException(format(
-            "{}: {} is {}",
-            "Utils::TGBotApi::File::throw_if_not_correct_file",
-            filepath,
-            to_string(check_result)
-        ));
-    }
-}
-
 }
 
 namespace std {
     using Utils::TGBotApi::File::convert_map_result_check_file;
-    using Utils::TGBotApi::File::EnumResultCheckFile;
+    using Utils::TGBotApi::File::ResultCheckFile;
     using Utils::TGBotApi::File::convert_map_content_type;
-    using Utils::TGBotApi::File::EnumContentType;
+    using Utils::TGBotApi::File::ContentType;
 
-    
-    string to_string(EnumResultCheckFile result_check) {
+
+    string to_string(ResultCheckFile result_check) {
         if (convert_map_result_check_file.find(result_check) == convert_map_result_check_file.end()) {
             return "UNKNOWN";
         }
@@ -58,7 +58,7 @@ namespace std {
         return convert_map_result_check_file.at(result_check);
     };
 
-    string to_string(Utils::TGBotApi::File::EnumContentType content_type) {
+    string to_string(Utils::TGBotApi::File::ContentType content_type) {
 
         if (convert_map_content_type.find(content_type) == convert_map_content_type.end()) {
             return "UNKNOWN";

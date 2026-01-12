@@ -50,35 +50,35 @@ namespace Utils::TGBotApi::Message {
     file_content_type(
         // document
         json_message.contains(DOCUMENT_KEY)
-        ? EnumContentType::DOCUMENT
+        ? ContentType::DOCUMENT
         // photo
         : json_message.contains(PHOTO_KEY)
-        ? EnumContentType::PHOTO
+        ? ContentType::PHOTO
         // video
         : json_message.contains(VIDEO_KEY)
-        ? EnumContentType::VIDEO
+        ? ContentType::VIDEO
         // audio
         : json_message.contains(AUDIO_KEY)
-        ? EnumContentType::AUDIO
+        ? ContentType::AUDIO
 
-        : EnumContentType::TEXT
+        : ContentType::TEXT
     ),
     file_name(
         json_message.contains(DOCUMENT_KEY) ? string(json_message[DOCUMENT_KEY][FILE_NAME_KEY])
         : json_message.contains(PHOTO_KEY) ? format(
             "{}_{}.jpg",
-            static_cast<long long>(json_message[FROM_KEY][ID_KEY]),
-            static_cast<long long>(json_message[MESSAGE_ID_KEY])
+            json_message[FROM_KEY][ID_KEY].get<long long>(),
+            json_message[MESSAGE_ID_KEY].get<long long>()
         )
         : json_message.contains(VIDEO_KEY) ? string(json_message[VIDEO_KEY][FILE_NAME_KEY])
         : json_message.contains(AUDIO_KEY) ? string(json_message[AUDIO_KEY][FILE_NAME_KEY])
         : ""
     ),
     file_size(
-        json_message.contains(DOCUMENT_KEY) ? static_cast<long long>(json_message[DOCUMENT_KEY][FILE_SIZE_KEY])
-        : json_message.contains(PHOTO_KEY) ? static_cast<long long>(json_message[PHOTO_KEY].back()[FILE_SIZE_KEY])
-        : json_message.contains(VIDEO_KEY) ? static_cast<long long>(json_message[VIDEO_KEY][FILE_SIZE_KEY])
-        : json_message.contains(AUDIO_KEY) ? static_cast<long long>(json_message[AUDIO_KEY][FILE_SIZE_KEY])
+        json_message.contains(DOCUMENT_KEY) ? json_message[DOCUMENT_KEY][FILE_SIZE_KEY].get<long long>()
+        : json_message.contains(PHOTO_KEY) ? json_message[PHOTO_KEY].back()[FILE_SIZE_KEY].get<long long>()
+        : json_message.contains(VIDEO_KEY) ? json_message[VIDEO_KEY][FILE_SIZE_KEY].get<long long>()
+        : json_message.contains(AUDIO_KEY) ? json_message[AUDIO_KEY][FILE_SIZE_KEY].get<long long>()
         : 0
     ),
     from(make_unique<User>(json_message[FROM_KEY])),
@@ -93,7 +93,7 @@ namespace Utils::TGBotApi::Message {
         long long         id,
         string_view       text,
         string_view       file_download_id,
-        EnumContentType   file_content_type,
+        ContentType   file_content_type,
         string_view       file_name,
         long long         file_size,
         unique_ptr<User>    from,

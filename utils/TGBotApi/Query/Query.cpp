@@ -39,7 +39,7 @@ namespace Utils::TGBotApi::Query {
     }
 
     Result Query::query(
-        EnumQueryMethod method,
+        QueryMethod method,
         string_view path, 
         const Params& params,
         const Headers& headers,
@@ -56,8 +56,8 @@ namespace Utils::TGBotApi::Query {
 
         #ifndef NDEBUG
         get_logger()->debug("Method", (
-            method == EnumQueryMethod::GET ? "GET"
-            : method == EnumQueryMethod::POST ? "POST"
+            method == QueryMethod::GET ? "GET"
+            : method == QueryMethod::POST ? "POST"
             : "UNKNOWN"
         ), __FILE__, __LINE__);
         get_logger()->debug("ApiUrl", _telegram_api_url, __FILE__, __LINE__);
@@ -86,9 +86,9 @@ namespace Utils::TGBotApi::Query {
         httplib::Client cli(_telegram_api_url);
         cli.enable_server_certificate_verification(false);
         
-        if (method == EnumQueryMethod::GET) {
+        if (method == QueryMethod::GET) {
             result = cli.Get(result_path, params, headers);
-        } else if (method == EnumQueryMethod::POST) {
+        } else if (method == QueryMethod::POST) {
             MultipartFormDataItems form_data;
             if (!params.empty()) {
                 for (const auto&[name, content] : params) {

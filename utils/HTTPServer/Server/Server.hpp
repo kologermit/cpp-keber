@@ -4,6 +4,7 @@
 #include <utils/String/String.hpp>
 #include <utils/JSONKeys.hpp>
 #include <utils/Random/Random.hpp>
+#include <utils/Datetime.hpp>
 #include <nlohmann/json.hpp>
 #include <fmt/core.h>
 #include <string>
@@ -25,16 +26,19 @@ namespace Utils::HTTPServer::Server {
     using std::runtime_error;
     using std::optional;
     using std::nullopt;
+    using std::pair;
     using HTTPServer = httplib::Server;
     using HTTPHandler = httplib::Server::Handler;
     using httplib::Request;
     using httplib::Response;
     using nlohmann::json;
+    using jed_utils::datetime;
     using Utils::Random::rand_int;
     using Utils::JSONKeys::STATUS_KEY;
     using Utils::JSONKeys::RESULT_KEY;
     using Utils::JSONKeys::HANDLE_ID_KEY;
     using Utils::String::split;
+    using Utils::Datetime::DATETIME_FORMAT;
     using Utils::HTTPServer::Handler::Param;
     using Utils::HTTPServer::Handler::ParamType;
     using Utils::HTTPServer::Handler::HandlerSignature;
@@ -108,33 +112,113 @@ namespace Utils::HTTPServer::Server {
                                 throw string("UNAUTHORIZED");
                             }
                         }
-
-                        if (!signature.path_params.empty()) {
-                            for (const auto&[name, type, is_required] : signature.path_params) {
-                                if (!is_required && !request.path_params.contains(name)) {
-                                    continue;
+                        vector<pair<bool, const Param&>> path_and_query_params;
+                        for (const Param& path_param : signature.path_params) {
+                            path_and_query_params.push_back({
+                                true,
+                                path_param
+                            });
+                        }
+                        for (const Param& query_param : signature.query_params) {
+                            path_and_query_params.push_back({
+                                false,
+                                query_param
+                            });
+                        }
+                        for (const auto& [is_path_param, param] : path_and_query_params) {
+                            const auto& [name, type, is_required, min, max] = param;
+                            bool contains = (
+                                is_path_param
+                                ? request.path_params.contains(name)
+                                : request.params.contains(name)
+                            );
+                            if (!is_required && !contains) {
+                                continue;
+                            }
+                            const string& value = (
+                                is_path_param
+                                ? request.path_params.at(name)
+                                : request.params.find(name)->second
+                            );
+                            if (type == ParamType::STRING) {
+                                handler_context->string_params[name] = value;
+                                if (min.has_value() && static_cast<long long>(value.size()) < *min) {
+                                    throw invalid_argument(fmt::format(
+                                        "invalid {}. size of param {} must be greater than {}",
+                                        (is_path_param ? "path"  : "param"),
+                                        name,
+                                        *min
+                                    ));
                                 }
-                                const string& value = request.path_params.at(name);
-                                if (type == ParamType::STRING) {
-                                        handler_context->string_params[name] = value;
-                                } else if (type == ParamType::INT) {
-                                    try {
-                                        handler_context->ll_params[name] = stoll(value);
-                                    } catch (const exception&) {
-                                        throw invalid_argument(fmt::format("invalid path. param {} must be integer", name));
-                                    }
-                                } else if (type == ParamType::FLOAT) {
-                                    try {
-                                        handler_context->double_params[name] = stod(value);
-                                    } catch (const exception&) {
-                                        throw invalid_argument(fmt::format("invalid path. param {} must be float", name));
-                                    }
-                                } else if (type == ParamType::BOOL) {
-                                    if (value != "true" && value != "false") {
-                                        throw invalid_argument(fmt::format("invalid path. param {} must be boolean", name));
-                                    }
-                                    handler_context->bool_params[name] = value == "true";
+                                if (max.has_value() && static_cast<long long>(value.size()) < *max) {
+                                    throw invalid_argument(fmt::format(
+                                        "invalid {}. size of param {} must be less than {}",
+                                        (is_path_param ? "path"  : "param"),
+                                        name,
+                                        *max
+                                    ));
                                 }
+                            } else if (type == ParamType::INT) {
+                                try {
+                                    handler_context->ll_params[name] = stoll(value);
+                                } catch (const exception&) {
+                                    throw invalid_argument(fmt::format(
+                                        "invalid {}. param {} must be integer",
+                                        (is_path_param ? "path"  : "param"),
+                                        name
+                                    ));
+                                }
+                                if (min.has_value() && handler_context->ll_params[name] < *min) {
+                                    throw invalid_argument(fmt::format(
+                                        "invalid {}. param {} must be greater than {}",
+                                        (is_path_param ? "path"  : "param"),
+                                        name,
+                                        *min
+                                    ));
+                                }
+                                if (max.has_value() && handler_context->ll_params[name] > *max) {
+                                    throw invalid_argument(fmt::format(
+                                        "invalid {}. param {} must be less than {}",
+                                        (is_path_param ? "path"  : "param"),
+                                        name,
+                                        *max
+                                    ));
+                                }
+                            } else if (type == ParamType::FLOAT) {
+                                try {
+                                    handler_context->double_params[name] = stod(value);
+                                } catch (const exception&) {
+                                    throw invalid_argument(fmt::format(
+                                        "invalid {}. param {} must be float",
+                                        (is_path_param ? "path"  : "param"),
+                                        name
+                                    ));
+                                }
+                                if (min.has_value() && static_cast<long long>(handler_context->double_params[name]) < *min) {
+                                    throw invalid_argument(fmt::format(
+                                        "invalid {}. param {} must be greater than {}",
+                                        (is_path_param ? "path"  : "param"),
+                                        name,
+                                        *min
+                                    ));
+                                }
+                                if (max.has_value() && static_cast<long long>(handler_context->double_params[name]) > *max) {
+                                    throw invalid_argument(fmt::format(
+                                        "invalid {}. param {} must be less than {}",
+                                        (is_path_param ? "path"  : "param"),
+                                        name,
+                                        *max
+                                    ));
+                                }
+                            } else if (type == ParamType::BOOL) {
+                                if (value != "true" && value != "false") {
+                                    throw invalid_argument(fmt::format(
+                                        "invalid {}. param {} must be boolean",
+                                        (is_path_param ? "path"  : "param"),
+                                        name
+                                    ));
+                                }
+                                handler_context->bool_params[name] = value == "true";
                             }
                         }
 
@@ -147,22 +231,114 @@ namespace Utils::HTTPServer::Server {
                             if (!body_json.is_object()) {
                                 throw invalid_argument("body must be object");                            
                             }
-                            for (const auto&[name, type, is_required] : signature.body_params) {
+                            for (const auto&[name, type, is_required, min, max] : signature.body_params) {
                                 if (!body_json.contains(name) && is_required) {
                                     throw invalid_argument(fmt::format("body must have key {}", name));
                                 }
                                 if (!body_json.contains(name)) {
                                     continue;
                                 }
-                                if (json body_json_param = body_json[name];
-                                    (type == ParamType::INT && !body_json_param.is_number_integer())
-                                    || (type == ParamType::FLOAT && !body_json_param.is_number_float())
-                                    || (type == ParamType::BOOL && !body_json_param.is_boolean())
-                                    || (type == ParamType::STRING && !body_json_param.is_string())
-                                    || (type == ParamType::OBJECT && !body_json_param.is_object())
-                                    || (type == ParamType::ARRAY && !body_json_param.is_array())
-                                ) {
-                                    throw invalid_argument(fmt::format("param {} has invalid type", name));
+                                json body_json_param = body_json[name];
+                                if (type == ParamType::INT) {
+                                    if (!body_json_param.is_number_integer()) {
+                                        throw invalid_argument(fmt::format(
+                                            "body param {} must be integer",
+                                            name
+                                        ));
+                                    }
+                                    if (min.has_value() && body_json_param.get<long long>() < *min) {
+                                        throw invalid_argument(fmt::format(
+                                            "body param {} must be greater than {}",
+                                            name,
+                                            *min
+                                        ));
+                                    }
+                                    if (max.has_value() && body_json_param.get<long long>() > *max) {
+                                        throw invalid_argument(fmt::format(
+                                            "body param {} must be less than {}",
+                                            name,
+                                            *max
+                                        ));
+                                    }
+                                }
+                                if (type == ParamType::FLOAT) {
+                                    if (!body_json_param.is_number_float()) {
+                                        throw invalid_argument(fmt::format(
+                                            "body param {} must be float",
+                                            name
+                                        ));
+                                    }
+                                    if (min.has_value() && static_cast<long long>(body_json_param.get<double>()) < *min) {
+                                        throw invalid_argument(fmt::format(
+                                            "body param {} must be greater than {}",
+                                            name,
+                                            *min
+                                        ));
+                                    }
+                                    if (max.has_value() && static_cast<long long>(body_json_param.get<double>()) > *max) {
+                                        throw invalid_argument(fmt::format(
+                                            "body param {} must be less than {}",
+                                            name,
+                                            *max
+                                        ));
+                                    }
+                                }
+                                if (type == ParamType::STRING) {
+                                    if (!body_json_param.is_string()) {
+                                        throw invalid_argument(fmt::format(
+                                            "body param {} must be string",
+                                            name
+                                        ));
+                                    }
+                                    if (min.has_value() && static_cast<long long>(body_json_param.get<string>().size()) < *min) {
+                                        throw invalid_argument(fmt::format(
+                                            "body param {} size must be greater than {}",
+                                            name,
+                                            *min
+                                        ));
+                                    }
+                                    if (max.has_value() && static_cast<long long>(body_json_param.get<string>().size()) > *max) {
+                                        throw invalid_argument(fmt::format(
+                                            "body param {} size must be greater than {}",
+                                            name,
+                                            *max
+                                        ));
+                                    }
+                                }
+                                if (type == ParamType::BOOL && !body_json_param.is_boolean()) {
+                                    throw invalid_argument(fmt::format("body param {} must be boolean", name));
+                                }
+                                if (type == ParamType::ARRAY) {
+                                    if (!body_json_param.is_array()) {
+                                        throw invalid_argument(fmt::format("body param {} must be array", name));
+                                    }
+                                    if (min.has_value() && static_cast<long long>(body_json_param.size()) < *min) {
+                                        throw invalid_argument(fmt::format(
+                                            "body param {} size must be greater than {}",
+                                            name,
+                                            *min
+                                        ));
+                                    }
+                                    if (max.has_value() && static_cast<long long>(body_json_param.size()) > *max) {
+                                        throw invalid_argument(fmt::format(
+                                            "body param {} size must be less than {}",
+                                            name,
+                                            *max
+                                        ));
+                                    }
+                                }
+                                if (type == ParamType::OBJECT && !body_json_param.is_object()) {
+                                    throw invalid_argument(fmt::format("body param {} must be object", name));
+                                }
+                                if (type == ParamType::DATETIME) {
+                                    if (!body_json_param.is_string()) {
+                                        throw invalid_argument(fmt::format("body param {} must be datetime", name));
+                                    }
+                                    try {
+                                        datetime::parse(DATETIME_FORMAT, body_json_param);
+                                    } catch (const runtime_error&) {
+                                        throw invalid_argument(fmt::format("body param {} must be datetime", name));
+                                    }
                                 }
                             }
                         }
@@ -221,24 +397,37 @@ namespace Utils::HTTPServer::Server {
                 };
 
                 const HandlerSignature& signature = handler->get_signature();
-                if (signature.method == RequestHandlerMethod::GET) {
-                    _server.Get(signature.pattern, http_handler);
-                } else if (signature.method == RequestHandlerMethod::POST) {
-                    _server.Post(signature.pattern, http_handler);
-                } else if (signature.method == RequestHandlerMethod::PATCH) {
-                    _server.Patch(signature.pattern, http_handler);
-                } else if (signature.method == RequestHandlerMethod::DELETE) {
-                    _server.Delete(signature.pattern, http_handler);
+                string method;
+                switch (signature.method) {
+                    case RequestHandlerMethod::GET:
+                        _server.Get(signature.pattern, http_handler);
+                        method = "GET";
+                        break;
+                    case RequestHandlerMethod::POST:
+                        _server.Post(signature.pattern, http_handler);
+                        method = "POST";
+                        break;
+                    case RequestHandlerMethod::PATCH:
+                        _server.Patch(signature.pattern, http_handler);
+                        method = "PATCH";
+                        break;
+                    case RequestHandlerMethod::DELETE:
+                        _server.Delete(signature.pattern, http_handler);
+                        method = "DELETE";
+                        break;
+                    case RequestHandlerMethod::NONE:
+                        method = "NONE";
+                        break;
                 }
                 global_context->logger->info(
                     "SERVER::SET_HANDLER", fmt::format(
                         "handler={} method={} pattern={}",
                         signature.name,
-                        to_string(signature.method),
+                        method,
                         signature.pattern,
                         signature.is_auth
-                    ), 
-                    __FILE__, 
+                    ),
+                    __FILE__,
                     __LINE__
                 );
             }

@@ -3,10 +3,6 @@
 #include <utility>
 #include <utils/Entity/Entity.hpp>
 #include <nlohmann/json.hpp>
-#include <string>
-#include <string_view>
-#include <memory>
-#include <map>
 
 namespace Utils::Entity::ApiRequest {
 
@@ -16,7 +12,7 @@ namespace Utils::Entity::ApiRequest {
     using std::map;
     using nlohmann::json;
 
-    enum EnumRequestService : int {
+    enum RequestService {
         UNKNOWN,
         NGINX,
         BOT,
@@ -41,21 +37,21 @@ namespace Utils::Entity::ApiRequest {
 
     constexpr const char* FROM_HEADER = "FROM_SERVICE";
 
-    const auto FROM = make_shared<Column>("from");
-    const auto TO = make_shared<Column>("to");
-    const auto REQUEST = make_shared<Column>("request");
-    const auto RESPONSE = make_shared<Column>("response");
+    constexpr const char* FROM_COLUMN = "from";
+    constexpr const char* TO_COLUMN = "to";
+    constexpr const char* REQUEST_COLUMN = "request";
+    constexpr const char* RESPONSE_COLUMN = "response";
 
     struct ApiRequest : Entity {
 
-        EnumRequestService from;
-        EnumRequestService to;
+        RequestService from;
+        RequestService to;
         json request;
         json response;
 
         explicit ApiRequest(
-            EnumRequestService from = UNKNOWN,
-            EnumRequestService to = UNKNOWN,
+            RequestService from = UNKNOWN,
+            RequestService to = UNKNOWN,
             json request = {},
             json response = {},
             long long id = 0,
@@ -72,10 +68,10 @@ namespace Utils::Entity::ApiRequest {
 
         explicit ApiRequest(const row& api_request_row):
             Entity(api_request_row),
-            from(static_cast<EnumRequestService>(api_request_row[FROM->name].get<int>().value())),
-            to(static_cast<EnumRequestService>(api_request_row[TO->name].get<int>().value())),
-            request(json::parse(api_request_row[REQUEST->name].get<string>().value())),
-            response(json::parse(api_request_row[RESPONSE->name].get<string>().value()))
+            from(static_cast<RequestService>(api_request_row[FROM_COLUMN].get<int>().value())),
+            to(static_cast<RequestService>(api_request_row[TO_COLUMN].get<int>().value())),
+            request(json::parse(api_request_row[REQUEST_COLUMN].get<string>().value())),
+            response(json::parse(api_request_row[RESPONSE_COLUMN].get<string>().value()))
         {}
 
         static const char* get_table_name() noexcept {
@@ -86,10 +82,10 @@ namespace Utils::Entity::ApiRequest {
         map<const char *, optional<string> > to_map(bool is_full = false, bool add_id = false) const noexcept {
             auto result_map = Entity::to_map(is_full, add_id);
 
-            result_map[FROM->name] = to_string(from);
-            result_map[TO->name] = to_string(to);
-            result_map[REQUEST->name] = request.dump();
-            result_map[RESPONSE->name] = response.dump();
+            result_map[FROM_COLUMN] = to_string(from);
+            result_map[TO_COLUMN] = to_string(to);
+            result_map[REQUEST_COLUMN] = request.dump();
+            result_map[RESPONSE_COLUMN] = response.dump();
 
             return result_map;
         }

@@ -8,9 +8,8 @@
 
 namespace Bot::BotHandler::YouTube {
 
-    using Entity::User::YOUTUBE;
-    using Entity::User::SCREEN;
     using Entity::User::User;
+    using Entity::User::UserScreen;
     using Bot::BotHandler::Menu::MenuHandler;
     using Bot::BotHandler::YouTube::Media::MediaHandler;
     using Bot::BotHandler::YouTube::Playlist::PlaylistHandler;
@@ -23,7 +22,7 @@ namespace Bot::BotHandler::YouTube {
     using std::set;
 
     ptrMessage YouTubeHandler::to_youtube(shared_ptr<BotHandlerContext> ctx) {
-        ctx->user->screen = YOUTUBE;
+        ctx->user->screen = UserScreen::YOUTUBE;
         ctx->db->user->update(*ctx->user);
         return ctx->bot->send_message( {
             .chat_id = ctx->chat->id,
@@ -78,7 +77,7 @@ namespace Bot::BotHandler::YouTube {
             BACK_WORD,
         };
         return (ctx->access.full || ctx->access.youtube)
-        && ctx->user->screen == YOUTUBE
+        && ctx->user->screen == UserScreen::YOUTUBE
         && buttons.contains(ctx->message->text)
         ;
     }

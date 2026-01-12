@@ -17,10 +17,10 @@ namespace Bot::Entity::User {
             return user;
         }
     
-        return this->create(User(tg_user.name, tg_user.username, EnumUserScreen::START, tg_user.id), true);
+        return this->create(User(tg_user.name, tg_user.username, UserScreen::START, tg_user.id), true);
     }
 
     unique_ptr<User> UserRepository::get_by_username(string_view username) {
-        return exec_select_one<User>(_db, User::get_table_name(), {{USERNAME->name, username.data()}});
+        return exec_select_one<User>(_db, User::get_table_name(), {{USERNAME_COLUMN, username.data()}});
     }
 }

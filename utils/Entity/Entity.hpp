@@ -5,6 +5,7 @@
 #include <string>
 #include <map>
 #include <pqxx/pqxx>
+#include <nlohmann/json.hpp>
 
 namespace Utils::Entity {
     using std::nullopt;
@@ -18,17 +19,13 @@ namespace Utils::Entity {
     using Datetime::DATETIME_FORMAT;
     using pqxx::row;
     using pqxx::connection;
+    using nlohmann::json;
 
-    struct Column {
-        const char* name;
-        explicit Column(const char* name) : name(name) {}
-    };
-
-    const auto ID = make_shared<Column>("id");
-    const auto CREATED_AT = make_shared<Column>("created_at");
-    const auto UPDATED_AT = make_shared<Column>("updated_at");
-    const auto DELETED_AT = make_shared<Column>("deleted_at");
-    const auto NAME = make_shared<Column>("name");
+    constexpr const char* ID_COLUMN = "id";
+    constexpr const char* CREATED_AT_COLUMN = "created_at";
+    constexpr const char* UPDATED_AT_COLUMN = "updated_at";
+    constexpr const char* DELETED_AT_COLUMN = "deleted_at";
+    constexpr const char* NAME_COLUMN = "name";
 
     struct Entity {
         
@@ -49,16 +46,16 @@ namespace Utils::Entity {
             deleted_at(std::move(deleted_at)) 
         {}
 
-        Entity(const row& entity_row):
-            id(entity_row[ID->name].get<long long>().value_or(0)),
-            created_at(datetime::parse(DATETIME_FORMAT, entity_row[CREATED_AT->name].get<string>().value())),
-            updated_at(datetime::parse(DATETIME_FORMAT, entity_row[UPDATED_AT->name].get<string>().value())) 
-        {
-            if (const auto deleted_at_value = entity_row[DELETED_AT->name].get<string>();
-                deleted_at_value.has_value()) {
-                deleted_at = datetime::parse(DATETIME_FORMAT, deleted_at_value.value());
-            }
-        }
+        explicit Entity(const row& entity_row):
+            id(entity_row[ID_COLUMN].get<long long>().value_or(0)),
+            created_at(datetime::parse(DATETIME_FORMAT, entity_row[CREATED_AT_COLUMN].get<string>().value())),
+            updated_at(datetime::parse(DATETIME_FORMAT, entity_row[UPDATED_AT_COLUMN].get<string>().value())),
+            deleted_at(
+                !entity_row[DELETED_AT_COLUMN].is_null()
+                ? optional<datetime>(datetime::parse(DATETIME_FORMAT, entity_row[DELETED_AT_COLUMN].get<string>().value()))
+                : nullopt
+            )
+        {}
 
         static const char* get_table_name() noexcept {
             static const char* table_name = "entities";
@@ -68,13 +65,27 @@ namespace Utils::Entity {
         map<const char*, optional<string> > to_map(bool is_full = false, bool add_id = false) const noexcept {
             map<const char*, optional<string> > result;
             if (add_id) {
-                result[ID->name] = to_string(id);
+                result[ID_COLUMN] = to_string(id);
             }
             if (is_full) {
-                result[ID->name] = to_string(id);
-                result[CREATED_AT->name] = created_at.to_string(DATETIME_FORMAT);
-                result[UPDATED_AT->name] = updated_at.to_string(DATETIME_FORMAT);
-                result[DELETED_AT->name] = (deleted_at.has_value() ? optional<string>(deleted_at.value().to_string(DATETIME_FORMAT)) : nullopt);
+                result[ID_COLUMN] = to_string(id);
+                result[CREATED_AT_COLUMN] = created_at.to_string(DATETIME_FORMAT);
+                result[UPDATED_AT_COLUMN] = updated_at.to_string(DATETIME_FORMAT);
+                result[DELETED_AT_COLUMN] = (deleted_at.has_value() ? optional<string>(deleted_at.value().to_string(DATETIME_FORMAT)) : nullopt);
+            }
+            return result;
+        }
+
+        json to_json() const noexcept {
+            json result{
+                {ID_COLUMN, id},
+                {CREATED_AT_COLUMN, created_at.to_string(DATETIME_FORMAT)},
+                {UPDATED_AT_COLUMN, updated_at.to_string(DATETIME_FORMAT)}
+            };
+            if (deleted_at.has_value()) {
+                result[DELETED_AT_COLUMN] = deleted_at->to_string(DATETIME_FORMAT);
+            } else {
+                result[DELETED_AT_COLUMN] = nullptr;
             }
             return result;
         }

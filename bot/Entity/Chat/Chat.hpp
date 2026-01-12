@@ -7,8 +7,7 @@
 
 namespace Bot::Entity::Chat {
 
-    using Utils::TGBotApi::Chat::EnumChatType;
-    using Utils::Entity::Column;
+    using Utils::TGBotApi::Chat::ChatType;
     using Utils::Entity::Entity;
     using std::optional;
     using std::nullopt;
@@ -21,28 +20,28 @@ namespace Bot::Entity::Chat {
     using pqxx::row;
 
     constexpr const char* CHAT_TYPES_TABLE = "chat_types";
-    const auto NAME = make_shared<Column>("name");
-    const auto USERNAME = make_shared<Column>("username");
-    const auto TYPE = make_shared<Column>("type");
+    constexpr const char* NAME_COLUMN = "name";
+    constexpr const char* USERNAME_COLUMN = "username";
+    constexpr const char* TYPE_COLUMN = "type";
 
     const map<int, string> map_chat_type_to_string{
-        {EnumChatType::UNKNOWN, "UNKNOWN"},
-        {EnumChatType::PRIVATE, "PRIVATE"},
-        {EnumChatType::CHANNEL, "CHANNEL"},
-        {EnumChatType::GROUP, "GROUP"},
-        {EnumChatType::SUPERGROUP, "SUPERGROUP"},
+        {ChatType::UNKNOWN, "UNKNOWN"},
+        {ChatType::PRIVATE, "PRIVATE"},
+        {ChatType::CHANNEL, "CHANNEL"},
+        {ChatType::GROUP, "GROUP"},
+        {ChatType::SUPERGROUP, "SUPERGROUP"},
     };
 
     struct Chat : Entity {
 
         string name;
         string username;
-        EnumChatType type;
+        ChatType type;
 
-        Chat(
+        explicit Chat(
             string_view name = "",
             string_view username = "",
-            EnumChatType type = EnumChatType::UNKNOWN,
+            ChatType type = ChatType::UNKNOWN,
             long long id = 0,
             datetime created_at = {},
             datetime updated_at = {},
@@ -54,11 +53,11 @@ namespace Bot::Entity::Chat {
             type(type)
         {}
 
-        Chat(const row& chat_row):
+        explicit Chat(const row& chat_row):
             Entity(chat_row),
-            name(chat_row[NAME->name].get<string>().value()),
-            username(chat_row[USERNAME->name].get<string>().value()),
-            type(static_cast<EnumChatType>(chat_row[TYPE->name].get<int>().value()))
+            name(chat_row[NAME_COLUMN].get<string>().value()),
+            username(chat_row[USERNAME_COLUMN].get<string>().value()),
+            type(static_cast<ChatType>(chat_row[TYPE_COLUMN].get<int>().value()))
         {}
 
         static const char* get_table_name() noexcept {
@@ -69,9 +68,9 @@ namespace Bot::Entity::Chat {
         map<const char*, optional<string> > to_map(bool is_full = false, bool add_id = false) const noexcept {
             auto result = Entity::to_map(is_full, add_id);
 
-            result[NAME->name] = name;
-            result[USERNAME->name] = username;
-            result[TYPE->name] = to_string(type);
+            result[NAME_COLUMN] = name;
+            result[USERNAME_COLUMN] = username;
+            result[TYPE_COLUMN] = to_string(type);
 
             return result;
         }

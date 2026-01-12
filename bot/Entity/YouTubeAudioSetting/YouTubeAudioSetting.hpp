@@ -5,7 +5,6 @@
 namespace Bot::Entity::YouTubeAudioSetting {
 
     using Utils::Entity::Entity;
-    using Utils::Entity::Column;
     using jed_utils::datetime;
     using pqxx::row;
     using std::map;
@@ -13,13 +12,12 @@ namespace Bot::Entity::YouTubeAudioSetting {
     using std::string_view;
     using std::optional;
     using std::nullopt;
-    using std::make_shared;
     using std::to_string;
 
-    const auto USER_ID = make_shared<Column>("user_id");
-    const auto URL = make_shared<Column>("url");
-    const auto FILE_NAME = make_shared<Column>("file_name");
-    const auto DOWNLOAD_URL = make_shared<Column>("download_url");
+    const auto USER_ID_COLUMN = "user_id";
+    const auto URL_COLUMN = "url";
+    const auto FILE_NAME_COLUMN = "file_name";
+    const auto DOWNLOAD_URL_COLUMN = "download_url";
 
     struct YouTubeAudioSetting : Entity {
         long long user_id;
@@ -46,10 +44,10 @@ namespace Bot::Entity::YouTubeAudioSetting {
 
         YouTubeAudioSetting(const row& youtube_audio_setting_row):
             Entity(youtube_audio_setting_row),
-            user_id(youtube_audio_setting_row[USER_ID->name].get<long long>().value()),
-            url(youtube_audio_setting_row[URL->name].get<string>().value()),
-            file_name(youtube_audio_setting_row[FILE_NAME->name].get<string>().value()),
-            download_url(youtube_audio_setting_row[DOWNLOAD_URL->name].get<string>().value())
+            user_id(youtube_audio_setting_row[USER_ID_COLUMN].get<long long>().value()),
+            url(youtube_audio_setting_row[URL_COLUMN].get<string>().value()),
+            file_name(youtube_audio_setting_row[FILE_NAME_COLUMN].get<string>().value()),
+            download_url(youtube_audio_setting_row[DOWNLOAD_URL_COLUMN].get<string>().value())
         {}
 
         static const char* get_table_name() noexcept {
@@ -60,10 +58,10 @@ namespace Bot::Entity::YouTubeAudioSetting {
         map<const char*, optional<string> > to_map(bool is_full = false, bool add_id = false) const noexcept {
             auto result = Entity::to_map(is_full, add_id);
             
-            result[USER_ID->name] = to_string(user_id);
-            result[URL->name] = url;
-            result[FILE_NAME->name] = file_name;
-            result[DOWNLOAD_URL->name] = download_url;
+            result[USER_ID_COLUMN] = to_string(user_id);
+            result[URL_COLUMN] = url;
+            result[FILE_NAME_COLUMN] = file_name;
+            result[DOWNLOAD_URL_COLUMN] = download_url;
 
             return result;
         }

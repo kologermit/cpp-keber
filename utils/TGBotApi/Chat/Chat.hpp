@@ -5,7 +5,7 @@
 
 namespace Utils::TGBotApi::Chat {
 
-enum EnumChatType {
+enum ChatType {
     PRIVATE,
     GROUP,
     SUPERGROUP,
@@ -18,16 +18,16 @@ using nlohmann::json;
 using std::string_view;
 
 struct Chat : User  {
+    explicit Chat(const json&);
 
-    Chat(const json&);
-    Chat(
+    explicit Chat(
         long long id,
         string_view name, 
         string_view username = "",
-        EnumChatType type = EnumChatType::PRIVATE
+        ChatType type = ChatType::PRIVATE
     );
 
-    EnumChatType type;
+    ChatType type;
 };
 
 }

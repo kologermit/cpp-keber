@@ -14,7 +14,7 @@ using std::filesystem::exists;
 using std::filesystem::is_directory;
 using std::filesystem::create_directory;
 
-Logger::Logger(string_view path, const EnumLoggerLevel& level):
+Logger::Logger(string_view path, const LoggerLevel& level):
 _level(level)
 {
     if (!exists(path)) {
@@ -65,25 +65,25 @@ void Logger::print_event(
 
 
 void Logger::debug(string_view event, string_view message, string_view file, int line) const {
-    if (_level <= EnumLoggerLevel::DEBUG) {
+    if (_level <= LoggerLevel::DEBUG) {
         print_event(cout, file, line, "DEBUG", event, message, false, true, false);
         print_event(_file, file, line, "DEBUG", event, message, false, false, false);
     }
 }
 void Logger::info(string_view event, string_view message, string_view file, int line) const {
-    if (_level <= EnumLoggerLevel::INFO) {
+    if (_level <= LoggerLevel::INFO) {
         print_event(cout, file, line, "INFO", event, message, true, false, false);
         print_event(_file, file, line, "INFO", event, message, false, false, false);
     }
 }
 void Logger::warning(string_view event, string_view message, string_view file, int line) const {
-    if (_level <= EnumLoggerLevel::WARNING) {
+    if (_level <= LoggerLevel::WARNING) {
         print_event(cout, file, line, "WARNING", event, message, false, true, false);
         print_event(_file, file, line, "WARNING", event, message, false, false, false);
     }
 }
 void Logger::error(string_view event, string_view message, string_view file, int line) const {
-    if (_level <= EnumLoggerLevel::ERROR) {
+    if (_level <= LoggerLevel::ERROR) {
         print_event(clog, file, line, "ERROR", event, message, false, false, true);
         print_event(_file, file, line, "ERROR", event, message, false, false, false);
     }

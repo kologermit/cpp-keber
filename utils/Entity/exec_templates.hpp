@@ -30,7 +30,7 @@ namespace Utils::Entity {
         string sql_values;
 
         if (add_id) {
-            sql_columns = format(" {},", tx.quote_name(ID->name));
+            sql_columns = format(" {},", tx.quote_name(ID_COLUMN));
             sql_values = format(" {},", tx.quote(entity.id));
         }
 
@@ -100,7 +100,7 @@ namespace Utils::Entity {
 
         sql_query += format(
             " WHERE {} = {} RETURNING *;",
-            tx.quote_name(ID->name),
+            tx.quote_name(ID_COLUMN),
             tx.quote(entity.id)
         );
 
@@ -143,7 +143,7 @@ namespace Utils::Entity {
         if (check_deleted) {
             sql_query += format(
                 " AND {} IS NULL",
-                tx.quote_name(DELETED_AT->name)
+                tx.quote_name(DELETED_AT_COLUMN)
             );
         }
 
@@ -188,16 +188,16 @@ namespace Utils::Entity {
             sql_query = fmt::format(
                 "UPDATE {} SET {} = {} WHERE {} = {} RETURNING *",
                 tx.quote_name(EntityT::get_table_name()),
-                tx.quote_name(DELETED_AT->name),
+                tx.quote_name(DELETED_AT_COLUMN),
                 tx.quote(datetime().to_string(DATETIME_FORMAT)),
-                tx.quote_name(ID->name),
+                tx.quote_name(ID_COLUMN),
                 tx.quote(id)
             );
         } else {
             sql_query = fmt::format(
                 "DELETE FROM {} WHERE {} = {} RETURNING *",
                 tx.quote_name(EntityT::get_table_name()),
-                tx.quote_name(ID->name),
+                tx.quote_name(ID_COLUMN),
                 tx.quote(id)
             );
         }
@@ -234,16 +234,16 @@ namespace Utils::Entity {
             sql_query = fmt::format(
                 "UPDATE {} SET {} = {} WHERE {} IN {} RETURNING *",
                 tx.quote_name(EntityT::get_table_name()),
-                tx.quote_name(DELETED_AT->name),
+                tx.quote_name(DELETED_AT_COLUMN),
                 tx.quote(datetime().to_string(DATETIME_FORMAT)),
-                tx.quote_name(ID->name),
+                tx.quote_name(ID_COLUMN),
                 condition_ids
             );
         } else {
             sql_query = fmt::format(
                 "DELETE FROM {} WHERE {} = {} RETURNING *",
                 tx.quote_name(EntityT::get_table_name()),
-                tx.quote_name(ID->name),
+                tx.quote_name(ID_COLUMN),
                 condition_ids
             );
         }

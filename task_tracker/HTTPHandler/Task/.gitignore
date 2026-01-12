@@ -1,0 +1,10 @@
+*
+!.gitignore
+!GETTaskHandler.hpp
+!GETTaskHandler.cpp
+!POSTTaskHandler.hpp
+!POSTTaskHandler.cpp
+!PATCHTaskHandler.hpp
+!PATCHTaskHandler.cpp
+!GETTaskByUserHandler.hpp
+!GETTaskByUserHandler.cpp

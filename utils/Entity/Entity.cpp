@@ -40,8 +40,8 @@ namespace Utils::Entity {
         string insert_sql_query = format(
             "INSERT INTO {} ({}, {}) VALUES",
             tx.quote_name(table),
-            tx.quote_name(ID->name),
-            tx.quote_name(NAME->name)
+            tx.quote_name(ID_COLUMN),
+            tx.quote_name(NAME_COLUMN)
         );
 
         for (const auto&[id, name] : map_int_to_string) {

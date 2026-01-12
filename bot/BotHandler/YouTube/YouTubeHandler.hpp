@@ -11,7 +11,7 @@ namespace Bot::BotHandler::YouTube {
     using Utils::RabbitMQ::Queue;
     using Bot::Config::InterfaceConfig;
 
-    enum EnumDownloadType {
+    enum DownloadType {
         AUDIO,
         VIDEO_720P, VIDEO_BEST,
         PLAYLIST_AUDIO,

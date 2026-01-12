@@ -13,7 +13,7 @@ namespace Bot::Entity::Message {
     using std::unique_ptr;
 
     struct InterfaceMessageRepository : Repository<Message> {
-        InterfaceMessageRepository(connection& db): Repository(db) {}
+        explicit InterfaceMessageRepository(connection& db): Repository(db) {}
 
         virtual unique_ptr<Message> get_by_chat_and_id(long long chat_id, long long id) = 0;
         virtual unique_ptr<Message> get_by_telegram_message(const TGMessage& tg_message, bool check_created = false) = 0;

@@ -1,7 +1,6 @@
 #define CPPHTTPLIB_OPENSSL_SUPPORT
 
 #include <fstream>
-#include <iomanip>
 #include <stdexcept>
 #include <httplib.h>
 #include <utils/UUID4/UUID4.hpp>
@@ -14,7 +13,7 @@
 namespace Utils::TGBotApi::Bot {
 
     using Utils::TGBotApi::Query::Query;
-    using TGBotApi::Query::EnumQueryMethod;
+    using TGBotApi::Query::QueryMethod;
     using TGBotApi::Message::Message;
     using JSONKeys::RESULT_KEY;
     using JSONKeys::SECRET_TOKEN_KEY;
@@ -69,7 +68,7 @@ namespace Utils::TGBotApi::Bot {
 
      json Bot::_get_me_raw_json(string_view token, string_view telegram_api_url) {
         Query client(token, telegram_api_url);
-        const json result = client.query_raw_json(EnumQueryMethod::GET, "getMe")[RESULT_KEY];
+        const json result = client.query_raw_json(QueryMethod::GET, "getMe")[RESULT_KEY];
         return result;
     }
 
@@ -104,14 +103,14 @@ namespace Utils::TGBotApi::Bot {
 
     bool Bot::delete_webhook() const {
         return *Query(_token, _telegram_api_url).query_parse_json<bool>(
-            EnumQueryMethod::GET,
+            QueryMethod::GET,
             "deleteWebhook"
         ).result;
     }
 
     bool Bot::set_webhook(string_view webhook_url) const {
         return *Query(_token, _telegram_api_url).query_parse_json<bool>(
-            EnumQueryMethod::POST,
+            QueryMethod::POST,
             "setWebhook",
             Params{
                 {URL_KEY, string(webhook_url)},
@@ -122,12 +121,12 @@ namespace Utils::TGBotApi::Bot {
     }
 
     unique_ptr<Message> Bot::send_message(const SendMessageParameters& message_parameters) const {
-        string path = map<EnumContentType, string>{
-            {EnumContentType::TEXT, "sendMessage"},
-            {EnumContentType::DOCUMENT, "sendDocument"},
-            {EnumContentType::VIDEO, "sendVideo"},
-            {EnumContentType::PHOTO, "sendPhoto"},
-            {EnumContentType::AUDIO, "sendAudio"},
+        string path = map<ContentType, string>{
+            {ContentType::TEXT, "sendMessage"},
+            {ContentType::DOCUMENT, "sendDocument"},
+            {ContentType::VIDEO, "sendVideo"},
+            {ContentType::PHOTO, "sendPhoto"},
+            {ContentType::AUDIO, "sendAudio"},
         }[message_parameters.content_type];
 
         Params params;
@@ -137,7 +136,7 @@ namespace Utils::TGBotApi::Bot {
         if (!message_parameters.text.empty()) {
             params.insert({
                 (
-                    message_parameters.content_type == EnumContentType::TEXT
+                    message_parameters.content_type == ContentType::TEXT
                     ? TEXT_KEY
                     : CAPTION_KEY
                 ),
@@ -153,13 +152,13 @@ namespace Utils::TGBotApi::Bot {
             params.insert({PLACEHOLDER_KEY, message_parameters.placeholder});
         }
 
-        if (!message_parameters.filepath.empty() && message_parameters.content_type != EnumContentType::TEXT) {
+        if (!message_parameters.filepath.empty() && message_parameters.content_type != ContentType::TEXT) {
             files.push_back(Query::File{
-                .name = map<EnumContentType, string>{
-                    {EnumContentType::DOCUMENT, DOCUMENT_KEY},
-                    {EnumContentType::VIDEO, VIDEO_KEY},
-                    {EnumContentType::PHOTO, PHOTO_KEY},
-                    {EnumContentType::AUDIO, AUDIO_KEY},
+                .name = map<ContentType, string>{
+                    {ContentType::DOCUMENT, DOCUMENT_KEY},
+                    {ContentType::VIDEO, VIDEO_KEY},
+                    {ContentType::PHOTO, PHOTO_KEY},
+                    {ContentType::AUDIO, AUDIO_KEY},
                 }[message_parameters.content_type],
                 .filepath = message_parameters.filepath,
                 .filename = message_parameters.filename.empty() ? message_parameters.filepath : message_parameters.filename,
@@ -176,7 +175,7 @@ namespace Utils::TGBotApi::Bot {
         }
 
         return std::move(Query(_token, _telegram_api_url).query_parse_json<Message>(
-            EnumQueryMethod::POST,
+            QueryMethod::POST,
             path,
             params,
             {},
@@ -186,7 +185,7 @@ namespace Utils::TGBotApi::Bot {
 
     unique_ptr<Message> Bot::edit_text(long long chat_id, long long message_id, string_view text) const {
         return std::move(Query(_token, _telegram_api_url).query_parse_json<Message>(
-            EnumQueryMethod::POST,
+            QueryMethod::POST,
             "editMessageText",
             Params{
                 {CHAT_ID_KEY, to_string(chat_id)},
@@ -199,7 +198,7 @@ namespace Utils::TGBotApi::Bot {
 
     unique_ptr<Message> Bot::edit_caption(long long chat_id, long long message_id, string_view caption) const {
         return Query(_token, _telegram_api_url).query_parse_json<Message>(
-            EnumQueryMethod::POST,
+            QueryMethod::POST,
             "editMessageCaption",
             Params{
                 {CHAT_ID_KEY, to_string(chat_id)},
@@ -211,7 +210,7 @@ namespace Utils::TGBotApi::Bot {
 
     bool Bot::delete_message(long long chat_id, long long message_id) const {
         return *Query(_token, _telegram_api_url).query_parse_json<bool>(
-            EnumQueryMethod::POST,
+            QueryMethod::POST,
             "deleteMessage",
             Params{
                 {CHAT_ID_KEY, to_string(chat_id)},
@@ -238,7 +237,7 @@ namespace Utils::TGBotApi::Bot {
         }
 
         return *Query(_token, _telegram_api_url).query_parse_json<bool>(
-            EnumQueryMethod::POST,
+            QueryMethod::POST,
             "answerCallbackQuery",
             params
         ).result;
@@ -250,7 +249,7 @@ namespace Utils::TGBotApi::Bot {
 
     bool Bot::download_file(string_view file_id, string_view output_path) const {
         auto res = Query(_token, _telegram_api_url).query_parse_json<json>(
-            EnumQueryMethod::GET,
+            QueryMethod::GET,
             "getFile",
             Params{{FILE_ID_KEY, file_id.data()}}
         );
@@ -260,7 +259,7 @@ namespace Utils::TGBotApi::Bot {
         }
 
         auto file_res = Query(_token, _telegram_api_url).query(
-            EnumQueryMethod::GET,
+            QueryMethod::GET,
             "",
             {},
             {},

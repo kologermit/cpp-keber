@@ -1,0 +1,6 @@
+*
+!.gitignore
+!InterfaceTaskTrackerApi.hpp
+!TaskTrackerApi.hpp
+!TaskTrackerApi.cpp
+!Task.hpp

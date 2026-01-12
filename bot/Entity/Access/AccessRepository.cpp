@@ -14,14 +14,14 @@ namespace Bot::Entity::Access {
     }
     
     unique_ptr<vector<Access> > AccessRepository::get_raw_by_user_id(long long user_id) {
-        return exec_select_many<Access>(_db, Access::get_table_name(), {{USER_ID->name, to_string(user_id)}});
+        return exec_select_many<Access>(_db, Access::get_table_name(), {{USER_ID_COLUMN, to_string(user_id)}});
     }
 
 
     UserAccess AccessRepository::get_by_user_id(long long user_id) {
         UserAccess user_access;
         
-        const map<EnumAccessType, bool&> type_to_member = {
+        const map<AccessType, bool&> type_to_member = {
             {BASE, user_access.base},
             {FULL, user_access.full},
             {ACCESS, user_access.access},
@@ -31,7 +31,7 @@ namespace Bot::Entity::Access {
             {SERVER, user_access.server}
         };
 
-        auto raw_user_access = get_raw_by_user_id(user_id);
+        unique_ptr<vector<Access>> raw_user_access = get_raw_by_user_id(user_id);
 
         for (const auto& access : *raw_user_access) {
             type_to_member.at(access.type) = true;

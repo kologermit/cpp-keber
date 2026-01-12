@@ -1,11 +1,7 @@
 #pragma once
 
-#include "Entity.hpp"
-#include "exec_templates.hpp"
-
-namespace pqxx {
-    class connection;
-}
+#include <utils/Entity/Entity.hpp>
+#include <utils/Entity/exec_templates.hpp>
 
 namespace Utils::Entity {
 
@@ -45,7 +41,7 @@ namespace Utils::Entity {
         return exec_select_one<EntityT>(
             _db,
             EntityT::get_table_name(),
-            {{ID->name, to_string(id)}},
+            {{ID_COLUMN, to_string(id)}},
             check_deleted
         );
     }

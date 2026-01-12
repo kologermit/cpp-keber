@@ -20,10 +20,9 @@ namespace Bot::BotHandler::Access {
     using std::pair;
     using fmt::format;
     using nlohmann::json;
-    using Entity::Access::EnumAccessType;
-    using Entity::User::ACCESS;
-    using Entity::User::SCREEN;
+    using Entity::Access::AccessType;
     using Entity::User::User;
+    using Entity::User::UserScreen;
     using Bot::BotHandler::Menu::MenuHandler;
     using Utils::TGBotApi::Types::ReplyKeyboard;
     using Utils::TGBotApi::Types::ReplyButtons;
@@ -42,7 +41,7 @@ namespace Bot::BotHandler::Access {
     bool AccessHandler::check(shared_ptr<BotHandlerContext> ctx) {
         return (ctx->access.full || ctx->access.access)
         && ctx->callback == nullptr
-        && ctx->user->screen == ACCESS
+        && ctx->user->screen == UserScreen::ACCESS
         && ctx->message->text.size() <= 20
         && (
             ctx->message->text.starts_with("@")
@@ -78,14 +77,14 @@ namespace Bot::BotHandler::Access {
         UserAccess user_access
     ) {
         InlineButtons buttons;
-        for (auto&[word, data] : map<const char*, pair<EnumAccessType, bool> >{
-            {BASE_WORD, {EnumAccessType::BASE, user_access.base}},
-            {FULL_WORD, {EnumAccessType::FULL, user_access.full}},
-            {ACCESS_WORD, {EnumAccessType::ACCESS, user_access.access}},
-            {YOUTUBE_WORD, {EnumAccessType::YOUTUBE, user_access.youtube}},
-            {TASK_WORD, {EnumAccessType::TASK, user_access.task}},
-            {DOCKER_WORD, {EnumAccessType::DOCKER, user_access.docker}},
-            {SERVER_WORD, {EnumAccessType::SERVER, user_access.server}},
+        for (auto&[word, data] : map<const char*, pair<AccessType, bool> >{
+            {BASE_WORD, {AccessType::BASE, user_access.base}},
+            {FULL_WORD, {AccessType::FULL, user_access.full}},
+            {ACCESS_WORD, {AccessType::ACCESS, user_access.access}},
+            {YOUTUBE_WORD, {AccessType::YOUTUBE, user_access.youtube}},
+            {TASK_WORD, {AccessType::TASK, user_access.task}},
+            {DOCKER_WORD, {AccessType::DOCKER, user_access.docker}},
+            {SERVER_WORD, {AccessType::SERVER, user_access.server}},
         }) {
             auto [access_type, access_value] = data;
             auto button = make_shared<InlineButton>(
@@ -129,7 +128,7 @@ namespace Bot::BotHandler::Access {
             }
         }
 
-        ctx->user->screen = ACCESS;
+        ctx->user->screen = UserScreen::ACCESS;
         ctx->db->user->update(*ctx->user);
 
         return ctx->bot->send_message({

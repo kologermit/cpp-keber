@@ -29,7 +29,7 @@ namespace Utils::TGBotApi::Query {
     using Utils::TGBotApi::JSONKeys::DESCRIPTION_KEY;
     using Utils::TGBotApi::JSONKeys::ERROR_CODE_KEY;
 
-    enum EnumQueryMethod {
+    enum QueryMethod {
         GET,
         POST
     };
@@ -53,7 +53,7 @@ namespace Utils::TGBotApi::Query {
         };
 
         Result query(
-            EnumQueryMethod method,
+            QueryMethod method,
             string_view path, 
             const Params& params = {},
             const Headers& headers = {},
@@ -63,7 +63,7 @@ namespace Utils::TGBotApi::Query {
         );
 
         inline json query_raw_json(
-            EnumQueryMethod method,
+            QueryMethod method,
             string_view path,
             const Params& params = {},
             const Headers& headers = {},
@@ -74,7 +74,7 @@ namespace Utils::TGBotApi::Query {
 
         template<typename ResultType>
         QueryResult<ResultType> query_parse_json(
-            EnumQueryMethod method,
+            QueryMethod method,
             string_view path,
             const Params& params = {},
             const Headers& headers = {},
@@ -91,7 +91,7 @@ namespace Utils::TGBotApi::Query {
     };
 
     inline json Query::query_raw_json(
-        EnumQueryMethod method,
+        QueryMethod method,
         string_view path, 
         const Params& params,
         const Headers& headers,
@@ -105,7 +105,7 @@ namespace Utils::TGBotApi::Query {
 
     template<typename ResultType>
     Query::QueryResult<ResultType> Query::query_parse_json(
-        EnumQueryMethod method,
+        QueryMethod method,
         string_view path, 
         const Params& params,
         const Headers& headers,

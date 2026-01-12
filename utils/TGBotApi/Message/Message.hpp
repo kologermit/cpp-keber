@@ -13,7 +13,7 @@ namespace Utils::TGBotApi::Message {
 using std::string_view;
 using std::string;
 using std::unique_ptr;
-using Utils::TGBotApi::File::EnumContentType;
+using Utils::TGBotApi::File::ContentType;
 using Utils::TGBotApi::Chat::Chat;
 using Utils::TGBotApi::User::User;
 using nlohmann::json;
@@ -24,7 +24,7 @@ struct Message {
         long long         id,
         string_view       text = "",
         string_view       file_download_id = "",
-        EnumContentType   file_content_type = EnumContentType::TEXT,
+        ContentType   file_content_type = ContentType::TEXT,
         string_view       file_name = "",
         long long         file_size = 0,
         unique_ptr<User>    from = nullptr,
@@ -37,7 +37,7 @@ struct Message {
     long long         id;
     string            text;
     string            file_download_id;
-    EnumContentType   file_content_type;
+    ContentType   file_content_type;
     string            file_name;
     long long         file_size;
     unique_ptr<User>    from;

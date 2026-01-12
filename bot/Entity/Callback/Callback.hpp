@@ -6,8 +6,7 @@
 namespace Bot::Entity::Callback {
 
     using Utils::Datetime::datetime;
-    using Utils::Entity::ID;
-    using Utils::Entity::Column;
+    using Utils::Entity::ID_COLUMN;
     using Utils::Entity::Entity;
     using pqxx::row;
     using std::map;
@@ -18,10 +17,10 @@ namespace Bot::Entity::Callback {
     using std::optional;
     using std::nullopt;
 
-    const auto DATA = make_shared<Column>("data");
-    const auto MESSAGE_ID = make_shared<Column>("message_id");
-    const auto USER_ID = make_shared<Column>("user_id");
-    const auto CHAT_ID = make_shared<Column>("chat_id");
+    constexpr const char* DATA_COLUMN = "data";
+    constexpr const char* MESSAGE_ID_COLUMN = "message_id";
+    constexpr const char* USER_ID_COLUMN = "user_id";
+    constexpr const char* CHAT_ID_COLUMN = "chat_id";
 
     struct Callback : Entity {
         string id;
@@ -30,7 +29,7 @@ namespace Bot::Entity::Callback {
         long long user_id;
         long long chat_id;
 
-        Callback(
+        explicit Callback(
             string_view data = "",
             long long message_id = 0,
             long long user_id = 0,
@@ -49,13 +48,13 @@ namespace Bot::Entity::Callback {
         {}
 
 
-        Callback(const row& callback_row):
+        explicit Callback(const row& callback_row):
             Entity(callback_row),
-            id(callback_row[ID->name].get<string>().value()),
-            data(callback_row[DATA->name].get<string>().value()),
-            message_id(callback_row[MESSAGE_ID->name].get<long long>().value()),
-            user_id(callback_row[USER_ID->name].get<long long>().value()),
-            chat_id(callback_row[CHAT_ID->name].get<long long>().value())
+            id(callback_row[ID_COLUMN].get<string>().value()),
+            data(callback_row[DATA_COLUMN].get<string>().value()),
+            message_id(callback_row[MESSAGE_ID_COLUMN].get<long long>().value()),
+            user_id(callback_row[USER_ID_COLUMN].get<long long>().value()),
+            chat_id(callback_row[CHAT_ID_COLUMN].get<long long>().value())
         {}
 
         static const char* get_table_name() noexcept {
@@ -67,12 +66,12 @@ namespace Bot::Entity::Callback {
             auto result = Entity::to_map(is_full, add_id);
 
             if (is_full || add_id) {
-                result[ID->name] = id;
+                result[ID_COLUMN] = id;
             }
-            result[DATA->name] = data;
-            result[MESSAGE_ID->name] = to_string(message_id);
-            result[USER_ID->name] = to_string(user_id);
-            result[CHAT_ID->name] = to_string(chat_id);
+            result[DATA_COLUMN] = data;
+            result[MESSAGE_ID_COLUMN] = to_string(message_id);
+            result[USER_ID_COLUMN] = to_string(user_id);
+            result[CHAT_ID_COLUMN] = to_string(chat_id);
 
             return result;
         }

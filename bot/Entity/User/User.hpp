@@ -1,16 +1,11 @@
 #pragma once
 
 #include <utils/Entity/Entity.hpp>
-#include <string>
-#include <map>
-#include <string_view>
-#include <pqxx/pqxx>
 
 namespace Bot::Entity::User {
 
     using Utils::Entity::Entity;
-    using Utils::Entity::Column;
-    using Utils::Entity::NAME;
+    using Utils::Entity::NAME_COLUMN;
     using std::string;
     using std::string_view;
     using std::optional;
@@ -21,7 +16,7 @@ namespace Bot::Entity::User {
     using pqxx::row;
     using jed_utils::datetime;
 
-    enum EnumUserScreen : int {
+    enum UserScreen : int {
         UNKNOWN,
         START,
         MENU,
@@ -54,19 +49,19 @@ namespace Bot::Entity::User {
         {YOUTUBE_PLAYLIST_AUDIO, "YOUTUBE_PLAYLIST_AUDIO"},
     };
 
-    const auto USERNAME = make_shared<Column>("username");
-    const auto SCREEN = make_shared<Column>("screen");
+    constexpr const char* USERNAME_COLUMN = "username";
+    constexpr const char* SCREEN_COLUMN = "screen";
 
     struct User : Entity {
 
         string name;
         string username;
-        EnumUserScreen screen;
+        UserScreen screen;
 
-        User(
+        explicit User(
             string_view name = "",
             string_view username = "",
-            EnumUserScreen screen = UNKNOWN,
+            UserScreen screen = UNKNOWN,
             long long id = 0,
             datetime created_at = {},
             datetime updated_at = {},
@@ -80,9 +75,9 @@ namespace Bot::Entity::User {
 
         User(const row& user_row):
             Entity(user_row),
-            name(user_row[NAME->name].get<string>().value()),
-            username(user_row[USERNAME->name].get<string>().value()),
-            screen(static_cast<EnumUserScreen>(user_row[SCREEN->name].get<int>().value()))
+            name(user_row[NAME_COLUMN].get<string>().value()),
+            username(user_row[USERNAME_COLUMN].get<string>().value()),
+            screen(static_cast<UserScreen>(user_row[SCREEN_COLUMN].get<int>().value()))
         {}
 
         static const char* get_table_name() noexcept {
@@ -93,9 +88,9 @@ namespace Bot::Entity::User {
         map<const char*, optional<string> > to_map(bool is_full = false, bool add_id = false) const noexcept {
             auto result = Entity::to_map(is_full, add_id);
             
-            result[NAME->name] = name;
-            result[USERNAME->name] = username;
-            result[SCREEN->name] = to_string(screen);
+            result[NAME_COLUMN] = name;
+            result[USERNAME_COLUMN] = username;
+            result[SCREEN_COLUMN] = to_string(screen);
 
             return result;
         }

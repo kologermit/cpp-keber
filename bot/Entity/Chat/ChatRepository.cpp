@@ -11,7 +11,7 @@ namespace Bot::Entity::Chat {
     }
 
     unique_ptr<Chat> ChatRepository::get_by_telegram_chat(const TGChat& tg_chat) {
-        auto chat = get_by_id(tg_chat.id);
+        unique_ptr<Chat> chat = get_by_id(tg_chat.id);
 
         if (chat != nullptr) {
             return chat;

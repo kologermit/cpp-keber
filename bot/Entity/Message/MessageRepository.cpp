@@ -9,7 +9,7 @@
 namespace Bot::Entity::Message {
 
     using Utils::Entity::create_rows_in_enum_table_if_empty;
-    using Utils::Entity::ID;
+    using Utils::Entity::ID_COLUMN;
     using Bot::Entity::Chat::Chat;
     using pqxx::result;
     using pqxx::row;
@@ -35,14 +35,14 @@ namespace Bot::Entity::Message {
             tx.quote_name(Message::get_table_name()),
             tx.quote_name(Chat::get_table_name()),
             tx.quote_name(Message::get_table_name()),
-            tx.quote_name(CHAT_ID->name),
+            tx.quote_name(CHAT_ID_COLUMN),
             tx.quote_name(Chat::get_table_name()),
-            tx.quote_name(ID->name),
+            tx.quote_name(ID_COLUMN),
             tx.quote_name(Message::get_table_name()),
-            tx.quote_name(ID->name),
+            tx.quote_name(ID_COLUMN),
             tx.quote(id),
             tx.quote_name(Chat::get_table_name()),
-            tx.quote_name(ID->name),
+            tx.quote_name(ID_COLUMN),
             tx.quote(chat_id)
         );
 

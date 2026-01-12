@@ -6,7 +6,7 @@
 
 namespace Bot::BotHandler::YouTube::Playlist {
     using Bot::Entity::User::User;
-    using Bot::Entity::User::EnumUserScreen;
+    using Bot::Entity::User::UserScreen;
     using Utils::TGBotApi::Types::ReplyKeyboard;
     using Utils::TGBotApi::Types::ReplyButtons;
     using Utils::TGBotApi::Types::ReplyButton;
@@ -20,7 +20,7 @@ namespace Bot::BotHandler::YouTube::Playlist {
     using std::getline;
 
     ptrMessage PlaylistHandler::to_youtube_playlist(shared_ptr<BotHandlerContext> ctx, bool is_video) {
-        ctx->user->screen = (is_video ? EnumUserScreen::YOUTUBE_PLAYLIST_VIDEO : EnumUserScreen::YOUTUBE_PLAYLIST_AUDIO);
+        ctx->user->screen = (is_video ? UserScreen::YOUTUBE_PLAYLIST_VIDEO : UserScreen::YOUTUBE_PLAYLIST_AUDIO);
         ctx->db->user->update(*ctx->user);
 
         return ctx->bot->send_message( {
@@ -38,7 +38,7 @@ namespace Bot::BotHandler::YouTube::Playlist {
 
     bool PlaylistHandler::check(shared_ptr<BotHandlerContext> ctx) {
         return (ctx->access.full || ctx->access.youtube)
-        && (ctx->user->screen == EnumUserScreen::YOUTUBE_PLAYLIST_VIDEO || ctx->user->screen == EnumUserScreen::YOUTUBE_PLAYLIST_AUDIO)
+        && (ctx->user->screen == UserScreen::YOUTUBE_PLAYLIST_VIDEO || ctx->user->screen == UserScreen::YOUTUBE_PLAYLIST_AUDIO)
         && (ctx->message->text.starts_with("https://") || ctx->message->text == BACK_WORD);
     }
 
@@ -48,7 +48,7 @@ namespace Bot::BotHandler::YouTube::Playlist {
         }
 
         const char* PLAYLIST_TYPE_WORD = (
-            ctx->user->screen == EnumUserScreen::YOUTUBE_PLAYLIST_VIDEO
+            ctx->user->screen == UserScreen::YOUTUBE_PLAYLIST_VIDEO
             ? VIDEO_PLAYLIST_WORD
             : AUDIO_PLAYLIST_WORD
         );
@@ -86,7 +86,7 @@ namespace Bot::BotHandler::YouTube::Playlist {
                 answer
             ),
             .reply_message_id = ctx->message->id,
-            .inline_keyboard = make_unique<InlineKeyboard>(ctx->user->screen == EnumUserScreen::YOUTUBE_PLAYLIST_VIDEO
+            .inline_keyboard = make_unique<InlineKeyboard>(ctx->user->screen == UserScreen::YOUTUBE_PLAYLIST_VIDEO
                 ? InlineButtons{
                     {make_shared<InlineButton>(DELETE_WORD, "", "delete")},
                     {

@@ -13,8 +13,6 @@ namespace Utils::Entity::ApiRequest {
         explicit ApiRequestRepository(connection& db): InterfaceApiRequestRepository(db) {
             create_rows_in_enum_table_if_empty(db, API_REQUEST_SERVICES_TABLE, map_enum_to_service_name);
         };
-
-        private:
     };
 
 }

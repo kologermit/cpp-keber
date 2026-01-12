@@ -51,7 +51,11 @@ namespace Utils::BotApi {
     unique_ptr<User> BotApi::get_user(long long id) {
         const Result response = _client.Get(fmt::format("/user/{}", id));
         throw_by_status_or_error(response);
-        return make_unique<User>(json::parse(response->body)["result"]);
+        json json_result = json::parse(response->body)["result"];
+        if (json_result.is_null()) {
+            return nullptr;
+        }
+        return make_unique<User>(json_result);
     }
 
     long long BotApi::post_message(

@@ -8,7 +8,7 @@ namespace Bot::Entity::YouTubeAudioSetting {
 
     unique_ptr<vector<YouTubeAudioSetting> > YouTubeAudioSettingRepository::get_by_user_id(long long user_id, bool check_deleted) {
         return exec_select_many<YouTubeAudioSetting>(_db, YouTubeAudioSetting::get_table_name(), {
-            {USER_ID->name, to_string(user_id)}
+            {USER_ID_COLUMN, to_string(user_id)}
         }, check_deleted);
     }
     unique_ptr<vector<YouTubeAudioSetting> > YouTubeAudioSettingRepository::update_by_user_id(long long user_id, const vector<YouTubeAudioSetting>& settings) {

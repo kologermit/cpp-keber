@@ -14,7 +14,7 @@ using std::mutex;
 struct Logger : InterfaceLogger {
     explicit Logger(
         string_view path="./logs/",
-        const EnumLoggerLevel& level=
+        const LoggerLevel& level=
         #ifndef NDEBUG
         DEBUG
         #else
@@ -39,7 +39,7 @@ struct Logger : InterfaceLogger {
     ) const override;
 
     private:
-    const EnumLoggerLevel _level;
+    const LoggerLevel _level;
     mutable ofstream _file;
     mutable mutex _mutex;
 

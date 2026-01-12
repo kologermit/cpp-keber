@@ -5,7 +5,7 @@
 
 namespace Bot::BotHandler::Access {
 
-    using Bot::Entity::Access::EnumAccessType;
+    using Bot::Entity::Access::AccessType;
     using Bot::Entity::Access::Access;
     using Utils::TGBotApi::Bot::SendMessageParameters;
     using fmt::format;
@@ -28,7 +28,7 @@ namespace Bot::BotHandler::Access {
     ptrMessage AccessCallbackHandler::handle(shared_ptr<BotHandlerContext> ctx) {
         auto data = json::parse(ctx->callback->data);
         long long user_id = data[1];
-        auto access_type = static_cast<EnumAccessType>(data[2]);
+        auto access_type = static_cast<AccessType>(data[2]);
         const bool access_value = data[3];
         const string word = data[4];
 

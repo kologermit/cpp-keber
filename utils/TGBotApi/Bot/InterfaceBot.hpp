@@ -15,7 +15,7 @@ namespace Utils::TGBotApi::Bot {
     using std::string_view, std::string, std::unique_ptr, std::shared_ptr;
     using Utils::TGBotApi::User::User;
     using Utils::TGBotApi::Message::Message;
-    using Utils::TGBotApi::File::EnumContentType;
+    using Utils::TGBotApi::File::ContentType;
     using Utils::TGBotApi::JSONKeys::HTML_KEY;
     using Utils::TGBotApi::Message::Keyboard::InlineKeyboard;
     using Utils::TGBotApi::Message::Keyboard::ReplyKeyboard;
@@ -29,7 +29,7 @@ namespace Utils::TGBotApi::Bot {
         string placeholder = "";
         string filepath = "";
         string filename = "";
-        EnumContentType content_type = EnumContentType::TEXT;
+        ContentType content_type = ContentType::TEXT;
         string parse_mode = HTML_KEY;
         unique_ptr<InlineKeyboard> inline_keyboard = nullptr;
         unique_ptr<ReplyKeyboard> reply_keyboard = nullptr;

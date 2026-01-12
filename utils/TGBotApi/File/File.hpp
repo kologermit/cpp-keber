@@ -9,7 +9,7 @@ namespace Utils::TGBotApi::File {
 using std::string_view, std::string, std::map;
 using std::exception;
 
-enum EnumResultCheckFile {
+enum ResultCheckFile {
     NOT_FOUND,
     READ_DENIED,
     TOO_LARGE,
@@ -17,7 +17,7 @@ enum EnumResultCheckFile {
     OK
 };
 
-enum EnumContentType {
+enum ContentType {
     UNKNOWN,
     PHOTO,
     VIDEO,
@@ -26,45 +26,30 @@ enum EnumContentType {
     TEXT,
 };
 
-struct NotCorrentFileException : exception {
 
-    NotCorrentFileException(string_view message):
-    _message(message) {}
-
-    const char* what() const noexcept override {
-        return _message.data();
-    }
-
-    private:
-
-    string _message;
-
+const map<ContentType, string> convert_map_content_type = {
+    {ContentType::PHOTO, "PHOTO"},
+    {ContentType::VIDEO, "VIDEO"},
+    {ContentType::AUDIO, "AUDIO"},
+    {ContentType::DOCUMENT, "DOCUMENT"},
+    {ContentType::TEXT, "TEXT"},
 };
 
-
-const map<EnumContentType, string> convert_map_content_type = {
-    {EnumContentType::PHOTO, "PHOTO"},
-    {EnumContentType::VIDEO, "VIDEO"},
-    {EnumContentType::AUDIO, "AUDIO"},
-    {EnumContentType::DOCUMENT, "DOCUMENT"},
-    {EnumContentType::TEXT, "TEXT"},
+const map<ResultCheckFile, string> convert_map_result_check_file = {
+    {ResultCheckFile::NOT_FOUND, "NOT_FOUND"},
+    {ResultCheckFile::READ_DENIED, "READ_DENIED"},
+    {ResultCheckFile::TOO_LARGE, "TOO_LARGE"},
+    {ResultCheckFile::UNSUPPORTED_CONTENT_TYPE, "UNSUPPORTED_CONTENT_TYPE"},
+    {ResultCheckFile::OK, "OK"}
 };
 
-const map<EnumResultCheckFile, string> convert_map_result_check_file = {
-    {EnumResultCheckFile::NOT_FOUND, "NOT_FOUND"},
-    {EnumResultCheckFile::READ_DENIED, "READ_DENIED"},
-    {EnumResultCheckFile::TOO_LARGE, "TOO_LARGE"},
-    {EnumResultCheckFile::UNSUPPORTED_CONTENT_TYPE, "UNSUPPORTED_CONTENT_TYPE"},
-    {EnumResultCheckFile::OK, "OK"}
-};
-
-EnumResultCheckFile is_correct_file(string_view filepath);
+ResultCheckFile is_correct_file(string_view filepath);
 void throw_if_not_correct_file(string_view filepath);
 
 }
 
 
 namespace std {
-    string to_string(Utils::TGBotApi::File::EnumResultCheckFile result_check);
-    string to_string(Utils::TGBotApi::File::EnumContentType conntent_type);
+    string to_string(Utils::TGBotApi::File::ResultCheckFile result_check);
+    string to_string(Utils::TGBotApi::File::ContentType content_type);
 }

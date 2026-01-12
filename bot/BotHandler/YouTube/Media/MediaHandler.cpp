@@ -10,7 +10,7 @@
 
 namespace Bot::BotHandler::YouTube::Media {
     using Bot::Entity::User::User;
-    using Bot::Entity::User::EnumUserScreen;
+    using Bot::Entity::User::UserScreen;
     using Bot::Entity::YouTubeAudioSetting::YouTubeAudioSetting;
     using Utils::TGBotApi::Types::ReplyKeyboard;
     using Utils::TGBotApi::Types::ReplyButtons;
@@ -38,7 +38,7 @@ namespace Bot::BotHandler::YouTube::Media {
         static const ReplyButtons VIDEO_KEYBOARD{{make_shared<ReplyButton>(BACK_WORD)}};
         static const ReplyButtons AUDIO_KEYBOARD{{make_shared<ReplyButton>(SETTINGS_TABLE_WORD), make_shared<ReplyButton>(BACK_WORD)}};
 
-        ctx->user->screen = (is_video ? EnumUserScreen::YOUTUBE_VIDEO : EnumUserScreen::YOUTUBE_AUDIO);
+        ctx->user->screen = (is_video ? UserScreen::YOUTUBE_VIDEO : UserScreen::YOUTUBE_AUDIO);
         ctx->db->user->update(*ctx->user);
         return ctx->bot->send_message( {
             .chat_id = ctx->chat->id,
@@ -58,8 +58,8 @@ namespace Bot::BotHandler::YouTube::Media {
             ctx->access.full
             || ctx->access.youtube
         ) && (
-            ctx->user->screen == EnumUserScreen::YOUTUBE_VIDEO
-            || ctx->user->screen == EnumUserScreen::YOUTUBE_AUDIO
+            ctx->user->screen == UserScreen::YOUTUBE_VIDEO
+            || ctx->user->screen == UserScreen::YOUTUBE_AUDIO
         ) && (
             ctx->message->text.starts_with("https")
             || ctx->message->text == BACK_WORD
@@ -72,10 +72,10 @@ namespace Bot::BotHandler::YouTube::Media {
         if (ctx->message->text == BACK_WORD) {
             return YouTubeHandler::to_youtube(ctx);
         }
-        if (ctx->user->screen == EnumUserScreen::YOUTUBE_AUDIO && ctx->message->text == SETTINGS_TABLE_WORD) {
+        if (ctx->user->screen == UserScreen::YOUTUBE_AUDIO && ctx->message->text == SETTINGS_TABLE_WORD) {
             return send_audio_settings(ctx);
         }
-        if (ctx->user->screen == EnumUserScreen::YOUTUBE_AUDIO && ctx->message->file_name.ends_with(".xlsx")) {
+        if (ctx->user->screen == UserScreen::YOUTUBE_AUDIO && ctx->message->file_name.ends_with(".xlsx")) {
             return handle_audio_settings(ctx);
         }
         return handle_urls(ctx);
@@ -170,7 +170,7 @@ namespace Bot::BotHandler::YouTube::Media {
 
     ptrMessage MediaHandler::handle_urls(shared_ptr<BotHandlerContext> ctx) {
         const char* MEDIA_TYPE_WORD = (
-            ctx->user->screen == EnumUserScreen::YOUTUBE_VIDEO
+            ctx->user->screen == UserScreen::YOUTUBE_VIDEO
             ? VIDEO_WORD
             : AUDIO_WORD
         );
@@ -203,7 +203,7 @@ namespace Bot::BotHandler::YouTube::Media {
             ),
             .reply_message_id = ctx->message->id,
             .inline_keyboard = make_unique<InlineKeyboard>(
-                ctx->user->screen == EnumUserScreen::YOUTUBE_VIDEO
+                ctx->user->screen == UserScreen::YOUTUBE_VIDEO
                 ? InlineButtons{
                     {make_shared<InlineButton>(DELETE_WORD, "", "delete")},
                     {

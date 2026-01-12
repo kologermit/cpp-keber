@@ -10,7 +10,7 @@ Chat::Chat(
     long long id,
     string_view name, 
     string_view username,
-    EnumChatType type
+    ChatType type
 ):
     User(id, name, username),
     type(type)
@@ -19,16 +19,16 @@ Chat::Chat(
 Chat::Chat(const json& json_chat): 
     User(json_chat)
     {
-        static const map<string, EnumChatType> chat_type_map = {
-            {"private", EnumChatType::PRIVATE},
-            {"group", EnumChatType::GROUP},
-            {"supergroup", EnumChatType::SUPERGROUP},
-            {"channel", EnumChatType::CHANNEL}
+        static const map<string, ChatType> chat_type_map = {
+            {"private", ChatType::PRIVATE},
+            {"group", ChatType::GROUP},
+            {"supergroup", ChatType::SUPERGROUP},
+            {"channel", ChatType::CHANNEL}
         };
         
         auto find_result = chat_type_map.find(json_chat[TYPE_KEY]);
 
-        type = find_result == chat_type_map.end() ? EnumChatType::UNKNOWN : find_result->second;
+        type = find_result == chat_type_map.end() ? ChatType::UNKNOWN : find_result->second;
     }
 
 }

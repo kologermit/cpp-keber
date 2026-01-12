@@ -18,3 +18,4 @@
 !HTTPServer
 !Postgres
 !BotApi
+!TaskTrackerApi
