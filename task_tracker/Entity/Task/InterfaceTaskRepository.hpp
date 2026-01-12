@@ -21,7 +21,8 @@ namespace TaskTracker::Entity::Task {
             optional<datetime> start_at = nullopt,
             optional<datetime> in_work_at = nullopt,
             optional<datetime> completed_at = nullopt,
-            optional<datetime> deleted_at = nullopt
+            optional<datetime> deleted_at = nullopt,
+            optional<TaskState> state = nullopt
         ) = 0;
 
         explicit InterfaceTaskRepository(connection& db): Repository(db) {}

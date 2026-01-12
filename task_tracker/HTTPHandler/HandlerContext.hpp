@@ -12,6 +12,7 @@ namespace TaskTracker::HTTPHandler {
     using std::map;
     using std::optional;
     using std::nullopt;
+    using jed_utils::datetime;
     using nlohmann::json;
     using httplib::Request;
     using httplib::Response;
@@ -28,6 +29,7 @@ namespace TaskTracker::HTTPHandler {
         map<string, double> double_params;
         map<string, string> string_params;
         map<string, bool> bool_params;
+        map<string, datetime> datetime_params;
 
         HandlerContext(
             shared_ptr<GlobalContext> global_ctx,

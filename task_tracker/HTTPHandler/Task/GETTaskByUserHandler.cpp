@@ -2,6 +2,9 @@
 
 namespace TaskTracker::HTTPHandler::Task {
     using std::unique_ptr;
+    using std::vector;
+    using jed_utils::datetime;
+    using Utils::Datetime::DATETIME_FORMAT;
     using Utils::HTTPServer::Handler::RequestHandlerMethod;
     using Utils::HTTPServer::Handler::Param;
     using Utils::HTTPServer::Handler::ParamType;
@@ -35,6 +38,40 @@ namespace TaskTracker::HTTPHandler::Task {
     }
 
     json GETTaskByUserHandler::handle(ptrContext ctx) {
-        ctx->db->task->get_by_user_id()
+        optional<datetime> start_at;
+        optional<datetime> in_work_at;
+        optional<datetime> completed_at;
+        optional<datetime> deleted_at;
+        optional<TaskState> state;
+        
+        for (auto& [name, value] : map<string, optional<datetime>*>{
+            {START_AT_COLUMN, &start_at},
+            {IN_WORK_AT_COLUMN, &in_work_at},
+            {COMPLETED_AT_COLUMN, &completed_at},
+            {DELETED_AT_COLUMN, &deleted_at},
+        }) {
+            if (ctx->datetime_params.contains(name)) {
+                *value = ctx->datetime_params[name];
+            }
+        }
+
+        if (ctx->ll_params.contains(STATE_KEY)) {
+            state = static_cast<TaskState>(ctx->ll_params[STATE_KEY]);
+        }
+
+        unique_ptr<vector<Task>> tasks = ctx->db->task->get_by_user_id(
+            ctx->ll_params[USER_ID_COLUMN],
+            start_at,
+            in_work_at,
+            completed_at,
+            deleted_at,
+            state
+        );
+        
+        json return_result = json::array();
+        for (const Task& task : *tasks) {
+            return_result.push_back(task.to_json());
+        }
+        return return_result;
     }
 }

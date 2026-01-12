@@ -9,7 +9,8 @@ namespace TaskTracker::Entity::Task {
             optional<datetime> start_at,
             optional<datetime> in_work_at,
             optional<datetime> completed_at,
-            optional<datetime> deleted_at
+            optional<datetime> deleted_at,
+            optional<TaskState> state
         ) override;
 
         explicit TaskRepository(connection& db): InterfaceTaskRepository(db) {};

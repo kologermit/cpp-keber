@@ -219,7 +219,17 @@ namespace Utils::HTTPServer::Server {
                                     ));
                                 }
                                 handler_context->bool_params[name] = value == "true";
-                            }
+                            } else if (type == ParamType::DATETIME) {
+                                try {
+                                    handler_context->datetime_params[name] = datetime::parse(DATETIME_FORMAT, value);
+                                } catch (const exception&) {
+                                    throw invalid_argument(fmt::format(
+                                        "invalid {} param must be datetime",
+                                        (is_path_param ? "path" : "param"),
+                                        name
+                                    ));
+                                }
+                            } 
                         }
 
                         if (signature.is_json_body && !json::accept(request.body)) {
