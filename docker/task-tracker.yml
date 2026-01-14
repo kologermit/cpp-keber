@@ -3,9 +3,9 @@ volumes:
 
 services:
   task-tracker:
-#    extends:
-#      file: ./parents.yml
-#      service: parent
+    extends:
+      file: ./parents.yml
+      service: parent
     build: ..
     ports:
       - ${TASK_TRACKER_EXTERNAL_PORT}:8080

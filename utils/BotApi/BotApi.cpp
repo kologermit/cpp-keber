@@ -1,57 +1,24 @@
 #include <utils/BotApi/BotApi.hpp>
-#include <fmt/core.h>
-#include <nlohmann/json.hpp>
-
-#ifndef NDEBUG
-#include <utils/Logger/InterfaceLogger.hpp>
-#endif
 
 namespace Utils::BotApi {
-    #ifndef NDEBUG
-    using Utils::Logger::get_logger;
-    #endif
-    using std::to_string;
     using std::make_unique;
-    using std::runtime_error;
-    using httplib::Headers;
-    using httplib::Error;
     using httplib::Result;
-    using httplib::Request;
     using nlohmann::json;
+    using Utils::Api::throw_by_status_or_error;
 
-    BotApi::BotApi(
-        string_view base_url,
-        string_view auth_key
-    ):
-        _base_url(base_url),
-        _auth_key(auth_key),
-        _client(_base_url)
-    {
-        _client.set_default_headers(Headers{
-            {"Authorization", _auth_key}
-        });
-    };
+    constexpr const char* RESULT_KEY = "result";
+    constexpr const char* APPLICATION_JSON_KEY = "application/json";
 
-    void throw_by_status_or_error(const Result& response) {
-        #ifndef NDEBUG
-        get_logger()->debug("BotApi::Status", to_string(response->status), __FILE__, __LINE__);
-        get_logger()->debug("BotApi::Body", response->body, __FILE__, __LINE__);
-        #endif
-        if (response.error() != Error::Success) {
-            throw runtime_error(fmt::format("BotApi: error {}", to_string(response.error())));
-        }
-        if (response->status >= 300 || response->status < 200) {
-            throw runtime_error(fmt::format("BotApi: status {}", response->status));
-        }
-        if (!json::accept(response->body)) {
-            throw runtime_error("BotApi: body isn't json");
-        }
-    }
+    BotApi::BotApi(string_view base_url, string_view auth_key):
+        InterfaceBotApi(),
+        Api(base_url, auth_key)
+    {}
 
     unique_ptr<User> BotApi::get_user(long long id) {
-        const Result response = _client.Get(fmt::format("/user/{}", id));
-        throw_by_status_or_error(response);
-        json json_result = json::parse(response->body)["result"];
+        const string path = fmt::format("/user/{}", id);
+        const Result response = _client.Get(path);
+        throw_by_status_or_error(_base_url, path, response);
+        json json_result = json::parse(response->body)[RESULT_KEY];
         if (json_result.is_null()) {
             return nullptr;
         }
@@ -99,9 +66,10 @@ namespace Utils::BotApi {
         if (!reply_markup.empty()) {
             request_body["reply_markup"] = reply_markup;
         }
-        const Result response = _client.Post("/message", request_body.dump(), "application/json");
-        throw_by_status_or_error(response);
-        return json::parse(response->body)["result"].get<long long>();
+        static const string path = "/message";
+        const Result response = _client.Post(path, request_body.dump(), APPLICATION_JSON_KEY);
+        throw_by_status_or_error(_base_url, path, response);
+        return json::parse(response->body)[RESULT_KEY].get<long long>();
     }
 
     long long BotApi::patch_message(
@@ -116,8 +84,9 @@ namespace Utils::BotApi {
             {(!is_caption ? "text" : "caption"), text},
         };
 
-        const Result response = _client.Patch("/message", request_body.dump(), "application/json");
-        throw_by_status_or_error(response);
+        static const string path = "/message";
+        const Result response = _client.Patch(path, request_body.dump(), APPLICATION_JSON_KEY);
+        throw_by_status_or_error(_base_url, path, response);
         return json::parse(response->body)["result"].get<long long>();
     }
 }

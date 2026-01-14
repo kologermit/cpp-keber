@@ -34,7 +34,7 @@ namespace Bot::HTTPHandler::User {
             {"id", user->id},
             {"name", user->name},
             {"username", user->username},
-            {"screen", map_user_screen_to_string.at(user->screen)},
+            {"screen", user->screen},
             {"created_at", user->created_at.to_string()},
             {"updated_at", user->updated_at.to_string()},
         };

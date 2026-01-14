@@ -1,45 +1,40 @@
 #pragma once
 
-#include <utils/TaskTrackerApi/Task.hpp>
-#include <vector>
-#include <memory>
+#include <utils/TaskTrackerApi/InterfaceTaskTrackerApi.hpp>
+#include <utils/Api/Api.hpp>
 
 namespace Utils::TaskTrackerApi {
-    using std::optional;
-    using std::nullopt;
     using std::string_view;
-    using std::vector;
-    using std::unique_ptr;
-    using jed_utils::datetime;
+    using Utils::Api::Api;
 
-    struct InterfaceTaskTrackerApi {
-        virtual ~InterfaceTaskTrackerApi() = default;
+    struct TaskTrackerApi final : InterfaceTaskTrackerApi, Api {
+        TaskTrackerApi(string_view base_url, string_view auth_key);
 
-        virtual unique_ptr<Task> get_task(
+        unique_ptr<Task> get_task(
             long long id,
             long long user_id
-        ) = 0;
-        virtual unique_ptr<vector<Task>> get_tasks(
+        ) override;
+        unique_ptr<vector<Task>> get_tasks(
             long long user_id,
             optional<TaskState> state = nullopt,
             optional<datetime> start_at = nullopt,
             optional<datetime> in_work_at = nullopt,
             optional<datetime> completed_at = nullopt,
             optional<datetime> deleted_at = nullopt
-        ) = 0;
-        virtual unique_ptr<Task> post_task(
+        ) override;
+        unique_ptr<Task> post_task(
             long long user_id,
             string_view title,
             optional<string_view> description = nullopt,
             optional<datetime> start_at = nullopt
-        ) = 0;
-        virtual unique_ptr<Task> patch_task(
+        ) override;
+        unique_ptr<Task> patch_task(
             long long id,
             long long user_id,
             optional<string_view> title = nullopt,
             optional<string_view> description = nullopt,
             optional<datetime> start_at = nullopt,
             optional<TaskState> state = nullopt
-        ) = 0;
+        ) override;
     };
 }

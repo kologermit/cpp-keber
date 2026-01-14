@@ -1,38 +1,38 @@
 #pragma once
 
-#include <nlohmann/json.hpp>
-#include <datetime/datetime.h>
-#include <string>
-#include <optional>
-#include <utils/Datetime.hpp>
+#include <utils/Api/Entity.hpp>
 
 namespace Utils::BotApi {
-    using std::optional;
-    using std::nullopt;
     using std::string;
-    using jed_utils::datetime;
     using nlohmann::json;
-    using Utils::Datetime::DATETIME_FORMAT;
+    using Utils::Api::Entity;
 
-    struct User {
-        const long long id;
-        const string name;
-        const string username;
-        const datetime created_at;
-        const datetime updated_at;
-        const optional<datetime> deleted_at;
+    constexpr const char* NAME_KEY = "name";
+    constexpr const char* USERNAME_KEY = "username";
+    constexpr const char* SCREEN_KEY = "screen";
+
+    enum UserScreen : int {
+        UNKNOWN,
+        START,
+        MENU,
+        DOCKER,
+        DICE,
+        ACCESS, ADD_ACCESS,
+        WEATHER, ADD_WEATHER_POINT,
+        TASK, ADD_TASK_DESCRIPTION, ADD_TASK_DATE, EDIT_TASK_SUMMARY, EDIT_TASK_DESCRIPTION, EDIT_TASK_DATE,
+        YOUTUBE, YOUTUBE_VIDEO, YOUTUBE_AUDIO, YOUTUBE_PLAYLIST_VIDEO, YOUTUBE_PLAYLIST_AUDIO,
+    };
+
+    struct User : Entity {
+        string name;
+        string username;
+        UserScreen screen;
 
         User(const json& json_user):
-            id(json_user["id"].get<long long>()),
-            name(json_user["name"].get<string>()),
-            username(json_user["username"].get<string>()),
-            created_at(datetime::parse(DATETIME_FORMAT, json_user["created_at"].get<string>())),
-            updated_at(datetime::parse(DATETIME_FORMAT, json_user["updated_at"].get<string>())),
-            deleted_at(
-                json_user["deleted_at"].is_null()
-                ? nullopt
-                : optional<datetime>(datetime::parse(DATETIME_FORMAT, json_user["deleted_at"].get<string>()))
-            )
+            Entity(json_user),
+            name(json_user[NAME_KEY].get<string>()),
+            username(json_user[USERNAME_KEY].get<string>()),
+            screen(static_cast<UserScreen>(json_user[SCREEN_KEY].get<int>()))
         {}
     };
 }

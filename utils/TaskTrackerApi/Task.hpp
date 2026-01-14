@@ -1,50 +1,51 @@
 #pragma once
 
-#include <nlohmann/json.hpp>
-#include <utils/Datetime.hpp>
+#include <utils/Api/Entity.hpp>
 
-namespace Utils::TaskTracker {
+namespace Utils::TaskTrackerApi {
     using std::optional;
     using std::nullopt;
     using std::string;
     using Utils::Datetime::DATETIME_FORMAT;
     using nlohmann::json;
     using jed_utils::datetime;
+    using Utils::Api::Entity;
 
-    enum TaskState {UNKNOWN, NEW, IN_WORK, CANCELLED, COMPLETED};
+    enum TaskState {UNKNOWN, NEW, IN_WORK, COMPLETED, DELETED};
 
     constexpr const char* TITLE_KEY = "title";
     constexpr const char* DESCRIPTION_KEY = "description";
     constexpr const char* USER_ID_KEY = "user_id";
     constexpr const char* STATE_KEY = "state";
-    constexpr const char* ID_KEY = "id";
-    constexpr const char* CREATED_AT_KEY = "created_at";
-    constexpr const char* UPDATED_AT_KEY = "updated_at";
-    constexpr const char* DELETED_AT_KEY = "delete_at";
+    constexpr const char* START_AT_KEY = "start_at";
+    constexpr const char* IN_WORK_AT_KEY = "in_work_at";
+    constexpr const char* COMPLETED_AT_KEY = "completed_at";
 
-    struct Task {
+    struct Task : Entity {
         string title;
         string description;
         long long user_id;
         TaskState state;
-        long long id;
-        datetime created_at;
-        datetime updated_at;
-        optional<datetime> deleted_at;
-
+        datetime start_at;
+        optional<datetime> in_work_at;
+        optional<datetime> completed_at;
 
         Task(const json& json_task):
+            Entity(json_task),
             title(json_task[TITLE_KEY].get<string>()),
             description(json_task[DESCRIPTION_KEY].get<string>()),
             user_id(json_task[USER_ID_KEY].get<long long>()),
             state(static_cast<TaskState>(json_task[STATE_KEY].get<int>())),
-            id(json_task[ID_KEY].get<long long>()),
-            created_at(datetime::parse(DATETIME_FORMAT, json_task[CREATED_AT_KEY].get<string>())),
-            updated_at(datetime::parse(DATETIME_FORMAT, json_task[UPDATED_AT_KEY].get<string>())),
-            deleted_at(
-                json_task[DELETED_AT_KEY].is_null()
+            start_at(datetime::parse(DATETIME_FORMAT, json_task[START_AT_KEY].get<string>())),
+            in_work_at(
+                json_task[IN_WORK_AT_KEY].is_null()
                 ? nullopt
-                : optional<datetime>(datetime::parse(DATETIME_FORMAT, json_task[DELETED_AT_KEY].get<string>()))
+                : optional<datetime>(datetime::parse(DATETIME_FORMAT, json_task[IN_WORK_AT_KEY].get<string>()))
+            ),
+            completed_at(
+                json_task[COMPLETED_AT_KEY].is_null()
+                ? nullopt
+                : optional<datetime>(datetime::parse(DATETIME_FORMAT, json_task[IN_WORK_AT_KEY].get<string>()))
             )
         {}
     };

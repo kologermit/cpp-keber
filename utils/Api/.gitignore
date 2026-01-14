@@ -1,0 +1,5 @@
+*
+!.gitignore
+!Entity.hpp
+!Api.hpp
+!Api.cpp

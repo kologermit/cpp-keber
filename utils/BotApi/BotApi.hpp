@@ -3,17 +3,13 @@
 #define CPPHTTPLIB_OPENSSL_SUPPORT
 
 #include <utils/BotApi/InterfaceBotApi.hpp>
-#include <httplib/httplib.h>
+#include <utils/Api/Api.hpp>
 
 namespace Utils::BotApi {
-    using httplib::Client;
+    using Utils::Api::Api;
 
-    struct BotApi final : InterfaceBotApi {
-        BotApi(
-            string_view base_url,
-            string_view auth_key
-        );
-
+    struct BotApi final : InterfaceBotApi, Api {
+        BotApi(string_view base_url, string_view auth_key);
         unique_ptr<User> get_user(long long id) override;
         long long post_message(
             optional<long long> chat_telegram_id,
@@ -30,10 +26,5 @@ namespace Utils::BotApi {
             string_view text,
             bool is_caption
         ) override;
-
-        private:
-        const string _base_url;
-        const string _auth_key;
-        Client _client;
     };
 }
