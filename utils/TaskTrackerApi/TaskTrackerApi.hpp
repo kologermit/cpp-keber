@@ -14,14 +14,7 @@ namespace Utils::TaskTrackerApi {
             long long id,
             long long user_id
         ) override;
-        unique_ptr<vector<Task>> get_tasks(
-            long long user_id,
-            optional<TaskState> state = nullopt,
-            optional<datetime> start_at = nullopt,
-            optional<datetime> in_work_at = nullopt,
-            optional<datetime> completed_at = nullopt,
-            optional<datetime> deleted_at = nullopt
-        ) override;
+        unique_ptr<vector<Task>> get_tasks(const GetTasksParams& params) override;
         unique_ptr<Task> post_task(
             long long user_id,
             string_view title,

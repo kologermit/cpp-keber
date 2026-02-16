@@ -60,7 +60,7 @@ namespace Bot::BotHandler::YouTube::Playlist {
             if (buffer.empty()) {
                 continue;
             }
-            auto playlist = ctx->global_ctx->youtube_api->get_playlist(buffer);
+            auto playlist = ctx->global_ctx->api->youtube->get_playlist(buffer);
             if (playlist == nullptr) {
                 return ctx->bot->send_message( {
                     .chat_id = ctx->chat->id,
@@ -69,7 +69,7 @@ namespace Bot::BotHandler::YouTube::Playlist {
                 });
             }
 
-            answer += "\n\n" + format(MEDIA_TEMPLATE,
+            answer += "\n\n" + fmt::format(MEDIA_TEMPLATE,
                 playlist->title,
                 playlist->video_urls.size(),
                 playlist->playlist_url

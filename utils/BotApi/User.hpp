@@ -11,7 +11,7 @@ namespace Utils::BotApi {
     constexpr const char* USERNAME_KEY = "username";
     constexpr const char* SCREEN_KEY = "screen";
 
-    enum UserScreen : int {
+    enum class UserScreen : int {
         UNKNOWN,
         START,
         MENU,
@@ -19,7 +19,7 @@ namespace Utils::BotApi {
         DICE,
         ACCESS, ADD_ACCESS,
         WEATHER, ADD_WEATHER_POINT,
-        TASK, ADD_TASK_DESCRIPTION, ADD_TASK_DATE, EDIT_TASK_SUMMARY, EDIT_TASK_DESCRIPTION, EDIT_TASK_DATE,
+        TASK_TRACKER, ADD_TASK_DESCRIPTION, ADD_TASK_DATE, EDIT_TASK_SUMMARY, EDIT_TASK_DESCRIPTION, EDIT_TASK_DATE,
         YOUTUBE, YOUTUBE_VIDEO, YOUTUBE_AUDIO, YOUTUBE_PLAYLIST_VIDEO, YOUTUBE_PLAYLIST_AUDIO,
     };
 

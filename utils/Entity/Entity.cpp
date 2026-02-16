@@ -9,6 +9,7 @@ namespace Utils::Entity {
 
     using std::pair;
     using std::make_unique;
+    using std::runtime_error;
     using fmt::format;
     using pqxx::result;
     using pqxx::row;
@@ -21,10 +22,10 @@ namespace Utils::Entity {
     void create_rows_in_enum_table_if_empty(connection& conn, const char* table, const map<int, string>& map_int_to_string) {
         nontransaction tx{conn};
 
-
         const string select_sql_query = format(
-            "SELECT * FROM {} LIMIT 1;",
-            tx.quote_name(table)
+            "SELECT * FROM {} ORDER BY {} ASC",
+            tx.quote_name(table),
+            tx.quote_name(ID_COLUMN)
         );
 
         #ifndef NDEBUG
@@ -33,8 +34,25 @@ namespace Utils::Entity {
 
         auto result = tx.exec(select_sql_query);
 
-        if (!result.empty()) {
+        if (static_cast<size_t>(result.size()) == static_cast<size_t>(map_int_to_string.size())) {
+            for (const auto& [id, name] : map_int_to_string) {
+                const auto row = result[id];
+                const long long row_id = *row[ID_COLUMN].get<long long>();
+                const string row_name = *row[NAME_COLUMN].get<string>();
+                if (row_id != id || row_name != name) {
+                    throw runtime_error(fmt::format("Not Found row {}:{} in table {}",
+                        id, name, table
+                    ));
+                }
+            }
             return;
+        }
+
+        if (result.size() > 0) {
+            throw runtime_error(fmt::format("Count of rows != {} in table {}", 
+                map_int_to_string.size(),
+                table
+            ));
         }
 
         string insert_sql_query = format(

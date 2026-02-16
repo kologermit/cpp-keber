@@ -4,14 +4,7 @@
 
 namespace TaskTracker::Entity::Task {
     struct TaskRepository final : InterfaceTaskRepository {
-        unique_ptr<vector<Task>> get_by_user_id(
-            long long user_id,
-            optional<datetime> start_at,
-            optional<datetime> in_work_at,
-            optional<datetime> completed_at,
-            optional<datetime> deleted_at,
-            optional<TaskState> state
-        ) override;
+        unique_ptr<vector<Task>> get_by_user_id(const GetByUserParams& params) override;
 
         explicit TaskRepository(connection& db): InterfaceTaskRepository(db) {};
     };

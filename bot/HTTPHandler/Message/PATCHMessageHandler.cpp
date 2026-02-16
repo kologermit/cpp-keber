@@ -14,7 +14,7 @@ namespace Bot::HTTPHandler::Message {
 
     const HandlerSignature& PATCHMessageHandler::get_signature() const noexcept {
         static const HandlerSignature signature{
-            .name = "PATCHMessage",
+            .name = "PATCHMessageHandler",
             .pattern = "/message",
             .method = RequestHandlerMethod::PATCH,
             .is_auth = true,

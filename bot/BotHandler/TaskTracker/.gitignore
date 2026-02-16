@@ -1,0 +1,7 @@
+*
+!.gitignore
+!Description
+!StartAt
+!TaskCallback
+!TaskTrackerHandler.hpp
+!TaskTrackerHandler.cpp

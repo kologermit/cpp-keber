@@ -1,4 +1,5 @@
 #include <utils/BotApi/BotApi.hpp>
+#include <fmt/core.h>
 
 namespace Utils::BotApi {
     using std::make_unique;

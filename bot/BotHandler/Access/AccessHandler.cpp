@@ -82,7 +82,7 @@ namespace Bot::BotHandler::Access {
             {FULL_WORD, {AccessType::FULL, user_access.full}},
             {ACCESS_WORD, {AccessType::ACCESS, user_access.access}},
             {YOUTUBE_WORD, {AccessType::YOUTUBE, user_access.youtube}},
-            {TASK_WORD, {AccessType::TASK, user_access.task}},
+            {TASK_TRACKER_WORD, {AccessType::TASK_TRACKER, user_access.task_tracker}},
             {DOCKER_WORD, {AccessType::DOCKER, user_access.docker}},
             {SERVER_WORD, {AccessType::SERVER, user_access.server}},
         }) {
@@ -119,7 +119,7 @@ namespace Bot::BotHandler::Access {
             {FULL_WORD, ctx->access.full},
             {ACCESS_WORD, ctx->access.access},
             {YOUTUBE_WORD, ctx->access.youtube},
-            {TASK_WORD, ctx->access.task},
+            {TASK_TRACKER_WORD, ctx->access.task_tracker},
             {DOCKER_WORD, ctx->access.docker},
             {SERVER_WORD, ctx->access.server},
         }) {

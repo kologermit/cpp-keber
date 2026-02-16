@@ -2,6 +2,7 @@
 #include <stdexcept>
 #include <filesystem>
 #include <fstream>
+#include <iostream>
 #include <nlohmann/json.hpp>
 #include <fmt/core.h>
 #include <utils/Env/Env.hpp>
@@ -19,6 +20,8 @@ namespace Utils::Config {
     using std::streamsize;
     using std::stoll;
     using std::exception;
+    using std::cout;
+    using std::endl;
     using nlohmann::json;
     using Utils::Env::Get;
 
@@ -135,6 +138,15 @@ namespace Utils::Config {
                 }
                 continue;
             }
+            cout << argument.name << "=";
+            if (argument.string_value != nullptr) {
+                cout << *argument.string_value;
+            } else if (argument.long_long_value != nullptr) {
+                cout << *argument.long_long_value;
+            } else if (argument.vector_long_long_value != nullptr) {
+                cout << json(*argument.vector_long_long_value).dump();
+            }
+            cout << endl;
         }
 
         return false;

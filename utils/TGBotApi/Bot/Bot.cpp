@@ -188,6 +188,7 @@ namespace Utils::TGBotApi::Bot {
             QueryMethod::POST,
             "editMessageText",
             Params{
+                {PARSE_MODE_KEY, HTML_KEY},
                 {CHAT_ID_KEY, to_string(chat_id)},
                 {MESSAGE_ID_KEY, to_string(message_id)},
                 {TEXT_KEY, string(text)},
@@ -201,6 +202,7 @@ namespace Utils::TGBotApi::Bot {
             QueryMethod::POST,
             "editMessageCaption",
             Params{
+                {PARSE_MODE_KEY, HTML_KEY},
                 {CHAT_ID_KEY, to_string(chat_id)},
                 {MESSAGE_ID_KEY, to_string(message_id)},
                 {CAPTION_KEY, string(caption)},

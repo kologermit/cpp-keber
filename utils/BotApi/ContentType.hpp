@@ -1,7 +1,7 @@
 #pragma once
 
 namespace Utils::BotApi {
-    enum ContentType {
+    enum class ContentType : int {
         UNKNOWN,
         PHOTO,
         VIDEO,

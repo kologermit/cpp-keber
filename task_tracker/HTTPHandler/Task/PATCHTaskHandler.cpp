@@ -19,7 +19,7 @@ namespace TaskTracker::HTTPHandler::Task {
 
     const HandlerSignature& PATCHTaskHandler::get_signature() const noexcept {
         static const HandlerSignature signature = {
-            .name = "PATCHTask",
+            .name = "PATCHTaskHandler",
             .pattern = "/user/:user_id/task/:id",
             .method = RequestHandlerMethod::PATCH,
             .is_auth = true,

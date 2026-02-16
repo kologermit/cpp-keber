@@ -11,58 +11,49 @@ namespace TaskTracker::Entity::Task {
     using pqxx::nontransaction;
     using pqxx::result;
     using pqxx::const_result_iterator;
+    using Utils::Entity::ID_COLUMN;
+    using Utils::Entity::CREATED_AT_COLUMN;
     using Utils::Entity::DELETED_AT_COLUMN;
 
     #ifndef NDEBUG
     using Utils::Logger::get_logger;
     #endif
 
-    unique_ptr<vector<Task>> TaskRepository::get_by_user_id(
-            long long user_id,
-            optional<datetime> start_at,
-            optional<datetime> in_work_at,
-            optional<datetime> completed_at,
-            optional<datetime> deleted_at,
-            optional<TaskState> state
-        ) {
+    struct ParamAndColumnAndSymbol {
+        const char* column;
+        bool is_gte;
+        const optional<datetime>& param;
+    };
+
+    unique_ptr<vector<Task>> TaskRepository::get_by_user_id(const GetByUserParams& params) {
         nontransaction tx{_db};
 
         string optional_sql_where;
-
-        if (start_at.has_value()) {
-            optional_sql_where += fmt::format(
-                " AND {} >= {}",
-                tx.quote_name(START_AT_COLUMN),
-                tx.quote(start_at->to_string(DATETIME_FORMAT))
-            );
+        
+        for (const auto& [column, is_gte, param] : vector<ParamAndColumnAndSymbol>{
+            {CREATED_AT_COLUMN, true, params.created_at_gte},
+            {CREATED_AT_COLUMN, false, params.created_at_lte},
+            {START_AT_COLUMN, true, params.start_at_gte},
+            {START_AT_COLUMN, false, params.start_at_lte},
+            {IN_WORK_AT_COLUMN, true, params.in_work_at_gte},
+            {IN_WORK_AT_COLUMN, false, params.in_work_at_lte},
+            {COMPLETED_AT_COLUMN, true, params.completed_at_gte},
+            {COMPLETED_AT_COLUMN, false, params.completed_at_lte},
+            {DELETED_AT_COLUMN, true, params.deleted_at_gte},
+            {DELETED_AT_COLUMN, false, params.deleted_at_lte},
+        }) {
+            if (param.has_value()) {
+                optional_sql_where += fmt::format(
+                    "AND {} {} {} ",
+                    tx.quote_name(column),
+                    (is_gte ? ">=" : "<="),
+                    tx.quote(param->to_string(DATETIME_FORMAT))
+                );
+            }
         }
 
-        if (in_work_at.has_value()) {
-            optional_sql_where += fmt::format(
-                " AND {} >= {}",
-                tx.quote_name(IN_WORK_AT_COLUMN),
-                tx.quote(in_work_at->to_string(DATETIME_FORMAT))
-            );
-        }
-
-        if (completed_at.has_value()) {
-            optional_sql_where += fmt::format(
-                " AND {} >= {}",
-                tx.quote_name(COMPLETED_AT_COLUMN),
-                tx.quote(completed_at->to_string(DATETIME_FORMAT))
-            );
-        }
-
-        if (deleted_at.has_value()) {
-            optional_sql_where += fmt::format(
-                " AND {} >= {}",
-                tx.quote_name(DELETED_AT_COLUMN),
-                tx.quote(in_work_at->to_string(DATETIME_FORMAT))
-            );
-        }
-
-        if (state.has_value()) {
-            switch (state.value()) {
+        if (params.state.has_value()) {
+            switch (params.state.value()) {
                 case TaskState::NEW:
                     optional_sql_where += fmt::format(
                         " AND {} IS NULL AND {} IS NULL AND {} IS NULL",
@@ -97,11 +88,12 @@ namespace TaskTracker::Entity::Task {
         }
 
         const string sql_query = fmt::format(
-            "SELECT * FROM {} WHERE {} = {} {}",
+            "SELECT * FROM {} WHERE {} = {} {} ORDER BY {} ASC",
             tx.quote_name(Task::get_table_name()),
             tx.quote_name(USER_ID_COLUMN),
-            tx.quote(user_id),
-            optional_sql_where
+            tx.quote(params.user_id),
+            optional_sql_where,
+            tx.quote_name(ID_COLUMN)
         );
 
         #ifndef NDEBUG

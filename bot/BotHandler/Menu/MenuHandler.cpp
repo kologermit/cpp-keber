@@ -1,6 +1,7 @@
 #include <bot/BotHandler/Menu/MenuHandler.hpp>
 #include <bot/BotHandler/Access/AccessHandler.hpp>
 #include <bot/BotHandler/YouTube/YouTubeHandler.hpp>
+#include <bot/BotHandler/TaskTracker/TaskTrackerHandler.hpp>
 #include <bot/BotHandler/Keys.hpp>
 #include <utils/TGBotApi/Types.hpp>
 #include <algorithm>
@@ -11,7 +12,8 @@ namespace Bot::BotHandler::Menu {
     using Utils::TGBotApi::Types::ReplyButtons;
     using Bot::BotHandler::Access::AccessHandler;
     using Bot::BotHandler::YouTube::YouTubeHandler;
-    using Entity::User::MENU;
+    using Bot::BotHandler::TaskTracker::TaskTrackerHandler;
+    using Bot::Entity::User::UserScreen;
     using std::make_unique;
     using std::make_shared;
     using std::map;
@@ -26,14 +28,14 @@ namespace Bot::BotHandler::Menu {
     bool MenuHandler::check(shared_ptr<BotHandlerContext> ctx) {
         static const set<string> words{
             ACCESS_WORD,
-            TASK_WORD,
+            TASK_TRACKER_WORD,
             YOUTUBE_WORD,
             DOCKER_WORD,
             SERVER_WORD,
         };
         return
             (ctx->access.full || ctx->access.base)
-            && ctx->user->screen == MENU
+            && ctx->user->screen == UserScreen::MENU
             && words.contains(ctx->message->text);
     }
 
@@ -46,6 +48,10 @@ namespace Bot::BotHandler::Menu {
             return YouTubeHandler::to_youtube(ctx);
         }
 
+        if (ctx->message->text == TASK_TRACKER_WORD) {
+            return TaskTrackerHandler::to_task_tracker(ctx);
+        }
+
         return ctx->bot->send_message({
             .chat_id = ctx->chat->id,
             .text = IN_DEVELOP_PHRASE,
@@ -54,14 +60,14 @@ namespace Bot::BotHandler::Menu {
     }
 
     ptrMessage MenuHandler::to_menu(shared_ptr<BotHandlerContext> ctx, string_view text) {
-        ctx->user->screen = MENU;
+        ctx->user->screen = UserScreen::MENU;
         ctx->db->user->update(*ctx->user);
 
         ReplyButtons buttons(3, vector<shared_ptr<ReplyButton> >(3, nullptr));
 
         const map<pair<size_t, size_t>, pair<bool, string_view> > buttons_with_access{
             {{0, 0}, {ctx->access.access, ACCESS_WORD}},
-            {{1, 0}, {ctx->access.task, TASK_WORD}},
+            {{1, 0}, {ctx->access.task_tracker, TASK_TRACKER_WORD}},
             {{1, 1}, {ctx->access.youtube, YOUTUBE_WORD}},
             {{2, 0}, {ctx->access.docker, DOCKER_WORD}},
             {{2, 1}, {ctx->access.server, SERVER_WORD}},

@@ -15,6 +15,7 @@ using std::shared_ptr;
 using std::make_shared;
 using std::make_unique;
 using std::to_string;
+using std::runtime_error;
 using std::nullopt;
 using pqxx::connection;
 using Utils::Logger::get_logger;
@@ -72,10 +73,18 @@ int main(int argc, const char* argv[]) {
     
     init_server(*server);
 
-    global_ctx->bot_api->post_message(
-        nullopt,
-        "START TASK TRACKER"
-    );
+    try {
+        global_ctx->bot_api->post_message(
+            nullopt,
+            "START TASK TRACKER"
+        );
+    } catch (const runtime_error& exc) {
+        logger->warning(
+            "SEND_START_MESSAGE",
+            exc.what(),
+            __FILE__, __LINE__
+        );
+    }
     server->run();
 
     return 0;

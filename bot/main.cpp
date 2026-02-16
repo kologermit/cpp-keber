@@ -5,6 +5,7 @@
 #include <utils/Logger/Logger.hpp>
 #include <utils/TGBotApi/Bot/Bot.hpp>
 #include <utils/YouTubeApi/YouTubeApi.hpp>
+#include <utils/TaskTrackerApi/TaskTrackerApi.hpp>
 #include <utils/HTTPServer/Server/Server.hpp>
 #include <utils/Postgres/postgres.hpp>
 #include <bot/Config/Config.hpp>
@@ -17,6 +18,7 @@
 #include <bot/Entity/User/UserRepository.hpp>
 #include <bot/Entity/YouTubeAudioSetting/YouTubeAudioSettingRepository.hpp>
 
+using std::map;
 using std::shared_ptr;
 using std::make_shared;
 using std::make_unique;
@@ -28,13 +30,16 @@ using Utils::Logger::Logger;
 using Utils::Logger::InterfaceLogger;
 using TGBot = Utils::TGBotApi::Bot::Bot;
 using Utils::YouTubeApi::YouTubeApi;
+using Utils::TaskTrackerApi::TaskTrackerApi;
 using Utils::HTTPServer::Server::InterfaceServer;
 using Utils::HTTPServer::Server::Server;
 using Utils::Postgres::create_connection;
 using Bot::Config::InterfaceConfig;
 using Bot::Config::Config;
+using Bot::MinimalTask;
 using Bot::GlobalContext;
 using Bot::DBContext;
+using Bot::ApiContext;
 using Bot::HTTPHandler::HandlerContext;
 using Bot::HTTPHandler::init_server;
 using Bot::Entity::Access::AccessRepository;
@@ -66,6 +71,7 @@ int main(int argc, const char* argv[]) {
 
     const shared_ptr<GlobalContext> global_context = make_shared<GlobalContext>(
         GlobalContext{
+            .task_tracker_cache = make_shared<map<long long, MinimalTask> >(),
             .logger = logger,
             .config = config,
             .bot = make_shared<TGBot>(config->get_bot_token(), config->get_telegram_api_url()),
@@ -77,7 +83,10 @@ int main(int argc, const char* argv[]) {
                 .user = make_shared<UserRepository>(db),
                 .youtube_audio_setting = make_shared<YouTubeAudioSettingRepository>(db),
             }),
-            .youtube_api = make_shared<YouTubeApi>(config->get_youtube_api_url()),
+            .api = make_shared<ApiContext>(ApiContext{
+                .task_tracker = make_shared<TaskTrackerApi>(config->get_task_tracker_url(), config->get_auth_key()),
+                .youtube = make_shared<YouTubeApi>(config->get_youtube_api_url()),
+            }),
         }
     );
 

@@ -16,16 +16,30 @@ namespace Bot::BotHandler {
     constexpr const char* BASE_WORD = "🔰Базовые";
     constexpr const char* FULL_WORD = "👑Полные";
     constexpr const char* YOUTUBE_WORD = "🎥Ютуб";
-    constexpr const char* TASK_WORD = "🎯Задачи";
+    constexpr const char* TASK_TRACKER_WORD = "🎯Задачи";
     constexpr const char* DOCKER_WORD = "🐋Докер";
     constexpr const char* SERVER_WORD = "🖥️Сервер";
     constexpr const char* ADD_WORD = "➕Добавить";
     constexpr const char* DELETE_WORD = "❌Удалить";
     constexpr const char* AUDIO_WORD = "🔊Аудио";
     constexpr const char* VIDEO_WORD = "🎬Видео";
+    constexpr const char* EMPTY_WORD = "[Пусто]";
     constexpr const char* AUDIO_PLAYLIST_WORD = "▶️🔊Аудио-Плейлист";
     constexpr const char* SETTINGS_TABLE_WORD = "⚙️Таблица настроек";
     constexpr const char* VIDEO_PLAYLIST_WORD = "▶️🎬Видео-Плейлист";
+
+    constexpr const char* TODAY_WORD = "🗓️Сегодня";
+    constexpr const char* TOMORROW_WORD = "🗓️Завтра";
+    constexpr const char* NEXT_2_DAYS_WORD = "🗓️Через 2 дня";
+    constexpr const char* NEXT_3_DAYS_WORD = "🗓️Через 3 дня";
+    constexpr const char* STATISTIC_WORD = "📊Статистика";
+    constexpr const char* NEW_SYMBOL = "🆕";
+    constexpr const char* IN_WORK_SYMBOL = "🛠️";
+    constexpr const char* COMPLETE_SYMBOL = "✅";
+    constexpr const char* DELETED_SYMBOL = "❌";
+    constexpr const char* INFO_SYMBOL = "ℹ️";
+    constexpr const char* ONE_SYMBOL = "1️⃣";
+    constexpr const char* TWO_SYMBOL = "2️⃣";
 
     constexpr const char* NOT_UNDERSTAND_PHRASE = "Не понял!";
     constexpr const char* USER_NOT_FOUND_PHRASE = "Пользователь {} не найден!";
@@ -42,6 +56,8 @@ namespace Bot::BotHandler {
     constexpr const char* DOWNLOAD_MEDIA_PHRASE = "<b>Добавить {} ({}) в очередь скачивания?</b>\n{}";
     constexpr const char* ADD_TO_QUEUE_PHRASE = "<b>Добавлено в очередь</b>";
     constexpr const char* FAILED_TO_ADD_TO_QUEUE_PHRASE = "<b>Не получилось добавить в очередь</b>";
+    constexpr const char* COUNT_TASKS_PHRASE = "<b>{} заданий не завершено</b>";
+    constexpr const char* ALL_TASLS_COMPLETED_PHRASE = "<b>Все задания завершены</b>";
 
     constexpr const char* USER_TEMPLATE = "<b>Имя:</b> <code>{}</code>\n<b>ID:</b> <code>{}</code>\n<b>Тег:</b> <code>{}</code>";
     constexpr const char* MEDIA_TEMPLATE = "<b>{} | {}</b>\n<code>{}</code>";

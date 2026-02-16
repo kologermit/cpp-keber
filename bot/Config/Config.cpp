@@ -117,7 +117,7 @@ namespace Bot::Config {
             Argument{
                 .name = "TMP_PATH",
                 .default_value = "./tmp",
-                .string_value = &_task_tracker_url,
+                .string_value = &_tmp_path,
             },
             Argument{
                 .name = "LOGS_PATH",

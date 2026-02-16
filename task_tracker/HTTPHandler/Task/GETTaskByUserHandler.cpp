@@ -11,15 +11,24 @@ namespace TaskTracker::HTTPHandler::Task {
     using Utils::Entity::DELETED_AT_COLUMN;
     using TaskTracker::Entity::Task::Task;
     using TaskTracker::Entity::Task::TaskState;
+    using TaskTracker::Entity::Task::GetByUserParams;
     using TaskTracker::Entity::Task::STATE_KEY;
     using TaskTracker::Entity::Task::USER_ID_COLUMN;
-    using TaskTracker::Entity::Task::START_AT_COLUMN;
-    using TaskTracker::Entity::Task::IN_WORK_AT_COLUMN;
-    using TaskTracker::Entity::Task::COMPLETED_AT_COLUMN;
+
+    constexpr const char* CREATED_AT_GTE_PARAM = "created_at_gte";
+    constexpr const char* CREATED_AT_LTE_PARAM = "created_at_lte";
+    constexpr const char* START_AT_GTE_PARAM = "start_at_gte";
+    constexpr const char* START_AT_LTE_PARAM = "start_at_lte";
+    constexpr const char* IN_WORK_AT_GTE_PARAM = "in_work_at_gte";
+    constexpr const char* IN_WORK_AT_LTE_PARAM = "in_work_at_lte";
+    constexpr const char* COMPLETED_AT_GTE_PARAM = "completed_at_gte";
+    constexpr const char* COMPLETED_AT_LTE_PARAM = "completed_at_lte";
+    constexpr const char* DELETED_AT_GTE_PARAM = "deleted_at_gte";
+    constexpr const char* DELETED_AT_LTE_PARAM = "deleted_at_lte";
 
     const HandlerSignature& GETTaskByUserHandler::get_signature() const noexcept {
         static const HandlerSignature signature = {
-            .name = "GETTaskByUser",
+            .name = "GETTaskByUserHandler",
             .pattern = "/user/:user_id/tasks",
             .method = RequestHandlerMethod::GET,
             .is_auth = true,
@@ -28,27 +37,38 @@ namespace TaskTracker::HTTPHandler::Task {
             },
             .query_params = {
                 Param{STATE_KEY, ParamType::INT, false, TaskState::NEW, TaskState::DELETED},
-                Param{START_AT_COLUMN, ParamType::DATETIME, false},
-                Param{IN_WORK_AT_COLUMN, ParamType::DATETIME, false},
-                Param{COMPLETED_AT_COLUMN, ParamType::DATETIME, false},
-                Param{DELETED_AT_COLUMN, ParamType::DATETIME, false},
+                Param{CREATED_AT_GTE_PARAM, ParamType::DATETIME, false},
+                Param{CREATED_AT_LTE_PARAM, ParamType::DATETIME, false},
+                Param{START_AT_GTE_PARAM, ParamType::DATETIME, false},
+                Param{START_AT_LTE_PARAM, ParamType::DATETIME, false},
+                Param{IN_WORK_AT_GTE_PARAM, ParamType::DATETIME, false},
+                Param{IN_WORK_AT_LTE_PARAM, ParamType::DATETIME, false},
+                Param{COMPLETED_AT_GTE_PARAM, ParamType::DATETIME, false},
+                Param{COMPLETED_AT_LTE_PARAM, ParamType::DATETIME, false},
+                Param{DELETED_AT_GTE_PARAM, ParamType::DATETIME, false},
+                Param{DELETED_AT_LTE_PARAM, ParamType::DATETIME, false},
             }
         };
         return signature;
     }
 
     json GETTaskByUserHandler::handle(ptrContext ctx) {
-        optional<datetime> start_at;
-        optional<datetime> in_work_at;
-        optional<datetime> completed_at;
-        optional<datetime> deleted_at;
-        optional<TaskState> state;
+
+        GetByUserParams params{
+            .user_id = ctx->ll_params[USER_ID_COLUMN]
+        };
         
         for (auto& [name, value] : map<string, optional<datetime>*>{
-            {START_AT_COLUMN, &start_at},
-            {IN_WORK_AT_COLUMN, &in_work_at},
-            {COMPLETED_AT_COLUMN, &completed_at},
-            {DELETED_AT_COLUMN, &deleted_at},
+            {CREATED_AT_GTE_PARAM, &params.created_at_gte},
+            {CREATED_AT_LTE_PARAM, &params.created_at_lte},
+            {START_AT_GTE_PARAM, &params.start_at_gte},
+            {START_AT_LTE_PARAM, &params.start_at_lte},
+            {IN_WORK_AT_GTE_PARAM, &params.in_work_at_gte},
+            {IN_WORK_AT_LTE_PARAM, &params.in_work_at_lte},
+            {COMPLETED_AT_GTE_PARAM, &params.completed_at_gte},
+            {COMPLETED_AT_LTE_PARAM, &params.completed_at_lte},
+            {DELETED_AT_GTE_PARAM, &params.deleted_at_gte},
+            {DELETED_AT_LTE_PARAM, &params.deleted_at_lte},
         }) {
             if (ctx->datetime_params.contains(name)) {
                 *value = ctx->datetime_params[name];
@@ -56,17 +76,10 @@ namespace TaskTracker::HTTPHandler::Task {
         }
 
         if (ctx->ll_params.contains(STATE_KEY)) {
-            state = static_cast<TaskState>(ctx->ll_params[STATE_KEY]);
+            params.state = static_cast<TaskState>(ctx->ll_params[STATE_KEY]);
         }
 
-        unique_ptr<vector<Task>> tasks = ctx->db->task->get_by_user_id(
-            ctx->ll_params[USER_ID_COLUMN],
-            start_at,
-            in_work_at,
-            completed_at,
-            deleted_at,
-            state
-        );
+        unique_ptr<vector<Task>> tasks = ctx->db->task->get_by_user_id(params);
         
         json return_result = json::array();
         for (const Task& task : *tasks) {

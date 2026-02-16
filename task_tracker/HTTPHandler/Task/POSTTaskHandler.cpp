@@ -3,6 +3,7 @@
 namespace TaskTracker::HTTPHandler::Task {
 
     using std::unique_ptr;
+    using std::runtime_error;
     using Utils::HTTPServer::Handler::RequestHandlerMethod;
     using Utils::HTTPServer::Handler::Param;
     using Utils::HTTPServer::Handler::ParamType;
@@ -18,7 +19,7 @@ namespace TaskTracker::HTTPHandler::Task {
 
     const HandlerSignature& POSTTaskHandler::get_signature() const noexcept {
         static const HandlerSignature signature = {
-            .name = "POSTTask",
+            .name = "POSTTaskHandler",
             .pattern = "/task",
             .method = RequestHandlerMethod::POST,
             .is_auth = true,
@@ -34,22 +35,22 @@ namespace TaskTracker::HTTPHandler::Task {
     }
 
     json POSTTaskHandler::handle(ptrContext ctx) {
-        const unique_ptr<User> user = ctx->global_ctx->bot_api->get_user(
-            ctx->json_body->at(USER_ID_COLUMN).get<long long>());
-        if (user == nullptr) {
+        const long long user_id = ctx->json_body->at(USER_ID_COLUMN).get<long long>();
+        try {
+            const unique_ptr<Task> task = ctx->db->task->create(Task(
+                ctx->json_body->at(TITLE_COLUMN).get<string>(),
+                ctx->json_body->value<string>(DESCRIPTION_COLUMN, ""),
+                user_id,
+                (
+                    ctx->json_body->contains(START_AT_COLUMN)
+                    ? datetime::parse(DATETIME_FORMAT, ctx->json_body->at(START_AT_COLUMN).get<string>())
+                    : datetime{}
+                )
+            ));
+            return task->to_json();
+        } catch (const runtime_error&) {
             ctx->response.status = 400;
             return "user not found";
         }
-        const unique_ptr<Task> task = ctx->db->task->create(Task(
-            ctx->json_body->at(TITLE_COLUMN).get<string>(),
-            ctx->json_body->value<string>(DESCRIPTION_COLUMN, ""),
-            user->id,
-            (
-                ctx->json_body->contains(START_AT_COLUMN)
-                ? datetime::parse(DATETIME_FORMAT, ctx->json_body->at(START_AT_COLUMN).get<string>())
-                : datetime{}
-            )
-        ));
-        return task->to_json();
     }
 }

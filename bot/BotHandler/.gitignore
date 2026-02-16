@@ -9,5 +9,6 @@
 !CallbackDeleter
 !InterfaceBotHandler.hpp
 !Keys.hpp
+!TaskTracker
 !list_handlers.hpp
 !list_handlers.cpp

@@ -1,0 +1,4 @@
+*
+!.gitignore
+!TaskCallbackHandler.hpp
+!TaskCallbackHandler.cpp

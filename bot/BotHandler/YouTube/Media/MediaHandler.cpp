@@ -134,7 +134,7 @@ namespace Bot::BotHandler::YouTube::Media {
             const string download_url = sheet.at({i, 3});
             const string file_name = sheet.contains({i, 1}) ? sheet.at({i, 1}) : "";
 
-            auto video_data = ctx->global_ctx->youtube_api->get_video(url);
+            auto video_data = ctx->global_ctx->api->youtube->get_video(url);
             
             if (video_data == nullptr) {
                 return ctx->bot->send_message({
@@ -181,7 +181,7 @@ namespace Bot::BotHandler::YouTube::Media {
             if (buffer.empty()) {
                 continue;
             }
-            auto result = ctx->global_ctx->youtube_api->get_video(buffer);
+            auto result = ctx->global_ctx->api->youtube->get_video(buffer);
             if (result == nullptr) {
                 return ctx->bot->send_message( {
                     .chat_id = ctx->chat->id,
@@ -190,7 +190,7 @@ namespace Bot::BotHandler::YouTube::Media {
                 });
             }
             const auto& [video, channel] = *result;
-            answer += "\n\n" +  format(MEDIA_TEMPLATE, video.title, channel.title, video.video_url);
+            answer += "\n\n" +  fmt::format(MEDIA_TEMPLATE, video.title, channel.title, video.video_url);
             count++;
         }
 

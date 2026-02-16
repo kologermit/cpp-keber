@@ -1,0 +1,4 @@
+*
+!.gitignore
+!StartAtHandler.hpp
+!StartAtHandler.cpp

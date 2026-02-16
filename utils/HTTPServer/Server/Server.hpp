@@ -13,6 +13,9 @@
 
 namespace Utils::HTTPServer::Server {
 
+    using std::chrono::high_resolution_clock;
+    using std::chrono::duration_cast;
+    using std::chrono::milliseconds;
     using std::stoll;
     using std::stod;
     using std::string;
@@ -85,6 +88,7 @@ namespace Utils::HTTPServer::Server {
             for (ptrIHandler handler : _handlers) {
                 const HTTPHandler http_handler =
                 [handler, global_context](const Request& request, Response& response) {
+                    const auto start = high_resolution_clock::now();
                     int handle_id = rand_int(1, 1000000);
                     #ifndef NDEBUG
                     global_context->logger->debug("SERVER::REQUEST", fmt::format(
@@ -354,12 +358,15 @@ namespace Utils::HTTPServer::Server {
                         }
 
                         handle_result = handler->handle(handler_context);
+                        const auto end = high_resolution_clock::now();
+                        const long long duration = duration_cast<milliseconds>(end - start).count();
 
                         global_context->logger->info("SERVER::REQUEST", fmt::format(
-                            "({}/{}) ({}) {} {}",
+                            "({}/{}) ({}/{}ms) {} {}",
                             handler->get_signature().name,
                             request.method,
                             response.status,
+                            duration,
                             handle_id,
                             request.path
                         ), __FILE__, __LINE__);

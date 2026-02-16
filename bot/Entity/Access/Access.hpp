@@ -18,7 +18,7 @@ namespace Bot::Entity::Access {
         FULL,
         ACCESS,
         YOUTUBE,
-        TASK,
+        TASK_TRACKER,
         DOCKER,
         SERVER,
     };
@@ -28,7 +28,7 @@ namespace Bot::Entity::Access {
         {AccessType::FULL, "FULL"},
         {AccessType::ACCESS, "ACCESS"},
         {AccessType::YOUTUBE, "YOUTUBE"},
-        {AccessType::TASK, "TASK"},
+        {AccessType::TASK_TRACKER, "TASK_TRACKER"},
         {AccessType::DOCKER, "DOCKER"},
         {AccessType::SERVER, "SERVER"},
     };
@@ -42,7 +42,7 @@ namespace Bot::Entity::Access {
         bool full = false;
         bool access = false;
         bool youtube = false;
-        bool task = false;
+        bool task_tracker = false;
         bool docker = false;
         bool server = false;
     };

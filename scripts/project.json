@@ -15,13 +15,15 @@
     "build_all_release": {
         "scripts": [
             "@@ conan build",
-            "@@ bot build_release"
+            "@@ bot build_release",
+            "@@ task_tracker build_release"
         ]
     },
     "build_all_debug": {
         "scripts": [
             "@@ conan build",
-            "@@ bot build_debug"
+            "@@ bot build_debug",
+            "@@ task_tracker build_debug"
         ]
     },
     "build_all": {

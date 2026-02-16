@@ -26,7 +26,7 @@ namespace Bot::Entity::Access {
             {FULL, user_access.full},
             {ACCESS, user_access.access},
             {YOUTUBE, user_access.youtube},
-            {TASK, user_access.task},
+            {TASK_TRACKER, user_access.task_tracker},
             {DOCKER, user_access.docker},
             {SERVER, user_access.server}
         };

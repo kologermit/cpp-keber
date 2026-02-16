@@ -109,11 +109,12 @@ namespace Bot::HTTPHandler::Webhook {
                 ptrMessage result_tg_message = handler->handle(bot_handler_ctx);
                 json json_result = nullptr;
                 if (result_tg_message != nullptr) {
-                    auto new_message = ctx->db->message->get_by_telegram_message(*result_tg_message);
+                    auto new_message = ctx->db->message->get_by_telegram_message(*result_tg_message, true);
                     json_result = new_message->id;
                 }
                 ctx->logger->info("BOT_HANDLER::HANDLE", fmt::format(
-                    "({}) -- {} -- {}",
+                    "{}|{}|{} -- {}",
+                    handler->get_name(),
                     handle_id,
                     user->name,
                     (result_tg_message != nullptr ? result_tg_message->text : "No message")

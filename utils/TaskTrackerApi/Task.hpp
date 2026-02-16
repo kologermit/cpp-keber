@@ -6,6 +6,7 @@ namespace Utils::TaskTrackerApi {
     using std::optional;
     using std::nullopt;
     using std::string;
+    using std::map;
     using Utils::Datetime::DATETIME_FORMAT;
     using nlohmann::json;
     using jed_utils::datetime;
@@ -45,7 +46,7 @@ namespace Utils::TaskTrackerApi {
             completed_at(
                 json_task[COMPLETED_AT_KEY].is_null()
                 ? nullopt
-                : optional<datetime>(datetime::parse(DATETIME_FORMAT, json_task[IN_WORK_AT_KEY].get<string>()))
+                : optional<datetime>(datetime::parse(DATETIME_FORMAT, json_task[COMPLETED_AT_KEY].get<string>()))
             )
         {}
     };

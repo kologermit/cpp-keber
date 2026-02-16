@@ -23,7 +23,7 @@ services:
       - WEBHOOK_URL=${BOT_WEBHOOK_URL}
       - WEBHOOK_PATH=/webhook
       - TELEGRAM_API_URL=${TELEGRAM_API_URL}
-      - TASK_TRACKER_URL=http://task_trakcer:8080
+      - TASK_TRACKER_URL=http://task-tracker:8080
       - DB_HOST=postgres
       - DB_PORT=5432
       - DB_NAME=${POSTGRES_DB}

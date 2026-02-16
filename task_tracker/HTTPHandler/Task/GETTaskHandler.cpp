@@ -11,7 +11,7 @@ namespace TaskTracker::HTTPHandler::Task {
 
     const HandlerSignature& GETTaskHandler::get_signature() const noexcept {
         static const HandlerSignature signature = {
-            .name = "GETTask",
+            .name = "GETTaskHandler",
             .pattern = "/user/:user_id/task/:id",
             .method = RequestHandlerMethod::GET,
             .is_auth = true,
