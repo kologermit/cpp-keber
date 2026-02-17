@@ -8,27 +8,21 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Install dependencies
-        run: |
-          python3 manager.py project install_deps
+        run: python3 manager.py project install_deps
       - name: Build Bot
-        run: |
-          python3 manager.py bot build_release
+        run: python3 manager.py bot build_release
       - name: Build Task tracker
-        run: |
-          python3 manager.py task_tracker build_release
+        run: python3 manager.py task_tracker build_release
       - name: Build containers
-        run: |
-          docker compose build
+        run: docker compose build
   recreate_containers:
+    needs: build
     runs-on: self-hosted
     steps:
       - name: Stop containers
-        run: |
-          docker compose stop -t 3
+        run: docker compose stop -t 3
       - name: Remove containers
-        run: |
-          docker compose rm -f
+        run: docker compose rm -f
       - name: Up containers
-        run: |
-          docker compose up -d
+        run: docker compose up -d
   
