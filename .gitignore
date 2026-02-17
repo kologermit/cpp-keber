@@ -22,3 +22,4 @@
 !cmake
 !Debug-conanprofile
 !Release-conanprofile
+!.github

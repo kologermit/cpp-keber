@@ -16,6 +16,7 @@ namespace Bot::BotHandler::TaskTracker {
     using std::optional;
     using nlohmann::json;
     using jed_utils::datetime;
+    using Utils::TGBotApi::Types::ptrMessage;
     using Utils::TGBotApi::Types::ReplyButton;
     using Utils::TGBotApi::Types::ReplyButtons;
     using Utils::TGBotApi::Types::ReplyLane;
@@ -54,10 +55,12 @@ namespace Bot::BotHandler::TaskTracker {
         if (message_text.empty()) {
             unique_ptr<vector<Task>> new_tasks = ctx->global_ctx->api->task_tracker->get_tasks({
                 .user_id = ctx->user->id,
+                .start_at_gte = datetime(),
                 .state = TaskState::NEW,
             });
             unique_ptr<vector<Task>> in_work_tasks = ctx->global_ctx->api->task_tracker->get_tasks({
                 .user_id = ctx->user->id,
+                .start_at_gte = datetime(),
                 .state = TaskState::IN_WORK,
             });
             const size_t count_tasks = new_tasks->size() + in_work_tasks->size();
@@ -246,7 +249,7 @@ namespace Bot::BotHandler::TaskTracker {
                     task.id
                 }.dump()));
             }
-            ctx->bot->send_message({
+            const ptrMessage task_message = ctx->bot->send_message({
                 .chat_id = ctx->chat->id,
                 .text = fmt::format(
                     "<b>{} {}</b>",
@@ -255,6 +258,7 @@ namespace Bot::BotHandler::TaskTracker {
                 ),
                 .inline_keyboard = make_unique<InlineKeyboard>(InlineButtons{button_lane})
             });
+            ctx->db->message->get_by_telegram_message(*task_message);
 
             string zero_aligment_id = to_string(task.id);
             zero_aligment_id = string(size_of_aligment - zero_aligment_id.size(), '0') + zero_aligment_id;
