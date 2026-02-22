@@ -20,6 +20,7 @@
 !zsh_manager_completions
 !docker
 !cmake
+!README.md
 !Debug-conanprofile
 !Release-conanprofile
 !.github
