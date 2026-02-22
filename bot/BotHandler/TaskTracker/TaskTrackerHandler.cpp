@@ -53,14 +53,16 @@ namespace Bot::BotHandler::TaskTracker {
         
         string text(message_text);
         if (message_text.empty()) {
+            datetime now;
+            datetime start_at(now.get_year(), now.get_month(), now.get_day(), 23, 59, 59);
             unique_ptr<vector<Task>> new_tasks = ctx->global_ctx->api->task_tracker->get_tasks({
                 .user_id = ctx->user->id,
-                .start_at_gte = datetime(),
+                .start_at_lte = start_at,
                 .state = TaskState::NEW,
             });
             unique_ptr<vector<Task>> in_work_tasks = ctx->global_ctx->api->task_tracker->get_tasks({
                 .user_id = ctx->user->id,
-                .start_at_gte = datetime(),
+                .start_at_lte = start_at,
                 .state = TaskState::IN_WORK,
             });
             const size_t count_tasks = new_tasks->size() + in_work_tasks->size();
@@ -193,7 +195,13 @@ namespace Bot::BotHandler::TaskTracker {
     }
 
     ptrMessage TaskTrackerHandler::send_tasks(ptrContext ctx) {
-        datetime start_at{};
+        datetime now;
+        datetime start_at(
+            now.get_year(),
+            now.get_month(),
+            now.get_day(),
+            23, 59, 59
+        );
         start_at.add_days(
             ctx->message->text == TOMORROW_WORD ? 1
             : ctx->message->text == NEXT_2_DAYS_WORD ? 2
@@ -202,7 +210,12 @@ namespace Bot::BotHandler::TaskTracker {
         );
         optional<datetime> start_at_gte;
         if (ctx->message->text != TODAY_WORD) {
-            start_at_gte = datetime{};
+            start_at_gte = datetime(
+                now.get_year(),
+                now.get_month(),
+                now.get_day(),
+                0, 0, 0
+            );
             start_at_gte->add_days(
                 ctx->message->text == TOMORROW_WORD ? 1
                 : ctx->message->text == NEXT_2_DAYS_WORD ? 2

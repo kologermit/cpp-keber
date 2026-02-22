@@ -12,7 +12,7 @@ namespace Bot::Entity::Message {
         explicit MessageRepository(connection& db);
 
         unique_ptr<Message> get_by_chat_and_id(long long chat_id, long long id) override;
-        unique_ptr<Message> get_by_telegram_message(const TGMessage& tg_message, bool check_created) override;
+        unique_ptr<Message> get_by_telegram_message(const TGMessage& tg_message) override;
     };
 
 }

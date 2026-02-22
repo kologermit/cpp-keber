@@ -70,7 +70,7 @@ namespace Bot::HTTPHandler::Webhook {
         shared_ptr<User> user = ctx->db->user->get_by_telegram_user(*tg_message->from);
         shared_ptr<User> bot_user = ctx->db->user->get_by_telegram_user(ctx->global_ctx->bot->get_user());
         shared_ptr<Chat> chat = ctx->db->chat->get_by_telegram_chat(*tg_message->chat);
-        shared_ptr<Message>message = ctx->db->message->get_by_telegram_message(*tg_message, true);
+        shared_ptr<Message>message = ctx->db->message->get_by_telegram_message(*tg_message);
         shared_ptr<Callback> callback = (
             tg_callback != nullptr && *tg_callback != nullopt
             ? ctx->db->callback->get_by_telegram_callback(tg_callback->value())
@@ -109,7 +109,7 @@ namespace Bot::HTTPHandler::Webhook {
                 ptrMessage result_tg_message = handler->handle(bot_handler_ctx);
                 json json_result = nullptr;
                 if (result_tg_message != nullptr) {
-                    auto new_message = ctx->db->message->get_by_telegram_message(*result_tg_message, true);
+                    auto new_message = ctx->db->message->get_by_telegram_message(*result_tg_message);
                     json_result = new_message->id;
                 }
                 ctx->logger->info("BOT_HANDLER::HANDLE", fmt::format(

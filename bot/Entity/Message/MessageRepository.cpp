@@ -60,15 +60,14 @@ namespace Bot::Entity::Message {
         return nullptr;
     }
 
-    unique_ptr<Message> MessageRepository::get_by_telegram_message(const TGMessage& tg_message, bool check_created) {
+    unique_ptr<Message> MessageRepository::get_by_telegram_message(const TGMessage& tg_message) {
         unique_ptr<Message> reply_message;
 
-        if (check_created) {
-            if (auto message = get_by_chat_and_id(tg_message.chat->id, tg_message.id); message != nullptr) {
-                return message;
-            }
+        unique_ptr<Message> message = get_by_chat_and_id(tg_message.chat->id, tg_message.id);
+        if (message != nullptr) {
+            return message;
         }
-
+        
         if (tg_message.reply_message != nullptr) {
             reply_message = get_by_chat_and_id(tg_message.chat->id, tg_message.reply_message->id);
         }
