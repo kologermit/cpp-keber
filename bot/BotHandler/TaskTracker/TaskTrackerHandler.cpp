@@ -15,7 +15,7 @@ namespace Bot::BotHandler::TaskTracker {
     using std::max;
     using std::to_string;
     using std::optional;
-    using std::ranges::sort;
+    using std::sort;
     using nlohmann::json;
     using jed_utils::datetime;
     using Utils::TGBotApi::Types::ptrMessage;
@@ -36,9 +36,7 @@ namespace Bot::BotHandler::TaskTracker {
     using Bot::BotHandler::Menu::MenuHandler;
     using Bot::BotHandler::TaskTracker::Description::DescriptionHandler;
 
-    bool task_title_cmp(const Task& a, const Task& b) {
-        return a.title < b.title;
-    };
+    bool task_title_cmp(const Task& a, const Task& b);
 
     const string& TaskTrackerHandler::get_name() const noexcept {
         static const string name = "TaskTracker";
@@ -160,27 +158,23 @@ namespace Bot::BotHandler::TaskTracker {
             .start_at_lte = today_end,
             .state = TaskState::NEW,
         });
-        sort(*new_tasks, task_title_cmp);
         const unique_ptr<vector<Task> > in_work_tasks = ctx->global_ctx->api->task_tracker->get_tasks({
             .user_id = ctx->user->id,
             .start_at_lte = today_end,
             .state = TaskState::IN_WORK,
         });
-        sort(*in_work_tasks, task_title_cmp);
         const unique_ptr<vector<Task> > completed_tasks = ctx->global_ctx->api->task_tracker->get_tasks({
             .user_id = ctx->user->id,
             .completed_at_gte = today_start,
             .completed_at_lte = today_end,
             .state = TaskState::COMPLETED,
         });
-        sort(*completed_tasks, task_title_cmp);
         const unique_ptr<vector<Task> > deleted_tasks = ctx->global_ctx->api->task_tracker->get_tasks({
             .user_id = ctx->user->id,
             .deleted_at_gte = today_start,
             .deleted_at_lte = today_end,
             .state = TaskState::DELETED,
         });
-        sort(*deleted_tasks, task_title_cmp);
         string message_text = fmt::format("<b>Статистика за сегодня ({})</b>", today.to_string(DATE_FORMAT));
         message_text += fmt::format("\n\n<b>Новые ({}):</b>", new_tasks->size());
         for (const Task& task : *new_tasks) {
@@ -239,14 +233,18 @@ namespace Bot::BotHandler::TaskTracker {
             .start_at_lte = start_at,
             .state = TaskState::NEW,
         });
-        sort(*new_tasks, task_title_cmp);
+        sort(new_tasks->begin(), new_tasks->end(), [](const Task& a, const Task& b) {
+            return a.title < b.title;
+        });
         const unique_ptr<vector<Task>> in_work_tasks = ctx->global_ctx->api->task_tracker->get_tasks({
             .user_id = ctx->user->id,
             .start_at_gte = start_at_gte,
             .start_at_lte = start_at,
             .state = TaskState::IN_WORK,
         });
-        sort(*in_work_tasks, task_title_cmp);
+        sort(in_work_tasks->begin(), in_work_tasks->end(), [](const Task& a, const Task& b) {
+            return a.title < b.title;
+        });
         vector<Task> tasks(*in_work_tasks);
         tasks.insert(tasks.end(), new_tasks->begin(), new_tasks->end());
         string result_text;
@@ -278,8 +276,7 @@ namespace Bot::BotHandler::TaskTracker {
             const ptrMessage task_message = ctx->bot->send_message({
                 .chat_id = ctx->chat->id,
                 .text = fmt::format(
-                    "<b>{}{}. {}</b>",
-                    get_id_zero_aligment(tasks, task.id),
+                    "<b>{} {}</b>",
                     task_state_to_symbol(task.state),
                     task.title
                 ),
