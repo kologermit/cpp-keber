@@ -36,10 +36,9 @@ namespace Bot::BotHandler::TaskTracker::Description {
     ptrMessage DescriptionHandler::to_task_description(ptrContext ctx, bool save_title) {
         ctx->user->screen = UserScreen::ADD_TASK_DESCRIPTION;
         ctx->db->user->update(*ctx->user);
-        if (!save_title) {
-            return nullptr;
+        if (save_title) {
+            ctx->global_ctx->task_tracker_cache->operator[](ctx->user->id).title = ctx->message->text;
         }
-        ctx->global_ctx->task_tracker_cache->operator[](ctx->user->id).title = ctx->message->text;
         return ctx->bot->send_message({
             .chat_id = ctx->chat->id,
             .text = fmt::format("Записал название: <i>{}</i>\n\n<b>Введи описание:</b>", ctx->message->text),
