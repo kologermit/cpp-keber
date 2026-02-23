@@ -96,7 +96,7 @@ namespace Bot::BotHandler::TaskTracker {
                 },
                 ReplyLane{
                     make_shared<ReplyButton>(STATISTIC_WORD, Style::BLUE),
-                    make_shared<ReplyButton>(BACK_WORD),
+                    make_shared<ReplyButton>(BACK_WORD, Style::RED),
                 }
             })
         });
