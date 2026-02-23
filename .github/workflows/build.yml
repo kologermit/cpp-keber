@@ -12,12 +12,9 @@ jobs:
       - name: Install dependencies
         working-directory: ${{ vars.WORKING_DIR }}
         run: python3 manager.py project install_deps
-      - name: Build Bot
+      - name: Build All
         working-directory: ${{ vars.WORKING_DIR }}
-        run: python3 manager.py bot build_release
-      - name: Build Task tracker
-        working-directory: ${{ vars.WORKING_DIR }}
-        run: python3 manager.py task_tracker build_release
+        run: python3 manager.py project build_all
       - name: Build containers
         working-directory: ${{ vars.WORKING_DIR }}
         run: docker compose build
@@ -33,5 +30,5 @@ jobs:
         run: docker compose rm -f
       - name: Up containers
         working-directory: ${{ vars.WORKING_DIR }}
-        run: docker compose up -d
+        run: docker compose up -d --force-recreate
   

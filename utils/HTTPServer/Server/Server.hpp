@@ -360,6 +360,10 @@ namespace Utils::HTTPServer::Server {
                         handle_result = handler->handle(handler_context);
                         const auto end = high_resolution_clock::now();
                         const long long duration = duration_cast<milliseconds>(end - start).count();
+                        string full_path = request.path + "?";
+                        for (const auto& [key, value] : request.params) {
+                            full_path += fmt::format("{}={}&", key, value);
+                        }
 
                         global_context->logger->info("SERVER::REQUEST", fmt::format(
                             "({}/{}) ({}/{}ms) {} {}",
@@ -368,7 +372,7 @@ namespace Utils::HTTPServer::Server {
                             response.status,
                             duration,
                             handle_id,
-                            request.path
+                            full_path
                         ), __FILE__, __LINE__);
                     } catch (const string&) {
                         response.status = 401;
