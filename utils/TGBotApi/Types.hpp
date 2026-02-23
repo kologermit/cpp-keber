@@ -12,6 +12,8 @@
 
 namespace Utils::TGBotApi::Types {
 
+    using TGBotApi::Message::Keyboard::Style;
+
     using TGBotApi::User::User;
     using ptrUser = std::unique_ptr<User>;
 

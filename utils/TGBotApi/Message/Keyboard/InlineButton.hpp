@@ -3,11 +3,15 @@
 #include <string_view>
 #include <string>
 #include <nlohmann/json.hpp>
+#include <utils/TGBotApi/Message/Keyboard/Style.hpp>
 
 namespace Utils::TGBotApi::Message::Keyboard {
 
 using std::string_view;
 using std::string;
+using std::optional;
+using std::nullopt;
+
 using nlohmann::json;
 
 struct InlineButton {
@@ -15,12 +19,14 @@ struct InlineButton {
     InlineButton(
         string_view text,
         string_view url = "",
-        string_view callback_data = ""
+        string_view callback_data = "",
+        optional<Style> style = nullopt
     );
 
     string text;
     string url;
     string callback_data;
+    optional<Style> style;
 
     [[nodiscard]] json get_json() const noexcept;
 

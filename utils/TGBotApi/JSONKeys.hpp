@@ -42,6 +42,7 @@ constexpr const char* URL_KEY                       = "url";
 constexpr const char* USERNAME_KEY                  = "username";
 constexpr const char* VIDEO_KEY                     = "video";
 constexpr const char* CALLBACK_DATA_KEY             = "callback_data";
+constexpr const char* STYLE_KEY                     = "style";
 constexpr const char* REPLY_MARKUP_KEY              = "reply_markup";
 constexpr const char* INLINE_KEYBOARD_KEY           = "inline_keyboard";
 constexpr const char* REPLY_KEYBOARD_KEY            = "reply_keyboard";

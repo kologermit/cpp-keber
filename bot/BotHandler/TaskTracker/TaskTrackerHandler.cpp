@@ -25,6 +25,7 @@ namespace Bot::BotHandler::TaskTracker {
     using Utils::TGBotApi::Types::InlineButtons;
     using Utils::TGBotApi::Types::InlineLane;
     using Utils::TGBotApi::Types::InlineKeyboard;
+    using Utils::TGBotApi::Types::Style;
     using Utils::TaskTrackerApi::task_state_to_symbol;
     using Utils::TaskTrackerApi::TaskState;
     using Utils::TaskTrackerApi::Task;
@@ -82,16 +83,16 @@ namespace Bot::BotHandler::TaskTracker {
             .reply_message_id = ctx->message->id,
             .reply_keyboard = make_unique<ReplyKeyboard>(ReplyButtons{
                 ReplyLane{
-                    make_shared<ReplyButton>(TODAY_WORD),
-                    make_shared<ReplyButton>(TOMORROW_WORD),
+                    make_shared<ReplyButton>(TODAY_WORD, Style::RED),
+                    make_shared<ReplyButton>(TOMORROW_WORD, Style::RED),
                 },
                 ReplyLane{
-                    make_shared<ReplyButton>(NEXT_2_DAYS_WORD),
-                    make_shared<ReplyButton>(NEXT_3_DAYS_WORD),
+                    make_shared<ReplyButton>(NEXT_2_DAYS_WORD, Style::BLUE),
+                    make_shared<ReplyButton>(NEXT_3_DAYS_WORD, Style::BLUE),
                 },
                 ReplyLane{
-                    make_shared<ReplyButton>(STATISTIC_WORD),
-                    make_shared<ReplyButton>(BACK_WORD),
+                    make_shared<ReplyButton>(STATISTIC_WORD, Style::GREEN),
+                    make_shared<ReplyButton>(BACK_WORD, Style::GREEN),
                 }
             })
         });

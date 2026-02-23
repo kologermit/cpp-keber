@@ -12,3 +12,5 @@
 !ReplyKeyboard.cpp
 !ReplyButton.hpp
 !ReplyButton.cpp
+!Style.hpp
+!Style.cpp
