@@ -10,6 +10,7 @@ namespace Bot::BotHandler::Menu {
     using Utils::TGBotApi::Types::ReplyKeyboard;
     using Utils::TGBotApi::Types::ReplyButton;
     using Utils::TGBotApi::Types::ReplyButtons;
+    using Utils::TGBotApi::Types::Style;
     using Bot::BotHandler::Access::AccessHandler;
     using Bot::BotHandler::YouTube::YouTubeHandler;
     using Bot::BotHandler::TaskTracker::TaskTrackerHandler;

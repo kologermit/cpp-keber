@@ -13,7 +13,7 @@ InlineButton::InlineButton(
     string_view text,
     string_view url,
     string_view callback_data,
-    optional<Style> style
+    Style style
 ):
 text(text),
 url(url),
@@ -31,8 +31,8 @@ json InlineButton::get_json() const noexcept {
     if (!callback_data.empty()) {
         result[CALLBACK_DATA_KEY] = callback_data;
     }
-    if (style.has_value()) {
-        result[STYLE_KEY] = to_string(style.value());
+    if (style != Style::WHITE) {
+        result[STYLE_KEY] = to_string(style);
     }
     return result;
 }

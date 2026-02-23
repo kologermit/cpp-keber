@@ -9,9 +9,6 @@ namespace Utils::TGBotApi::Message::Keyboard {
 
 using std::string_view;
 using std::string;
-using std::optional;
-using std::nullopt;
-
 using nlohmann::json;
 
 struct InlineButton {
@@ -20,13 +17,13 @@ struct InlineButton {
         string_view text,
         string_view url = "",
         string_view callback_data = "",
-        optional<Style> style = nullopt
+        Style style = Style::WHITE
     );
 
     string text;
     string url;
     string callback_data;
-    optional<Style> style;
+    Style style;
 
     [[nodiscard]] json get_json() const noexcept;
 

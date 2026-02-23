@@ -5,12 +5,13 @@ namespace std {
         static const string red = "danger";
         static const string blue = "primary";
         static const string green = "success";
-        static const string unknown = "unknown";
+        static const string white = "white";
         switch (style) {
             case Style::RED: return red;
             case Style::BLUE: return blue;
             case Style::GREEN: return green;
+            case Style::WHITE: return white;
         }
-        return unknown;
+        return white;
     }
 }

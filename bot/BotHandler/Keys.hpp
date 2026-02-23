@@ -35,11 +35,11 @@ namespace Bot::BotHandler {
     constexpr const char* STATISTIC_WORD = "📊Статистика";
     constexpr const char* NEW_SYMBOL = "🆕";
     constexpr const char* IN_WORK_SYMBOL = "🛠️";
-    constexpr const char* COMPLETE_SYMBOL = "✅";
-    constexpr const char* DELETED_SYMBOL = "❌";
-    constexpr const char* INFO_SYMBOL = "ℹ️";
-    constexpr const char* ONE_SYMBOL = "1️⃣";
-    constexpr const char* TWO_SYMBOL = "2️⃣";
+    constexpr const char* COMPLETE_SYMBOL = "√";
+    constexpr const char* DELETED_SYMBOL = "✘";
+    constexpr const char* INFO_SYMBOL = "i";
+    constexpr const char* ONE_SYMBOL = "+1";
+    constexpr const char* TWO_SYMBOL = "+2";
 
     constexpr const char* NOT_UNDERSTAND_PHRASE = "Не понял!";
     constexpr const char* USER_NOT_FOUND_PHRASE = "Пользователь {} не найден!";

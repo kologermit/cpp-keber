@@ -10,6 +10,7 @@ namespace Bot::BotHandler::TaskTracker {
     using std::unique_ptr;
     using std::set;
     using std::vector;
+    using std::pair;
     using std::min;
     using std::max;
     using std::to_string;
@@ -83,16 +84,16 @@ namespace Bot::BotHandler::TaskTracker {
             .reply_message_id = ctx->message->id,
             .reply_keyboard = make_unique<ReplyKeyboard>(ReplyButtons{
                 ReplyLane{
-                    make_shared<ReplyButton>(TODAY_WORD, Style::RED),
-                    make_shared<ReplyButton>(TOMORROW_WORD, Style::RED),
+                    make_shared<ReplyButton>(TODAY_WORD),
+                    make_shared<ReplyButton>(TOMORROW_WORD),
                 },
                 ReplyLane{
-                    make_shared<ReplyButton>(NEXT_2_DAYS_WORD, Style::BLUE),
-                    make_shared<ReplyButton>(NEXT_3_DAYS_WORD, Style::BLUE),
+                    make_shared<ReplyButton>(NEXT_2_DAYS_WORD),
+                    make_shared<ReplyButton>(NEXT_3_DAYS_WORD),
                 },
                 ReplyLane{
-                    make_shared<ReplyButton>(STATISTIC_WORD, Style::GREEN),
-                    make_shared<ReplyButton>(BACK_WORD, Style::GREEN),
+                    make_shared<ReplyButton>(STATISTIC_WORD),
+                    make_shared<ReplyButton>(BACK_WORD),
                 }
             })
         });
@@ -243,25 +244,25 @@ namespace Bot::BotHandler::TaskTracker {
             max_id = max(max_id, task.id);
         }
         static const size_t minimal_aligment = 3;
-        static const vector<const char*> inline_buttons{
-            IN_WORK_SYMBOL,
-            COMPLETE_SYMBOL,
-            DELETED_SYMBOL,
-            INFO_SYMBOL,
-            ONE_SYMBOL,
-            TWO_SYMBOL,
+        static const vector<pair<const char*, Style>> inline_buttons{
+            {IN_WORK_SYMBOL, Style::BLUE},
+            {COMPLETE_SYMBOL, Style::GREEN},
+            {DELETED_SYMBOL, Style::RED},
+            {INFO_SYMBOL, Style::BLUE},
+            {ONE_SYMBOL, Style::BLUE},
+            {TWO_SYMBOL, Style::BLUE},
         };
         const size_t size_of_aligment = to_string(max_id).size() / minimal_aligment * minimal_aligment + minimal_aligment;
 
         for (size_t i = 0; i < std::min(tasks.size(), size_t(15)); i++) {
             const Task& task = tasks[i];
             InlineLane button_lane;
-            for (const auto inline_button : inline_buttons) {
+            for (const auto& [inline_button, style] : inline_buttons) {
                 button_lane.push_back(make_shared<InlineButton>(inline_button, "", json{
                     TASK_TRACKER_CALLBACK_HANDLER_NAME,
                     inline_button,
                     task.id
-                }.dump()));
+                }.dump(), style));
             }
             const ptrMessage task_message = ctx->bot->send_message({
                 .chat_id = ctx->chat->id,

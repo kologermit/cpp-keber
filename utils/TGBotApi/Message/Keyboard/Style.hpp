@@ -3,9 +3,7 @@
 #include <string>
 
 namespace Utils::TGBotApi::Message::Keyboard {
-    enum Style {
-        RED, GREEN, BLUE
-    };
+    enum Style {RED, GREEN, BLUE, WHITE};
 }
 
 namespace std {

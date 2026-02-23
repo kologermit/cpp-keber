@@ -9,13 +9,13 @@ using std::to_string;
 
 ReplyButton::ReplyButton(
     string_view text,
-    optional<Style> style
+    Style style
 ): text(text), style(style) {}
 
 json ReplyButton::get_json() const noexcept {
     json result{{TEXT_KEY, text}};
-    if (style.has_value()) {
-        result[STYLE_KEY] = to_string(style.value());
+    if (style != Style::WHITE) {
+        result[STYLE_KEY] = to_string(style);
     }
     return result;
 }
