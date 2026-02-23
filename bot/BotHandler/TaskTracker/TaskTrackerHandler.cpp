@@ -278,7 +278,8 @@ namespace Bot::BotHandler::TaskTracker {
             const ptrMessage task_message = ctx->bot->send_message({
                 .chat_id = ctx->chat->id,
                 .text = fmt::format(
-                    "<b>{} {}</b>",
+                    "<b>{}{}. {}</b>",
+                    get_id_zero_aligment(tasks, task.id),
                     task_state_to_symbol(task.state),
                     task.title
                 ),
