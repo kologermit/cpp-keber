@@ -87,7 +87,7 @@ namespace Bot::BotHandler::TaskTracker {
             .reply_message_id = ctx->message->id,
             .reply_keyboard = make_unique<ReplyKeyboard>(ReplyButtons{
                 ReplyLane{
-                    make_shared<ReplyButton>(TODAY_WORD),
+                    make_shared<ReplyButton>(TODAY_WORD, Style::GREEN),
                     make_shared<ReplyButton>(TOMORROW_WORD),
                 },
                 ReplyLane{
@@ -95,7 +95,7 @@ namespace Bot::BotHandler::TaskTracker {
                     make_shared<ReplyButton>(NEXT_3_DAYS_WORD),
                 },
                 ReplyLane{
-                    make_shared<ReplyButton>(STATISTIC_WORD),
+                    make_shared<ReplyButton>(STATISTIC_WORD, Style::BLUE),
                     make_shared<ReplyButton>(BACK_WORD),
                 }
             })
