@@ -13,10 +13,19 @@
             "../../venv/bin/conan install ../.. --profile:host=../../Debug-conanprofile --profile:build=../../Debug-conanprofile --build missing -s build_type=Debug"
         ]
     },
+    "build_minizip": {
+        "description": "Build minizip",
+        "working_dir": "./recipes/minizip/all",
+        "scripts": [
+            "../../../venv/bin/conan create . --profile=../../../Release-conanprofile --build=missing"
+        ]
+    },
     "build": {
         "description": "Build Conan source files",
         "scripts": [
             "mkdir -p build/Debug build/Release",
+            "./venv/bin/conan profile detect || true",
+            "@@ conan build_minizip",
             "@@ conan build_release",
             "@@ conan build_debug"
         ]

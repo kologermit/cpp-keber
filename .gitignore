@@ -17,9 +17,9 @@
 !test_code
 !utils
 !youtube_api
-!zsh_manager_completions
 !docker
 !cmake
 !Debug-conanprofile
 !Release-conanprofile
 !.github
+!recipes

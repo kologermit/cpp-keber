@@ -60,6 +60,13 @@ if (BUILD_BOT)
         BOT
         UTILS_LIB
     )
+
+    # Статическая линковка для BOT
+    target_link_options(BOT PRIVATE 
+        -static-libgcc 
+        -static-libstdc++
+        -Wl,--gc-sections  # Удаление неиспользуемого кода
+    )
 endif()
 
 option(BUILD_TASK_TRACKER "Build task_tracker" OFF)
@@ -68,6 +75,12 @@ if (BUILD_TASK_TRACKER)
     target_link_libraries(
             TASK_TRACKER
             UTILS_LIB
+    )
+    # Статическая линковка для TASK_TRACKER
+    target_link_options(TASK_TRACKER PRIVATE 
+        -static-libgcc 
+        -static-libstdc++
+        -Wl,--gc-sections
     )
 endif()
 

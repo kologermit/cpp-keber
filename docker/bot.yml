@@ -5,10 +5,9 @@ volumes:
 
 services:
   bot:
-#    extends:
-#       file: ./parents.yml
-#       service: parent
-    build: ..
+    extends:
+      file: ./parents.yml
+      service: custom_service
     ports:
       - ${BOT_EXTERNAL_PORT:-127.0.0.1:8080}:8080
     volumes:

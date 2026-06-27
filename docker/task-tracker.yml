@@ -5,7 +5,7 @@ services:
   task-tracker:
     extends:
       file: ./parents.yml
-      service: parent
+      service: custom_service
     build: ..
     ports:
       - ${TASK_TRACKER_EXTERNAL_PORT}:8080

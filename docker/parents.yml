@@ -35,6 +35,7 @@ services:
       service: parent
     build:
       context: ..
+      target: base_runner
       args:
         - RUNNER_IMAGE=${RUNNER_IMAGE}
     user: runner

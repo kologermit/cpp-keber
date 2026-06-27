@@ -47,7 +47,7 @@ ERROR_RETURN_CODE = 1
 SUCCESS_RETURN_CODE = 0
 
 
-def dump_message(msg: str, key="error", info=None, **kwargs) -> str:
+def dump_message(msg: str, key="error", info=None, **kwargs):
     return dumps(
         {
             key: msg.format(**kwargs),
@@ -57,7 +57,7 @@ def dump_message(msg: str, key="error", info=None, **kwargs) -> str:
         , indent=2, ensure_ascii=False)
 
 
-def load_env_file() -> None:
+def load_env_file():
     if not path.exists(ENV_FILE):
         return
 
@@ -88,12 +88,7 @@ FILE_DESCRIPTION = lambda available_scripts: dump_message(
 
 
 class Script:
-    __action__: tuple[str]
-    __scripts__: tuple[str]
-    __description__: str
-    __working_dir__: str
-
-    def __init__(self, action: tuple[str], scripts: tuple[str], working_dir: str = "", description: str = EMPTY_STR):
+    def __init__(self, action, scripts, working_dir = "", description = EMPTY_STR):
         self.__action__ = deepcopy(action)
         self.__scripts__ = deepcopy(scripts)
         self.__description__ = deepcopy(description)
@@ -101,20 +96,20 @@ class Script:
         if not working_dir.startswith('/'):
             self.__working_dir__ = path.join(ABSOLUTE_DIR, working_dir)
 
-    def get_action(self) -> tuple[str]:
+    def get_action(self):
         return self.__action__
 
-    def get_scripts(self) -> tuple[str]:
+    def get_scripts(self):
         return self.__scripts__
 
-    def get_description(self) -> str:
+    def get_description(self):
         return self.__description__
 
-    def get_working_dir(self) -> str:
+    def get_working_dir(self):
         return self.__working_dir__
 
 
-def main() -> int:
+def main():
     load_env_file()
 
     for arg in deepcopy(argv):
@@ -123,7 +118,7 @@ def main() -> int:
 
     script_files = listdir(FOLDER_WITH_SCRIPTS)
 
-    scripts: dict[tuple[str], Script] = {}
+    scripts = {}
 
     for script_file in script_files:
         if JSON_FILE_EXTENSION not in script_file:
@@ -136,7 +131,7 @@ def main() -> int:
             file = open(full_path, READ_MODE)
             text = file.read()
             file.close()
-            data: dict[str, dict[str, list[str] | str]] = loads(text)
+            data = loads(text)
 
             if not isinstance(data, dict):
                 raise TypeError(ROOT_IS_NOT_DICT_ERROR.format(file=script_file))
@@ -186,7 +181,8 @@ def main() -> int:
 
     key = (argv[1], argv[2])
 
-    if (script := scripts.get(key)) is None:
+    script = scripts.get(key)
+    if scripts is None:
         print(dump_message(SCRIPT_NOT_FOUND_ERROR, script=key))
         return ERROR_RETURN_CODE
 
