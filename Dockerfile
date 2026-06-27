@@ -13,17 +13,13 @@ WORKDIR /
 CMD ["/app"]
 
 FROM ${BUILDER_IMAGE} AS base_builder
-RUN apt update && apt upgrade -y
-RUN apt install -y \
-    python3 \
-    python3-venv \
-    clang \
-    gcc \
-    cmake \
-    libfindbin-libs-perl \
-    bison \
-    flex \
-    make
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    python3 python3-venv python3-pip \
+    clang cmake make \
+    libstdc++-12-dev \
+    bison flex && \
+    rm -rf /var/lib/apt/lists/*
 WORKDIR /src
 COPY ./manager.py ./requirements.txt /src/
 COPY ./scripts/venv.json /src/scripts/venv.json
