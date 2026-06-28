@@ -63,7 +63,7 @@ namespace Bot::BotHandler::Access {
         if (find_user == nullptr) {
             return ctx->bot->send_message( {
                 .chat_id = ctx->chat->id,
-                .text = format(USER_NOT_FOUND_PHRASE, ctx->message->text),
+                .text = fmt::format(USER_NOT_FOUND_PHRASE, ctx->message->text),
                 .reply_message_id = ctx->message->id,
             });
         }
@@ -102,7 +102,7 @@ namespace Bot::BotHandler::Access {
         }
         return ctx->bot->send_message( {
             .chat_id = ctx->chat->id,
-            .text = format(USER_TEMPLATE,
+            .text = fmt::format(USER_TEMPLATE,
                     user.name,
                     user.id,
                     "@" + user.username
@@ -133,7 +133,7 @@ namespace Bot::BotHandler::Access {
 
         return ctx->bot->send_message({
             .chat_id = ctx->chat->id,
-            .text = format(ACCESS_PHRASE, access_answer),
+            .text = fmt::format(ACCESS_PHRASE, access_answer),
             .reply_message_id = ctx->message->id,
             .reply_keyboard = make_unique<ReplyKeyboard>(ReplyButtons{
                 {make_shared<ReplyButton>(BACK_WORD)}

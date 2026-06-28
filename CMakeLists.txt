@@ -1,24 +1,9 @@
 cmake_minimum_required(VERSION 3.15)
 
-if(NOT COMPILER)
-    set(COMPILER clang)
-endif()
-
-include(./cmake/${COMPILER}-toolchain.cmake)
-include(./cmake/unity-build-toolchain.cmake)
-
 project(CPP-KEBER CXX)
 
-option(UNITY_BUILD "Enable unity build for faster compilation" ON)
-
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_EXTENSIONS ON)
-set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
-set(CMAKE_MODULE_PATH "${CMAKE_BINARY_DIR};${CMAKE_MODULE_PATH};./bot;./utils;.")
-set(BUILD_SHARED_LIBS OFF)
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -DNDEBUG")
-
-include(./build/${CMAKE_BUILD_TYPE}/generators/conan_toolchain.cmake)
 
 add_compile_options(
     -Wall 
@@ -38,86 +23,81 @@ else()
     message(STATUS "Release mode enabled")
 endif()
 
-find_package(fmt REQUIRED)
-find_package(nlohmann_json REQUIRED)
-find_package(libuuid REQUIRED)
-find_package(httplib REQUIRED)
-find_package(OpenSSL REQUIRED)
-find_package(libpqxx REQUIRED)
-find_package(datetime REQUIRED)
-find_package(xlsxio REQUIRED)
-find_package(libxlsxwriter REQUIRED)
-find_package(GTest REQUIRED)
+find_package(PostgreSQL REQUIRED)
 
-set(OPENSSL_USE_STATIC_LIBS TRUE)
+set(DEPS_STATICS 
+    ${CMAKE_SOURCE_DIR}/build/_deps/libuuid/build/libuuid_static.a
+    ${CMAKE_SOURCE_DIR}/build/_deps/libpqxx/build/src/libpqxx-7.10.a
+    ${CMAKE_SOURCE_DIR}/build/_deps/fmt/build/libfmt.a
+    ${CMAKE_SOURCE_DIR}/build/_deps/datetime/build/libdatetime.a
+    ${CMAKE_SOURCE_DIR}/build/_deps/xlsxio/build/libxlsxio_read.a
+    ${CMAKE_SOURCE_DIR}/build/_deps/xlsxio/build/libxlsxio_write.a
+    ${CMAKE_SOURCE_DIR}/build/_deps/libxlsxwriter/build/libxlsxwriter.a
+    ${CMAKE_SOURCE_DIR}/build/_deps/openssl/libssl.a
+    ${CMAKE_SOURCE_DIR}/build/_deps/openssl/libcrypto.a
+    ${CMAKE_SOURCE_DIR}/build/_deps/libexpat/expat/build/libexpat.a
+    ${CMAKE_SOURCE_DIR}/build/_deps/minizip-ng/build/libminizip.a
+    ${CMAKE_SOURCE_DIR}/build/_deps/zlib-ng/build/libz.a
+    PostgreSQL::PostgreSQL
+)
+
+set(DEPS_PATHS 
+    ${CMAKE_SOURCE_DIR}/build/_deps/libuuid/build/include
+    ${CMAKE_SOURCE_DIR}/build/_deps/cpp-httplib
+    ${CMAKE_SOURCE_DIR}/build/_deps/libpqxx/include
+    ${CMAKE_SOURCE_DIR}/build/_deps/libpqxx/build/include
+    ${CMAKE_SOURCE_DIR}/build/_deps/nlohmann-json/single_include
+    ${CMAKE_SOURCE_DIR}/build/_deps/fmt/include
+    ${CMAKE_SOURCE_DIR}/build/_deps/datetime/src
+    ${CMAKE_SOURCE_DIR}/build/_deps/xlsxio/include/
+    ${CMAKE_SOURCE_DIR}/build/_deps/libxlsxwriter/include
+    ${CMAKE_SOURCE_DIR}
+)
 
 add_subdirectory(utils)
 
-option(BUILD_BOT "Build bot" OFF)
-if (BUILD_BOT)
-    add_subdirectory(bot)
-    target_link_libraries(
-        BOT
-        UTILS_LIB
-    )
-
-    # Статическая линковка для BOT
-    target_link_options(BOT PRIVATE 
-        -static-libgcc 
-        -static-libstdc++
-        -Wl,--gc-sections  # Удаление неиспользуемого кода
-    )
-endif()
-
-option(BUILD_TASK_TRACKER "Build task_tracker" OFF)
-if (BUILD_TASK_TRACKER)
-    add_subdirectory(task_tracker)
-    target_link_libraries(
-            TASK_TRACKER
-            UTILS_LIB
-    )
-    # Статическая линковка для TASK_TRACKER
-    target_link_options(TASK_TRACKER PRIVATE 
-        -static-libgcc 
-        -static-libstdc++
-        -Wl,--gc-sections
-    )
-endif()
-
-option(BUILD_TEST_CODE "Build test" OFF)
+option(BUILD_TEST_CODE "Build test code" OFF)
 if (BUILD_TEST_CODE)
     file(GLOB_RECURSE TEST_SOURCES
-            LIST_DIRECTORIES false
-            "./test_code/*.cpp"
+        LIST_DIRECTORIES false
+        "./test_code/*.cpp"
     )
-
     add_executable(TEST_CODE ${TEST_SOURCES})
-
-    target_include_directories(TEST_CODE PRIVATE
-        .
-        ./test_code
-        ./bot
-        ./utils
-    )
-
-    target_link_libraries(TEST_CODE
-        openssl::openssl
-        libpqxx::pqxx
-        libuuid::libuuid
-        datetime::datetime
-        fmt::fmt
-        httplib::httplib
-        nlohmann_json::nlohmann_json
-        xlsxio::xlsxio
-        libxlsxwriter::libxlsxwriter
-        gtest::gtest
-        pthread
-        dl
-        resolv
-    )
-
-    target_link_libraries(
-        TEST_CODE
+    target_include_directories(TEST_CODE PRIVATE ${DEPS_PATHS})
+    target_link_libraries(TEST_CODE PRIVATE
         UTILS_LIB
+        ${DEPS_STATICS}
+    )
+endif()
+
+option(BUILD_BOT "Build bot" OFF)
+if (BUILD_BOT)
+    file(GLOB_RECURSE BOT_SOURCES
+        LIST_DIRECTORIES false
+        "./bot/*.cpp"
+    )
+    add_executable(BOT ${BOT_SOURCES})
+    target_include_directories(BOT PRIVATE 
+        ${DEPS_PATHS}
+    )
+    target_link_libraries(BOT PRIVATE
+        UTILS_LIB
+        ${DEPS_STATICS}
+    )
+endif()
+
+option(BUILD_TASK_TRACKER "Build task tracker" OFF)
+if (BUILD_TASK_TRACKER)
+    file(GLOB_RECURSE TASK_TRACKER_SOURCES
+        LIST_DIRECTORIES false
+        "./task_tracker/*.cpp"
+    )
+    add_executable(TASK_TRACKER ${TASK_TRACKER_SOURCES})
+    target_include_directories(TASK_TRACKER PRIVATE 
+        ${DEPS_PATHS}
+    )
+    target_link_libraries(TASK_TRACKER PRIVATE
+        UTILS_LIB
+        ${DEPS_STATICS}
     )
 endif()

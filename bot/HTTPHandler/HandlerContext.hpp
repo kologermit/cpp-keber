@@ -1,7 +1,7 @@
 #pragma once
 
 #include <bot/GlobalContext.hpp>
-#include <httplib/httplib.h>
+#include <httplib.h>
 #include <nlohmann/json.hpp>
 #include <optional>
 #include <map>

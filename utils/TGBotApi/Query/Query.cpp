@@ -10,16 +10,14 @@
 #endif
 
 namespace Utils::TGBotApi::Query {
-
     using std::ios;
     using std::ifstream;
     using std::streamsize;
     using std::to_string;
     using std::runtime_error;
-    using fmt::format;
     using httplib::Result, httplib::Error;
-    using httplib::MultipartFormDataItems;
-    using httplib::MultipartFormData;
+    using httplib::UploadFormData;
+    using httplib::UploadFormDataItems;
 
     #ifndef NDEBUG
     using Utils::Logger::get_logger;
@@ -73,7 +71,7 @@ namespace Utils::TGBotApi::Query {
         }
         get_logger()->debug("Files_is_empty", to_string(files.empty()), __FILE__, __LINE__);
         for (auto file : files) {
-            get_logger()->debug("Files", format(
+            get_logger()->debug("Files", fmt::format(
                 "name={}; filename={}; filepath={}; content_type={}",
                 file.name,
                 file.filename,
@@ -89,10 +87,10 @@ namespace Utils::TGBotApi::Query {
         if (method == QueryMethod::GET) {
             result = cli.Get(result_path, params, headers);
         } else if (method == QueryMethod::POST) {
-            MultipartFormDataItems form_data;
+            UploadFormDataItems form_data;
             if (!params.empty()) {
                 for (const auto&[name, content] : params) {
-                    form_data.push_back({
+                    form_data.push_back(UploadFormData{
                         name,
                         content,
                         "",
@@ -102,11 +100,11 @@ namespace Utils::TGBotApi::Query {
             }
             if (!files.empty()) {
                 for (const auto&[name, filepath, filename, content_type] : files) {
-                    form_data.push_back(MultipartFormData{
+                    form_data.push_back(UploadFormData{
                         name,
                         _read_file(filepath),
                         filename,
-                        content_type
+                        content_type,
                     });
                 }
             }

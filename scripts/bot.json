@@ -4,47 +4,41 @@
         "working_dir": "./build/Debug",
         "scripts": [
             "cmake ../.. -B . -DBUILD_BOT=ON -DCMAKE_BUILD_TYPE=Debug",
-            "cmake --build . --target BOT --parallel $(($(nproc)-1))",
-            "chmod 777 bot/BOT || true"
+            "cmake --build . --target BOT --parallel $(($(nproc)-1))"
         ]
     },
     "build_release": {
         "description": "Build release bot",
         "working_dir": "./build/Release",
         "scripts": [
-            "cmake ../.. -B . -DBUILD_BOT=ON -DNDEBUG=1 -DCMAKE_BUILD_TYPE=Release",
-            "cmake --build . --target BOT --parallel $(($(nproc)-1))",
-            "chmod 777 bot/BOT || true"
+            "cmake ../.. -B . -DBUILD_BOT=ON -DCMAKE_BUILD_TYPE=Release",
+            "cmake --build . --target BOT --parallel $(($(nproc)-1))"
         ]
     },
-    "up": {
-        "description": "Up bot container",
+    "run_debug": {
+        "description": "Run ./build/Debug/bot/BOT",
         "scripts": [
-            "docker compose up -d bot"
+            "./build/Debug/bot/BOT"
         ]
     },
-    "stop": {
-        "description": "Stop bot container",
+    "run_release": {
+        "description": "Run ./build/Release/bot/BOT",
         "scripts": [
-            "docker compose stop -t 1 bot"
+            "./build/Release/bot/BOT"
         ]
     },
-    "remove": {
-        "description": "Remove bot container",
+    "build_debug_and_run": {
+        "description": "Build bot and run ./build/Debug/bot/BOT",
         "scripts": [
-            "docker compose rm -sfv bot"
+            "@@ bot build_debug",
+            "@@ bot run_debug"
         ]
     },
-    "logs": {
-        "description": "All logs bot container",
+    "build_release_and_run": {
+        "description": "Build bot and run ./build/Release/BOT",
         "scripts": [
-            "docker compose logs -f bot"
-        ]
-    },
-    "logs20": {
-        "description": "Logs bot container (20 lines)",
-        "scripts": [
-            "docker compose logs --tail 20 -f bot"
+            "@@ bot build_release",
+            "@@ bot run_release"
         ]
     }
 }

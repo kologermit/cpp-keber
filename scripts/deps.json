@@ -1,0 +1,276 @@
+{
+    "cpp-httlib-download": {
+        "working_dir": "./build/_deps",
+        "scripts": [
+            "rm -rf cpp-httplib",
+            "git clone https://github.com/yhirose/cpp-httplib.git"
+        ]
+    },
+    "datetime-download": {
+        "working_dir": "./build/_deps",
+        "scripts": [
+            "rm -rf datetime",
+            "git clone https://github.com/jeremydumais/CPP-DateTime-library.git datetime"
+        ]
+    },
+    "datetime-build": {
+        "working_dir": "./build/_deps/datetime",
+        "scripts": [
+            "cmake -S . -B build -DBUILD_TESTING=OFF",
+            "cmake --build build"
+        ]
+    },
+    "datetime-download-and-build": {
+        "scripts": [
+            "@@ deps datetime-download",
+            "@@ deps datetime-build"
+        ]
+    },
+    "fmt-download": {
+        "working_dir": "./build/_deps",
+        "scripts": [
+            "rm -rf fmt",
+            "git clone -b 10.x https://github.com/fmtlib/fmt.git"
+        ]
+    },
+    "fmt-build": {
+        "working_dir": "./build/_deps/fmt",
+        "scripts": [
+            "cmake -S . -B build -DFMT_TEST=OFF -DFMT_DOC=OFF -DFMT_INSTALL=ON -DBUILD_SHARED_LIBS=OFF",
+            "cmake --build build"
+        ]
+    },
+    "fmt-download-and-build": {
+        "scripts": [
+            "@@ deps fmt-download",
+            "@@ deps fmt-build"
+        ]
+    },
+    "gtest-download": {
+        "working_dir": "./build/_deps",
+        "scripts": [
+            "rm -rf gtest",
+            "git clone https://github.com/google/googletest.git gtest"
+        ]
+    },
+    "gtest-build": {
+        "working_dir": "./build/_deps/gtest",
+        "scripts": [
+            "cmake -S . -B build -DBUILD_GMOCK=OFF -DINSTALL_GTEST=OFF",
+            "cmake --build build"
+        ]
+    },
+    "gtest-download-and-build": {
+        "scripts": [
+            "@@ deps gtest-download",
+            "@@ deps gtest-build"
+        ]
+    },
+    "libexpat-download": {
+        "working_dir": "./build/_deps",
+        "scripts": [
+            "rm -rf libexpat",
+            "git clone https://github.com/libexpat/libexpat.git"
+        ]
+    },
+    "libexpat-build": {
+        "working_dir": "./build/_deps/libexpat/expat/build",
+        "scripts": [
+            "cmake .. -DEXPAT_SHARED_LIBS=OFF -DEXPAT_BUILD_TESTS=OFF -DEXPAT_BUILD_EXAMPLES=OFF -DEXPAT_BUILD_TOOLS=OFF -DEXPAT_BUILD_DOCS=OFF -DEXPAT_BUILD_PKGCONFIG=OFF",
+            "make -j$(nproc)"
+        ]
+    },
+    "libexpat-download-and-build": {
+        "scripts": [
+            "@@ deps libexpat-download",
+            "@@ deps libexpat-build"
+        ]
+    },
+    "libpqxx-download": {
+        "working_dir": "./build/_deps",
+        "scripts": [
+            "rm -rf libpqxx",
+            "git clone -b 7.10 https://github.com/jtv/libpqxx.git"
+        ]
+    },
+    "libpqxx-build": {
+        "working_dir": "./build/_deps/libpqxx",
+        "scripts": [
+            "cmake -S . -B build -DBUILD_TEST=OFF -DBUILD_TESTS=OFF",
+            "cmake --build build"
+        ]
+    },
+    "libpqxx-download-and-build": {
+        "scripts": [
+            "@@ deps libpqxx-download",
+            "@@ deps libpqxx-build"
+        ]
+    },
+    "libuuid-download": {
+        "working_dir": "./build/_deps",
+        "scripts": [
+            "rm -rf libuuid",
+            "git clone https://github.com/rjones30/libuuid.git"
+        ]
+    },
+    "libuuid-build": {
+        "working_dir": "./build/_deps/libuuid",
+        "scripts": [
+            "cmake -S . -B build",
+            "cmake --build build"
+        ]
+    },
+    "libuuid-download-and-build": {
+        "scripts": [
+            "@@ deps libuuid-download",
+            "@@ deps libuuid-build"
+        ]
+    },
+    "libxlsxwriter-download": {
+        "working_dir": "./build/_deps",
+        "scripts": [
+            "rm -rf libxlsxwriter",
+            "git clone https://github.com/jmcnamara/libxlsxwriter.git"
+        ]
+    },
+    "libxlsxwriter-build": {
+        "working_dir": "./build/_deps/libxlsxwriter",
+        "scripts": [
+            "cmake -S . -B build -DUSE_SYSTEM_MINIZIP=ON -DUSE_OPENSSL_MD5=ON",
+            "cmake --build build"
+        ]
+    },
+    "libxlsxwriter-download-and-build": {
+        "scripts": [
+            "@@ deps libxlsxwriter-download",
+            "@@ deps libxlsxwriter-build"
+        ]
+    },
+    "minizip-ng-download": {
+        "working_dir": "./build/_deps",
+        "scripts": [
+            "rm -rf minizip-ng",
+            "git clone https://github.com/zlib-ng/minizip-ng.git"
+        ]
+    },
+    "minizip-ng-build": {
+        "working_dir": "./build/_deps/minizip-ng/build",
+        "scripts": [
+            "cmake .. -DBUILD_SHARED_LIBS=OFF -DMZ_COMPAT=ON -DMZ_ZLIB=ON -DMZ_BZIP2=OFF -DMZ_LZMA=OFF -DMZ_PPMD=OFF -DMZ_ZSTD=OFF -DMZ_LIBCOMP=OFF -DMZ_ICONV=OFF -DMZ_OPENSSL=OFF -DMZ_PKCRYPT=OFF -DMZ_WZAES=OFF -DMZ_BUILD_TESTS=OFF -DMZ_BUILD_UNIT_TESTS=OFF -DMZ_BUILD_FUZZ_TESTS=OFF",
+            "make -j$(nproc)"
+        ]
+    },
+    "minizip-ng-download-and-build": {
+        "scripts": [
+            "@@ deps minizip-ng-download",
+            "@@ deps minizip-ng-build"
+        ]
+    },
+    "nlohmann-json-download": {
+        "working_dir": "./build/_deps",
+        "scripts": [
+            "rm -rf nlohmann-json",
+            "git clone https://github.com/nlohmann/json.git nlohmann-json"
+        ]
+    },
+    "openssl-download": {
+        "working_dir": "./build/_deps",
+        "scripts": [
+            "rm -rf openssl",
+            "git clone -b openssl-3.5 https://github.com/openssl/openssl.git"
+        ]
+    },
+    "openssl-build": {
+        "working_dir": "./build/_deps/openssl",
+        "scripts": [
+            "./Configure linux-x86_64 --prefix=/opt/openssl-static --openssldir=/opt/openssl-static/ssl no-shared no-dso no-tests -fPIC",
+            "make -j$(nproc)"
+        ]
+    },
+    "openssl-download-and-build": {
+        "scripts": [
+            "@@ deps openssl-download",
+            "@@ deps openssl-build"
+        ]
+    },
+    "xlsxio-download": {
+        "working_dir": "./build/_deps",
+        "scripts": [
+            "rm -rf xlsxio",
+            "git clone https://github.com/brechtsanders/xlsxio.git"
+        ]
+    },
+    "xlsxio-build": {
+        "working_dir": "./build/_deps/xlsxio",
+        "scripts": [
+            "cmake -S . -B build",
+            "cmake --build build"
+        ]
+    },
+    "xlsxio-download-and-build": {
+        "scripts": [
+            "@@ deps xlsxio-download",
+            "@@ deps xlsxio-build"
+        ]
+    },
+    "zlib-ng-download": {
+        "working_dir": "./build/_deps",
+        "scripts": [
+            "rm -rf zlib-ng",
+            "git clone https://github.com/zlib-ng/zlib-ng.git"
+        ]
+    },
+    "zlib-ng-build": {
+        "working_dir": "./build/_deps/zlib-ng/build",
+        "scripts": [
+            "cmake .. -DBUILD_SHARED_LIBS=OFF -DZLIB_COMPAT=ON -DBUILD_TESTING=OFF",
+            "make -j$(nproc)"
+        ]
+    },
+    "zlib-ng-download-and-build": {
+        "scripts": [
+            "@@ deps zlib-ng-download",
+            "@@ deps zlib-ng-build"
+        ]
+    },
+    "download-all": {
+        "scripts": [
+            "@@ deps cpp-httlib-download",
+            "@@ deps datetime-download",
+            "@@ deps fmt-download",
+            "@@ deps gtest-download",
+            "@@ deps libexpat-download",
+            "@@ deps libpqxx-download",
+            "@@ deps libuuid-download",
+            "@@ deps libxlsxwriter-download",
+            "@@ deps minizip-ng-download",
+            "@@ deps nlohmann-json-download",
+            "@@ deps openssl-download",
+            "@@ deps xlsxio-download",
+            "@@ deps zlib-ng-download"
+        ]
+    },
+    "build-all": {
+        "scripts": [
+            "@@ deps cpp-httlib-build",
+            "@@ deps datetime-build",
+            "@@ deps fmt-build",
+            "@@ deps gtest-build",
+            "@@ deps libexpat-build",
+            "@@ deps libpqxx-build",
+            "@@ deps libuuid-build",
+            "@@ deps libxlsxwriter-build",
+            "@@ deps minizip-ng-build",
+            "@@ deps nlohmann-json-build",
+            "@@ deps openssl-build",
+            "@@ deps xlsxio-build",
+            "@@ deps zlib-ng-build"
+        ]
+    },
+    "download-and-build-all": {
+        "scripts": [
+            "@@ deps download-all",
+            "@@ deps build-all"
+        ]
+    }
+}

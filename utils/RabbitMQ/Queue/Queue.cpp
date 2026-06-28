@@ -25,7 +25,7 @@ namespace Utils::RabbitMQ {
         if (vhost == "/") {
             return "%2F";
         }
-        return httplib::detail::encode_url(vhost.data());
+        return httplib::encode_uri(vhost.data());
     }
 
     Queue::Queue(

@@ -5,7 +5,7 @@
 #include <utils/TGBotApi/Bot/InterfaceBot.hpp>
 #include <utils/TGBotApi/User/User.hpp>
 #include <vector>
-#include <httplib/httplib.h>
+#include <httplib.h>
 
 namespace Utils::TGBotApi::Bot {
 

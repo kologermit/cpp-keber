@@ -61,8 +61,8 @@ namespace Bot::BotHandler::Access {
             ctx->bot->send_message(SendMessageParameters{
                 .chat_id = user->id,
                 .text = (access_value
-                    ? format(ADD_ACCESS_PHRASE, word, ctx->user->name)
-                    : format(REMOVE_ACCESS_PHRASE, word, ctx->user->name)
+                    ? fmt::format(ADD_ACCESS_PHRASE, word, ctx->user->name)
+                    : fmt::format(REMOVE_ACCESS_PHRASE, word, ctx->user->name)
                 ),
             });
         } catch (...) {}

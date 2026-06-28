@@ -16,9 +16,7 @@ namespace Utils::Entity {
     using std::vector;
     using std::runtime_error;
     using std::string;
-    using fmt::format;
     using pqxx::result;
-    using pqxx::row;
     using pqxx::nontransaction;
     using pqxx::connection;
 
@@ -30,18 +28,18 @@ namespace Utils::Entity {
         string sql_values;
 
         if (add_id) {
-            sql_columns = format(" {},", tx.quote_name(ID_COLUMN));
-            sql_values = format(" {},", tx.quote(entity.id));
+            sql_columns = fmt::format(" {},", tx.quote_name(ID_COLUMN));
+            sql_values = fmt::format(" {},", tx.quote(entity.id));
         }
 
         for (const auto& data : entity.to_map(false)) {
             const auto& [column, value] = data;
-            sql_columns += format(
+            sql_columns += fmt::format(
                 " {},",
                 tx.quote_name(column)
             );
 
-            sql_values += format(
+            sql_values += fmt::format(
                 " {},",
                 tx.quote(value)
             );
@@ -55,7 +53,7 @@ namespace Utils::Entity {
             sql_values.erase(sql_values.end()-1);
         }
 
-        const string sql_query = format(
+        const string sql_query = fmt::format(
             "INSERT INTO {} ({}) VALUES ({}) RETURNING *;",
             tx.quote_name(EntityT::get_table_name()),
             sql_columns,
@@ -69,7 +67,7 @@ namespace Utils::Entity {
         auto res = tx.exec(sql_query);
 
         if (res.empty()) {
-            throw runtime_error(format("exec_insert::insert_error -- row doesnt insert in table {}", EntityT::get_table_name()));
+            throw runtime_error(fmt::format("exec_insert::insert_error -- row doesnt insert in table {}", EntityT::get_table_name()));
         }
 
         return make_unique<EntityT>(res.one_row());
@@ -80,14 +78,14 @@ namespace Utils::Entity {
     unique_ptr<EntityT> exec_update_by_id(connection& conn, const EntityT& entity) {
         nontransaction tx{conn};
 
-        string sql_query = format(
+        string sql_query = fmt::format(
             "UPDATE {} SET",
             tx.quote_name(EntityT::get_table_name())
         );
 
         for (const auto& iter : entity.to_map(false)) {
             const auto& [column, value] = iter;
-            sql_query += format(
+            sql_query += fmt::format(
                 " {} = {},",
                 tx.quote_name(column),
                 tx.quote(value)
@@ -98,7 +96,7 @@ namespace Utils::Entity {
             sql_query.erase(sql_query.end()-1);
         }
 
-        sql_query += format(
+        sql_query += fmt::format(
             " WHERE {} = {} RETURNING *;",
             tx.quote_name(ID_COLUMN),
             tx.quote(entity.id)
@@ -111,7 +109,7 @@ namespace Utils::Entity {
         auto res = tx.exec(sql_query);
 
         if (res.empty()) {
-            throw runtime_error(format("exec_update::update_error -- row doesnt updated in table {}", EntityT::get_table_name()));
+            throw runtime_error(fmt::format("exec_update::update_error -- row doesnt updated in table {}", EntityT::get_table_name()));
         }
 
         return make_unique<EntityT>(res.one_row());
@@ -141,7 +139,7 @@ namespace Utils::Entity {
         );
 
         if (check_deleted) {
-            sql_query += format(
+            sql_query += fmt::format(
                 " AND {} IS NULL",
                 tx.quote_name(DELETED_AT_COLUMN)
             );
@@ -164,7 +162,10 @@ namespace Utils::Entity {
             return nullptr;
         }
 
-        return make_unique<EntityT>(res.one_row());
+        for (const auto& r : res) {
+            return make_unique<EntityT>(r);
+        }
+        return nullptr;
     }
 
     template<typename EntityT>
@@ -209,7 +210,7 @@ namespace Utils::Entity {
         const auto res = tx.exec(sql_query);
 
         if (res.empty()) {
-            throw runtime_error(format("exec_update::update_error -- row doesnt deleted in table {}", EntityT::get_table_name()));
+            throw runtime_error(fmt::format("exec_update::update_error -- row doesnt deleted in table {}", EntityT::get_table_name()));
         }
         
         return make_unique<EntityT>(res.one_row());

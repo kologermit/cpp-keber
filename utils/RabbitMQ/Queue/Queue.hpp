@@ -4,7 +4,7 @@
 #include <string_view>
 #include <memory>
 #include <optional>
-#include <httplib/httplib.h>
+#include <httplib.h>
 #include <nlohmann/json.hpp>
 #include <utils/RabbitMQ/Message/Message.hpp>
 

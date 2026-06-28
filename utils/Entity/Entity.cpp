@@ -22,7 +22,7 @@ namespace Utils::Entity {
     void create_rows_in_enum_table_if_empty(connection& conn, const char* table, const map<int, string>& map_int_to_string) {
         nontransaction tx{conn};
 
-        const string select_sql_query = format(
+        const string select_sql_query = fmt::format(
             "SELECT * FROM {} ORDER BY {} ASC",
             tx.quote_name(table),
             tx.quote_name(ID_COLUMN)
@@ -55,7 +55,7 @@ namespace Utils::Entity {
             ));
         }
 
-        string insert_sql_query = format(
+        string insert_sql_query = fmt::format(
             "INSERT INTO {} ({}, {}) VALUES",
             tx.quote_name(table),
             tx.quote_name(ID_COLUMN),

@@ -1,5 +1,3 @@
-#pragma once
-
 #include <bot/BotHandler/YouTube/Media/MediaCallbackHandler.hpp>
 #include <bot/BotHandler/YouTube/Media/MediaHandler.hpp>
 #include <bot/BotHandler/YouTube/YouTubeHandler.hpp>

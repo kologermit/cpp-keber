@@ -1,7 +1,7 @@
 #pragma once
 
 #define CPPHTTPLIB_OPENSSL_SUPPORT
-#include <httplib/httplib.h>
+#include <httplib.h>
 #include <nlohmann/json.hpp>
 
 namespace Utils::Api {

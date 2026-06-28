@@ -1,10 +1,6 @@
 *
 !.gitignore
-!venv.json
-!conan.json
+!deps.json
 !bot.json
-!test_code.json
-!project.json
-!zsh.json
-!postgres.json
 !task_tracker.json
+!test_code.json

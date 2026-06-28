@@ -1,6 +1,6 @@
 #!python3
 
-from os import path, listdir, environ
+from os import path, listdir, environ, makedirs
 from copy import deepcopy
 from json import loads, dumps
 from json.decoder import JSONDecodeError
@@ -164,6 +164,8 @@ def main():
 
         for key, value in data.items():
             action = tuple([clear_filename] + [key])
+            if not path.exists(str(value.get(WORKING_DIR_KEY, path.curdir))):
+                makedirs(str(value.get(WORKING_DIR_KEY, path.curdir)), exist_ok=True)
             scripts[action] = Script(
                 action=action,
                 scripts=tuple(map(str, value[SCRIPTS_KEY])),
@@ -182,7 +184,7 @@ def main():
     key = (argv[1], argv[2])
 
     script = scripts.get(key)
-    if scripts is None:
+    if script is None:
         print(dump_message(SCRIPT_NOT_FOUND_ERROR, script=key))
         return ERROR_RETURN_CODE
 

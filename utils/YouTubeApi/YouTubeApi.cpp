@@ -1,5 +1,5 @@
 #include <utils/YouTubeApi/YouTubeApi.hpp>
-#include <httplib/httplib.h>
+#include <httplib.h>
 #include <nlohmann/json.hpp>
 
 #ifndef NDEBUG

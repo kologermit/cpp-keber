@@ -8,7 +8,6 @@
 !.env.example
 !.gitignore
 !downloader
-!Makefile
 !manager.py
 !postgres
 !README.md

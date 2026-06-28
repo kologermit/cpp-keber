@@ -1,6 +1,0 @@
-*
-!.gitignore
-!patches
-!CMakeLists.txt
-!conandata.yml
-!conanfile.py

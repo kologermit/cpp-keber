@@ -14,7 +14,6 @@ namespace Bot::Entity::Message {
     using pqxx::result;
     using pqxx::row;
     using pqxx::nontransaction;
-    using fmt::format;
     using std::make_unique;
 
     #ifndef NDEBUG
@@ -29,7 +28,7 @@ namespace Bot::Entity::Message {
     unique_ptr<Message> MessageRepository::get_by_chat_and_id(long long chat_id, long long id) {
         nontransaction tx{_db};
 
-        const string sql_query = format(
+        const string sql_query = fmt::format(
             "SELECT {}.* FROM {} JOIN {} ON {}.{} = {}.{} WHERE {}.{} = {} AND {}.{} = {}",
             tx.quote_name(Message::get_table_name()),
             tx.quote_name(Message::get_table_name()),

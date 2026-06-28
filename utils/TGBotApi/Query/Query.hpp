@@ -116,7 +116,7 @@ namespace Utils::TGBotApi::Query {
         json json_result = query_raw_json(method, path, params, headers, files, full_path, throw_by_status);
 
         if (!static_cast<bool>(json_result[OK_KEY])) {
-            throw runtime_error(format(
+            throw runtime_error(fmt::format(
                 "Utils::TGBotApi::Query::query_parse_json: {} -- {}",
                 json_result[ERROR_CODE_KEY].get<int>(),
                 json_result[DESCRIPTION_KEY].get<string>()
