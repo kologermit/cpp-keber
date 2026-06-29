@@ -52,7 +52,7 @@ RUN python3 manager.py build task-tracker-release
 
 
 FROM base-builder AS build-task-tracker-debug
-COPY ./task-tracker /src/task_tracker
+COPY ./task_tracker /src/task_tracker
 RUN python3 manager.py build task-tracker-debug
 
 

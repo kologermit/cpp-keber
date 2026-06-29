@@ -10,7 +10,6 @@ services:
       context: ..
       dockerfile: Dockerfile
       target: runner-task-tracker-${PROJECT_BUILD}
-    build: ..
     ports:
       - ${TASK_TRACKER_EXTERNAL_PORT}:8080
     volumes:
