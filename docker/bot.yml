@@ -8,13 +8,16 @@ services:
     extends:
       file: ./parents.yml
       service: custom_service
+    build:
+      context: ..
+      dockerfile: Dockerfile
+      target: runner-bot-${PROJECT_BUILD}
     ports:
       - ${BOT_EXTERNAL_PORT:-127.0.0.1:8080}:8080
     volumes:
       - bot_logs:/volumes/logs
       - bot_tmp:/volumes/tmp
       - file_buffer:/volumes/file_buffer:ro
-      - ../build/${PROJECT_BUILD}/bot/BOT:/app:ro
     environment:
       - AUTH_KEY=${AUTH_KEY}
       - BOT_TOKEN=${BOT_TOKEN}

@@ -10,5 +10,4 @@ file(GLOB_RECURSE UTILS_SOURCES
 add_library(UTILS_LIB STATIC ${UTILS_SOURCES})
 target_include_directories(UTILS_LIB PRIVATE ${DEPS_PATHS} .)
 target_compile_definitions(UTILS_LIB PRIVATE $<$<CONFIG:Release>:NDEBUG=1>)
-
-# target_link_libraries(UTILS_LIB PRIVATE )
+set_target_properties(UTILS_LIB PROPERTIES UNITY_BUILD ON)

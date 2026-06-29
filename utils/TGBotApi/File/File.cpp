@@ -33,7 +33,7 @@ namespace Utils::TGBotApi::File {
     void throw_if_not_correct_file(string_view filepath) {
         ResultCheckFile check_result = is_correct_file(filepath);
         if (is_correct_file(filepath) != ResultCheckFile::OK) {
-            throw invalid_argument(format(
+            throw invalid_argument(fmt::format(
                 "{}: {} is {}",
                 "Utils::TGBotApi::File::throw_if_not_correct_file",
                 filepath,

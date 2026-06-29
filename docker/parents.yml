@@ -38,14 +38,5 @@ services:
       target: base_runner
       args:
         - RUNNER_IMAGE=${RUNNER_IMAGE}
+        - BUILDER_IMAGE=${BUILDER_IMAGE}
     user: runner
-
-  python_service:
-    extends:
-      file: ./parents.yml
-      service: parent
-    image: ${PYTHON_IMAGE}
-    working_dir: /
-    entrypoint: sh /utils/Python/entrypoint.sh
-    volumes:
-      - ../utils/Python:/utils/Python:ro

@@ -4,6 +4,8 @@ project(CPP-KEBER CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_UNITY_BUILD ON)
+set(CMAKE_UNITY_BUILD_BATCH_SIZE 20)
 
 add_compile_options(
     -Wall 
@@ -64,6 +66,10 @@ if (BUILD_TEST_CODE)
     )
     add_executable(TEST_CODE ${TEST_SOURCES})
     target_include_directories(TEST_CODE PRIVATE ${DEPS_PATHS})
+    set_target_properties(BOT PROPERTIES
+        UNITY_BUILD ON
+        UNITY_BUILD_BATCH_SIZE 20
+    )
     target_link_libraries(TEST_CODE PRIVATE
         UTILS_LIB
         ${DEPS_STATICS}

@@ -3,14 +3,14 @@
         "working_dir": "./build/_deps",
         "scripts": [
             "rm -rf cpp-httplib",
-            "git clone https://github.com/yhirose/cpp-httplib.git"
+            "git clone https://github.com/yhirose/cpp-httplib"
         ]
     },
     "datetime-download": {
         "working_dir": "./build/_deps",
         "scripts": [
             "rm -rf datetime",
-            "git clone https://github.com/jeremydumais/CPP-DateTime-library.git datetime"
+            "git clone https://github.com/jeremydumais/CPP-DateTime-library datetime"
         ]
     },
     "datetime-build": {
@@ -30,7 +30,7 @@
         "working_dir": "./build/_deps",
         "scripts": [
             "rm -rf fmt",
-            "git clone -b 10.x https://github.com/fmtlib/fmt.git"
+            "git clone -b 10.x https://github.com/fmtlib/fmt"
         ]
     },
     "fmt-build": {
@@ -50,7 +50,7 @@
         "working_dir": "./build/_deps",
         "scripts": [
             "rm -rf gtest",
-            "git clone https://github.com/google/googletest.git gtest"
+            "git clone https://github.com/google/googletest gtest"
         ]
     },
     "gtest-build": {
@@ -70,7 +70,7 @@
         "working_dir": "./build/_deps",
         "scripts": [
             "rm -rf libexpat",
-            "git clone https://github.com/libexpat/libexpat.git"
+            "git clone https://github.com/libexpat/libexpat"
         ]
     },
     "libexpat-build": {
@@ -90,13 +90,13 @@
         "working_dir": "./build/_deps",
         "scripts": [
             "rm -rf libpqxx",
-            "git clone -b 7.10 https://github.com/jtv/libpqxx.git"
+            "git clone -b 7.10 https://github.com/jtv/libpqxx"
         ]
     },
     "libpqxx-build": {
         "working_dir": "./build/_deps/libpqxx",
         "scripts": [
-            "cmake -S . -B build -DBUILD_TEST=OFF -DBUILD_TESTS=OFF",
+            "cmake -S . -B build -DBUILD_TEST=OFF",
             "cmake --build build"
         ]
     },
@@ -110,7 +110,7 @@
         "working_dir": "./build/_deps",
         "scripts": [
             "rm -rf libuuid",
-            "git clone https://github.com/rjones30/libuuid.git"
+            "git clone https://github.com/rjones30/libuuid"
         ]
     },
     "libuuid-build": {
@@ -130,13 +130,13 @@
         "working_dir": "./build/_deps",
         "scripts": [
             "rm -rf libxlsxwriter",
-            "git clone https://github.com/jmcnamara/libxlsxwriter.git"
+            "git clone https://github.com/jmcnamara/libxlsxwriter"
         ]
     },
     "libxlsxwriter-build": {
         "working_dir": "./build/_deps/libxlsxwriter",
         "scripts": [
-            "cmake -S . -B build -DUSE_SYSTEM_MINIZIP=ON -DUSE_OPENSSL_MD5=ON",
+            "cmake -S . -B build -DUSE_SYSTEM_MINIZIP=ON -DMINIZIP_INCLUDE_DIRS=$PWD/third_party/ -DUSE_OPENSSL_MD5=ON",
             "cmake --build build"
         ]
     },
@@ -150,7 +150,7 @@
         "working_dir": "./build/_deps",
         "scripts": [
             "rm -rf minizip-ng",
-            "git clone https://github.com/zlib-ng/minizip-ng.git"
+            "git clone https://github.com/zlib-ng/minizip-ng"
         ]
     },
     "minizip-ng-build": {
@@ -170,14 +170,14 @@
         "working_dir": "./build/_deps",
         "scripts": [
             "rm -rf nlohmann-json",
-            "git clone https://github.com/nlohmann/json.git nlohmann-json"
+            "git clone https://github.com/nlohmann/json nlohmann-json"
         ]
     },
     "openssl-download": {
         "working_dir": "./build/_deps",
         "scripts": [
             "rm -rf openssl",
-            "git clone -b openssl-3.5 https://github.com/openssl/openssl.git"
+            "git clone -b openssl-3.5 https://github.com/openssl/openssl"
         ]
     },
     "openssl-build": {
@@ -197,7 +197,7 @@
         "working_dir": "./build/_deps",
         "scripts": [
             "rm -rf xlsxio",
-            "git clone https://github.com/brechtsanders/xlsxio.git"
+            "git clone https://github.com/brechtsanders/xlsxio"
         ]
     },
     "xlsxio-build": {
@@ -217,7 +217,7 @@
         "working_dir": "./build/_deps",
         "scripts": [
             "rm -rf zlib-ng",
-            "git clone https://github.com/zlib-ng/zlib-ng.git"
+            "git clone https://github.com/zlib-ng/zlib-ng"
         ]
     },
     "zlib-ng-build": {
@@ -252,7 +252,6 @@
     },
     "build-all": {
         "scripts": [
-            "@@ deps cpp-httlib-build",
             "@@ deps datetime-build",
             "@@ deps fmt-build",
             "@@ deps gtest-build",
@@ -261,7 +260,6 @@
             "@@ deps libuuid-build",
             "@@ deps libxlsxwriter-build",
             "@@ deps minizip-ng-build",
-            "@@ deps nlohmann-json-build",
             "@@ deps openssl-build",
             "@@ deps xlsxio-build",
             "@@ deps zlib-ng-build"

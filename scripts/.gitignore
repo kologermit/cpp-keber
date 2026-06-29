@@ -1,6 +1,5 @@
 *
 !.gitignore
 !deps.json
-!bot.json
-!task_tracker.json
+!build.json
 !test_code.json

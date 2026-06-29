@@ -2,11 +2,6 @@
 !.gitignore
 !bot.yml
 !postgres.yml
-!caddy.yml
 !networks.yml
 !parents.yml
-!youtube_api.yml
-!rabbitmq.yml
-!selenium.yml
-!downloader.yml
 !task-tracker.yml

@@ -6,11 +6,14 @@ services:
     extends:
       file: ./parents.yml
       service: custom_service
+    build:
+      context: ..
+      dockerfile: Dockerfile
+      target: runner-task-tracker-${PROJECT_BUILD}
     build: ..
     ports:
       - ${TASK_TRACKER_EXTERNAL_PORT}:8080
     volumes:
-      - ../build/${PROJECT_BUILD}/task_tracker/TASK_TRACKER:/app
       - task-tracker-logs:/volumes/logs
     environment:
       - AUTH_KEY=${AUTH_KEY}

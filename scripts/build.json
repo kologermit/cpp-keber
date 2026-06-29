@@ -1,0 +1,44 @@
+{
+    "utils-debug": {
+        "working_dir": "./build/Debug",
+        "scripts": [
+            "cmake ../.. -B . -DCMAKE_BUILD_TYPE=Debug",
+            "cmake --build . --target UTILS_LIB --parallel $(($(nproc)-1))"
+        ]
+    },
+    "utils-release": {
+        "working_dir": "./build/Release",
+        "scripts": [
+            "cmake ../.. -B . -DCMAKE_BUILD_TYPE=Release",
+            "cmake --build . --target UTILS_LIB --parallel $(($(nproc)-1))"
+        ]
+    },
+    "bot-debug": {
+        "working_dir": "./build/Debug",
+        "scripts": [
+            "cmake ../.. -B . -DBUILD_BOT=ON -DCMAKE_BUILD_TYPE=Debug",
+            "cmake --build . --target BOT --parallel $(($(nproc)-1))"
+        ]
+    },
+    "bot-release": {
+        "working_dir": "./build/Release",
+        "scripts": [
+            "cmake ../.. -B . -DBUILD_BOT=ON -DCMAKE_BUILD_TYPE=Release",
+            "cmake --build . --target BOT --parallel $(($(nproc)-1))"
+        ]
+    },
+    "trask-tracker-debug": {
+        "working_dir": "./build/Debug",
+        "scripts": [
+            "cmake ../.. -B . -DBUILD_TASK_TRACKER=ON -DCMAKE_BUILD_TYPE=Debug",
+            "cmake --build . --target TASK_TRACKER --parallel $(($(nproc)-1))"
+        ]
+    },
+    "task-tracker-release": {
+        "working_dir": "./build/Release",
+        "scripts": [
+            "cmake ../.. -B . -DBUILD_TASK_TRACKER=ON -DCMAKE_BUILD_TYPE=Release",
+            "cmake --build . --target TASK_TRACKER --parallel $(($(nproc)-1))"
+        ]
+    }
+}
