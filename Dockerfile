@@ -18,7 +18,7 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     python3 make g++ git ca-certificates patch python3-pip\
     libpq-dev libminizip-dev pkg-config zlib1g-dev libexpat1-dev && \
-    rm -rf /var/lib/apt/lists/* && pip install --break cmake==3.25.0
+    rm -rf /var/lib/apt/lists/*
 WORKDIR /src
 COPY ./manager.py /src/manager.py
 COPY ./scripts/deps.json /src/scripts/deps.json
