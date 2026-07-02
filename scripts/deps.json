@@ -17,7 +17,7 @@
         "working_dir": "./build/_deps/datetime",
         "scripts": [
             "cmake -S . -B build -DBUILD_TESTING=OFF",
-            "cmake --build build"
+            "cmake --build build --parallel $(($(nproc)-1))"
         ]
     },
     "datetime-download-and-build": {
@@ -37,7 +37,7 @@
         "working_dir": "./build/_deps/fmt",
         "scripts": [
             "cmake -S . -B build -DFMT_TEST=OFF -DFMT_DOC=OFF -DFMT_INSTALL=ON -DBUILD_SHARED_LIBS=OFF",
-            "cmake --build build"
+            "cmake --build build --parallel $(($(nproc)-1))"
         ]
     },
     "fmt-download-and-build": {
@@ -57,7 +57,7 @@
         "working_dir": "./build/_deps/gtest",
         "scripts": [
             "cmake -S . -B build -DBUILD_GMOCK=OFF -DINSTALL_GTEST=OFF",
-            "cmake --build build"
+            "cmake --build build --parallel $(($(nproc)-1))"
         ]
     },
     "gtest-download-and-build": {
@@ -97,7 +97,7 @@
         "working_dir": "./build/_deps/libpqxx",
         "scripts": [
             "cmake -S . -B build -DBUILD_TEST=OFF",
-            "cmake --build build"
+            "cmake --build build --parallel $(($(nproc)-1))"
         ]
     },
     "libpqxx-download-and-build": {
@@ -117,7 +117,7 @@
         "working_dir": "./build/_deps/libuuid",
         "scripts": [
             "cmake -S . -B build",
-            "cmake --build build"
+            "cmake --build build --parallel $(($(nproc)-1))"
         ]
     },
     "libuuid-download-and-build": {
@@ -137,7 +137,7 @@
         "working_dir": "./build/_deps/libxlsxwriter",
         "scripts": [
             "cmake -S . -B build -DUSE_SYSTEM_MINIZIP=ON -DMINIZIP_INCLUDE_DIRS=$PWD/third_party/ -DUSE_OPENSSL_MD5=ON",
-            "cmake --build build"
+            "cmake --build build --parallel $(($(nproc)-1))"
         ]
     },
     "libxlsxwriter-download-and-build": {
@@ -204,7 +204,7 @@
         "working_dir": "./build/_deps/xlsxio",
         "scripts": [
             "cmake -S . -B build -DCMAKE_POLICY_VERSION_MINIMUM=3.5",
-            "cmake --build build"
+            "cmake --build build --parallel $(($(nproc)-1))"
         ]
     },
     "xlsxio-download-and-build": {

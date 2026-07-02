@@ -7,8 +7,6 @@ services:
       file: ./parents.yml
       service: custom_service
     build:
-      context: ..
-      dockerfile: Dockerfile
       target: runner-task-tracker-${PROJECT_BUILD}
     ports:
       - ${TASK_TRACKER_EXTERNAL_PORT}:8080

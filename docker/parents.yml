@@ -35,7 +35,7 @@ services:
       service: parent
     build:
       context: ..
-      target: base_runner
+      dockerfile: Dockerfile
       args:
         - RUNNER_IMAGE=${RUNNER_IMAGE}
         - BUILDER_IMAGE=${BUILDER_IMAGE}
