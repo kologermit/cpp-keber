@@ -111,7 +111,7 @@ namespace Bot::Config {
             },
             Argument{
                 .name = "TASK_TRACKER_URL",
-                .default_value = "http://task_tracker:8082",
+                .default_value = "http://localhost:8082",
                 .string_value = &_task_tracker_url,
             },
             Argument{

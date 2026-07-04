@@ -1,0 +1,18 @@
+name: build-images
+on:
+  [workflow_dispatch]
+
+jobs:
+  publish_bot_debug_ubuntu:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: build-image
+        run: docker build . \
+          --target runner-bot-debug \
+          --build-arg BUILDER_IMAGE=ubuntu:latest \
+          --build-arg RUNNER_IMAGE=ubuntu:latest
+          -t ghcr.io/kologermit/cpp-keber/bot:debug-ubuntu \
+      - name: publish-image
+        run: docker push ghcr.io/kologermit/cpp-keber/bot:debug-ubuntu

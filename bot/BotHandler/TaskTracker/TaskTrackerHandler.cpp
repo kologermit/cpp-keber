@@ -109,9 +109,13 @@ namespace Bot::BotHandler::TaskTracker {
 
         static const set<string> task_buttons{
             TODAY_WORD,
+            TODAY_FILTER_WORD,
             TOMORROW_WORD,
+            TOMORROW_FILTER_WORD,
             NEXT_2_DAYS_WORD,
+            NEXT_2_DAYS_FILTER_WORD,
             NEXT_3_DAYS_WORD,
+            NEXT_3_DAYS_FILTER_WORD,
         };
 
         if (task_buttons.contains(ctx->message->text)) {
@@ -208,9 +212,9 @@ namespace Bot::BotHandler::TaskTracker {
             23, 59, 59
         );
         start_at.add_days(
-            ctx->message->text == TOMORROW_WORD ? 1
-            : ctx->message->text == NEXT_2_DAYS_WORD ? 2
-            : ctx->message->text == NEXT_3_DAYS_WORD ? 3
+            ctx->message->text == TOMORROW_WORD || ctx->message->text == TOMORROW_FILTER_WORD ? 1
+            : ctx->message->text == NEXT_2_DAYS_WORD || ctx->message->text == NEXT_2_DAYS_FILTER_WORD ? 2
+            : ctx->message->text == NEXT_3_DAYS_WORD || ctx->message->text == NEXT_3_DAYS_FILTER_WORD ? 3
             : 0
         );
         optional<datetime> start_at_gte;

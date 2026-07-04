@@ -49,7 +49,7 @@ namespace Bot::BotHandler::Menu {
             return YouTubeHandler::to_youtube(ctx);
         }
 
-        if (ctx->message->text == TASK_TRACKER_WORD) {
+        if (ctx->message->text == TASK_TRACKER_WORD || ctx->message->text == TASK_TRACKER_FILTER_WORD) {
             return TaskTrackerHandler::to_task_tracker(ctx);
         }
 

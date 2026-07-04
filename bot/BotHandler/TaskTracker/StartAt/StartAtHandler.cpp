@@ -38,9 +38,9 @@ namespace Bot::BotHandler::TaskTracker::StartAt {
         }
 
         datetime start_at;
-        if (ctx->message->text == TOMORROW_WORD) {
+        if (ctx->message->text == TOMORROW_WORD || ctx->message->text == TOMORROW_FILTER_WORD) {
             start_at.add_days(1);
-        } else if (ctx->message->text != TODAY_WORD) {
+        } else if (ctx->message->text != TODAY_WORD && ctx->message->text != TODAY_FILTER_WORD) {
             try {
                 start_at = datetime::parse(DATE_FORMAT, ctx->message->text);
             } catch (const exception&) {

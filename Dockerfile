@@ -14,7 +14,7 @@ RUN if command -v apt &> /dev/null; then \
         addgroup -g ${GROUP_ID} runner && \
         adduser -u ${USER_ID} -G runner -D -s /bin/bash runner && \
         apk update && \
-        apk add --no-cache postgresql-libs openssl; \
+        apk add --no-cache postgresql-libs openssl libstdc++; \
     else \
         echo "Unsupported package manager" >&2 && \
         exit 1; \

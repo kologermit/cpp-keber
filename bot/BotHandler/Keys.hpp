@@ -17,6 +17,7 @@ namespace Bot::BotHandler {
     constexpr const char* FULL_WORD = "👑Полные";
     constexpr const char* YOUTUBE_WORD = "🎥Ютуб";
     constexpr const char* TASK_TRACKER_WORD = "🎯Задачи";
+    constexpr const char* TASK_TRACKER_FILTER_WORD = "Задачи";
     constexpr const char* DOCKER_WORD = "🐋Докер";
     constexpr const char* SERVER_WORD = "🖥️Сервер";
     constexpr const char* ADD_WORD = "➕Добавить";
@@ -29,10 +30,15 @@ namespace Bot::BotHandler {
     constexpr const char* VIDEO_PLAYLIST_WORD = "▶️🎬Видео-Плейлист";
 
     constexpr const char* TODAY_WORD = "🗓️Сегодня";
+    constexpr const char* TODAY_FILTER_WORD = "Сегодня";
     constexpr const char* TOMORROW_WORD = "🗓️Завтра";
+    constexpr const char* TOMORROW_FILTER_WORD = "Завтра";
     constexpr const char* NEXT_2_DAYS_WORD = "🗓️Через 2 дня";
+    constexpr const char* NEXT_2_DAYS_FILTER_WORD = "Через 2 дня";
     constexpr const char* NEXT_3_DAYS_WORD = "🗓️Через 3 дня";
+    constexpr const char* NEXT_3_DAYS_FILTER_WORD = "Через 3 дня";
     constexpr const char* STATISTIC_WORD = "📊Статистика";
+    constexpr const char* STATISTIC_FILTER_WORD = "Статистика";
     constexpr const char* NEW_SYMBOL = "🆕";
     constexpr const char* IN_WORK_SYMBOL = "🛠️";
     constexpr const char* COMPLETE_SYMBOL = "√";
