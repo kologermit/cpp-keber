@@ -12,8 +12,8 @@ jobs:
         run: |
           docker build . --target runner-bot-debug --build-arg BUILDER_IMAGE=ubuntu:latest --build-arg RUNNER_IMAGE=ubuntu:latest -t ghcr.io/kologermit/cpp-keber/bot:debug-ubuntu
           docker build . --target runner-bot-release --build-arg BUILDER_IMAGE=ubuntu:latest --build-arg RUNNER_IMAGE=ubuntu:latest -t ghcr.io/kologermit/cpp-keber/bot:release-ubuntu
-          docker build . --target runner-bot-debug --build-arg BUILDER_IMAGE=alpine:latest --build-arg RUNNER_IMAGE=ubuntu:latest -t ghcr.io/kologermit/cpp-keber/bot:debug-alpine
-          docker build . --target runner-bot-release --build-arg BUILDER_IMAGE=alpine:latest --build-arg RUNNER_IMAGE=ubuntu:latest -t ghcr.io/kologermit/cpp-keber/bot:release-alpine
+          docker build . --target runner-bot-debug --build-arg BUILDER_IMAGE=alpine:latest --build-arg RUNNER_IMAGE=alpine:latest -t ghcr.io/kologermit/cpp-keber/bot:debug-alpine
+          docker build . --target runner-bot-release --build-arg BUILDER_IMAGE=alpine:latest --build-arg RUNNER_IMAGE=alpine:latest -t ghcr.io/kologermit/cpp-keber/bot:release-alpine
       - name: publish-image
         run: |
           docker login --username kologermit --password ${{ secrets.GH_CONTAINER_REGISTRY_TOKEN }} ghcr.io
