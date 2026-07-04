@@ -15,4 +15,6 @@ jobs:
           --build-arg RUNNER_IMAGE=ubuntu:latest |
           -t ghcr.io/kologermit/cpp-keber/bot:debug-ubuntu
       - name: publish-image
-        run: docker push ghcr.io/kologermit/cpp-keber/bot:debug-ubuntu
+        run: |
+          docker login --username kologermit --password ${{ secrets.GH_CONTAINER_REGISTRY_TOKEN }}
+          docker push ghcr.io/kologermit/cpp-keber/bot:debug-ubuntu
