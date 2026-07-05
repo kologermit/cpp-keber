@@ -30,6 +30,7 @@ namespace Bot::BotHandler::Menu {
         static const set<string> words{
             ACCESS_WORD,
             TASK_TRACKER_WORD,
+            TASK_TRACKER_FILTER_WORD,
             YOUTUBE_WORD,
             DOCKER_WORD,
             SERVER_WORD,
