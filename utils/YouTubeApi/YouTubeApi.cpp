@@ -12,6 +12,7 @@ namespace Utils::YouTubeApi {
     using httplib::Client;
     using httplib::Params;
     using httplib::Error;
+    using httplib::Headers;
     using nlohmann::json;
     using std::runtime_error;
     using std::nullopt;
@@ -31,7 +32,7 @@ namespace Utils::YouTubeApi {
         Client clt(youtube_api_url.data());
         Params params{{"url", url.data()}};
 
-        auto result = clt.Get(request_url.data(), params, {});
+        auto result = clt.Get(request_url.data(), params, Headers{});
 
         #ifndef NDEBUG
         get_logger()->debug("YouTubeApi::send_request::url", url, __FILE__, __LINE__);

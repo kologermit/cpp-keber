@@ -9,6 +9,7 @@ namespace Utils::TaskTrackerApi {
     using nlohmann::json;
     using httplib::Result;
     using httplib::Params;
+    using httplib::Headers;
     using Utils::Api::throw_by_status_or_error;
     using Utils::Api::DELETED_AT_KEY;
 
@@ -78,7 +79,7 @@ namespace Utils::TaskTrackerApi {
                 query_params.insert({key, value->value().to_string(DATETIME_FORMAT)});
             }
         }
-        const Result result = _client.Get(path, query_params, {});
+        const Result result = _client.Get(path, query_params, Headers{});
         throw_by_status_or_error(_base_url, path, result);
         json body = json::parse(result->body);
         unique_ptr<vector<Task>> return_result = make_unique<vector<Task>>();
