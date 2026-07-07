@@ -7,7 +7,7 @@ services:
   bot:
     extends:
       file: ./parents.yml
-      service: custom_service
+      service: custom-service
     build:
       target: runner-bot-${PROJECT_BUILD}
     ports:
@@ -36,7 +36,7 @@ services:
       - RABBITMQ_VHOST=${RABBITMQ_VHOST}
       - LISTEN_IP=0.0.0.0
       - LISTEN_PORT=8080
-      - YOUTUBE_API_URL=http://youtube_api:8080
+      - YOUTUBE_API_URL=http://youtube-api:8080
       - TMP_PATH=/volumes/tmp
       - LOGS_PATH=/volumes/logs
       - SHARED_PATH=/shared/

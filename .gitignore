@@ -1,9 +1,7 @@
 *
 !bot
 !task_tracker
-!Caddyfile
 !CMakeLists.txt
-!conanfile.py
 !Dockerfile
 !.env.example
 !.gitignore
@@ -17,8 +15,4 @@
 !utils
 !youtube_api
 !docker
-!cmake
-!Debug-conanprofile
-!Release-conanprofile
 !.github
-!recipes

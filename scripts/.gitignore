@@ -2,4 +2,5 @@
 !.gitignore
 !deps.json
 !build.json
-!test_code.json
+!test-code.json
+!youtube-api.json

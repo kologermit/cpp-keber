@@ -5,7 +5,7 @@ services:
   task-tracker:
     extends:
       file: ./parents.yml
-      service: custom_service
+      service: custom-service
     build:
       target: runner-task-tracker-${PROJECT_BUILD}
     ports:

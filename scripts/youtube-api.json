@@ -1,0 +1,22 @@
+{
+    "login-oauth-in-container": {
+        "scripts": [
+            "docker compose exec youtube-api /venv/venv/bin/python3 /app/utils/Python/oauth_login.py"
+        ]
+    },
+    "login-oauth-in-venv": {
+        "scripts": [
+            "./venv/bin/python3 ./utils/Python/oauth_login.py"
+        ]
+    },
+    "clear-oauth-cache-container": {
+        "scripts": [
+            "docker compose exec youtube-api /venv/venv/bin/python3 -c 'from pytubefix.helpers import reset_cache; reset_cache()'"
+        ]
+    },
+    "clear-oauth-cache-venv": {
+        "scripts": [
+            "./venv/bin/python3 -c 'from pytubefix.helpers import reset_cache; reset_cache()'"
+        ]
+    }
+}

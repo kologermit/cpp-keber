@@ -1,5 +1,6 @@
 ARG RUNNER_IMAGE=ubuntu:latest
 ARG BUILDER_IMAGE=ubuntu:latest
+ARG PYTHON_RUNNER_IMAGE=python:3
 
 FROM ${RUNNER_IMAGE} AS base-runner
 ARG USER_ID=1001
@@ -86,3 +87,28 @@ COPY --from=build-task-tracker-release /src/build/Release/TASK_TRACKER /app
 
 FROM base-runner AS runner-task-tracker-debug
 COPY --from=build-task-tracker-debug /src/build/Debug/TASK_TRACKER /app
+
+
+FROM ${PYTHON_RUNNER_IMAGE} AS base-python-runner
+ARG USER_ID=1001
+ARG GROUP_ID=1001
+WORKDIR /app
+RUN if command -v groupadd &> /dev/null; then \
+        groupadd -g ${GROUP_ID} runner && useradd -u ${USER_ID} -g runner -m -s /bin/bash runner; \
+    elif command -v addgroup &> /dev/null; then \
+        addgroup -g ${GROUP_ID} runner && adduser -u ${USER_ID} -G runner -D -s /bin/bash runner; \
+    else \
+        echo "Unsupported user management" >&2 && exit 1; \
+    fi \
+    && touch /env.json && mkdir -p /volumes/logs /venv \
+    && chown runner:runner /volumes/logs /venv /env.json \
+    && chmod 755 /volumes/logs /venv /env.json
+ENTRYPOINT ["/venv/venv/bin/python3", "main.py"]
+
+FROM base-python-runner AS runner-youtube-api
+COPY ./youtube_api/requirements.txt /app/requirements.txt
+RUN su - runner -s /bin/sh -c "python3 -m venv /venv/venv" \
+    && su - runner -s /bin/sh -c "/venv/venv/bin/pip install --upgrade pip" \
+    && su - runner -s /bin/sh -c "/venv/venv/bin/pip install -r /app/requirements.txt"
+COPY ./youtube_api /app
+COPY ./utils/Python /app/utils/Python

@@ -1,0 +1,24 @@
+volumes:
+  youtube-api-logs:
+
+services:
+  youtube-api:
+    extends:
+      file: ./parents.yml
+      service: custom-service
+    build:
+      target: runner-youtube-api
+    volumes:
+      - youtube-api-logs:/volumes/logs
+    environment:
+      - LOGS_DIR=/volumes/logs
+      - BOT_URL=http://bot:8080
+      - BOT_ADMINS=${BOT_ADMINS}
+      - AUTH_KEY=${AUTH_KEY}
+      - LISTEN_IP=0.0.0.0
+      - LISTEN_PORT=8080
+      - TEST_YOUTUBE_VIDEO=${YOUTUBE_API_TEST_YOUTUBE_VIDEO}
+      - USE_OAUTH=${USE_OAUTH}
+    ports:
+      - ${YOUTUBE_API_EXTERNAL_PORT}:8080
+        

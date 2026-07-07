@@ -11,8 +11,9 @@ LOGS_DIR = 'LOGS_DIR'
 TMP_DIR = 'TMP_DIR'
 FILE_BUFFER_DIR = 'FILE_BUFFER_DIR'
 BOT_URL = 'BOT_URL'
+BOT_ADMINS: list[int] = 'BOT_ADMINS'
 LISTEN_IP = 'LISTEN_IP'
-LISTEN_PORT = 'LISTEN_PORT'
+LISTEN_PORT: int = 'LISTEN_PORT'
 DB_HOST = 'DB_HOST'
 DB_PORT = 'DB_PORT'
 DB_NAME = 'DB_NAME'
@@ -25,12 +26,9 @@ RABBITMQ_PASS = 'RABBITMQ_PASS'
 RABBITMQ_VHOST = 'RABBITMQ_VHOST'
 DOWNLOADER_QUEUE_NAME = 'DOWNLOADER_QUEUE_NAME'
 MERGER_QUEUE_NAME = 'MERGER_QUEUE_NAME'
-GOOGLE_EMAIL = 'GOOGLE_EMAIL'
-GOOGLE_PASSWORD = 'GOOGLE_PASSWORD'
-SELENIUM_HOST = 'SELENIUM_HOST'
-SELENIUM_PAGE_LOAD_TIME: int = 'SELENIUM_PAGE_LOAD_TIME'
 TEST_YOUTUBE_VIDEO = 'TEST_YOUTUBE_VIDEO'
 USE_OAUTH: bool = 'USE_OAUTH'
+AUTH_KEY = 'AUTH_KEY'
 
 default_config = {
     LOGS_DIR: {
@@ -51,13 +49,23 @@ default_config = {
         summary: 'Ссылка на АПИ бота. По умолчанию http://localhost:8080',
         default: 'http://localhost:8080',
     },
+    BOT_ADMINS: { # type: ignore
+        summary: 'Список tg-id админов дял рассылки системных уведомлений. По умолчанию []',
+        default: '[]',
+        json: True,
+    },
+    AUTH_KEY: {
+        summary: 'Ключ авторизации для сервисов. По умолчанию ""',
+        default: 'qwerty',
+    },
     LISTEN_IP: {
         summary: 'Прослушиваемый IP. По умолчанию 0.0.0.0',
         default: '0.0.0.0'
     },
     LISTEN_PORT: {
         summary: 'Прослушиваемый порт. По умолчанию 8080',
-        default: '8080'
+        default: '8080',
+        json: True,
     },
     DB_HOST: {
         summary: 'Хост БД Postgres. По умолчанию localhost', 
@@ -108,21 +116,6 @@ default_config = {
     MERGER_QUEUE_NAME: {
         summary: 'Очередь объединения. По умолчанию merger',
         default: 'merger'
-    },
-    GOOGLE_EMAIL: {
-        summary: 'Гугл-почта для активации через selenium',
-    },
-    GOOGLE_PASSWORD: {
-        summary: 'Пароль от гугл-почты',
-    },
-    SELENIUM_HOST: {
-        summary: 'Хост от селениума. По умолчанию http://localhost:4444/wd/hub',
-        default: 'http://localhost:4444/wd/hub'
-    },
-    SELENIUM_PAGE_LOAD_TIME: {
-        summary: 'Время в секундах для загрузки страницы в селениум. По умолчанию 10',
-        json: True,
-        default: '10'
     },
     TEST_YOUTUBE_VIDEO: {
         summary: 'Видео для проверки доступа к Ютубу. По умолчанию https://www.youtube.com/watch?v=jiT2Mak9AzI',

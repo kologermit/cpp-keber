@@ -8,3 +8,5 @@
 !types.py
 !bot_api.py
 !entrypoint.sh
+!check_oauth.py
+!oauth_login.py

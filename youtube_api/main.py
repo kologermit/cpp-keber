@@ -7,16 +7,16 @@ from config import (
     LOGS_DIR, 
     LISTEN_IP, 
     LISTEN_PORT, 
-    PROJECT_NAME, 
-    GOOGLE_PASSWORD, 
-    GOOGLE_EMAIL, 
-    SELENIUM_PAGE_LOAD_TIME, 
-    SELENIUM_HOST, 
+    PROJECT_NAME,
     TEST_YOUTUBE_VIDEO,
     USE_OAUTH,
+    BOT_URL,
+    BOT_ADMINS,
+    AUTH_KEY,
 )
 from utils.Python.logger import init as init_logger, logger, log_err_with_code
-from utils.Python.pythubefix_settings import init as init_pytubefix
+from utils.Python.bot_api import BotAPI
+from utils.Python.check_oauth import is_logined
 
 # Внешние модули
 from bottle import route, run, response, request
@@ -48,7 +48,7 @@ def get_video_dict(url: str, use_oauth: bool) -> dict:
         'video_id': v.video_id,
         'video_url': v.watch_url,
         'thumbnail_url': v.thumbnail_url,
-        'year': v.publish_date.year,
+        'year': v.publish_date.year if v.publish_date is not None else None,
         'channel_url': v.channel_url,
     }
 
@@ -77,7 +77,7 @@ def get_playlist_dict(url: str, use_oauth: bool) -> dict:
 @middleware
 def video():
     try:
-        url = YouTube(dict(request.query)["url"]).watch_url
+        url = YouTube(dict(request.query)["url"]).watch_url # type: ignore
         v = get_video_dict(url, USE_OAUTH)
     except (RegexMatchError, KeyError):
         return generate_json_response({'message': 'Video not found'}, 400)
@@ -92,26 +92,32 @@ def video():
 @middleware
 def playlist():
     try:
-        url = Playlist(dict(request.query)["url"]).playlist_url
+        url = Playlist(dict(request.query)["url"]).playlist_url # type: ignore
         p = get_playlist_dict(url, USE_OAUTH)
     except (RegexMatchError, KeyError):
         return generate_json_response({'message': 'Playlist not found'}, 400)
-    return generate_json_response({
-        'playlist': p
-    })
+    return generate_json_response({'playlist': p})
+
+@route('/health')
+@middleware
+def health():
+    return generate_json_response({'status': 'active'})
 
 def main():
     init_logger(LOGS_DIR)
-    init_pytubefix(
-        GOOGLE_EMAIL, 
-        GOOGLE_PASSWORD, 
-        SELENIUM_HOST, 
-        SELENIUM_PAGE_LOAD_TIME,
-        TEST_YOUTUBE_VIDEO,
-        USE_OAUTH
-    )
+    bot = BotAPI(BOT_URL, AUTH_KEY, BOT_ADMINS)
+    bot.send_message_to_admins('START SERVICE YOUTUBE API')
+    if not is_logined(TEST_YOUTUBE_VIDEO, USE_OAUTH):
+        bot.send_message_to_admins('SERVICE YOUTUBE API: oauth not logged in. Logging in and reload program')
+        logger.warning({'event': 'OAUTH_NOT_LOGGED_IN', 'message': 'YouTube OAuth is not logged in. Logging in and reload program'})
+        try:
+            while True:
+                pass
+        except KeyboardInterrupt:
+            return 0
     logger.info({'event': 'START_SERVICE', 'service': {PROJECT_NAME}, 'listen': f'{LISTEN_IP}:{LISTEN_PORT}'})
     run(host=LISTEN_IP, port=LISTEN_PORT)
+    return 0
 
 if __name__ == '__main__':
-    main()
+    exit(main())

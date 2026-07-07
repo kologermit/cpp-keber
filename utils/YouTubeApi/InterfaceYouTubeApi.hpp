@@ -9,6 +9,7 @@ namespace Utils::YouTubeApi {
 
     using std::string;
     using std::string_view;
+    using std::optional;
     using std::unique_ptr;
     using std::shared_ptr;
     using std::vector;
@@ -19,7 +20,7 @@ namespace Utils::YouTubeApi {
         const string video_id;
         const string video_url;
         const string thumbnail_url;
-        const int year;
+        const optional<int> year;
     };
 
     struct Channel {

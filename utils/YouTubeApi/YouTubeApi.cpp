@@ -14,6 +14,8 @@ namespace Utils::YouTubeApi {
     using httplib::Error;
     using nlohmann::json;
     using std::runtime_error;
+    using std::nullopt;
+    using std::optional;
     using std::to_string;
     using std::make_unique;
 
@@ -68,7 +70,7 @@ namespace Utils::YouTubeApi {
                 .video_id = json_video["video_id"],
                 .video_url = json_video["video_url"],
                 .thumbnail_url = json_video["thumbnail_url"],
-                .year = json_video["year"]
+                .year = json_video["year"].is_null() ? nullopt : optional<int>(json_video["year"].get<int>()),
             },
             Channel{
                 .channel_id = json_channel["channel_id"],

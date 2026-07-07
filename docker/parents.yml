@@ -29,7 +29,7 @@ services:
     networks:
       - default
       
-  custom_service:
+  custom-service:
     extends:
       file: ./parents.yml
       service: parent
@@ -39,4 +39,5 @@ services:
       args:
         - RUNNER_IMAGE=${RUNNER_IMAGE}
         - BUILDER_IMAGE=${BUILDER_IMAGE}
+        - PYTHON_RUNNER_IMAGE=${PYTHON_RUNNER_IMAGE}
     user: runner
