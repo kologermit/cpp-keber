@@ -46,8 +46,8 @@ jobs:
         uses: actions/checkout@v4
       - name: build-images
         run: |
-          docker build . --target runner-youtube-api --build-arg PYTHON_RUNNER_IMAGE=ubuntu:latest -t ghcr.io/kologermit/cpp-keber/youtube-api:ubuntu
-          docker build . --target runner-youtube-api --build-arg PYTHON_RUNNER_IMAGE=alpine:latest -t ghcr.io/kologermit/cpp-keber/youtube-api:alpine
+          docker build . --target runner-youtube-api --build-arg PYTHON_RUNNER_IMAGE=python:3 -t ghcr.io/kologermit/cpp-keber/youtube-api:ubuntu
+          docker build . --target runner-youtube-api --build-arg PYTHON_RUNNER_IMAGE=alpine:alpine -t ghcr.io/kologermit/cpp-keber/youtube-api:alpine
       - name: publish-image
         run: |
           docker login --username kologermit --password ${{ secrets.GH_CONTAINER_REGISTRY_TOKEN }} ghcr.io
