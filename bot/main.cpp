@@ -18,45 +18,47 @@
 #include <bot/Entity/User/UserRepository.hpp>
 #include <bot/Entity/YouTubeAudioSetting/YouTubeAudioSettingRepository.hpp>
 
-using std::map;
-using std::shared_ptr;
-using std::make_shared;
-using std::make_unique;
-using std::to_string;
-using pqxx::connection;
-using Utils::Random::init_random;
-using Utils::Logger::get_logger;
-using Utils::Logger::Logger;
-using Utils::Logger::InterfaceLogger;
-using TGBot = Utils::TGBotApi::Bot::Bot;
-using Utils::YouTubeApi::YouTubeApi;
-using Utils::TaskTrackerApi::TaskTrackerApi;
-using Utils::HTTPServer::Server::InterfaceServer;
-using Utils::HTTPServer::Server::Server;
-using Utils::Postgres::create_connection;
-using Bot::Config::InterfaceConfig;
-using Bot::Config::Config;
-using Bot::MinimalTask;
-using Bot::GlobalContext;
-using Bot::DBContext;
-using Bot::ApiContext;
-using Bot::HTTPHandler::HandlerContext;
-using Bot::HTTPHandler::init_server;
-using Bot::Entity::Access::AccessRepository;
-using Bot::Entity::Callback::CallbackRepository;
-using Bot::Entity::Chat::ChatRepository;
-using Bot::Entity::Message::MessageRepository;
-using Bot::Entity::User::UserRepository;
-using Bot::Entity::YouTubeAudioSetting::YouTubeAudioSettingRepository;
-
-shared_ptr<Server<GlobalContext, HandlerContext>> server;
+std::shared_ptr<Utils::HTTPServer::Server::InterfaceServer
+    <Bot::GlobalContext, Bot::HTTPHandler::HandlerContext>> server;
 
 void signal_handler(const int signal) {
+    using Utils::Logger::get_logger;
+    using std::to_string;
     get_logger()->info("SIGNAL", to_string(signal), __FILE__, __LINE__);
     server->stop();
 }
 
 int main(int argc, const char* argv[]) {
+    using std::map;
+    using std::shared_ptr;
+    using std::make_shared;
+    using std::make_unique;
+    using std::to_string;
+    using pqxx::connection;
+    using Utils::Random::init_random;
+    using Utils::Logger::get_logger;
+    using Utils::Logger::Logger;
+    using Utils::Logger::InterfaceLogger;
+    using TGBot = Utils::TGBotApi::Bot::Bot;
+    using Utils::YouTubeApi::YouTubeApi;
+    using Utils::TaskTrackerApi::TaskTrackerApi;
+    using Utils::HTTPServer::Server::Server;
+    using Utils::Postgres::create_connection;
+    using Bot::Config::InterfaceConfig;
+    using Bot::Config::Config;
+    using Bot::MinimalTask;
+    using Bot::GlobalContext;
+    using Bot::DBContext;
+    using Bot::ApiContext;
+    using Bot::HTTPHandler::HandlerContext;
+    using Bot::HTTPHandler::init_server;
+    using Bot::Entity::Access::AccessRepository;
+    using Bot::Entity::Callback::CallbackRepository;
+    using Bot::Entity::Chat::ChatRepository;
+    using Bot::Entity::Message::MessageRepository;
+    using Bot::Entity::User::UserRepository;
+    using Bot::Entity::YouTubeAudioSetting::YouTubeAudioSettingRepository;
+
     init_random();
 
     const shared_ptr<InterfaceConfig> config = make_shared<Config>(argc, argv);
@@ -90,7 +92,7 @@ int main(int argc, const char* argv[]) {
         }
     );
 
-    server = make_shared<Server<GlobalContext, HandlerContext>>(
+    server = make_shared<Server<GlobalContext, HandlerContext> >(
         global_context,
         config->get_listen_ip(),
         static_cast<int>(config->get_listen_port())

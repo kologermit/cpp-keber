@@ -29,21 +29,11 @@ namespace Bot::BotHandler::YouTube::Media {
     }
 
     ptrMessage MediaCallbackHandler::handle(shared_ptr<BotHandlerContext> ctx) {
-        auto queue = get_downloader_queue(ctx->config);
         ctx->bot->answer_callback_query(ctx->callback->id);
         ctx->bot->delete_message(ctx->chat->id, ctx->message->id);
         return ctx->bot->send_message({
             .chat_id = ctx->chat->id,
-            .text = (
-                queue->publish_message({
-                    {DATA_KEY, json::parse(ctx->callback->data)},
-                    {TEXT_KEY, ctx->message->text},
-                    {CHAT_ID_KEY, ctx->chat->id},
-                    {USER_ID_KEY, ctx->user->id},
-                })
-                ? ADD_TO_QUEUE_PHRASE
-                : FAILED_TO_ADD_TO_QUEUE_PHRASE
-            ),
+            .text = IN_DEVELOP_PHRASE,
             .reply_message_id = ctx->message->reply_message_id
         });
     }

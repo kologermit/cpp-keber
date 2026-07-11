@@ -36,35 +36,6 @@ namespace Bot::BotHandler::YouTube {
         });
     }
 
-    shared_ptr<Queue> get_downloader_queue(shared_ptr<InterfaceConfig> config) {
-        static shared_ptr<Queue> downloader = nullptr;
-
-        if (downloader == nullptr) {
-            downloader = make_shared<Queue>(
-                config->get_downloader_queue_name(),
-                config->get_rabbit_mq_vhost(),
-                config->get_rabbit_mq_user(),
-                config->get_rabbit_mq_password(),
-                config->get_rabbit_mq_host(),
-                config->get_rabbit_mq_port()
-            );
-        }
-
-        if (!downloader->exists()) {
-            if (!downloader->declare()) {
-                throw runtime_error(
-                    fmt::format(
-                        fmt::runtime("Failed to declare queue {}"),
-                        config->get_downloader_queue_name()
-                    )
-                );
-            }
-        }
-
-        return downloader;
-    }
-
-
     const string& YouTubeHandler::get_name() const noexcept {
         static const string name = "YouTubeHandler";
         return name;

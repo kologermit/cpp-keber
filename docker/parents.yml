@@ -1,5 +1,5 @@
 services:
-  parent:
+  parent-without-network:
     restart: ${CONTAINER_RESTART}
     stop_signal: SIGINT
     cap_drop:
@@ -26,8 +26,13 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
-    networks:
-      - default
+
+  parent:
+    extends:
+      file: ./parents.yml
+      service: parent-without-network
+  networks:
+    - default
       
   custom-service:
     extends:

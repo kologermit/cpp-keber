@@ -51,12 +51,13 @@ namespace Bot::BotHandler::TaskTracker::StartAt {
                 });
             }
         }
-        ctx->global_ctx->task_tracker_cache->operator[](ctx->user->id).start_at = start_at;
+        auto& minimal_task = ctx->global_ctx->task_tracker_cache->operator[](ctx->user->id);
+        minimal_task.start_at = start_at;
         const unique_ptr<Task> new_task = ctx->global_ctx->api->task_tracker->post_task(
             ctx->user->id,
-            ctx->global_ctx->task_tracker_cache->operator[](ctx->user->id).title,
-            ctx->global_ctx->task_tracker_cache->operator[](ctx->user->id).description,
-            ctx->global_ctx->task_tracker_cache->operator[](ctx->user->id).start_at
+            minimal_task.title,
+            minimal_task.description,
+            minimal_task.start_at
         );
         ctx->global_ctx->task_tracker_cache->erase(ctx->user->id);
         return TaskTrackerHandler::to_task_tracker(ctx, fmt::format(

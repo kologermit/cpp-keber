@@ -258,6 +258,7 @@ namespace Bot::BotHandler::TaskTracker {
         }
         static const size_t minimal_aligment = 3;
         static const vector<pair<const char*, Style>> inline_buttons{
+            {NEW_SYMBOL, Style::WHITE},
             {IN_WORK_SYMBOL, Style::BLUE},
             {COMPLETE_SYMBOL, Style::GREEN},
             {DELETED_SYMBOL, Style::RED},
@@ -271,6 +272,12 @@ namespace Bot::BotHandler::TaskTracker {
             const Task& task = tasks[i];
             InlineLane button_lane;
             for (const auto& [inline_button, style] : inline_buttons) {
+                if (task.state == TaskState::IN_WORK && inline_button == IN_WORK_SYMBOL) {
+                    continue;
+                }
+                if (task.state == TaskState::NEW && inline_button == NEW_SYMBOL) {
+                    continue;
+                }
                 button_lane.push_back(make_shared<InlineButton>(inline_button, "", json{
                     TASK_TRACKER_CALLBACK_HANDLER_NAME,
                     inline_button,

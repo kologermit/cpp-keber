@@ -44,7 +44,7 @@ namespace Bot::BotHandler::TaskTracker::TaskCallback {
 
         unique_ptr<Task> new_task;
 
-        if (button == COMPLETE_SYMBOL || button == DELETED_SYMBOL || button == IN_WORK_SYMBOL) {
+        if (button == COMPLETE_SYMBOL || button == DELETED_SYMBOL || button == IN_WORK_SYMBOL || button == NEW_SYMBOL) {
             new_task = ctx->global_ctx->api->task_tracker->patch_task(
                 task->id,
                 task->user_id,
@@ -52,7 +52,8 @@ namespace Bot::BotHandler::TaskTracker::TaskCallback {
                 nullopt,
                 nullopt,
                 (
-                    button == COMPLETE_SYMBOL ? TaskState::COMPLETED 
+                    button == NEW_SYMBOL ? TaskState::NEW 
+                    : button == COMPLETE_SYMBOL ? TaskState::COMPLETED 
                     : button == DELETED_SYMBOL ? TaskState::DELETED
                     : TaskState::IN_WORK
                 )
