@@ -61,18 +61,23 @@ namespace TaskTracker::HTTPHandler::Task {
             switch (ctx->json_body->at(STATE_KEY).get<int>()) {
                 case TaskState::NEW:
                     task->in_work_at = nullopt;
-                    task->in_work_at = nullopt;
                     task->completed_at = nullopt;
                     task->deleted_at = nullopt;
                     break;
                 case TaskState::IN_WORK:
                     task->in_work_at = datetime{};
+                    task->completed_at = nullopt;
+                    task->deleted_at = nullopt;
                     break;
                 case TaskState::COMPLETED:
+                    task->in_work_at = nullopt;
                     task->completed_at = datetime{};
+                    task->deleted_at = nullopt;
                     break;
                 case TaskState::DELETED:
-                    ctx->db->task->del(task->id);
+                    task->in_work_at = nullopt;
+                    task->completed_at = nullopt;
+                    task->deleted_at = datetime{};
                     break;
                 default:;
             }

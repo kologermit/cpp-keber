@@ -203,62 +203,64 @@ namespace Bot::BotHandler::TaskTracker {
         });
     }
 
-    ptrMessage TaskTrackerHandler::send_tasks(ptrContext ctx) {
-        datetime now;
-        datetime start_at(
-            now.get_year(),
-            now.get_month(),
-            now.get_day(),
-            23, 59, 59
-        );
-        start_at.add_days(
-            ctx->message->text == TOMORROW_WORD || ctx->message->text == TOMORROW_FILTER_WORD ? 1
-            : ctx->message->text == NEXT_2_DAYS_WORD || ctx->message->text == NEXT_2_DAYS_FILTER_WORD ? 2
-            : ctx->message->text == NEXT_3_DAYS_WORD || ctx->message->text == NEXT_3_DAYS_FILTER_WORD ? 3
-            : 0
-        );
-        optional<datetime> start_at_gte;
-        if (ctx->message->text != TODAY_WORD) {
-            start_at_gte = datetime(
+    ptrMessage TaskTrackerHandler::send_tasks(ptrContext ctx, optional<vector<Task> > tasks) {
+        if (!tasks.has_value()) {
+            datetime now;
+            datetime start_at(
                 now.get_year(),
                 now.get_month(),
                 now.get_day(),
-                0, 0, 0
+                23, 59, 59
             );
-            start_at_gte->add_days(
-                ctx->message->text == TOMORROW_WORD ? 1
-                : ctx->message->text == NEXT_2_DAYS_WORD ? 2
-                : 3
-            );  
+            start_at.add_days(
+                ctx->message->text == TOMORROW_WORD || ctx->message->text == TOMORROW_FILTER_WORD ? 1
+                : ctx->message->text == NEXT_2_DAYS_WORD || ctx->message->text == NEXT_2_DAYS_FILTER_WORD ? 2
+                : ctx->message->text == NEXT_3_DAYS_WORD || ctx->message->text == NEXT_3_DAYS_FILTER_WORD ? 3
+                : 0
+            );
+            optional<datetime> start_at_gte;
+            if (ctx->message->text != TODAY_WORD) {
+                start_at_gte = datetime(
+                    now.get_year(),
+                    now.get_month(),
+                    now.get_day(),
+                    0, 0, 0
+                );
+                start_at_gte->add_days(
+                    ctx->message->text == TOMORROW_WORD ? 1
+                    : ctx->message->text == NEXT_2_DAYS_WORD ? 2
+                    : 3
+                );  
+            }
+            const unique_ptr<vector<Task>> new_tasks = ctx->global_ctx->api->task_tracker->get_tasks({
+                .user_id = ctx->user->id,
+                .start_at_gte = start_at_gte,
+                .start_at_lte = start_at,
+                .state = TaskState::NEW,
+            });
+            sort(new_tasks->begin(), new_tasks->end(), [](const Task& a, const Task& b) {
+                return a.title < b.title;
+            });
+            const unique_ptr<vector<Task>> in_work_tasks = ctx->global_ctx->api->task_tracker->get_tasks({
+                .user_id = ctx->user->id,
+                .start_at_gte = start_at_gte,
+                .start_at_lte = start_at,
+                .state = TaskState::IN_WORK,
+            });
+            sort(in_work_tasks->begin(), in_work_tasks->end(), [](const Task& a, const Task& b) {
+                return a.title < b.title;
+            });
+            tasks = *in_work_tasks;
+            tasks.value().insert(tasks.value().end(), new_tasks->begin(), new_tasks->end());
         }
-        const unique_ptr<vector<Task>> new_tasks = ctx->global_ctx->api->task_tracker->get_tasks({
-            .user_id = ctx->user->id,
-            .start_at_gte = start_at_gte,
-            .start_at_lte = start_at,
-            .state = TaskState::NEW,
-        });
-        sort(new_tasks->begin(), new_tasks->end(), [](const Task& a, const Task& b) {
-            return a.title < b.title;
-        });
-        const unique_ptr<vector<Task>> in_work_tasks = ctx->global_ctx->api->task_tracker->get_tasks({
-            .user_id = ctx->user->id,
-            .start_at_gte = start_at_gte,
-            .start_at_lte = start_at,
-            .state = TaskState::IN_WORK,
-        });
-        sort(in_work_tasks->begin(), in_work_tasks->end(), [](const Task& a, const Task& b) {
-            return a.title < b.title;
-        });
-        vector<Task> tasks(*in_work_tasks);
-        tasks.insert(tasks.end(), new_tasks->begin(), new_tasks->end());
         string result_text;
         long long max_id = -1;
-        for (const auto& task : tasks) {
+        for (const auto& task : *tasks) {
             max_id = max(max_id, task.id);
         }
         static const size_t minimal_aligment = 3;
         static const vector<pair<const char*, Style>> inline_buttons{
-            {NEW_SYMBOL, Style::WHITE},
+            {NEW_SYMBOL, Style::BLUE},
             {IN_WORK_SYMBOL, Style::BLUE},
             {COMPLETE_SYMBOL, Style::GREEN},
             {DELETED_SYMBOL, Style::RED},
@@ -268,8 +270,8 @@ namespace Bot::BotHandler::TaskTracker {
         };
         const size_t size_of_aligment = to_string(max_id).size() / minimal_aligment * minimal_aligment + minimal_aligment;
 
-        for (size_t i = 0; i < std::min(tasks.size(), size_t(15)); i++) {
-            const Task& task = tasks[i];
+        for (size_t i = 0; i < std::min(tasks.value().size(), size_t(15)); i++) {
+            const Task& task = tasks.value()[i];
             InlineLane button_lane;
             for (const auto& [inline_button, style] : inline_buttons) {
                 if (task.state == TaskState::IN_WORK && inline_button == IN_WORK_SYMBOL) {
@@ -308,7 +310,7 @@ namespace Bot::BotHandler::TaskTracker {
         if (result_text.empty()) {
             result_text = "<b>Задачи не найдены</b>";
         } else {
-            result_text = fmt::format("<b>Список задач:</b>\n{}\n<b>Всего задач: {}</b>", result_text, tasks.size());
+            result_text = fmt::format("<b>Список задач:</b>\n{}\n<b>Всего задач: {}</b>", result_text, tasks->size());
         }
         return ctx->bot->send_message({
             .chat_id = ctx->chat->id,

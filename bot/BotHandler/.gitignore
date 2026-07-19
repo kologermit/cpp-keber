@@ -10,5 +10,6 @@
 !InterfaceBotHandler.hpp
 !Keys.hpp
 !TaskTracker
+!Commands
 !list_handlers.hpp
 !list_handlers.cpp
