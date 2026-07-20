@@ -77,7 +77,7 @@ namespace TaskTracker::HTTPHandler::Task {
                 case TaskState::DELETED:
                     task->in_work_at = nullopt;
                     task->completed_at = nullopt;
-                    task->deleted_at = datetime{};
+                    ctx->db->task->del(task->id);
                     break;
                 default:;
             }
