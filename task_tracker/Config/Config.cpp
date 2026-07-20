@@ -1,14 +1,21 @@
 #include <task_tracker/Config/Config.hpp>
 #include <utils/Config/ConfigParser.hpp>
 #include <fmt/core.h>
+#include <stdexcept>
+#include <vector>
 
 namespace TaskTracker::Config {
     using Utils::Config::Argument;
     using Utils::Config::parse_config;
+    using Utils::Config::get_help_by_vector_arguments;
     using std::vector;
+    using std::invalid_argument;
+    using std::shared_ptr;
+    using std::exception;
+    using std::pair;
 
     Config::Config(const int argc, const char *argv[]) {
-        vector<Argument> arguments{
+        _arguments = vector<Argument>{
             Argument{
                 .name = "AUTH_KEY",
                 .default_value = "qwerty",
@@ -60,7 +67,9 @@ namespace TaskTracker::Config {
                 .string_value = &_bot_url,
             }
         };
-        _is_help = parse_config(argc, argv, arguments);
+        auto result = parse_config(argc, argv, _arguments);
+        _exception = result.first;
+        _is_help = result.second;
         _db_conn_url = fmt::format(
             "host={} port={} dbname={} user={} password={}",
             _db_host,
@@ -69,10 +78,21 @@ namespace TaskTracker::Config {
             _db_user,
             _db_password
         );
+        _help = get_help_by_vector_arguments("cpp-keber-task-tracker", _arguments);
     }
 
     bool Config::is_help() const noexcept {
         return _is_help;
+    }
+
+    const string& Config::get_help() const noexcept {
+        return _help;
+    }
+
+    void Config::throw_if_has_exception() const {
+        if (_exception != nullptr) {
+            throw *_exception;
+        }
     }
 
     const string& Config::get_auth_key() const noexcept {

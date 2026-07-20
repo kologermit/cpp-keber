@@ -1,5 +1,6 @@
 #include <memory>
 #include <csignal>
+#include <iostream>
 #include <pqxx/pqxx>
 #include <utils/Logger/Logger.hpp>
 #include <utils/HTTPServer/Server/Server.hpp>
@@ -17,6 +18,8 @@ using std::make_unique;
 using std::to_string;
 using std::runtime_error;
 using std::nullopt;
+using std::cout;
+using std::endl;
 using pqxx::connection;
 using Utils::Logger::get_logger;
 using Utils::Logger::Logger;
@@ -42,13 +45,13 @@ void signal_handler(const int signal) {
 
 int main(int argc, const char* argv[]) {
     const shared_ptr<InterfaceConfig> config = make_shared<Config>(argc, argv);
-    const shared_ptr<InterfaceLogger> logger = get_logger(make_unique<Logger>(config->get_logs_path()));
-
     if (config->is_help()) {
-        logger->info("HELP", "THIS IS TASK TRACKER SERVICE", __FILE__, __LINE__);
+        cout << config->get_help() << endl;
         return 0;
     }
+    config->throw_if_has_exception();
 
+    const shared_ptr<InterfaceLogger> logger = get_logger(make_unique<Logger>(config->get_logs_path()));
     auto db = create_connection(config->get_db_conn_url());
 
     const shared_ptr<GlobalContext> global_ctx = make_shared<GlobalContext>(

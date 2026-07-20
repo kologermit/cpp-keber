@@ -13,6 +13,8 @@ namespace Bot::Config {
         virtual ~InterfaceConfig() = default;
 
         virtual bool is_help() const noexcept = 0;
+        virtual void throw_if_has_exception() const = 0;
+        virtual const string& get_help() const noexcept = 0;
         virtual const string& get_telegram_api_url() const noexcept = 0;
         virtual const string& get_bot_token() const noexcept = 0;
         virtual const vector<long long>& get_bot_admins() const noexcept = 0;
@@ -27,11 +29,6 @@ namespace Bot::Config {
         virtual const string& get_db_user() const noexcept = 0;
         virtual const string& get_db_password() const noexcept = 0;
         virtual const string& get_db_conn_url() const noexcept = 0;
-        virtual const string& get_rabbit_mq_host() const noexcept = 0;
-        virtual long long get_rabbit_mq_port() const noexcept = 0;
-        virtual const string& get_rabbit_mq_vhost() const noexcept = 0;
-        virtual const string& get_rabbit_mq_user() const noexcept = 0;
-        virtual const string& get_rabbit_mq_password() const noexcept = 0;
         virtual const string& get_downloader_queue_name() const noexcept = 0;
         virtual const string& get_youtube_api_url() const noexcept = 0;
         virtual const string& get_task_tracker_url() const noexcept = 0;

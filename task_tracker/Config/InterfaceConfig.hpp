@@ -9,6 +9,8 @@ namespace TaskTracker::Config {
         virtual ~InterfaceConfig() = default;
 
         virtual bool is_help() const noexcept = 0;
+        virtual const string& get_help() const noexcept = 0;
+        virtual void throw_if_has_exception() const = 0;
         virtual const string&  get_auth_key() const noexcept = 0;
         virtual const string& get_db_host() const noexcept = 0;
         virtual long long get_db_port() const noexcept = 0;

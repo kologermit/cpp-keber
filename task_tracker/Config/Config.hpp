@@ -1,12 +1,24 @@
 #pragma once
 
 #include <task_tracker/Config/InterfaceConfig.hpp>
+#include <utils/Config/ConfigParser.hpp>
+#include <vector>
+#include <stdexcept>
+#include <memory>
 
 namespace TaskTracker::Config {
+
+    using std::vector;
+    using std::invalid_argument;
+    using std::shared_ptr;
+    using Utils::Config::Argument;
+
     struct Config final : InterfaceConfig {
         Config(const int argc, const char* argv[]);
 
         bool is_help() const noexcept override;
+        const string& get_help() const noexcept override;
+        void throw_if_has_exception() const override;
         const string& get_auth_key() const noexcept override;
         const string& get_db_host() const noexcept override;
         long long get_db_port() const noexcept override;
@@ -18,8 +30,12 @@ namespace TaskTracker::Config {
         long long get_listen_port() const noexcept override;
         const string& get_logs_path() const noexcept override;
         const string& get_bot_url() const noexcept override;
+
     private:
         bool _is_help;
+        string _help;
+        shared_ptr<invalid_argument> _exception = nullptr;
+        vector<Argument> _arguments;
         string _auth_key;
         string _db_host;
         long long _db_port;

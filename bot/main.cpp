@@ -1,6 +1,7 @@
 #include <memory>
 #include <csignal>
 #include <pqxx/pqxx>
+#include <iostream>
 #include <utils/Random/Random.hpp>
 #include <utils/Logger/Logger.hpp>
 #include <utils/TGBotApi/Bot/Bot.hpp>
@@ -34,6 +35,8 @@ int main(int argc, const char* argv[]) {
     using std::make_shared;
     using std::make_unique;
     using std::to_string;
+    using std::cout;
+    using std::endl;
     using pqxx::connection;
     using Utils::Random::init_random;
     using Utils::Logger::get_logger;
@@ -62,13 +65,13 @@ int main(int argc, const char* argv[]) {
     init_random();
 
     const shared_ptr<InterfaceConfig> config = make_shared<Config>(argc, argv);
-
-    const shared_ptr<InterfaceLogger> logger = get_logger(make_unique<Logger>(config->get_logs_path()));
     if (config->is_help()) {
-        logger->info("HELP", "THIS IS BOT SERVICE", __FILE__, __LINE__);
+        cout << config->get_help() << endl;
         return 0;
     }
+    config->throw_if_has_exception();
 
+    const shared_ptr<InterfaceLogger> logger = get_logger(make_unique<Logger>(config->get_logs_path()));
     auto db = create_connection(config->get_db_conn_url());
 
     const shared_ptr<GlobalContext> global_context = make_shared<GlobalContext>(

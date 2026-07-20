@@ -1,14 +1,28 @@
 #include <fmt/core.h>
 #include <utils/Config/ConfigParser.hpp>
 #include <bot/Config/Config.hpp>
+#include <vector>
+#include <memory>
+
+#ifndef NDEBUG
+#include <iostream>
+#endif
 
 namespace Bot::Config {
+    using std::make_shared;
     using std::invalid_argument;
+    using std::vector;
     using Utils::Config::parse_config;
     using Utils::Config::Argument;
+    using Utils::Config::get_help_by_vector_arguments;
+
+    #ifndef NDEBUG
+    using std::cout;
+    using std::endl;
+    #endif
 
     Config::Config(const int argc, const char *argv[]) {
-        vector<Argument> arguments{
+        _arguments = vector<Argument>{
             Argument{
                 .name = "TELEGRAM_API_URL",
                 .default_value = "https://api.telegram.org",
@@ -21,6 +35,7 @@ namespace Bot::Config {
             },
             Argument{
                 .name = "BOT_ADMINS",
+                .default_value = "[]",
                 .is_required = true,
                 .vector_long_long_value = & _bot_admins,
             },
@@ -75,31 +90,6 @@ namespace Bot::Config {
                 .string_value = &_db_password,
             },
             Argument{
-                .name = "RABBITMQ_HOST",
-                .default_value = "localhost",
-                .string_value = &_rabbit_mq_host,
-            },
-            Argument{
-                .name = "RABBITMQ_PORT",
-                .default_value = "15672",
-                .long_long_value = &_rabbit_mq_port,
-            },
-            Argument{
-                .name = "RABBITMQ_VHOST",
-                .default_value = "/",
-                .string_value = &_rabbit_mq_vhost,
-            },
-            Argument{
-                .name = "RABBITMQ_USER",
-                .default_value = "admin",
-                .string_value = &_rabbit_mq_user,
-            },
-            Argument{
-                .name = "RABBITMQ_PASSWORD",
-                .default_value = "qwerty",
-                .string_value = &_rabbit_mq_password,
-            },
-            Argument{
                 .name = "DOWNLOADER_QUEUE_NAME",
                 .default_value = "downloader",
                 .string_value = &_downloader_queue_name,
@@ -135,7 +125,10 @@ namespace Bot::Config {
                 .string_value = &_file_buffer_path,
             },
         };
-        _is_help = parse_config(argc, argv, arguments);
+        auto result = parse_config(argc, argv, _arguments);
+        _exception = result.first;
+        _is_help = result.second;
+        
         _db_conn_url = fmt::format(
             "host={} port={} dbname={} user={} password={}",
             _db_host,
@@ -145,8 +138,15 @@ namespace Bot::Config {
             _db_password
         );
 
-        if (_bot_admins.empty()) {
-            throw invalid_argument("BOT_ADMINS array is empty!");
+        if (_bot_admins.empty() && _exception != nullptr) {
+            _exception = make_shared<invalid_argument>("BOT_ADMINS array is empty!");
+        }
+        _help = get_help_by_vector_arguments("cpp-keber-bot", _arguments);
+    }
+    
+    void Config::throw_if_has_exception() const {
+        if (_exception != nullptr) {
+            throw *_exception;
         }
     }
 
@@ -154,7 +154,11 @@ namespace Bot::Config {
         return _is_help;
     }
 
-    const string &Config::get_telegram_api_url() const noexcept {
+    const string& Config::get_help() const noexcept {
+        return _help;
+    }
+
+    const string& Config::get_telegram_api_url() const noexcept {
         return _telegram_api_url;
     }
 
@@ -208,26 +212,6 @@ namespace Bot::Config {
 
     const string& Config::get_db_conn_url() const noexcept {
         return _db_conn_url;
-    }
-
-    const string& Config::get_rabbit_mq_host() const noexcept {
-        return _rabbit_mq_host;
-    }
-
-    long long Config::get_rabbit_mq_port() const noexcept {
-        return _rabbit_mq_port;
-    }
-
-    const string& Config::get_rabbit_mq_vhost() const noexcept {
-        return _rabbit_mq_vhost;
-    }
-
-    const string& Config::get_rabbit_mq_user() const noexcept {
-        return _rabbit_mq_user;
-    }
-
-    const string& Config::get_rabbit_mq_password() const noexcept {
-        return _rabbit_mq_password;
     }
 
     const string& Config::get_downloader_queue_name() const noexcept {
