@@ -32,6 +32,18 @@ namespace Bot::BotHandler::TaskTracker::StartAt {
             && ctx->global_ctx->task_tracker_cache->contains(ctx->user->id);
     }
 
+    ptrMessage StartAtHandler::send_new_task(ptrContext ctx, const Task& task) {
+        return TaskTrackerHandler::to_task_tracker(ctx, fmt::format(
+            "<b>{}Создана задача ({}):</b>\n\n<i>{}{}\n\n{}\n\n{}</i>",
+            SUCCESS_SYMBOL,
+            task.id,
+            task_state_to_symbol(task.state),
+            task.title,
+            task.description,
+            task.start_at.to_string(DATE_FORMAT)
+        ));
+    }
+
     ptrMessage StartAtHandler::handle(ptrContext ctx) {
         if (ctx->message->text == BACK_WORD) {
             return DescriptionHandler::to_task_description(ctx, false);
@@ -60,15 +72,7 @@ namespace Bot::BotHandler::TaskTracker::StartAt {
             minimal_task.start_at
         );
         ctx->global_ctx->task_tracker_cache->erase(ctx->user->id);
-        return TaskTrackerHandler::to_task_tracker(ctx, fmt::format(
-            "<b>{}Создана задача ({}):</b>\n\n<i>{}{}\n\n{}\n\n{}</i>",
-            SUCCESS_SYMBOL,
-            new_task->id,
-            task_state_to_symbol(new_task->state),
-            new_task->title,
-            new_task->description,
-            new_task->start_at.to_string(DATE_FORMAT)
-        ));
+        return StartAtHandler::send_new_task(ctx, *new_task);
     }
 
     ptrMessage StartAtHandler::to_task_start_at(ptrContext ctx, bool save_start_at) {

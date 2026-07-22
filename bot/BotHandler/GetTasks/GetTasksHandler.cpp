@@ -1,4 +1,4 @@
-#include <bot/BotHandler/Commands/GetTasks/GetTasksHandler.hpp>
+#include <bot/BotHandler/GetTasks/GetTasksHandler.hpp>
 #include <bot/BotHandler/TaskTracker/TaskTrackerHandler.hpp>
 #include <algorithm>
 #include <vector>
@@ -11,7 +11,7 @@
 #include <utils/String/String.hpp>
 #include <utils/TaskTrackerApi/TaskTrackerApi.hpp>
 
-namespace Bot::BotHandler::Commands::GetTasks {
+namespace Bot::BotHandler::GetTasks {
     using std::count;
     using std::vector;
     using std::unique_ptr;

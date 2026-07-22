@@ -14,7 +14,8 @@
 #include <bot/BotHandler/TaskTracker/Description/DescriptionHandler.hpp>
 #include <bot/BotHandler/TaskTracker/StartAt/StartAtHandler.hpp>
 #include <bot/BotHandler/TaskTracker/TaskCallback/TaskCallbackHandler.hpp>
-#include <bot/BotHandler/Commands/GetTasks/GetTasksHandler.hpp>
+#include <bot/BotHandler/GetTasks/GetTasksHandler.hpp>
+#include <bot/BotHandler/NewTask/NewTaskHandler.hpp>
 
 
 namespace Bot::BotHandler {
@@ -35,12 +36,14 @@ namespace Bot::BotHandler {
     using Bot::BotHandler::TaskTracker::Description::DescriptionHandler;
     using Bot::BotHandler::TaskTracker::StartAt::StartAtHandler;
     using Bot::BotHandler::TaskTracker::TaskCallback::TaskCallbackHandler;
-    using Bot::BotHandler::Commands::GetTasks::GetTasksHandler;
+    using Bot::BotHandler::GetTasks::GetTasksHandler;
+    using Bot::BotHandler::NewTask::NewTaskHandler;
 
     const vector<shared_ptr<InterfaceBotHandler> >& get_list_bot_handlers() {
         static const vector<shared_ptr<InterfaceBotHandler> > list_bot_handlers{
             make_shared<DiceHandler>(),
             make_shared<GetTasksHandler>(),
+            make_shared<NewTaskHandler>(),
             make_shared<StartHandler>(),
             make_shared<MenuHandler>(),
             make_shared<TaskTrackerHandler>(),

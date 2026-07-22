@@ -1,6 +1,17 @@
 #include <utils/String/String.hpp>
+#include <vector>
+#include <string>
+#include <string_view>
+#include <algorithm>
+
 
 namespace Utils::String {
+
+    using std::vector;
+    using std::string;
+    using std::string_view;
+    using std::max;
+
     vector<string> split(const string& text, string_view key) noexcept {
         vector<string> result;
         size_t start = 0;

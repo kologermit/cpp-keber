@@ -36,8 +36,6 @@ namespace Bot::BotHandler::TaskTracker {
     using Bot::BotHandler::Menu::MenuHandler;
     using Bot::BotHandler::TaskTracker::Description::DescriptionHandler;
 
-    bool task_title_cmp(const Task& a, const Task& b);
-
     const string& TaskTrackerHandler::get_name() const noexcept {
         static const string name = "TaskTracker";
         return name;

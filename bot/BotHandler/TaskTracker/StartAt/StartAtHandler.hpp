@@ -8,5 +8,6 @@ namespace Bot::BotHandler::TaskTracker::StartAt {
         bool check(ptrContext ctx) override;
         ptrMessage handle(ptrContext ctx) override;
         static ptrMessage to_task_start_at(ptrContext ctx, bool save_start_at = true);
+        static ptrMessage send_new_task(ptrContext ctx, const Task& task);
     };
 }

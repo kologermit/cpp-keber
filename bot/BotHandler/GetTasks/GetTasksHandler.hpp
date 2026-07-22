@@ -2,7 +2,7 @@
 
 #include <bot/BotHandler/InterfaceBotHandler.hpp>
 
-namespace Bot::BotHandler::Commands::GetTasks {
+namespace Bot::BotHandler::GetTasks {
     using std::string_view;
 
     struct GetTasksHandler : InterfaceBotHandler {
