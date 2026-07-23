@@ -1,5 +1,3 @@
-#define CPPHTTPLIB_OPENSSL_SUPPORT
-
 #include <fstream>
 #include <stdexcept>
 #include <httplib.h>
@@ -66,7 +64,7 @@ namespace Utils::TGBotApi::Bot {
     Bot::Bot(string_view token, string_view telegram_api_url):
     Bot(token, telegram_api_url, _get_me_raw_json(token, telegram_api_url)) {}
 
-     json Bot::_get_me_raw_json(string_view token, string_view telegram_api_url) {
+    json Bot::_get_me_raw_json(string_view token, string_view telegram_api_url) {
         Query client(token, telegram_api_url);
         const json result = client.query_raw_json(QueryMethod::GET, "getMe")[RESULT_KEY];
         return result;

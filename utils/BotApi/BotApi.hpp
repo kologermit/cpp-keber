@@ -1,7 +1,5 @@
 #pragma once
 
-#define CPPHTTPLIB_OPENSSL_SUPPORT
-
 #include <utils/BotApi/InterfaceBotApi.hpp>
 #include <utils/Api/Api.hpp>
 

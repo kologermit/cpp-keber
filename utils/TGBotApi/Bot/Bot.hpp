@@ -1,7 +1,5 @@
 #pragma once
 
-#define CPPHTTPLIB_OPENSSL_SUPPORT
-
 #include <utils/TGBotApi/Bot/InterfaceBot.hpp>
 #include <utils/TGBotApi/User/User.hpp>
 #include <vector>

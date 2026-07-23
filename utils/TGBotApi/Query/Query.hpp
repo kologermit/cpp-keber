@@ -1,7 +1,5 @@
 #pragma once
 
-#define CPPHTTPLIB_OPENSSL_SUPPORT
-
 #include <utils/TGBotApi/JSONKeys.hpp>
 #include <httplib.h>
 #include <fmt/core.h>
@@ -99,7 +97,8 @@ namespace Utils::TGBotApi::Query {
         string_view full_path,
         bool throw_by_status
     ) {
-        return json::parse(query(method, path, params, headers, files, full_path, throw_by_status)->body);
+        const Result result = query(method, path, params, headers, files, full_path, throw_by_status);
+        return json::parse(result->body);
     }
 
 

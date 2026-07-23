@@ -1,5 +1,3 @@
-#define CPPHTTPLIB_OPENSSL_SUPPORT
-
 #include <utils/TGBotApi/Query/Query.hpp>
 #include <fmt/core.h>
 #include <fstream>

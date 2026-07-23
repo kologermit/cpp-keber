@@ -15,6 +15,7 @@ add_compile_options(
     -Wconversion
     -Wno-error=deprecated-declarations
     -Wno-unused-command-line-argument
+    -DCPPHTTPLIB_OPENSSL_SUPPORT
 )
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
