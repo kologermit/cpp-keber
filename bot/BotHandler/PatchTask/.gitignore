@@ -1,0 +1,4 @@
+*
+!.gitignore
+!PatchTaskHandler.hpp
+!PatchTaskHandler.cpp

@@ -201,6 +201,35 @@ namespace Bot::BotHandler::TaskTracker {
         });
     }
 
+    ptrMessage TaskTrackerHandler::send_task(ptrContext ctx, const Task& task) {
+        static const vector<pair<const char*, Style>> inline_buttons{
+            {NEW_SYMBOL, Style::BLUE},
+            {IN_WORK_SYMBOL, Style::BLUE},
+            {COMPLETE_SYMBOL, Style::GREEN},
+            {DELETED_SYMBOL, Style::RED},
+            {INFO_SYMBOL, Style::BLUE},
+            {ONE_SYMBOL, Style::BLUE},
+            {TWO_SYMBOL, Style::BLUE},
+        };
+        InlineLane button_lane;
+        for (const auto& [inline_button, style] : inline_buttons) {
+            button_lane.push_back(make_shared<InlineButton>(inline_button, "", json{
+                TASK_TRACKER_CALLBACK_HANDLER_NAME,
+                inline_button,
+                task.id
+            }.dump(), style));
+        }
+        return ctx->bot->send_message({
+            .chat_id = ctx->chat->id,
+            .text = fmt::format(
+                "<b>{} {}</b>",
+                task_state_to_symbol(task.state),
+                task.title
+            ),
+            .inline_keyboard = make_unique<InlineKeyboard>(InlineButtons{button_lane})
+        });
+    }
+
     ptrMessage TaskTrackerHandler::send_tasks(ptrContext ctx, optional<vector<Task> > tasks) {
         if (!tasks.has_value()) {
             datetime now;

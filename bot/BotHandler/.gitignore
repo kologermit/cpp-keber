@@ -12,5 +12,6 @@
 !TaskTracker
 !GetTasks
 !NewTask
+!PatchTask
 !list_handlers.hpp
 !list_handlers.cpp

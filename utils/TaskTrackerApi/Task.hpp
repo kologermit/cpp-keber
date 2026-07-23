@@ -6,6 +6,7 @@ namespace Utils::TaskTrackerApi {
     using std::optional;
     using std::nullopt;
     using std::string;
+    using std::string_view;
     using std::map;
     using Utils::Datetime::DATETIME_FORMAT;
     using nlohmann::json;
@@ -13,6 +14,11 @@ namespace Utils::TaskTrackerApi {
     using Utils::Api::Entity;
 
     enum TaskState {UNKNOWN, NEW, IN_WORK, COMPLETED, DELETED};
+    constexpr const char* NEW_KEY = "new";
+    constexpr const char* IN_WORK_KEY = "in_work";
+    constexpr const char* COMPLETED_KEY = "completed";
+    constexpr const char* DELETED_KEY = "deleted";
+
 
     constexpr const char* TITLE_KEY = "title";
     constexpr const char* DESCRIPTION_KEY = "description";
@@ -49,5 +55,19 @@ namespace Utils::TaskTrackerApi {
                 : optional<datetime>(datetime::parse(DATETIME_FORMAT, json_task[COMPLETED_AT_KEY].get<string>()))
             )
         {}
+
+        static TaskState string_to_state(string_view string_state) {
+            static const map<string, TaskState> states{
+                {NEW_KEY, TaskState::NEW},
+                {IN_WORK_KEY, TaskState::IN_WORK},
+                {COMPLETED_KEY, TaskState::COMPLETED},
+                {DELETED_KEY, TaskState::DELETED},
+            };
+            const map<string, TaskState>::const_iterator find_result = states.find(string(string_state));
+            if (find_result == states.end()) {
+                return TaskState::UNKNOWN;
+            }
+            return find_result->second;
+        }
     };
 }
