@@ -151,8 +151,8 @@ namespace Bot::BotHandler::TaskTracker {
         );
     }
 
-    ptrMessage TaskTrackerHandler::send_statistic(ptrContext ctx) {
-        const datetime today;
+    ptrMessage TaskTrackerHandler::send_statistic(ptrContext ctx, optional<datetime> date) {
+        const datetime today = (date.has_value() ? date.value() : datetime{});
         const datetime today_start(today.get_year(), today.get_month(), today.get_day(), 0, 0, 0);
         const datetime today_end(today.get_year(), today.get_month(), today.get_day(), 23, 59, 59);
         const unique_ptr<vector<Task> > new_tasks = ctx->global_ctx->api->task_tracker->get_tasks({

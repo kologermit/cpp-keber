@@ -1,0 +1,4 @@
+*
+!.gitignore
+!GetStatisticHandler.hpp
+!GetStatisticHandler.cpp
