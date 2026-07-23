@@ -7,8 +7,8 @@
 #include <memory>
 #include <optional>
 #include <fmt/format.h>
+#include <pystring.h>
 #include <utils/Datetime.hpp>
-#include <utils/String/String.hpp>
 #include <utils/TaskTrackerApi/TaskTrackerApi.hpp>
 
 namespace Bot::BotHandler::GetTasks {
@@ -22,7 +22,7 @@ namespace Bot::BotHandler::GetTasks {
     using Utils::Datetime::datetime;
     using Utils::Datetime::DATE_FORMAT;
     using Utils::Datetime::DATETIME_FORMAT;
-    using Utils::String::split;
+    using pystring::split;
     using Utils::TaskTrackerApi::TaskState;
     using Utils::TaskTrackerApi::Task;
     using Utils::TaskTrackerApi::GetTasksParams;

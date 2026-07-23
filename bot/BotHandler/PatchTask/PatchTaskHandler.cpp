@@ -1,9 +1,9 @@
 #include <bot/BotHandler/PatchTask/PatchTaskHandler.hpp>
 #include <bot/BotHandler/TaskTracker/TaskTrackerHandler.hpp>
-#include <utils/String/String.hpp>
 #include <utils/TaskTrackerApi/Task.hpp>
 #include <utils/Datetime.hpp>
 #include <fmt/format.h>
+#include <pystring.h>
 #include <string_view>
 #include <optional>
 #include <memory>
@@ -13,8 +13,8 @@
 namespace Bot::BotHandler::PatchTask {
 
     using Bot::BotHandler::TaskTracker::TaskTrackerHandler;
-    using Utils::String::split;
-    using Utils::String::join;
+    using pystring::split;
+    using pystring::join;
     using Utils::TGBotApi::Bot::SendMessageParameters;
     using Utils::TaskTrackerApi::Task;
     using Utils::TaskTrackerApi::TaskState;
@@ -75,7 +75,7 @@ namespace Bot::BotHandler::PatchTask {
         if (first_line_words[2] == "title") {
             title = lines[1];
         } else if (first_line_words[2] == "description") {
-            description = join(lines.begin() + 1, lines.end(), "\n");
+            description = join("\n", vector<string>(lines.begin() + 1, lines.end()));
         } else if (first_line_words[2] == "start_at") {
             try {
                 start_at = datetime::parse(DATE_FORMAT, lines[1]);

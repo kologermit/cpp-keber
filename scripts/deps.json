@@ -193,6 +193,29 @@
             "@@ deps openssl-build"
         ]
     },
+    "pystring-download": {
+        "working_dir": "./build/_deps/",
+        "scripts": [
+            "rm -rf pystring",
+            "git clone https://github.com/imageworks/pystring"
+        ]
+    },
+    "pystring-build": {
+        "working_dir": "./build/_deps/pystring",
+        "scripts": [
+            "mkdir -p ./build/Debug ./build/Release",
+            "cmake -S . -B build/Debug -DBUILD_SHARED_LIBS=OFF -DCMAKE_CXX_FLAGS=\"-D_GLIBCXX_DEBUG\"",
+            "cmake --build build/Debug --parallel $(($(nproc)-1))",
+            "cmake -S . -B build/Release -DBUILD_SHARED_LIBS=OFF",
+            "cmake --build build/Release --parallel $(($(nproc)-1))"
+        ]
+    },
+    "pystring-download-and-build": {
+        "scripts": [
+            "@@ deps pystring-download",
+            "@@ deps pystring-build"
+        ]
+    },
     "xlsxio-download": {
         "working_dir": "./build/_deps",
         "scripts": [
@@ -246,6 +269,7 @@
             "@@ deps minizip-ng-download",
             "@@ deps nlohmann-json-download",
             "@@ deps openssl-download",
+            "@@ deps pystring-download",
             "@@ deps xlsxio-download",
             "@@ deps zlib-ng-download"
         ]
@@ -261,6 +285,7 @@
             "@@ deps libxlsxwriter-build",
             "@@ deps minizip-ng-build",
             "@@ deps openssl-build",
+            "@@ deps pystring-build",
             "@@ deps xlsxio-build",
             "@@ deps zlib-ng-build"
         ]

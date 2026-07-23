@@ -1,7 +1,6 @@
 #pragma once
 
 #include <utils/HTTPServer/Server/InterfaceServer.hpp>
-#include <utils/String/String.hpp>
 #include <utils/JSONKeys.hpp>
 #include <utils/Random/Random.hpp>
 #include <utils/Datetime.hpp>
@@ -40,7 +39,6 @@ namespace Utils::HTTPServer::Server {
     using Utils::JSONKeys::STATUS_KEY;
     using Utils::JSONKeys::RESULT_KEY;
     using Utils::JSONKeys::HANDLE_ID_KEY;
-    using Utils::String::split;
     using Utils::Datetime::DATETIME_FORMAT;
     using Utils::HTTPServer::Handler::Param;
     using Utils::HTTPServer::Handler::ParamType;

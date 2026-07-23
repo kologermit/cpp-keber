@@ -2,9 +2,9 @@
 #include <bot/BotHandler/TaskTracker/StartAt/StartAtHandler.hpp>
 #include <bot/BotHandler/Keys.hpp>
 #include <utils/Datetime.hpp>
-#include <utils/String/String.hpp>
 #include <utils/TaskTrackerApi/Task.hpp>
 #include <fmt/format.h>
+#include <pystring.h>
 #include <memory>
 #include <string>
 #include <vector>
@@ -16,8 +16,9 @@ namespace Bot::BotHandler::NewTask {
     using Bot::BotHandler::TaskTracker::StartAt::StartAtHandler;
     using Utils::Datetime::datetime;
     using Utils::Datetime::DATE_FORMAT;
-    using Utils::String::split;
-    using Utils::String::join;
+    using pystring::split;
+    using pystring::join;
+    using pystring::strip;
     using Utils::TaskTrackerApi::Task;
     using std::unique_ptr;
     using std::exception;
@@ -52,7 +53,7 @@ namespace Bot::BotHandler::NewTask {
                 .reply_message_id = ctx->message->id,
             });
         }
-        const string title = lines[1];
+        const string title = strip(lines[1]);
 
         datetime start_at;
         const vector<string> words_first_line = split(lines[0], " ");
@@ -72,7 +73,7 @@ namespace Bot::BotHandler::NewTask {
             }
         }
 
-        string description = join(lines.begin() + 2, lines.end(), "\n");
+        string description = strip(join("\n", vector<string>(lines.begin() + 2, lines.end())));
         if (description.empty()) {
             description = EMPTY_WORD;
         }

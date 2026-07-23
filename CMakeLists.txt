@@ -41,6 +41,7 @@ set(DEPS_STATICS
     ${CMAKE_SOURCE_DIR}/build/_deps/libexpat/expat/build/libexpat.a
     ${CMAKE_SOURCE_DIR}/build/_deps/minizip-ng/build/libminizip.a
     ${CMAKE_SOURCE_DIR}/build/_deps/zlib-ng/build/libz.a
+    ${CMAKE_SOURCE_DIR}/build/_deps/pystring/build/${CMAKE_BUILD_TYPE}/libpystring.a
     PostgreSQL::PostgreSQL
 )
 
@@ -54,6 +55,8 @@ set(DEPS_PATHS
     ${CMAKE_SOURCE_DIR}/build/_deps/datetime/src
     ${CMAKE_SOURCE_DIR}/build/_deps/xlsxio/include/
     ${CMAKE_SOURCE_DIR}/build/_deps/libxlsxwriter/include
+    ${CMAKE_SOURCE_DIR}/build/_deps/pystring
+    ${CMAKE_SOURCE_DIR}/build/_deps
     ${CMAKE_SOURCE_DIR}
 )
 
