@@ -16,6 +16,7 @@
 #include <bot/BotHandler/TaskTracker/TaskCallback/TaskCallbackHandler.hpp>
 #include <bot/BotHandler/GetTasks/GetTasksHandler.hpp>
 #include <bot/BotHandler/GetTask/GetTaskHandler.hpp>
+#include <bot/BotHandler/GetStatistic/GetStatisticHandler.hpp>
 #include <bot/BotHandler/NewTask/NewTaskHandler.hpp>
 #include <bot/BotHandler/PatchTask/PatchTaskHandler.hpp>
 
@@ -40,6 +41,7 @@ namespace Bot::BotHandler {
     using Bot::BotHandler::TaskTracker::TaskCallback::TaskCallbackHandler;
     using Bot::BotHandler::GetTask::GetTaskHandler;
     using Bot::BotHandler::GetTasks::GetTasksHandler;
+    using Bot::BotHandler::GetStatistic::GetStatisticHandler;
     using Bot::BotHandler::NewTask::NewTaskHandler;
     using Bot::BotHandler::PatchTask::PatchTaskHandler;
 
@@ -48,6 +50,7 @@ namespace Bot::BotHandler {
             make_shared<DiceHandler>(),
             make_shared<GetTaskHandler>(),
             make_shared<GetTasksHandler>(),
+            make_shared<GetStatisticHandler>(),
             make_shared<NewTaskHandler>(),
             make_shared<PatchTaskHandler>(),
             make_shared<StartHandler>(),
