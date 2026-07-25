@@ -70,7 +70,7 @@ if (BUILD_TEST_CODE)
     )
     add_executable(TEST_CODE ${TEST_SOURCES})
     target_include_directories(TEST_CODE PRIVATE ${DEPS_PATHS})
-    set_target_properties(BOT PROPERTIES
+    set_target_properties(TEST_CODE PROPERTIES
         UNITY_BUILD ON
         UNITY_BUILD_BATCH_SIZE 20
     )

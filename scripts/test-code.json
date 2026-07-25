@@ -1,44 +1,38 @@
 {
-    "build_debug": {
-        "description": "Build debug test_code",
+    "build-debug": {
         "working_dir": "./build/Debug",
         "scripts": [
             "cmake ../.. -B . -DBUILD_TEST_CODE=ON -DCMAKE_BUILD_TYPE=Debug",
             "cmake --build . --target TEST_CODE --parallel $(($(nproc)-1))"
         ]
     },
-    "build_release": {
-        "description": "Build release test_code",
+    "build-release": {
         "working_dir": "./build/Release",
         "scripts": [
             "cmake ../.. -B . -DBUILD_TEST_CODE=ON -DCMAKE_BUILD_TYPE=Release",
             "cmake --build . --target TEST_CODE --parallel $(($(nproc)-1))"
         ]
     },
-    "run_debug": {
-        "description": "Run ./build/Debug/TEST_CODE",
+    "run-debug": {
         "scripts": [
             "./build/Debug/TEST_CODE"
         ]
     },
-    "run_release": {
-        "description": "Run ./build/Release/TEST_CODE",
+    "run-release": {
         "scripts": [
             "./build/Release/TEST_CODE"
         ]
     },
-    "build_debug_and_run": {
-        "description": "Build test_code and run ./build/Debug/TEST_CODE",
+    "build-debug-and-run": {
         "scripts": [
-            "@@ test_code build_debug",
-            "@@ test_code run_debug"
+            "@@ test-code build-debug",
+            "@@ test-code run-debug"
         ]
     },
-    "build_release_and_run": {
-        "description": "Build test_code and run ./build/Release/TEST_CODE",
+    "build-release-and-run": {
         "scripts": [
-            "@@ test_code build_release",
-            "@@ test_code run_release"
+            "@@ test-code build-release",
+            "@@ test-code run-release"
         ]
     }
 }

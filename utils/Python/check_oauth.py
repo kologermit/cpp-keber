@@ -1,7 +1,6 @@
 from  copy import deepcopy
 
 from pytubefix import YouTube
-from pytubefix.helpers import reset_cache
 from pytubefix.exceptions import BotDetection
 import pytubefix.innertube
 from urllib.error import HTTPError
@@ -19,7 +18,8 @@ class CheckOAUTH:
 
 def is_logined(
     test_youtube_video: str,
-    use_oauth: bool = True
+    use_oauth: bool = True,
+    proxies: dict[str, str]|None = None
 ) -> bool:
     check_oauth = CheckOAUTH(
         test_youtube_video,
@@ -29,7 +29,7 @@ def is_logined(
     if use_oauth:
         pytubefix.innertube._default_oauth_verifier = check_oauth
     try:
-        YouTube(test_youtube_video, use_oauth=use_oauth).title
+        YouTube(test_youtube_video, use_oauth=use_oauth, proxies=proxies).title
     except HTTPError as exc:
         if exc.code != 428:
             raise exc

@@ -37,3 +37,5 @@ services:
       - SHARED_PATH=/shared/
       - FILE_BUFFER_PATH=/volumes/file_buffer
       - DOWNLOADER_QUEUE_NAME=downloader
+      - PROXY_HOST=${PROXY_HOST}
+      - PROXY_PORT=${PROXY_PORT}

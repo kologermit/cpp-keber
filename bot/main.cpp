@@ -79,7 +79,12 @@ int main(int argc, const char* argv[]) {
             .task_tracker_cache = make_shared<map<long long, MinimalTask> >(),
             .logger = logger,
             .config = config,
-            .bot = make_shared<TGBot>(config->get_bot_token(), config->get_telegram_api_url()),
+            .bot = make_shared<TGBot>(
+                config->get_bot_token(), 
+                config->get_telegram_api_url(),
+                config->get_proxy_host(),
+                config->get_proxy_port()
+            ),
             .db = make_shared<DBContext>(DBContext{
                 .access = make_shared<AccessRepository>(db),
                 .callback = make_shared<CallbackRepository>(db),

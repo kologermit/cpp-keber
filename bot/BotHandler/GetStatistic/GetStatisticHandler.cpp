@@ -22,20 +22,22 @@ namespace Bot::BotHandler::GetStatistic {
 
     bool GetStatisticHandler::check(ptrContext ctx) {
         // Пример /get_statistic date
-        return ctx->message->text.starts_with("/get_statistic ");
+        return ctx->message->text.starts_with("/get_statistic");
     }
 
     ptrMessage GetStatisticHandler::handle(ptrContext ctx) {
         vector<string> words = split(ctx->message->text, " ");
         datetime date;
-        try {
-            date = datetime::parse(DATE_FORMAT, words[1]);
-        } catch (const exception& exc) {
-            return ctx->bot->send_message({
-                .chat_id = ctx->chat->id,
-                .text = fmt::format("Не получилось определить дату {}. Ошибка {}", words[1], exc.what()),
-                .reply_message_id = ctx->message->id,
-            });
+        if (words.size() > 2) {
+            try {
+                date = datetime::parse(DATE_FORMAT, words[1]);
+            } catch (const exception& exc) {
+                return ctx->bot->send_message({
+                    .chat_id = ctx->chat->id,
+                    .text = fmt::format("Не получилось определить дату {}. Ошибка {}", words[1], exc.what()),
+                    .reply_message_id = ctx->message->id,
+                });
+            }
         }
 
         return TaskTrackerHandler::send_statistic(ctx, date);

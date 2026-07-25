@@ -36,7 +36,9 @@ namespace Utils::TGBotApi::Query {
 
     Result Query::query(
         QueryMethod method,
-        string_view path, 
+        string_view path,
+        string_view proxy_host,
+        int proxy_port, 
         const Params& params,
         const Headers& headers,
         const Files& files,
@@ -80,7 +82,13 @@ namespace Utils::TGBotApi::Query {
         #endif
 
         httplib::Client cli(_telegram_api_url);
+        cli.set_read_timeout(5);
+        cli.set_write_timeout(5);
+        cli.set_connection_timeout(15);
         cli.enable_server_certificate_verification(false);
+        if (!proxy_host.empty() && proxy_port > 0) {
+            cli.set_proxy(string(proxy_host), proxy_port);
+        }
         
         if (method == QueryMethod::GET) {
             result = cli.Get(result_path, params, headers);

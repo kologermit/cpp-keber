@@ -25,6 +25,8 @@ namespace Bot::Config {
         const string& get_listen_ip() const noexcept override;
         long long get_listen_port() const noexcept override;
         const string& get_auth_key() const noexcept override;
+        const string& get_proxy_host() const noexcept override;
+        long long get_proxy_port() const noexcept override;
         const string& get_db_host() const noexcept override;
         long long get_db_port() const noexcept override;
         const string& get_db_name() const noexcept override;
@@ -55,6 +57,8 @@ namespace Bot::Config {
         string _listen_ip;
         long long _listen_port;
         string _auth_key;
+        string _proxy_host;
+        long long _proxy_port;
         string _db_host;
         long long _db_port;
         string _db_name;

@@ -23,6 +23,8 @@ namespace Bot::Config {
         virtual const string& get_listen_ip() const noexcept = 0;
         virtual long long get_listen_port() const noexcept = 0;
         virtual const string& get_auth_key() const noexcept = 0;
+        virtual const string& get_proxy_host() const noexcept = 0;
+        virtual long long get_proxy_port() const noexcept = 0;
         virtual const string& get_db_host() const noexcept = 0;
         virtual long long get_db_port() const noexcept = 0;
         virtual const string& get_db_name() const noexcept = 0;

@@ -17,7 +17,7 @@ json='json'
 project_summary='project_summary'
 
 # Функция паркинга конфига и формирования кода
-def parse_config_to_exec(args: dict[str, dict[str, str]]) -> str:
+def parse_config_to_exec(args: dict[str, dict[str, str|bool]]) -> str:
     # Вынес повторяющиеся строки в переменные
     env_file='env_file'
     # Вывод справки при добавлении параметра -h

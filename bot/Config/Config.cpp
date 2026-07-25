@@ -65,6 +65,16 @@ namespace Bot::Config {
                 .string_value = &_auth_key,
             },
             Argument{
+                .name = "PROXY_HOST",
+                .default_value = "",
+                .string_value = &_proxy_host,
+            },
+            Argument{
+                .name = "PROXY_PORT",
+                .default_value = "-1",
+                .long_long_value = &_proxy_port,
+            },
+            Argument{
                 .name = "DB_HOST",
                 .default_value = "localhost",
                 .string_value = &_db_host,
@@ -184,6 +194,14 @@ namespace Bot::Config {
 
     long long Config::get_listen_port() const noexcept {
         return _listen_port;
+    }
+    
+    const string& Config::get_proxy_host() const noexcept {
+        return _proxy_host;
+    }
+
+    long long Config::get_proxy_port() const noexcept {
+        return _proxy_port;
     }
 
     const string& Config::get_auth_key() const noexcept {

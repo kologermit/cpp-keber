@@ -11,8 +11,6 @@ namespace Utils::TaskTrackerApi {
     using std::vector;
     using std::unique_ptr;
     using jed_utils::datetime;
-    
-    const string& task_state_to_symbol(const TaskState state);
 
     struct GetTasksParams{
         long long user_id;

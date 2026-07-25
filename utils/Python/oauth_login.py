@@ -1,9 +1,14 @@
+from .config import PROXY_HOST, PROXY_PORT, TEST_YOUTUBE_VIDEO, default_config, required
+from .parse_config import parse_config_to_exec
 from pytubefix import YouTube
 
-BASE_TEST_VIDEO_URL = 'https://www.youtube.com/watch?v=jiT2Mak9AzI'
-test_video_url = input(f'Input test url or skip (default: {BASE_TEST_VIDEO_URL}): ').strip()
-test_video_url = BASE_TEST_VIDEO_URL if test_video_url == '' else test_video_url
+default_config[TEST_YOUTUBE_VIDEO][required] = True
+default_config[PROXY_HOST][required] = True
+default_config[PROXY_PORT][required] = True # type: ignore
+exec(parse_config_to_exec(default_config))
 
-v = YouTube(test_video_url, use_oauth=True)
+proxies = {"http": f"http://{PROXY_HOST}:{PROXY_PORT}"} if PROXY_HOST and PROXY_PORT > 0 else None
+
+v = YouTube(TEST_YOUTUBE_VIDEO, use_oauth=True, proxies=proxies)
 print(f'Title={v.title}')
 print(f'Steams={v.streams}')

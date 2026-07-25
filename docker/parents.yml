@@ -34,10 +34,10 @@ services:
   networks:
     - default
       
-  custom-service:
+  custom-service-without-network:
     extends:
       file: ./parents.yml
-      service: parent
+      service: parent-without-network
     build:
       context: ..
       dockerfile: Dockerfile
@@ -46,3 +46,10 @@ services:
         - BUILDER_IMAGE=${BUILDER_IMAGE}
         - PYTHON_RUNNER_IMAGE=${PYTHON_RUNNER_IMAGE}
     user: runner
+
+  custom-service:
+    extends:
+      file: ./parents.yml
+      service: custom-service-without-network
+    networks:
+      - default

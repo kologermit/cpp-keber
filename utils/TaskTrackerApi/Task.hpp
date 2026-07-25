@@ -1,6 +1,8 @@
 #pragma once
 
 #include <utils/Api/Entity.hpp>
+#include <utils/Datetime.hpp>
+#include <fmt/format.h>
 
 namespace Utils::TaskTrackerApi {
     using std::optional;
@@ -56,6 +58,17 @@ namespace Utils::TaskTrackerApi {
             )
         {}
 
+        static string state_to_symbol(const TaskState state) {
+            static const map<TaskState, string> m{
+                {TaskState::UNKNOWN, "🚫"},
+                {TaskState::NEW, "🆕"},
+                {TaskState::IN_WORK, "🛠️"},
+                {TaskState::COMPLETED, "✅"},
+                {TaskState::DELETED, "❌"}, 
+            };
+            return m.at(state);
+        }
+
         static TaskState string_to_state(string_view string_state) {
             static const map<string, TaskState> states{
                 {NEW_KEY, TaskState::NEW},
@@ -68,6 +81,21 @@ namespace Utils::TaskTrackerApi {
                 return TaskState::UNKNOWN;
             }
             return find_result->second;
+        }
+
+        string get_text() const noexcept {
+            return fmt::format(
+                "<b>{}{}. {}\n\n{}\n\nСоздано: {}\nНачало: {}\nВ работе: {}\nЗавершена: {}\nУдалена: {}</b>",
+                state_to_symbol(state),
+                id,
+                title,
+                description,
+                created_at.to_string(DATETIME_FORMAT),
+                start_at.to_string(DATETIME_FORMAT),
+                (in_work_at.has_value() ? in_work_at->to_string(DATETIME_FORMAT) : "-"),
+                (completed_at.has_value() ? completed_at->to_string(DATETIME_FORMAT) : "-"),
+                (deleted_at.has_value() ? deleted_at->to_string(DATETIME_FORMAT) : "-")
+            );
         }
     };
 }

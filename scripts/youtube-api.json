@@ -6,7 +6,7 @@
     },
     "login-oauth-in-venv": {
         "scripts": [
-            "./venv/bin/python3 ./utils/Python/oauth_login.py"
+            "./.venv/bin/python3 ./utils/Python/oauth_login.py"
         ]
     },
     "clear-oauth-cache-container": {
@@ -16,7 +16,7 @@
     },
     "clear-oauth-cache-venv": {
         "scripts": [
-            "./venv/bin/python3 -c 'from pytubefix.helpers import reset_cache; reset_cache()'"
+            "./.venv/bin/python3 -c 'from pytubefix.helpers import reset_cache; reset_cache()'"
         ]
     }
 }

@@ -16,7 +16,12 @@ namespace Utils::TGBotApi::Bot {
 
     struct Bot final : InterfaceBot {
 
-        explicit Bot(string_view token, string_view telegram_api_url = "https://api.telegram.org");
+        explicit Bot(
+            string_view token, 
+            string_view telegram_api_url = "https://api.telegram.org",
+            string_view proxy_host = "",
+            int proxy_port = -1
+        );
 
         long long get_id() const noexcept override;
         const User& get_user() const noexcept override;
@@ -39,9 +44,22 @@ namespace Utils::TGBotApi::Bot {
 
         private:
 
-        explicit Bot(string_view token, string_view telegram_api_url, const json& json_bot);
-        static json _get_me_raw_json(string_view token, string_view telegram_api_url);
+        explicit Bot(
+            string_view token, 
+            string_view telegram_api_url, 
+            const json& json_bot,
+            string_view proxy_host,
+            int proxy_port
+        );
+        static json _get_me_raw_json(
+            string_view token, 
+            string_view telegram_api_url,
+            string_view proxy_host,
+            int proxy_port
+        );
 
+        const string _proxy_host;
+        const int _proxy_port;
         User _user;
         string _token;
         string _telegram_api_url;

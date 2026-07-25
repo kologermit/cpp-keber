@@ -22,7 +22,7 @@ namespace Bot::BotHandler::TaskTracker {
         ptrMessage handle(ptrContext ctx) override;
         static ptrMessage to_task_tracker(ptrContext ctx, string_view message_text = "");
         static ptrMessage send_statistic(ptrContext ctx, optional<datetime> date=nullopt);
-        static ptrMessage send_task(ptrContext ctx, const Task& task);
+        static ptrMessage send_task(ptrContext ctx, const Task& task, bool add_buttons=true);
         static ptrMessage send_tasks(ptrContext ctx, optional<vector<Task> > tasks=nullopt);
     };
 }

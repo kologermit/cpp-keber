@@ -52,7 +52,9 @@ namespace Utils::TGBotApi::Query {
 
         Result query(
             QueryMethod method,
-            string_view path, 
+            string_view path,
+            string_view proxy_host = "",
+            int proxy_port = -1,
             const Params& params = {},
             const Headers& headers = {},
             const Files& files = {},
@@ -63,6 +65,8 @@ namespace Utils::TGBotApi::Query {
         inline json query_raw_json(
             QueryMethod method,
             string_view path,
+            string_view proxy_host = "",
+            int proxy_port = -1,
             const Params& params = {},
             const Headers& headers = {},
             const Files& files = {},
@@ -74,6 +78,8 @@ namespace Utils::TGBotApi::Query {
         QueryResult<ResultType> query_parse_json(
             QueryMethod method,
             string_view path,
+            string_view proxy_host = "",
+            int proxy_port = -1,
             const Params& params = {},
             const Headers& headers = {},
             const Files& files = {},
@@ -91,13 +97,15 @@ namespace Utils::TGBotApi::Query {
     inline json Query::query_raw_json(
         QueryMethod method,
         string_view path, 
+        string_view proxy_host,
+        int proxy_port,
         const Params& params,
         const Headers& headers,
         const Files& files,
         string_view full_path,
         bool throw_by_status
     ) {
-        const Result result = query(method, path, params, headers, files, full_path, throw_by_status);
+        const Result result = query(method, path, proxy_host, proxy_port, params, headers, files, full_path, throw_by_status);
         return json::parse(result->body);
     }
 
@@ -106,13 +114,15 @@ namespace Utils::TGBotApi::Query {
     Query::QueryResult<ResultType> Query::query_parse_json(
         QueryMethod method,
         string_view path, 
+        string_view proxy_host,
+        int proxy_port,
         const Params& params,
         const Headers& headers,
         const Files& files,
         string_view full_path,
         bool throw_by_status
     ) {
-        json json_result = query_raw_json(method, path, params, headers, files, full_path, throw_by_status);
+        json json_result = query_raw_json(method, path, proxy_host, proxy_port, params, headers, files, full_path, throw_by_status);
 
         if (!static_cast<bool>(json_result[OK_KEY])) {
             throw runtime_error(fmt::format(

@@ -12,7 +12,6 @@ namespace Bot::BotHandler::TaskTracker::StartAt {
     using std::exception;
     using jed_utils::datetime;
     using Utils::TaskTrackerApi::Task;
-    using Utils::TaskTrackerApi::task_state_to_symbol;
     using Utils::Datetime::DATE_FORMAT;
     using Utils::TGBotApi::Types::ReplyKeyboard;
     using Utils::TGBotApi::Types::ReplyButtons;
@@ -37,7 +36,7 @@ namespace Bot::BotHandler::TaskTracker::StartAt {
             "<b>{}Создана задача ({}):</b>\n\n<i>{}{}\n\n{}\n\n{}</i>",
             SUCCESS_SYMBOL,
             task.id,
-            task_state_to_symbol(task.state),
+            Task::state_to_symbol(task.state),
             task.title,
             task.description,
             task.start_at.to_string(DATE_FORMAT)

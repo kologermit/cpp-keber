@@ -7,6 +7,8 @@ from config import (
     LOGS_DIR, 
     LISTEN_IP, 
     LISTEN_PORT, 
+    PROXY_HOST,
+    PROXY_PORT,
     PROJECT_NAME,
     TEST_YOUTUBE_VIDEO,
     USE_OAUTH,
@@ -23,6 +25,7 @@ from bottle import route, run, response, request
 from pytubefix import YouTube, Channel, Playlist
 from pytubefix.exceptions import RegexMatchError, VideoUnavailable
 
+PROXIES = {"http": f"http://{PROXY_HOST}:{PROXY_PORT}"} if PROXY_HOST and PROXY_PORT > 0 else None
 MAX_CACHE_SIZE = 2000
 
 def middleware(f):
@@ -42,7 +45,7 @@ def generate_json_response(data, status: int=200) -> str:
 
 @lru_cache(maxsize=MAX_CACHE_SIZE)
 def get_video_dict(url: str, use_oauth: bool) -> dict:
-    v = YouTube(url, use_oauth=use_oauth)
+    v = YouTube(url, use_oauth=use_oauth, proxies=PROXIES)
     return {
         'title': v.title,
         'video_id': v.video_id,
@@ -54,7 +57,7 @@ def get_video_dict(url: str, use_oauth: bool) -> dict:
 
 @lru_cache(maxsize=MAX_CACHE_SIZE)
 def get_channel_dict(url: str, use_oauth: bool) -> dict:
-    c = Channel(url, use_oauth=use_oauth)
+    c = Channel(url, use_oauth=use_oauth, proxies=PROXIES)
     return {
         'channel_id': c.channel_id,
         'title': c.channel_name,
@@ -63,7 +66,7 @@ def get_channel_dict(url: str, use_oauth: bool) -> dict:
 
 @lru_cache(maxsize=MAX_CACHE_SIZE)
 def get_playlist_dict(url: str, use_oauth: bool) -> dict:
-    p = Playlist(url, use_oauth=use_oauth)
+    p = Playlist(url, use_oauth=use_oauth, proxies=PROXIES)
     return {
         'playlist_id': p.playlist_id,
         'title': p.title,
@@ -77,7 +80,7 @@ def get_playlist_dict(url: str, use_oauth: bool) -> dict:
 @middleware
 def video():
     try:
-        url = YouTube(dict(request.query)["url"]).watch_url # type: ignore
+        url = YouTube(dict(request.query)["url"], proxies=PROXIES).watch_url # type: ignore
         v = get_video_dict(url, USE_OAUTH)
     except (RegexMatchError, KeyError):
         return generate_json_response({'message': 'Video not found'}, 400)
@@ -92,7 +95,7 @@ def video():
 @middleware
 def playlist():
     try:
-        url = Playlist(dict(request.query)["url"]).playlist_url # type: ignore
+        url = Playlist(dict(request.query)["url"], proxies=PROXIES).playlist_url # type: ignore
         p = get_playlist_dict(url, USE_OAUTH)
     except (RegexMatchError, KeyError):
         return generate_json_response({'message': 'Playlist not found'}, 400)
@@ -107,7 +110,7 @@ def main():
     init_logger(LOGS_DIR)
     bot = BotAPI(BOT_URL, AUTH_KEY, BOT_ADMINS)
     bot.send_message_to_admins('START SERVICE YOUTUBE API')
-    if not is_logined(TEST_YOUTUBE_VIDEO, USE_OAUTH):
+    if not is_logined(TEST_YOUTUBE_VIDEO, USE_OAUTH, proxies=PROXIES):
         bot.send_message_to_admins('SERVICE YOUTUBE API: oauth not logged in. Logging in and reload program')
         logger.warning({'event': 'OAUTH_NOT_LOGGED_IN', 'message': 'YouTube OAuth is not logged in. Logging in and reload program'})
         try:

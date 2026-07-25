@@ -16,17 +16,6 @@ namespace Utils::TaskTrackerApi {
     constexpr const char* RESULT_KEY = "result";
     constexpr const char* APPLICATION_JSON_KEY = "application/json";
 
-    const string& task_state_to_symbol(const TaskState state) {
-        static const map<TaskState, string> m{
-            {TaskState::UNKNOWN, "🚫"},
-            {TaskState::NEW, "🆕"},
-            {TaskState::IN_WORK, "🛠️"},
-            {TaskState::COMPLETED, "✅"},
-            {TaskState::DELETED, "❌"}, 
-        };
-        return m.at(state);
-    }
-
     TaskTrackerApi::TaskTrackerApi(string_view base_url, string_view auth_key):
         InterfaceTaskTrackerApi(),
         Api(base_url, auth_key)

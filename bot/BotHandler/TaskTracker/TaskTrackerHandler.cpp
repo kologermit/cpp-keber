@@ -28,7 +28,6 @@ namespace Bot::BotHandler::TaskTracker {
     using Utils::TGBotApi::Types::InlineLane;
     using Utils::TGBotApi::Types::InlineKeyboard;
     using Utils::TGBotApi::Types::Style;
-    using Utils::TaskTrackerApi::task_state_to_symbol;
     using Utils::TaskTrackerApi::TaskState;
     using Utils::TaskTrackerApi::Task;
     using Utils::Datetime::DATE_FORMAT;
@@ -144,7 +143,7 @@ namespace Bot::BotHandler::TaskTracker {
     string get_task_html(const vector<Task>& tasks, const Task& task) {
         return fmt::format(
             "\n<i>{}{}{}. {}</i>",
-            task_state_to_symbol(task.state),
+            Task::state_to_symbol(task.state),
             get_id_zero_aligment(tasks, task.id),
             task.id,
             task.title
@@ -201,7 +200,7 @@ namespace Bot::BotHandler::TaskTracker {
         });
     }
 
-    ptrMessage TaskTrackerHandler::send_task(ptrContext ctx, const Task& task) {
+    ptrMessage TaskTrackerHandler::send_task(ptrContext ctx, const Task& task, bool add_buttons) {
         static const vector<pair<const char*, Style>> inline_buttons{
             {NEW_SYMBOL, Style::BLUE},
             {IN_WORK_SYMBOL, Style::BLUE},
@@ -211,22 +210,22 @@ namespace Bot::BotHandler::TaskTracker {
             {ONE_SYMBOL, Style::BLUE},
             {TWO_SYMBOL, Style::BLUE},
         };
-        InlineLane button_lane;
-        for (const auto& [inline_button, style] : inline_buttons) {
-            button_lane.push_back(make_shared<InlineButton>(inline_button, "", json{
-                TASK_TRACKER_CALLBACK_HANDLER_NAME,
-                inline_button,
-                task.id
-            }.dump(), style));
+        unique_ptr<InlineKeyboard> inline_keyboard;
+        if (add_buttons) {
+            InlineLane button_lane;
+            for (const auto& [inline_button, style] : inline_buttons) {
+                button_lane.push_back(make_shared<InlineButton>(inline_button, "", json{
+                    TASK_TRACKER_CALLBACK_HANDLER_NAME,
+                    inline_button,
+                    task.id
+                }.dump(), style));
+            }
+            inline_keyboard = make_unique<InlineKeyboard>(InlineButtons{button_lane});
         }
         return ctx->bot->send_message({
             .chat_id = ctx->chat->id,
-            .text = fmt::format(
-                "<b>{} {}</b>",
-                task_state_to_symbol(task.state),
-                task.title
-            ),
-            .inline_keyboard = make_unique<InlineKeyboard>(InlineButtons{button_lane})
+            .text = task.get_text(),
+            .inline_keyboard = std::move(inline_keyboard)
         });
     }
 
@@ -317,7 +316,7 @@ namespace Bot::BotHandler::TaskTracker {
                 .chat_id = ctx->chat->id,
                 .text = fmt::format(
                     "<b>{} {}</b>",
-                    task_state_to_symbol(task.state),
+                    Task::state_to_symbol(task.state),
                     task.title
                 ),
                 .inline_keyboard = make_unique<InlineKeyboard>(InlineButtons{button_lane})
@@ -329,7 +328,7 @@ namespace Bot::BotHandler::TaskTracker {
             
             result_text += fmt::format(
                 "<b>{} {}.</b> <i>{}</i>\n",
-                task_state_to_symbol(task.state),
+                Task::state_to_symbol(task.state),
                 zero_aligment_id,
                 task.title
             );

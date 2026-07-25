@@ -107,7 +107,7 @@ namespace Bot::BotHandler::PatchTask {
                 start_at,
                 state
             );
-            return TaskTrackerHandler::send_task(ctx, *patched_task);
+            return TaskTrackerHandler::send_task(ctx, *patched_task, false);
         } catch (const exception& exc) {
             message_params.text = fmt::format("Ошибка при обновлении задачи {}", exc.what());
             return ctx->bot->send_message(message_params);

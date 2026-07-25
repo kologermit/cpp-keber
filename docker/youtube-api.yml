@@ -19,6 +19,8 @@ services:
       - LISTEN_PORT=8080
       - TEST_YOUTUBE_VIDEO=${YOUTUBE_API_TEST_YOUTUBE_VIDEO}
       - USE_OAUTH=${USE_OAUTH}
+      - PROXY_HOST=${PROXY_HOST}
+      - PROXY_PORT=${PROXY_PORT}
     ports:
       - ${YOUTUBE_API_EXTERNAL_PORT}:8080
         

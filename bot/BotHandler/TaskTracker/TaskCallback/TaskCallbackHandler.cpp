@@ -8,8 +8,8 @@ namespace Bot::BotHandler::TaskTracker::TaskCallback {
     using nlohmann::json;
     using Utils::Datetime::DATE_FORMAT;
     using Utils::TaskTrackerApi::TaskState;
-    using Utils::TaskTrackerApi::task_state_to_symbol;
     using Utils::TaskTrackerApi::Task;
+    using Bot::BotHandler::TaskTracker::TaskTrackerHandler;
 
     const string& TaskCallbackHandler::get_name() const noexcept {
         static const string name = "TaskCallbackHandler";
@@ -75,14 +75,7 @@ namespace Bot::BotHandler::TaskTracker::TaskCallback {
         return ctx->bot->edit_text(
             ctx->chat->id,
             ctx->message->id,
-            fmt::format(
-                "<b>{}{}. {}\n\n{}\n\n{}</b>",
-                task_state_to_symbol(new_task->state),
-                new_task->id,
-                new_task->title,
-                new_task->description,
-                new_task->start_at.to_string(DATE_FORMAT)
-            )
+            new_task->get_text()
         );
     }
 }

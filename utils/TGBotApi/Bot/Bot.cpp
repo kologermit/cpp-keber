@@ -50,7 +50,15 @@ namespace Utils::TGBotApi::Bot {
     using std::ofstream;
     using std::runtime_error;
 
-    Bot::Bot(string_view token, string_view telegram_api_url, const json& json_bot):
+    Bot::Bot(
+        string_view token, 
+        string_view telegram_api_url, 
+        const json& json_bot, 
+        string_view proxy_host,
+        int proxy_port
+    ):
+        _proxy_host(proxy_host),
+        _proxy_port(proxy_port),
         _user(json_bot),
         _token(token),
         _telegram_api_url(telegram_api_url),
@@ -61,12 +69,28 @@ namespace Utils::TGBotApi::Bot {
         _can_connect_to_business(json_bot[CAN_CONNECT_TO_BUSINESS_KEY]),
         _has_main_web_app(json_bot[HAS_MAIN_WEB_APP_KEY]) {}
 
-    Bot::Bot(string_view token, string_view telegram_api_url):
-    Bot(token, telegram_api_url, _get_me_raw_json(token, telegram_api_url)) {}
+    Bot::Bot(
+        string_view token, 
+        string_view telegram_api_url,
+        string_view proxy_host,
+        int proxy_port
+    ):
+        Bot(
+            token, 
+            telegram_api_url, 
+            _get_me_raw_json(token, telegram_api_url, proxy_host, proxy_port), 
+            proxy_host,
+            proxy_port
+        ) {}
 
-    json Bot::_get_me_raw_json(string_view token, string_view telegram_api_url) {
+    json Bot::_get_me_raw_json(
+        string_view token, 
+        string_view telegram_api_url,
+        string_view proxy_host,
+        int proxy_port
+    ) {
         Query client(token, telegram_api_url);
-        const json result = client.query_raw_json(QueryMethod::GET, "getMe")[RESULT_KEY];
+        const json result = client.query_raw_json(QueryMethod::GET, "getMe", proxy_host, proxy_port)[RESULT_KEY];
         return result;
     }
 
@@ -110,6 +134,8 @@ namespace Utils::TGBotApi::Bot {
         return *Query(_token, _telegram_api_url).query_parse_json<bool>(
             QueryMethod::POST,
             "setWebhook",
+            _proxy_host,
+            _proxy_port,
             Params{
                 {URL_KEY, string(webhook_url)},
                 {SECRET_TOKEN_KEY, _secret_token},
@@ -175,6 +201,8 @@ namespace Utils::TGBotApi::Bot {
         return std::move(Query(_token, _telegram_api_url).query_parse_json<Message>(
             QueryMethod::POST,
             path,
+            _proxy_host,
+            _proxy_port,
             params,
             {},
             files
@@ -185,6 +213,8 @@ namespace Utils::TGBotApi::Bot {
         return std::move(Query(_token, _telegram_api_url).query_parse_json<Message>(
             QueryMethod::POST,
             "editMessageText",
+            _proxy_host,
+            _proxy_port,
             Params{
                 {PARSE_MODE_KEY, HTML_KEY},
                 {CHAT_ID_KEY, to_string(chat_id)},
@@ -199,6 +229,8 @@ namespace Utils::TGBotApi::Bot {
         return Query(_token, _telegram_api_url).query_parse_json<Message>(
             QueryMethod::POST,
             "editMessageCaption",
+            _proxy_host,
+            _proxy_port,
             Params{
                 {PARSE_MODE_KEY, HTML_KEY},
                 {CHAT_ID_KEY, to_string(chat_id)},
@@ -212,6 +244,8 @@ namespace Utils::TGBotApi::Bot {
         return *Query(_token, _telegram_api_url).query_parse_json<bool>(
             QueryMethod::POST,
             "deleteMessage",
+            _proxy_host,
+            _proxy_port,
             Params{
                 {CHAT_ID_KEY, to_string(chat_id)},
                 {MESSAGE_ID_KEY, to_string(message_id)},
@@ -239,6 +273,8 @@ namespace Utils::TGBotApi::Bot {
         return *Query(_token, _telegram_api_url).query_parse_json<bool>(
             QueryMethod::POST,
             "answerCallbackQuery",
+            _proxy_host,
+            _proxy_port,
             params
         ).result;
     }
@@ -251,6 +287,8 @@ namespace Utils::TGBotApi::Bot {
         auto res = Query(_token, _telegram_api_url).query_parse_json<json>(
             QueryMethod::GET,
             "getFile",
+            _proxy_host,
+            _proxy_port,
             Params{{FILE_ID_KEY, file_id.data()}}
         );
 
@@ -261,6 +299,8 @@ namespace Utils::TGBotApi::Bot {
         auto file_res = Query(_token, _telegram_api_url).query(
             QueryMethod::GET,
             "",
+            _proxy_host,
+            _proxy_port,
             {},
             {},
             {},
