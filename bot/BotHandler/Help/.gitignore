@@ -1,0 +1,4 @@
+*
+!.gitignore
+!HelpHandler.hpp
+!HelpHandler.cpp

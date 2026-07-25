@@ -41,7 +41,8 @@ namespace Bot::BotHandler::NewTask {
         // date - необязательный парамерт, по умолчанию сегодняшняя дата
         // title - обязательный параметр, может занимать всю строку
         // description - необязательный параметр, занимает все строки после названия 
-        return ctx->message->text.starts_with("/new_task");
+        return (ctx->access.full || ctx->access.task_tracker)
+            && ctx->message->text.starts_with("/new_task");
     }
 
     ptrMessage NewTaskHandler::handle(ptrContext ctx) {

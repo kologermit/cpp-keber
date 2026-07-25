@@ -15,5 +15,6 @@
 !NewTask
 !PatchTask
 !GetStatistic
+!Help
 !list_handlers.hpp
 !list_handlers.cpp

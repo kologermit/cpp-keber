@@ -36,7 +36,8 @@ namespace Bot::BotHandler::GetTasks {
         // Пример /get_tasks date state1,state2...
         // date - дата в формате YYYY-MM-DD, по умолчанию текущая дата
         // state - состояние задачи, по умолчанию new, возможеные: completed, deleted, in_work, new
-        return ctx->message->text.starts_with("/get_tasks");
+        return (ctx->access.full || ctx->access.task_tracker)
+            && ctx->message->text.starts_with("/get_tasks");
     }
 
     ptrMessage GetTasksHandler::handle(ptrContext ctx) {

@@ -20,7 +20,8 @@ namespace Bot::BotHandler::GetTask {
 
     bool GetTaskHandler::check(ptrContext ctx) {
         // Пример /get_task task_id
-        return ctx->message->text.starts_with("/get_task ");
+        return (ctx->access.full || ctx->access.task_tracker)
+            && ctx->message->text.starts_with("/get_task ");
     }
 
     ptrMessage GetTaskHandler::handle(ptrContext ctx) {

@@ -41,12 +41,8 @@ namespace Bot::BotHandler::TaskTracker {
     }
 
     bool TaskTrackerHandler::check(ptrContext ctx) {
-        return 
-            ctx->user->screen == UserScreen::TASK_TRACKER
-            && (
-                ctx->access.task_tracker
-                || ctx->access.full
-            );
+        return (ctx->access.full || ctx->access.task_tracker)
+            && ctx->user->screen == UserScreen::TASK_TRACKER;
     }
 
     ptrMessage TaskTrackerHandler::to_task_tracker(ptrContext ctx, string_view message_text) {

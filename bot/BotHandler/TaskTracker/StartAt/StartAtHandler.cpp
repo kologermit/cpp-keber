@@ -26,20 +26,17 @@ namespace Bot::BotHandler::TaskTracker::StartAt {
     };
 
     bool StartAtHandler::check(ptrContext ctx) {
-        return 
-            ctx->user->screen == UserScreen::ADD_TASK_START_AT
+        return (ctx->access.full || ctx->access.task_tracker)
+            && ctx->user->screen == UserScreen::ADD_TASK_START_AT
             && ctx->global_ctx->task_tracker_cache->contains(ctx->user->id);
     }
 
     ptrMessage StartAtHandler::send_new_task(ptrContext ctx, const Task& task) {
         return TaskTrackerHandler::to_task_tracker(ctx, fmt::format(
-            "<b>{}Создана задача ({}):</b>\n\n<i>{}{}\n\n{}\n\n{}</i>",
+            "<b>{}Создана задача ({}):{}",
             SUCCESS_SYMBOL,
             task.id,
-            Task::state_to_symbol(task.state),
-            task.title,
-            task.description,
-            task.start_at.to_string(DATE_FORMAT)
+            task.get_text()
         ));
     }
 

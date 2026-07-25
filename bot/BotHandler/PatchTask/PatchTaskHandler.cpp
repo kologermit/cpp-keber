@@ -38,7 +38,8 @@ namespace Bot::BotHandler::PatchTask {
         //   /patch_task task_id description/title/start_at/state
         //   value
         //   ...
-        return ctx->message->text.starts_with("/patch_task");
+        return (ctx->access.full || ctx->access.task_tracker)
+            && ctx->message->text.starts_with("/patch_task");
     }
 
     ptrMessage PatchTaskHandler::handle(ptrContext ctx) {

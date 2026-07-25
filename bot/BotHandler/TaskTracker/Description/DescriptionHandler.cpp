@@ -21,8 +21,8 @@ namespace Bot::BotHandler::TaskTracker::Description {
     }
 
     bool DescriptionHandler::check(ptrContext ctx) {
-        return 
-            ctx->user->screen == UserScreen::ADD_TASK_DESCRIPTION
+        return (ctx->access.full || ctx->access.task_tracker)
+            && ctx->user->screen == UserScreen::ADD_TASK_DESCRIPTION
             && ctx->global_ctx->task_tracker_cache->contains(ctx->user->id);
     }
 

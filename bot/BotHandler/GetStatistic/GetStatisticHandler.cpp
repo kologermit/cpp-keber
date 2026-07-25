@@ -22,7 +22,8 @@ namespace Bot::BotHandler::GetStatistic {
 
     bool GetStatisticHandler::check(ptrContext ctx) {
         // Пример /get_statistic date
-        return ctx->message->text.starts_with("/get_statistic");
+        return (ctx->access.full || ctx->access.task_tracker) 
+            && ctx->message->text.starts_with("/get_statistic");
     }
 
     ptrMessage GetStatisticHandler::handle(ptrContext ctx) {

@@ -19,6 +19,7 @@
 #include <bot/BotHandler/GetStatistic/GetStatisticHandler.hpp>
 #include <bot/BotHandler/NewTask/NewTaskHandler.hpp>
 #include <bot/BotHandler/PatchTask/PatchTaskHandler.hpp>
+#include <bot/BotHandler/Help/HelpHandler.hpp>
 
 
 namespace Bot::BotHandler {
@@ -44,6 +45,7 @@ namespace Bot::BotHandler {
     using Bot::BotHandler::GetStatistic::GetStatisticHandler;
     using Bot::BotHandler::NewTask::NewTaskHandler;
     using Bot::BotHandler::PatchTask::PatchTaskHandler;
+    using Bot::BotHandler::Help::HelpHandler;
 
     const vector<shared_ptr<InterfaceBotHandler> >& get_list_bot_handlers() {
         static const vector<shared_ptr<InterfaceBotHandler> > list_bot_handlers{
@@ -53,6 +55,7 @@ namespace Bot::BotHandler {
             make_shared<GetStatisticHandler>(),
             make_shared<NewTaskHandler>(),
             make_shared<PatchTaskHandler>(),
+            make_shared<HelpHandler>(),
             make_shared<StartHandler>(),
             make_shared<MenuHandler>(),
             make_shared<TaskTrackerHandler>(),
