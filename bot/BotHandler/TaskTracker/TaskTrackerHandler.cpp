@@ -30,6 +30,7 @@ namespace Bot::BotHandler::TaskTracker {
     using Utils::TGBotApi::Types::Style;
     using Utils::TaskTrackerApi::TaskState;
     using Utils::TaskTrackerApi::Task;
+    using Utils::TaskTrackerApi::state_to_symbol;
     using Utils::Datetime::DATE_FORMAT;
     using Bot::Entity::User::UserScreen;
     using Bot::BotHandler::Menu::MenuHandler;
@@ -139,7 +140,7 @@ namespace Bot::BotHandler::TaskTracker {
     string get_task_html(const vector<Task>& tasks, const Task& task) {
         return fmt::format(
             "\n<i>{}{}{}. {}</i>",
-            Task::state_to_symbol(task.state),
+            state_to_symbol.at(task.state),
             get_id_zero_aligment(tasks, task.id),
             task.id,
             task.title
@@ -312,7 +313,7 @@ namespace Bot::BotHandler::TaskTracker {
                 .chat_id = ctx->chat->id,
                 .text = fmt::format(
                     "<b>{} {}</b>",
-                    Task::state_to_symbol(task.state),
+                    state_to_symbol.at(task.state),
                     task.title
                 ),
                 .inline_keyboard = make_unique<InlineKeyboard>(InlineButtons{button_lane})
@@ -324,7 +325,7 @@ namespace Bot::BotHandler::TaskTracker {
             
             result_text += fmt::format(
                 "<b>{} {}.</b> <i>{}</i>\n",
-                Task::state_to_symbol(task.state),
+                state_to_symbol.at(task.state),
                 zero_aligment_id,
                 task.title
             );

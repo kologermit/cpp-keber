@@ -11,6 +11,7 @@ namespace Utils::TaskTrackerApi {
     using std::string_view;
     using std::map;
     using Utils::Datetime::DATETIME_FORMAT;
+    using Utils::Datetime::DATE_FORMAT;
     using nlohmann::json;
     using jed_utils::datetime;
     using Utils::Api::Entity;
@@ -29,6 +30,28 @@ namespace Utils::TaskTrackerApi {
     constexpr const char* START_AT_KEY = "start_at";
     constexpr const char* IN_WORK_AT_KEY = "in_work_at";
     constexpr const char* COMPLETED_AT_KEY = "completed_at";
+
+    static const map<string, TaskState> string_to_state{
+        {NEW_KEY, TaskState::NEW},
+        {IN_WORK_KEY, TaskState::IN_WORK},
+        {COMPLETED_KEY, TaskState::COMPLETED},
+        {DELETED_KEY, TaskState::DELETED},
+    };
+
+    static const map<TaskState, string> state_to_string{
+        {TaskState::NEW, NEW_KEY},
+        {TaskState::IN_WORK, IN_WORK_KEY},
+        {TaskState::COMPLETED, COMPLETED_KEY},
+        {TaskState::DELETED, DELETED_KEY},
+    };
+
+    static const map<TaskState, string> state_to_symbol{
+        {TaskState::UNKNOWN, "🚫"},
+        {TaskState::NEW, "🆕"},
+        {TaskState::IN_WORK, "🛠️"},
+        {TaskState::COMPLETED, "✅"},
+        {TaskState::DELETED, "❌"}, 
+    };
 
     struct Task : Entity {
         string title;
@@ -58,43 +81,18 @@ namespace Utils::TaskTrackerApi {
             )
         {}
 
-        static string state_to_symbol(const TaskState state) {
-            static const map<TaskState, string> m{
-                {TaskState::UNKNOWN, "🚫"},
-                {TaskState::NEW, "🆕"},
-                {TaskState::IN_WORK, "🛠️"},
-                {TaskState::COMPLETED, "✅"},
-                {TaskState::DELETED, "❌"}, 
-            };
-            return m.at(state);
-        }
-
-        static TaskState string_to_state(string_view string_state) {
-            static const map<string, TaskState> states{
-                {NEW_KEY, TaskState::NEW},
-                {IN_WORK_KEY, TaskState::IN_WORK},
-                {COMPLETED_KEY, TaskState::COMPLETED},
-                {DELETED_KEY, TaskState::DELETED},
-            };
-            const map<string, TaskState>::const_iterator find_result = states.find(string(string_state));
-            if (find_result == states.end()) {
-                return TaskState::UNKNOWN;
-            }
-            return find_result->second;
-        }
-
         string get_text() const noexcept {
             return fmt::format(
                 "<b>{}{}. {}\n\n{}\n\nСоздано: {}\nНачало: {}\nВ работе: {}\nЗавершена: {}\nУдалена: {}</b>",
-                state_to_symbol(state),
+                state_to_symbol.at(state),
                 id,
                 title,
                 description,
-                created_at.to_string(DATETIME_FORMAT),
-                start_at.to_string(DATETIME_FORMAT),
-                (in_work_at.has_value() ? in_work_at->to_string(DATETIME_FORMAT) : "-"),
-                (completed_at.has_value() ? completed_at->to_string(DATETIME_FORMAT) : "-"),
-                (deleted_at.has_value() ? deleted_at->to_string(DATETIME_FORMAT) : "-")
+                created_at.to_string(DATE_FORMAT),
+                start_at.to_string(DATE_FORMAT),
+                (in_work_at.has_value() ? in_work_at->to_string(DATE_FORMAT) : "-"),
+                (completed_at.has_value() ? completed_at->to_string(DATE_FORMAT) : "-"),
+                (deleted_at.has_value() ? deleted_at->to_string(DATE_FORMAT) : "-")
             );
         }
     };

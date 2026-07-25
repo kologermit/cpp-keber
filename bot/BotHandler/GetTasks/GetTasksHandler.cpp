@@ -25,6 +25,7 @@ namespace Bot::BotHandler::GetTasks {
     using pystring::split;
     using Utils::TaskTrackerApi::TaskState;
     using Utils::TaskTrackerApi::Task;
+    using Utils::TaskTrackerApi::string_to_state;
     using Utils::TaskTrackerApi::GetTasksParams;
 
     const string& GetTasksHandler::get_name() const noexcept {
@@ -64,28 +65,26 @@ namespace Bot::BotHandler::GetTasks {
             }
         }
         
-        datetime start(
+        const datetime start(
             date.get_year(),
             date.get_month(),
             date.get_day(),
             0, 0, 0
         );
-        datetime end = start;
-        end.add_days(1);
+        const datetime end(
+            date.get_year(),
+            date.get_month(),
+            date.get_day(),
+            23, 59, 59
+        );
 
         set<TaskState> states = {TaskState::NEW};
-        const static map<string, TaskState> state_map = {
-            {"new", TaskState::NEW},
-            {"completed", TaskState::COMPLETED},
-            {"deleted", TaskState::DELETED},
-            {"in_work", TaskState::IN_WORK}
-        };
         if (words.size() == 3) {
             states.clear();
             vector<string> state_strings = split(words[2], ",");
             for (const string& state_str : state_strings) {
-                const map<string, TaskState>::const_iterator it = state_map.find(state_str);
-                if (it != state_map.end()) {
+                const map<string, TaskState>::const_iterator it = string_to_state.find(state_str);
+                if (it != string_to_state.end()) {
                     states.insert(it->second);
                 } else {
                     return ctx->bot->send_message({

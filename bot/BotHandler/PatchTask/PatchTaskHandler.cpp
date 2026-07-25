@@ -17,6 +17,7 @@ namespace Bot::BotHandler::PatchTask {
     using pystring::join;
     using Utils::TGBotApi::Bot::SendMessageParameters;
     using Utils::TaskTrackerApi::Task;
+    using Utils::TaskTrackerApi::string_to_state;
     using Utils::TaskTrackerApi::TaskState;
     using Utils::Datetime::datetime;
     using Utils::Datetime::DATE_FORMAT;
@@ -89,7 +90,7 @@ namespace Bot::BotHandler::PatchTask {
                 return ctx->bot->send_message(message_params);
             }
         } else if (first_line_words[2] == "state") {
-            state = Task::string_to_state(lines[1]);
+            state = string_to_state.at(lines[1]);
             if (state.value() == TaskState::UNKNOWN) {
                 message_params.text = fmt::format("Не получилось определить состоятие задачи {}", lines[1]);
                 return ctx->bot->send_message(message_params);
