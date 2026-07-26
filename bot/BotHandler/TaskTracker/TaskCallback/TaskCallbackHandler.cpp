@@ -20,8 +20,7 @@ namespace Bot::BotHandler::TaskTracker::TaskCallback {
             return false;
         }
         const json data = json::parse(ctx->callback->data);
-        return (ctx->access.full || ctx->access.task_tracker)
-            && data.is_array()
+        return data.is_array()
             && data.size() == 3
             && data[0].is_string()
             && data[1].is_string()
