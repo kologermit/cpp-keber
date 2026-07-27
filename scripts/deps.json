@@ -66,6 +66,26 @@
             "@@ deps gtest-build"
         ]
     },
+    "hiredis-download": {
+        "working_dir": "./build/_deps",
+        "scripts": [
+            "rm -rf hiredis",
+            "git clone https://github.com/redis/hiredis.git"
+        ]
+    },
+    "hiredis-build": {
+        "working_dir": "./build/_deps/hiredis",
+        "scripts": [
+            "cmake -S . -B build -DBUILD_SHARED_LIBS=OFF -DENABLE_NUGET=OFF -DDISABLE_TESTS=ON",
+            "cmake --build build --parallel $(($(nproc)-1))"
+        ]
+    },
+    "hiredis-download-and-build": {
+        "scripts": [
+            "@@ deps hiredis-download",
+            "@@ deps hiredis-build"
+        ]
+    },
     "libexpat-download": {
         "working_dir": "./build/_deps",
         "scripts": [
@@ -214,6 +234,26 @@
         "scripts": [
             "@@ deps pystring-download",
             "@@ deps pystring-build"
+        ]
+    },
+    "redis-plus-plus-download": {
+        "working_dir": "./build/_deps",
+        "scripts": [
+            "rm -rf redis-plus-plus",
+            "git clone https://github.com/sewenew/redis-plus-plus.git"
+        ]
+    },
+    "redis-plus-plus-build": {
+        "working_dir": "./build/_deps/redis-plus-plus",
+        "scripts": [
+            "cmake -S . -B build -DREDIS_PLUS_PLUS_BUILD_STATIC=ON -DREDIS_PLUS_PLUS_BUILD_SHARED=OFF -DREDIS_PLUS_PLUS_BUILD_TEST=OFF -DHIREDIS_HEADER=..",
+            "cmake --build build --parallel $(($(nproc)-1))"
+        ]
+    },
+    "redis-plus-plus-download-and-build": {
+        "scripts": [
+            "@@ deps redis-plus-plus-download",
+            "@@ deps redis-plus-plus-build"
         ]
     },
     "xlsxio-download": {

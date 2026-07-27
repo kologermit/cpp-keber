@@ -33,9 +33,8 @@ namespace Bot::BotHandler::TaskTracker::StartAt {
 
     ptrMessage StartAtHandler::send_new_task(ptrContext ctx, const Task& task) {
         return TaskTrackerHandler::to_task_tracker(ctx, fmt::format(
-            "<b>{}Создана задача ({}):{}</b>\n",
+            "<b>{}Создана задача:</b>\n{}",
             SUCCESS_SYMBOL,
-            task.id,
             task.get_text()
         ));
     }

@@ -40,5 +40,19 @@
             "cmake ../.. -B . -DBUILD_TASK_TRACKER=ON -DCMAKE_BUILD_TYPE=Release",
             "cmake --build . --target TASK_TRACKER --parallel $(($(nproc)-1))"
         ]
+    },
+    "healthcheck-debug": {
+        "working_dir": "./build/Debug",
+        "scripts": [
+            "cmake ../.. -B . -DBUILD_HEALTCHECK=ON -DCMAKE_BUILD_TYPE=Debug",
+            "cmake --build . --target HEALTHCHECK --parallel $(($(nproc)-1))"
+        ]
+    },
+    "healthckeck-release": {
+        "working_dir": "./build/Release",
+        "scripts": [
+            "cmake ../.. -B . -DBUILD_HEALTCHECK=ON -DCMAKE_BUILD_TYPE=Release",
+            "cmake --build . --target HEALTHCHECK --parallel $(($(nproc)-1))"
+        ]
     }
 }

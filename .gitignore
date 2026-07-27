@@ -15,4 +15,5 @@
 !utils
 !youtube_api
 !docker
+!healthcheck
 !.github

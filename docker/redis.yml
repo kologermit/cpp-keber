@@ -1,0 +1,16 @@
+volumes:
+  redis-data:
+
+services:
+  redis:
+    extends:
+      file: ./parents.yml
+      service: parent
+    image: ${REDIS_IMAGE}
+    environment:
+      - REDIS_PARSSWORD=${REDIS_PASSWORD}
+    volumes:
+      - redis-data:/data
+    entrypoint: ["/usr/local/bin/redis-server", "--requirepass", "${REDIS_PASSWORD}"]
+    ports:
+      - ${REDIS_EXTERNAL_PORT}:6379

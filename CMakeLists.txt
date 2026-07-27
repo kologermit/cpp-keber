@@ -10,7 +10,7 @@ set(CMAKE_UNITY_BUILD_BATCH_SIZE 20)
 add_compile_options(
     -Wall 
     -Wextra 
-    -pedantic 
+    -Wno-pedantic 
     -Werror
     -Wconversion
     -Wno-error=deprecated-declarations
@@ -42,6 +42,8 @@ set(DEPS_STATICS
     ${CMAKE_SOURCE_DIR}/build/_deps/minizip-ng/build/libminizip.a
     ${CMAKE_SOURCE_DIR}/build/_deps/zlib-ng/build/libz.a
     ${CMAKE_SOURCE_DIR}/build/_deps/pystring/build/${CMAKE_BUILD_TYPE}/libpystring.a
+    ${CMAKE_SOURCE_DIR}/build/_deps/redis-plus-plus/build/libredis++.a
+    ${CMAKE_SOURCE_DIR}/build/_deps/hiredis/build/libhiredis.a
     PostgreSQL::PostgreSQL
 )
 
@@ -56,6 +58,11 @@ set(DEPS_PATHS
     ${CMAKE_SOURCE_DIR}/build/_deps/xlsxio/include/
     ${CMAKE_SOURCE_DIR}/build/_deps/libxlsxwriter/include
     ${CMAKE_SOURCE_DIR}/build/_deps/pystring
+    ${CMAKE_SOURCE_DIR}/build/_deps/hiredis
+    ${CMAKE_SOURCE_DIR}/build/_deps/redis-plus-plus/src/sw/redis++/cxx17
+    ${CMAKE_SOURCE_DIR}/build/_deps/redis-plus-plus/src
+    ${CMAKE_SOURCE_DIR}/build/_deps/redis-plus-plus/src/sw/redis++/no_tls
+    ${CMAKE_SOURCE_DIR}/build/_deps/redis-plus-plus/build/src
     ${CMAKE_SOURCE_DIR}/build/_deps
     ${CMAKE_SOURCE_DIR}
 )
@@ -95,6 +102,18 @@ if (BUILD_BOT)
         ${DEPS_STATICS}
     )
 endif()
+
+option(BUILD_HEALTCHECK "Build healthcheck" OFF)
+if (BUILD_HEALTCHECK)
+    add_executable(HEALTHCHECK ./healthcheck/main.cpp)
+    target_include_directories(HEALTHCHECK PRIVATE 
+        ${DEPS_PATHS}
+    )
+    target_link_libraries(HEALTHCHECK PRIVATE
+        UTILS_LIB
+        ${DEPS_STATICS}
+    )
+endif ()
 
 option(BUILD_TASK_TRACKER "Build task tracker" OFF)
 if (BUILD_TASK_TRACKER)

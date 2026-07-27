@@ -2,7 +2,7 @@ ARG RUNNER_IMAGE=ubuntu:latest
 ARG BUILDER_IMAGE=ubuntu:latest
 ARG PYTHON_RUNNER_IMAGE=python:3
 
-FROM ${RUNNER_IMAGE} AS base-runner
+FROM ${RUNNER_IMAGE} AS base-runner-without-healthcheck
 ARG USER_ID=1001
 ARG GROUP_ID=1001
 RUN if command -v apt &> /dev/null; then \
@@ -53,6 +53,24 @@ COPY ./CMakeLists.txt /src/CMakeLists.txt
 COPY ./scripts/build.json /src/scripts/build.json
 RUN python3 manager.py build utils-debug && python3 manager.py build utils-release
 
+FROM base-builder AS build-healthcheck-debug
+COPY ./healthcheck /src/healthcheck
+RUN python3 manager.py build healthcheck-debug
+
+FROM base-builder AS build-healthcheck-release
+COPY ./healthcheck /src/healthcheck
+RUN python3 manager.py build healthcheck-release
+
+FROM base-runner-without-healthcheck AS base-runner-release
+COPY --from=build-healthcheck-release /src/build/HEALTHCHECK /healthcheck
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD /healthcheck --URL 127.0.0.1:8080 || exit 1
+
+FROM base-runner-without-healthcheck AS base-runner-debug
+COPY --from=build-healthcheck-debug /src/build/HEALTHCHECK /healthcheck
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD /healthcheck --URL 127.0.0.1:8080 || exit 1
+
 FROM base-builder AS build-bot-release
 COPY ./bot /src/bot
 RUN python3 manager.py build bot-release
@@ -63,11 +81,11 @@ COPY ./bot /src/bot
 RUN python3 manager.py build bot-debug
 
 
-FROM base-runner AS runner-bot-release
+FROM base-runner-release AS runner-bot-release
 COPY --from=build-bot-release /src/build/Release/BOT /app
 
 
-FROM base-runner AS runner-bot-debug
+FROM base-runner-debug AS runner-bot-debug
 COPY --from=build-bot-debug /src/build/Debug/BOT /app
 
 
@@ -81,11 +99,11 @@ COPY ./task_tracker /src/task_tracker
 RUN python3 manager.py build task-tracker-debug
 
 
-FROM base-runner AS runner-task-tracker-release
+FROM base-runner-release AS runner-task-tracker-release
 COPY --from=build-task-tracker-release /src/build/Release/TASK_TRACKER /app
 
 
-FROM base-runner AS runner-task-tracker-debug
+FROM base-runner-debug AS runner-task-tracker-debug
 COPY --from=build-task-tracker-debug /src/build/Debug/TASK_TRACKER /app
 
 
@@ -103,6 +121,7 @@ RUN if command -v groupadd &> /dev/null; then \
     && touch /env.json && mkdir -p /volumes/logs /venv \
     && chown runner:runner /volumes/logs /venv /env.json \
     && chmod 755 /volumes/logs /venv /env.json
+COPY ./utils/Python /app/utils/Python
 ENTRYPOINT ["/venv/venv/bin/python3", "main.py"]
 
 FROM base-python-runner AS runner-youtube-api
@@ -111,4 +130,3 @@ RUN su - runner -s /bin/sh -c "python3 -m venv /venv/venv" \
     && su - runner -s /bin/sh -c "/venv/venv/bin/pip install --upgrade pip" \
     && su - runner -s /bin/sh -c "/venv/venv/bin/pip install -r /app/requirements.txt"
 COPY ./youtube_api /app
-COPY ./utils/Python /app/utils/Python
