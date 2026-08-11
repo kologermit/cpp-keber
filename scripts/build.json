@@ -48,7 +48,7 @@
             "cmake --build . --target HEALTHCHECK --parallel $(($(nproc)-1))"
         ]
     },
-    "healthckeck-release": {
+    "healthcheck-release": {
         "working_dir": "./build/Release",
         "scripts": [
             "cmake ../.. -B . -DBUILD_HEALTCHECK=ON -DCMAKE_BUILD_TYPE=Release",
