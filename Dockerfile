@@ -62,12 +62,12 @@ COPY ./healthcheck /src/healthcheck
 RUN python3 manager.py build healthcheck-release
 
 FROM base-runner-without-healthcheck AS base-runner-release
-COPY --from=build-healthcheck-release /src/build/HEALTHCHECK /healthcheck
+COPY --from=build-healthcheck-release /src/build/Release/HEALTHCHECK /healthcheck
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD /healthcheck --URL 127.0.0.1:8080 || exit 1
 
 FROM base-runner-without-healthcheck AS base-runner-debug
-COPY --from=build-healthcheck-debug /src/build/HEALTHCHECK /healthcheck
+COPY --from=build-healthcheck-debug /src/build/Debug/HEALTHCHECK /healthcheck
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD /healthcheck --URL 127.0.0.1:8080 || exit 1
 

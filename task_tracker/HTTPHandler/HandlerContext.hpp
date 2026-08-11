@@ -18,6 +18,7 @@ namespace TaskTracker::HTTPHandler {
     using httplib::Response;
 
     struct HandlerContext {
+        int handle_id;
         const Request& request;
         Response& response;
         shared_ptr<GlobalContext> global_ctx;
@@ -32,11 +33,13 @@ namespace TaskTracker::HTTPHandler {
         map<string, datetime> datetime_params;
 
         HandlerContext(
+            int handle_id,
             shared_ptr<GlobalContext> global_ctx,
             const Request& request,
             Response& response,
             optional<json> json_body
         ):
+            handle_id(handle_id),
             request(request),
             response(response),
             global_ctx(global_ctx),

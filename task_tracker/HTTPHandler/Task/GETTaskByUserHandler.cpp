@@ -70,12 +70,12 @@ namespace TaskTracker::HTTPHandler::Task {
             {DELETED_AT_GTE_PARAM, &params.deleted_at_gte},
             {DELETED_AT_LTE_PARAM, &params.deleted_at_lte},
         }) {
-            if (ctx->datetime_params.contains(name)) {
+            if (ctx->datetime_params.find(name) != ctx->datetime_params.end()) {
                 *value = ctx->datetime_params[name];
             }
         }
 
-        if (ctx->ll_params.contains(STATE_KEY)) {
+        if (ctx->ll_params.find(STATE_KEY) != ctx->ll_params.end()) {
             params.state = static_cast<TaskState>(ctx->ll_params[STATE_KEY]);
         }
 

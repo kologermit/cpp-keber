@@ -8,3 +8,4 @@
 !HTTPHandler
 !main.cpp
 !GlobalContext.hpp
+!MessageThread

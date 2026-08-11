@@ -1,0 +1,5 @@
+*
+!.gitignore
+!InterfaceMessageThread.hpp
+!MessageThread.hpp
+!MessageThread.cpp

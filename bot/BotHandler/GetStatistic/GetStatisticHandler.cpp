@@ -29,7 +29,7 @@ namespace Bot::BotHandler::GetStatistic {
     ptrMessage GetStatisticHandler::handle(ptrContext ctx) {
         vector<string> words = split(ctx->message->text, " ");
         datetime date;
-        if (words.size() > 2) {
+        if (words.size() >= 2) {
             try {
                 date = datetime::parse(DATE_FORMAT, words[1]);
             } catch (const exception& exc) {

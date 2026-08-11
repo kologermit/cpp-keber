@@ -38,7 +38,7 @@ namespace Bot::BotHandler::Menu {
         return
             (ctx->access.full || ctx->access.base)
             && ctx->user->screen == UserScreen::MENU
-            && words.contains(ctx->message->text);
+            && words.find(ctx->message->text) != words.end();
     }
 
     ptrMessage MenuHandler::handle(shared_ptr<BotHandlerContext> ctx) {

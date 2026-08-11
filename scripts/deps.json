@@ -302,6 +302,7 @@
             "@@ deps datetime-download",
             "@@ deps fmt-download",
             "@@ deps gtest-download",
+            "@@ deps hiredis-download",
             "@@ deps libexpat-download",
             "@@ deps libpqxx-download",
             "@@ deps libuuid-download",
@@ -310,6 +311,7 @@
             "@@ deps nlohmann-json-download",
             "@@ deps openssl-download",
             "@@ deps pystring-download",
+            "@@ deps redis-plus-plus-download",
             "@@ deps xlsxio-download",
             "@@ deps zlib-ng-download"
         ]
@@ -319,6 +321,7 @@
             "@@ deps datetime-build",
             "@@ deps fmt-build",
             "@@ deps gtest-build",
+            "@@ deps hiredis-build",
             "@@ deps libexpat-build",
             "@@ deps libpqxx-build",
             "@@ deps libuuid-build",
@@ -326,6 +329,7 @@
             "@@ deps minizip-ng-build",
             "@@ deps openssl-build",
             "@@ deps pystring-build",
+            "@@ deps redis-plus-plus-build",
             "@@ deps xlsxio-build",
             "@@ deps zlib-ng-build"
         ]

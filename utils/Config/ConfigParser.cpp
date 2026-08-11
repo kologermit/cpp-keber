@@ -60,7 +60,7 @@ namespace Utils::Config {
         }
 
         json env_json = json::object();
-        if (cli_args.contains("env-file")) {
+        if (cli_args.find("env-file") != cli_args.end()) {
             const string& file_name = cli_args.at("env-file");
             if (!is_regular_file(file_name)) {
                 return {make_shared<invalid_argument>(fmt::format("Env file {} read access denied!", file_name)), false};
@@ -83,8 +83,8 @@ namespace Utils::Config {
         for (Argument& argument : arguments) {
             if (argument.is_required
                 && Get(argument.name).empty()
-                && !env_json.contains(argument.name)
-                && !cli_args.contains(argument.name)
+                && env_json.find(argument.name) == env_json.end()
+                && cli_args.find(argument.name) == cli_args.end()
             ) {
                 return {make_shared<invalid_argument>(fmt::format("Required argument {} not found!", argument.name)), false};
             }
@@ -93,7 +93,7 @@ namespace Utils::Config {
             if (!Get(argument.name).empty()) {
                 arg_string = Get(argument.name);
             }
-            if (env_json.contains(argument.name)) {
+            if (env_json.find(argument.name) != env_json.end()) {
                 if (argument.long_long_value != nullptr) {
                     if (!env_json.at(argument.name).is_number_integer()) {
                         return {make_shared<invalid_argument>(fmt::format("Argument {} is not a number!", argument.name)), false};
@@ -118,7 +118,7 @@ namespace Utils::Config {
                 }
                 continue;
             }
-            if (cli_args.contains(argument.name)) {
+            if (cli_args.find(argument.name) != cli_args.end()) {
                 arg_string = cli_args[argument.name];
             }
             if (argument.long_long_value != nullptr) {

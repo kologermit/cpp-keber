@@ -78,6 +78,7 @@ namespace Utils::HTTPServer::Server {
         };
 
         void stop() override {
+            _global_context->logger->info("SERVER::STOP", "Stopping server", __FILE__, __LINE__);
             _server.stop();
         };
 
@@ -97,6 +98,7 @@ namespace Utils::HTTPServer::Server {
                     #endif
                     json handle_result;
                     shared_ptr<HandlerContext> handler_context = make_shared<HandlerContext>(
+                        handle_id,
                         global_context,
                         request,
                         response,
@@ -131,8 +133,8 @@ namespace Utils::HTTPServer::Server {
                             const auto& [name, type, is_required, min, max] = param;
                             bool contains = (
                                 is_path_param
-                                ? request.path_params.contains(name)
-                                : request.params.contains(name)
+                                ? request.path_params.find(name) != request.path_params.end()
+                                : request.params.find(name) != request.params.end()
                             );
                             if (!is_required && !contains) {
                                 continue;
@@ -244,10 +246,10 @@ namespace Utils::HTTPServer::Server {
                                 throw invalid_argument("body must be object");                            
                             }
                             for (const auto&[name, type, is_required, min, max] : signature.body_params) {
-                                if (!body_json.contains(name) && is_required) {
+                                if (body_json.find(name) == body_json.end() && is_required) {
                                     throw invalid_argument(fmt::format("body must have key {}", name));
                                 }
-                                if (!body_json.contains(name)) {
+                                if (body_json.find(name) == body_json.end()) {
                                     continue;
                                 }
                                 json body_json_param = body_json[name];

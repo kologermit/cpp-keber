@@ -19,12 +19,12 @@ CallbackQuery::CallbackQuery(const json& json_callback_query):
 id(json_callback_query[ID_KEY]),
 data(json_callback_query[DATA_KEY]),
 from(
-    json_callback_query.contains(FROM_KEY)
+    json_callback_query.find(FROM_KEY) != json_callback_query.end()
     ? make_unique<User>(json_callback_query[FROM_KEY])
     : nullptr
 ),
 message(
-    json_callback_query.contains(MESSAGE_KEY)
+    json_callback_query.find(MESSAGE_KEY) != json_callback_query.end()
     ? make_unique<Message>(json_callback_query[MESSAGE_KEY])
     : nullptr
 ) {}

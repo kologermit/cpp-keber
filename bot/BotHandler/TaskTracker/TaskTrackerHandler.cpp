@@ -112,7 +112,7 @@ namespace Bot::BotHandler::TaskTracker {
             NEXT_3_DAYS_FILTER_WORD,
         };
 
-        if (task_buttons.contains(ctx->message->text)) {
+        if (task_buttons.find(ctx->message->text) != task_buttons.end()) {
             return TaskTrackerHandler::send_tasks(ctx);
         }
 
@@ -174,13 +174,13 @@ namespace Bot::BotHandler::TaskTracker {
             .state = TaskState::DELETED,
         });
         string message_text = fmt::format("<b>Статистика за сегодня ({})</b>", today.to_string(DATE_FORMAT));
-        message_text += fmt::format("\n\n<b>Новые ({}):</b>", new_tasks->size());
-        for (const Task& task : *new_tasks) {
-            message_text += get_task_html(*new_tasks, task);
-        }
         message_text += fmt::format("\n\n<b>В работе ({}):</b>", in_work_tasks->size());
         for (const Task& task : *in_work_tasks) {
             message_text += get_task_html(*in_work_tasks, task);
+        }
+        message_text += fmt::format("\n\n<b>Новые ({}):</b>", new_tasks->size());
+        for (const Task& task : *new_tasks) {
+            message_text += get_task_html(*new_tasks, task);
         }
         message_text += fmt::format("\n\n<b>Завершенные ({}):</b>", completed_tasks->size());
         for (const Task& task : *completed_tasks) {

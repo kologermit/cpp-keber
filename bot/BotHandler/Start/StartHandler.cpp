@@ -25,7 +25,7 @@ namespace Bot::BotHandler::Start {
                 ctx->message->text.starts_with(START_COMMAND)
                 || ctx->message->text.starts_with(MENU_COMMAND)
                 || ctx->user->screen == UserScreen::START
-                || (ctx->message->text == BACK_WORD && back_screens.contains(ctx->user->screen))
+                || (ctx->message->text == BACK_WORD && back_screens.find(ctx->user->screen) != back_screens.end())
             );
     }
 

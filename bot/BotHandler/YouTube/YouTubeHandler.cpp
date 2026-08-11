@@ -49,7 +49,7 @@ namespace Bot::BotHandler::YouTube {
         };
         return (ctx->access.full || ctx->access.youtube)
         && ctx->user->screen == UserScreen::YOUTUBE
-        && buttons.contains(ctx->message->text)
+        && buttons.find(ctx->message->text) != buttons.end()
         ;
     }
 

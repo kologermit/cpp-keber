@@ -129,10 +129,10 @@ namespace Bot::BotHandler::YouTube::Media {
         const auto& sheet = raw_data.begin()->second;
         vector<YouTubeAudioSetting> result;
 
-        for (unsigned short i = 1; sheet.contains({i, 2}) && sheet.contains({i, 3}); i++) {
+        for (unsigned short i = 1; sheet.find({i, 2}) != sheet.end() && sheet.find({i, 3}) != sheet.end(); i++) {
             string url = sheet.at({i, 2});
             const string download_url = sheet.at({i, 3});
-            const string file_name = sheet.contains({i, 1}) ? sheet.at({i, 1}) : "";
+            const string file_name = sheet.find({i, 1}) != sheet.end() ? sheet.at({i, 1}) : "";
 
             auto video_data = ctx->global_ctx->api->youtube->get_video(url);
             

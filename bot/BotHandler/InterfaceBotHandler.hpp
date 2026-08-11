@@ -1,7 +1,6 @@
 #pragma once
 
 #include <bot/GlobalContext.hpp>
-#include <bot/HTTPHandler/HandlerContext.hpp>
 #include <utils/TGBotApi/Types.hpp>
 
 namespace Bot::BotHandler {
@@ -11,7 +10,6 @@ namespace Bot::BotHandler {
     using Bot::Entity::User::User;
     using Bot::Entity::Callback::Callback;
     using Bot::Entity::Access::UserAccess;
-    using Bot::HTTPHandler::HandlerContext;
     using Bot::Config::InterfaceConfig;
     using Utils::TGBotApi::Bot::InterfaceBot;
     using Utils::TGBotApi::Types::ptrMessage;
@@ -26,7 +24,6 @@ namespace Bot::BotHandler {
         shared_ptr<User> user;
         shared_ptr<User> bot_user;
         shared_ptr<GlobalContext> global_ctx;
-        shared_ptr<HandlerContext> handler_ctx;
         shared_ptr<DBContext> db;
         UserAccess access;
         shared_ptr<InterfaceConfig> config;
