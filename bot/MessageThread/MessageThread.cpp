@@ -57,6 +57,12 @@ namespace Bot::MessageThread {
             task = std::move(message_queue->front());
             message_queue->pop();
 
+            shared_ptr<Callback> callback = (
+                task->tg_callback_query.has_value()
+                ? db->callback->get_by_telegram_callback(task->tg_callback_query.value())
+                : nullptr
+            );
+
             auto tg_message = make_shared<TGMessage>(
                 task->tg_callback_query.has_value()
                 ? std::move(*task->tg_callback_query.value().message)
@@ -67,11 +73,6 @@ namespace Bot::MessageThread {
             shared_ptr<User> bot_user = db->user->get_by_telegram_user(bot->get_user());
             shared_ptr<Chat> chat = db->chat->get_by_telegram_chat(*tg_message->chat);
             shared_ptr<Message> message = db->message->get_by_telegram_message(*tg_message);
-            shared_ptr<Callback> callback = (
-                task->tg_callback_query.has_value()
-                ? db->callback->get_by_telegram_callback(task->tg_callback_query.value())
-                : nullptr
-            );
 
             auto access = db->access->get_by_user_id(user->id);
 
